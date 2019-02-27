@@ -4,9 +4,9 @@
 waifu2xCaffeCUIDir=C:\\Users\\windwoz\\Desktop\\waifu2x-caffe\\waifu2x-caffe-cui.exe
 
 #file locations
-workspace=C:\\Users\\windwoz\\Desktop\\newrun\\test\\
-fileDir=C:\\Video\\yn\\yn.mkv
-dandere2xCppDir=C:\\Users\\windwoz\\Desktop\\AllInOne\\dandere2x_friend_release\\danderecppmodule.exe
+workspace=/home/linux/Documents/workspace/work/
+fileDir=/home/linux/Videos/Your_Name/yn.mkv
+dandere2xCppDir=/home/linux/Documents/workspace/nbworkspace
 ffmpegDir=ffmpeg
 
 #session settings

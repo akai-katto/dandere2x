@@ -115,6 +115,8 @@ public class DandereUtils {
         return FrameLoad;
     }
 
+
+    //this isnt working on linux
     /**
      * Listens in to see if a file is valid or not.
      * Continue to cycle within a time limit. Currently time limit is 10000 * 100 = 100 seconds.
