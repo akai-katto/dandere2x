@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="dandere2x-master:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/dandere2x_master_jar</output-path>
+    <root id="archive" name="dandere2x-master.jar">
+      <element id="module-output" name="dandere2x-master" />
+    </root>
+  </artifact>
+</component>

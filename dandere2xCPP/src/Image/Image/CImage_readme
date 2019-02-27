@@ -1,0 +1,8 @@
+What is "CImage?"
+
+CImage is my wrapper for "Cimg.h", which is an image library compatible with many operating systems.
+
+Unfortunately I didn't like the library itself and found it a bit wordy to use, so I made a wrapper
+to simplify it's process.
+
+CImage is inspired by princeton's API. 

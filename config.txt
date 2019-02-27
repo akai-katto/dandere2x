@@ -1,0 +1,30 @@
+#Mon Feb 18 11:48:41 PST 2019
+
+#waifu2xstuff. If on linux, you dont need this
+waifu2xCaffeCUIDir=C:\\Users\\windwoz\\Desktop\\waifu2x-caffe\\waifu2x-caffe-cui.exe
+
+#file locations
+workspace=C:\\Users\\windwoz\\Desktop\\newrun\\test\\
+fileDir=C:\\Video\\yn\\yn.mkv
+dandere2xCppDir=C:\\Users\\windwoz\\Desktop\\AllInOne\\dandere2x_friend_release\\danderecppmodule.exe
+ffmpegDir=ffmpeg
+
+#session settings
+timeFrame=00:04:54
+duration=00:00:10
+audioLayer=0:1
+frameRate=24
+width=1920
+height=1080
+
+
+#customization
+blockSize=30
+tolerance=16
+stepSize=4
+noiseLevel=3
+processType=cudnn
+bleed=2
+
+#ignore this if ur on windows
+dandereDir=/home/linux/Documents/waifu2x/dandere.lua
