@@ -6,7 +6,7 @@ waifu2xCaffeCUIDir=C:\\Users\\windwoz\\Desktop\\waifu2x-caffe\\waifu2x-caffe-cui
 #file locations
 workspace=/home/linux/Documents/workspace/work/
 fileDir=/home/linux/Videos/Your_Name/yn.mkv
-dandere2xCppDir=/home/linux/Documents/workspace/nbworkspace
+dandere2xCppDir=/home/linux/Documents/dandere2x-master/dandere2x_cpp/dandere2xcpp_nb/dist/Debug/GNU-Linux/dandere2xcpp_nb
 ffmpegDir=ffmpeg
 
 #session settings
@@ -20,7 +20,7 @@ height=1080
 
 #customization
 blockSize=30
-tolerance=16
+tolerance=16.4
 stepSize=4
 noiseLevel=3
 processType=cudnn

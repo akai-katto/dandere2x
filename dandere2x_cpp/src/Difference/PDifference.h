@@ -23,10 +23,12 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
+
 #include "../Image/BlockMatch/DiamondSearch.h"
-#include "../Image/BlockMatch/DifferenceBlocks.h"
 #include "../Image/Image/Image.h"
 #include "../DandereUtils/DandereUtils.h"
+
+#include "DifferenceBlocks.h"
 #include "Inversion.h"
 
 
@@ -51,7 +53,6 @@ public:
     unsigned int bleed;
     double tolerance;
     bool debug;
-
 
     std::string workspace;
     std::vector<Block> blocks;
@@ -109,23 +110,7 @@ public:
         this->tolerance = tolerence;
         this->debug = true;
     }
-
-    void setNewFrame(int frameNumber, std::shared_ptr<Image> image1,
-            std::shared_ptr<Image> image2) {
-        this->frameNumber = frameNumber;
-        this->image1 = image1;
-        this->image2 = image2;
-        blocks.empty();
-
-        this->width = image1->width;
-        this->height = image1->height;
-
-        //preform checks to ensure given information is valid
-        if (image1->height != image2->height || image1->width != image2->width)
-            throw std::invalid_argument("PDifference image resolution does not match!");
-    }
-
-
+    
     void generatePData() {
         if (!image1 || !image2)
             exit(1);
@@ -134,11 +119,11 @@ public:
 
         if (!blocks.empty()) { //if parts of frame2 can be made of frame1, create frame2'
             saveInversion(workspace + separator() + "outputs" + separator() + "output_" + std::to_string(frameNumber) + ".jpg");
-            this->printPFrameData(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
-            this->inv->printInversion(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
+            this->writePFrameData(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
+            this->inv->writeInversion(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
         }
         else { //if parts of frame2 cannot be made from frame1, just copy frame2. 
-            this->inv->printEmpty(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
+            this->inv->writeEmpty(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
             this->printEmpty(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
         }
 
@@ -147,7 +132,6 @@ public:
     void saveInversion(string input) {
         inv = make_shared<Inversion>(blocks, blockSize, bleed, image2);
         inv->createInversion();
-        //inv->saveInversion(input);
     }
 
 
@@ -225,12 +209,13 @@ public:
         }
     }
 
-
-    //print pframe data to a text file so 
-    //it can be used by PMerge in an other execution
-
-    void printPFrameData(string input) {
-        std::ofstream out(input);
+    /**
+     * 
+     * WRites all data from a pFrame to a text fil
+     * @param outputFile - Where the file will be saved
+     */
+    void writePFrameData(string outputFile) {
+        std::ofstream out(outputFile);
         for (int x = 0; x < blocks.size(); x++) {
             out << blocks[x].xStart << "\n" << blocks[x].yStart << "\n" <<
                     blocks[x].xEnd << "\n" << blocks[x].yEnd << endl;
@@ -259,27 +244,25 @@ public:
         }
     }
 
-    void save(std::string input, int compression = 100) {
-
-        unsigned int xBounds = image1->width;
-        unsigned int yBounds = image1->height;
-
-        Image PFrame(xBounds, yBounds);
-
-        for (int outer = 0; outer < blocks.size(); outer++) {
-            for (int x = 0; x < blockSize; x++) {
-                for (int y = 0; y < blockSize; y++) {
-                    PFrame.setColor(x + blocks[outer].xStart, y + blocks[outer].yStart,
-                            image1->getColorNoThrow(x + blocks[outer].xEnd, y + blocks[outer].yEnd));
-                }
-            }
-        }
-
-        PFrame.save(input.c_str(), compression);
-
-    }
-
-
+//    void save(std::string input, int compression = 100) {
+//
+//        unsigned int xBounds = image1->width;
+//        unsigned int yBounds = image1->height;
+//
+//        Image PFrame(xBounds, yBounds);
+//
+//        for (int outer = 0; outer < blocks.size(); outer++) {
+//            for (int x = 0; x < blockSize; x++) {
+//                for (int y = 0; y < blockSize; y++) {
+//                    PFrame.setColor(x + blocks[outer].xStart, y + blocks[outer].yStart,
+//                            image1->getColorNoThrow(x + blocks[outer].xEnd, y + blocks[outer].yEnd));
+//                }
+//            }
+//        }
+//
+//        PFrame.save(input.c_str(), compression);
+//
+//    }
 
 
     /**

@@ -20,15 +20,15 @@
         <itemPath>../src/DandereUtils/DandereUtils.h</itemPath>
       </logicalFolder>
       <logicalFolder name="Difference" displayName="Difference" projectFiles="true">
+        <itemPath>../src/Difference/DifferenceBlocks.h</itemPath>
         <itemPath>../src/Difference/Inversion.h</itemPath>
         <itemPath>../src/Difference/PDifference.h</itemPath>
+        <itemPath>../src/Difference/VectorDisplacement.h</itemPath>
       </logicalFolder>
       <logicalFolder name="Image" displayName="Image" projectFiles="true">
         <logicalFolder name="BlockMatch" displayName="BlockMatch" projectFiles="true">
           <itemPath>../src/Image/BlockMatch/Block.h</itemPath>
           <itemPath>../src/Image/BlockMatch/DiamondSearch.h</itemPath>
-          <itemPath>../src/Image/BlockMatch/DifferenceBlocks.h</itemPath>
-          <itemPath>../src/Image/BlockMatch/VectorDisplacement.h</itemPath>
         </logicalFolder>
         <logicalFolder name="Image" displayName="Image" projectFiles="true">
           <itemPath>../src/Image/Image/Image.h</itemPath>
@@ -70,25 +70,25 @@
       </compileType>
       <item path="../src/DandereUtils/DandereUtils.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="../src/Difference/DifferenceBlocks.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../src/Difference/Inversion.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Difference/PDifference.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../src/Difference/VectorDisplacement.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="../src/Driver.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Image/BlockMatch/Block.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Image/BlockMatch/DiamondSearch.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../src/Image/BlockMatch/DifferenceBlocks.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../src/Image/BlockMatch/VectorDisplacement.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -124,25 +124,25 @@
       </compileType>
       <item path="../src/DandereUtils/DandereUtils.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="../src/Difference/DifferenceBlocks.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../src/Difference/Inversion.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Difference/PDifference.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../src/Difference/VectorDisplacement.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="../src/Driver.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Image/BlockMatch/Block.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Image/BlockMatch/DiamondSearch.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../src/Image/BlockMatch/DifferenceBlocks.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../src/Image/BlockMatch/VectorDisplacement.h"
             ex="false"
             tool="3"
             flavor2="0">

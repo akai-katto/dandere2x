@@ -39,6 +39,7 @@ public class Dandere2xCUI {
             times.add(elapsed);
 
             double average = 0;
+
             for (double duration : times)
                 average += duration;
 
