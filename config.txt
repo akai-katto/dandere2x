@@ -10,7 +10,7 @@ dandere2xCppDir=/home/linux/Documents/dandere2x-master/dandere2x_cpp/dandere2xcp
 ffmpegDir=ffmpeg
 
 #session settings
-timeFrame=00:04:54
+timeFrame=00:04:14
 duration=00:00:10
 audioLayer=0:1
 frameRate=24
@@ -20,7 +20,7 @@ height=1080
 
 #customization
 blockSize=30
-tolerance=16.4
+tolerance=15
 stepSize=4
 noiseLevel=3
 processType=cudnn

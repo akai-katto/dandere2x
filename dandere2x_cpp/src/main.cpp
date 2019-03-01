@@ -21,36 +21,28 @@
 using namespace std;
 
 
+//args = workspace, framecount, blockSize, tolerance, stepSize, 
 int main(int argc, char** argv){
-    string workspace;// = "/home/linux/Videos/5cmrun/";
+    
+    bool debug = false; //debug flag
+    
+    string workspace;// = "/home/linux/Documents/workspace/work/";
     int frameCount;// = 144;
     int blockSize;// = 30;
     double tolerance;// = 15;
     int stepSize;// = 8;
-
-
-    if(argc==1){
-        cout << " No arguments given " << endl;
-        return 1;
-    }
-
-    if(argv[1] && argv[2]){
-        cout << argv[1] << " " << argv[2] << endl;
+    string runType; // 'n' or 'r'
+    int resumeFrame; // 17
+    
+    if(!debug){
         workspace = argv[1];
-        frameCount = stoi(argv[2]);
-    }
-
-    if(argv[3] && argv[4] && argv[5]){
-        cout << "using custom block size and tolerance" << endl;
+        frameCount = stoi(argv[2]); 
         blockSize = atoi(argv[3]);
         tolerance = stod(argv[4]);
         stepSize = stod(argv[5]);
+        runType = argv[6];
+        resumeFrame = atoi(argv[7]);
     }
-    else{
-        blockSize = 30;
-        tolerance = 15;
-    }
-
 
     cout << "Settings" << endl;
     cout << "workspace: " << workspace << endl;
@@ -58,7 +50,15 @@ int main(int argc, char** argv){
     cout << "blockSize: " << blockSize << endl;
     cout << "tolerance: " << tolerance << endl;
     cout << "stepSize: " << stepSize << endl;
-    driverDifference(workspace,frameCount, blockSize, tolerance,stepSize);
-
+    cout << "runType: " << runType << endl;
+    cout << "ResumeFrame (if valid): " << resumeFrame << endl;
+    
+    if(runType == "n"){
+        driverDifference(workspace,frameCount, blockSize, tolerance,stepSize);
+    }
+    else if(runType == "r"){
+        driverDifferenceResume(workspace,resumeFrame, frameCount, blockSize, tolerance,stepSize);
+    }
+    
     return 0;
 }

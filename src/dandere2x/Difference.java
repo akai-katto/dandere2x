@@ -14,18 +14,19 @@ import static java.io.File.separator;
 
 public class Difference implements Runnable {
 
-    public int blockSize;
-    public int bleed;
-    public String workspace;
-    public int ImageCount;
-    public int lexiConstant = 6;
-    public PrintStream log;
+    private int blockSize;
+    private int bleed;
+    private String workspace;
+    private int imageCount;
+    private int lexiConstant = 6;
+    private PrintStream log;
+    private int currentFrame = 1; // allow this to be modifiable in event of resume
 
-    public Difference(int blockSize, int bleed, String workspace, int ImageCount) {
+    public Difference(int blockSize, int bleed, String workspace, int imageCount) {
         this.blockSize = blockSize;
         this.bleed = bleed;
         this.workspace = workspace;
-        this.ImageCount = ImageCount;
+        this.imageCount = imageCount;
         try {
             log = new PrintStream(new File(workspace + "logs" + separator + "difference_logfile.txt"));
         } catch (FileNotFoundException e) {
@@ -41,7 +42,8 @@ public class Difference implements Runnable {
      * We do this by using the raw frames outputed from the video.
      */
     public void run() {
-        for (int x = 1; x < ImageCount; x++) {
+        setCurrentFrame();
+        for (int x = currentFrame; x < imageCount; x++) {
             log.println("Frame " + x);
             Frame im2 = DandereUtils.listenImage(log, workspace + "inputs" + separator + "frame" + (x + 1) + ".jpg");
             List<String> listPredictive = DandereUtils.listenText(log, workspace + "pframe_data" + separator + "pframe_" + x + ".txt");
@@ -55,6 +57,31 @@ public class Difference implements Runnable {
         }
     }
 
+
+
+    /**
+     * The protocol for resuming a dandere2x run is pretty similiar to that of starting a new one,
+     * just change the 'current' frame so we don't have to start from scratch.
+     *
+     * Count how many images have been upscaled, and that's own new starting point
+     *
+     *
+     * -1 in case previous image didnt save correctly.
+     */
+    public void setCurrentFrame(){
+
+        int frameCount = DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator,".jpg").size();
+
+        if(frameCount==0 || frameCount == 1){
+            System.out.println("new session");
+            this.currentFrame = 1;
+        }else {
+            System.out.println("resuming session");
+            System.out.println(frameCount);
+            this.currentFrame = frameCount;
+        }
+        return;
+    }
 
     /**
      * @param frameNumber

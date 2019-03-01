@@ -148,7 +148,6 @@ public:
 
 
     //match block is the inner call within 'matchAlBlocks' for readibility and maintability.
-
     inline void matchBlock(int x, int y) {
 
         //initial disp is currently deprecated, but has ambitiouns to be introduced later.
@@ -170,7 +169,6 @@ public:
         }
             //if the blocks have been (potentially) displaced, conduct a diamond search to search for them. 
         else {
-
             //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
             Block result = DiamondSearch::diamondSearchIterativeSuper(
                     *image2,

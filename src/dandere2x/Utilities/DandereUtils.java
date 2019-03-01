@@ -43,25 +43,19 @@ public class DandereUtils {
     }
 
 
-    /**
-     * Returns the files in folder that contain png's.
-     * Used for when generating a list of all files outputed by ffmpeg
-     *
-     * @param path
-     * @return
-     */
-    public static ArrayList<String> getJpgsInFolder(String path) {
+    public static ArrayList<String> getFileTypeInFolder(String path, String type){
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
         ArrayList<String> fileList = new ArrayList<String>();
 
         for (File x : listOfFiles) {
-            if (x.toString().contains(".jpg"))
+            if (x.toString().contains(type))
                 fileList.add(x.toString());
         }
         Collections.sort(fileList);
         return fileList;
     }
+
 
 
     /**

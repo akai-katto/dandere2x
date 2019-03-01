@@ -66,6 +66,32 @@ void driverDifference(std::string workspace, int frameCount, int blockSize, doub
 
 
 
+void driverDifferenceResume(std::string workspace,int resumeCount, int frameCount, int blockSize, double tolerance, int stepSize){
+    
+    
+    int bleed = 2;
+    bool debug = true;
+    
+    //1 
+    waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + ".jpg");
+    shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + ".jpg");
+    
+    for(int x = resumeCount; x < frameCount; x++){
+        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
+        std::cout << "Computing differences for frame" << x << endl;
+        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
+        PDifference dif = PDifference(im1, im2,x, blockSize,bleed, tolerance, workspace, stepSize, debug);
+        dif.generatePData(); //2
+        dif.drawOverIfRequired(); //3
+        im1 = im2; //4
+
+    }
+    
+}
+
+
+
+
 
 #endif /* DRIVER_H */
 

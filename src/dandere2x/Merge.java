@@ -21,6 +21,7 @@ public class Merge implements Runnable {
     private int frameCount;
     private int lexiConstant = 6;
     private PrintStream log;
+    private int currentFrame;
 
     public Merge(int blockSize, int bleed, String workspace, int frameCount) {
         this.blockSize = blockSize;
@@ -52,10 +53,11 @@ public class Merge implements Runnable {
      */
     public void run() {
 
+        setCurrentFrame(); //check if resuming or not
         //load genesis frame
-        Frame base = DandereUtils.listenImage(log, workspace + "merged" + separator + "merged_" + 1 + ".jpg");
+        Frame base = DandereUtils.listenImage(log, workspace + "merged" + separator + "merged_" + currentFrame + ".jpg");
 
-        for (int x = 1; x < frameCount; x++) {
+        for (int x = currentFrame; x < frameCount; x++) {
             log.println("Mering frame " + x);
             String inputName;
 
@@ -76,6 +78,30 @@ public class Merge implements Runnable {
                     workspace + "merged" + separator + "merged_" + (x + 1) + ".jpg");
 
         }
+    }
+
+
+    /**
+     * The protocol for resuming a dandere2x run is pretty similiar to that of starting a new one,
+     * just change the 'current' frame so we don't have to start from scratch.
+     *
+     * Count how many images have been upscaled, and that's own new starting point.
+     *
+     * -1 in case previous image didnt save correctly.
+     */
+    public void setCurrentFrame(){
+
+        int frameCount = DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size();
+
+        if(frameCount==0 || frameCount == 1){
+            System.out.println("new merged session");
+            this.currentFrame = 1;
+        }else {
+            System.out.println("resuming merged session");
+            System.out.println(frameCount);
+            this.currentFrame = frameCount;
+        }
+        return;
     }
 
 

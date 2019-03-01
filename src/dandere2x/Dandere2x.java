@@ -80,13 +80,28 @@ public class Dandere2x {
             exit(1);
         }
 
-        log.println("extracting frames");
-        FFMpeg.extractFrames(log, ffmpegDir, workspace, timeFrame, fileDir, duration);
-
-        log.println("extracting audio");
-        FFMpeg.extractAudio(log, ffmpegDir, workspace, timeFrame, duration, fileDir, audioLayer);
-
         frameCount = DandereUtils.getSecondsFromDuration(duration) * frameRate;
+
+
+        //if the frames have already been extracted, don't do it again
+        if((!new File(workspace + "inputs").exists()) || DandereUtils.getFileTypeInFolder(workspace + "inputs",".jpg").isEmpty()){
+            newRun();
+        }
+        else{
+            System.out.println("Resuming session");
+            log.println("Resuming session");
+
+            System.out.println("difference frames counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator,".jpg").size());
+            System.out.println("merged frames counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size());
+
+            log.println("difference frames counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator,".jpg").size());
+            log.println("merged frames counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size());
+
+        }
 
         log.println("framecount: " + frameCount);
 
@@ -100,6 +115,18 @@ public class Dandere2x {
 
         log.println("starting threaded processes");
         startThreadedProcesses();
+    }
+
+    public void newRun() throws IOException, InterruptedException{
+        log.println("extracting frames");
+        FFMpeg.extractFrames(log, ffmpegDir, workspace, timeFrame, fileDir, duration);
+
+        log.println("extracting audio");
+        FFMpeg.extractAudio(log, ffmpegDir, workspace, timeFrame, duration, fileDir, audioLayer);
+    }
+
+    public void resume() throws IOException, InterruptedException {
+
     }
 
 
@@ -207,27 +234,11 @@ public class Dandere2x {
     4) Waifu2xCaffee - A process to upscale frames on windows.
      */
     private void startThreadedProcesses() throws IOException, InterruptedException {
-        ProcessBuilder dandere2xPB;
-
 
         log.println("starting threaded processes...");
 
-        /**
-         * IF we're on linux, create the script for the user to run. The process builder command
-         * to start waifu2x-cpp is also different than that of windows.
-         */
-        if (DandereUtils.isLinux()) {
-            log.println("using linux...");
-            dandere2xPB = new ProcessBuilder(dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "");
-            createWaifu2xScript();
-        } else {
-            log.println("using windows...");
-            dandere2xPB = new ProcessBuilder("cmd.exe", "/C", "start", dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "");
-        }
 
-        log.println("starting cpp process" + dandere2xPB.command());
+        ProcessBuilder dandere2xPB = getDandere2xPB();
         dandere2xCppProc = dandere2xPB.start();
 
         Thread dandereCUI = new Thread() {
@@ -251,13 +262,10 @@ public class Dandere2x {
             }
         };
 
-
         log.println("Starting cui thread");
         dandereCUI.start();
-
         log.println("starting merge thread...");
         mergeThread.start();
-
         log.println("starting inversion thread...");
         inversionThread.start();
 
@@ -292,6 +300,46 @@ public class Dandere2x {
         log.println("dandere2x finished correctly...");
     }
 
+
+
+    /**
+     * IF we're on linux, create the script for the user to run. The process builder command
+     * to start waifu2x-cpp is also different than that of windows.
+     */
+    private ProcessBuilder getDandere2xPB(){
+
+        int count = DandereUtils.getFileTypeInFolder(workspace + "pframe_data",".txt").size();
+
+        String type = null;
+        if(count == 0){
+            log.print("New Dandere2x Session");
+            type = "n";
+        }
+        else{
+            new File(workspace + "pframe_data" + separator + "pframe_"+count).delete();
+            new File(workspace + "inversion_data" + separator + "inversion_"+count).delete();
+            log.println("Resuming Dandere2x Session: " + count);
+            type = "r";
+        }
+
+
+        ProcessBuilder dandere2xPB;
+
+        if (DandereUtils.isLinux()) {
+            log.println("using linux...");
+            dandere2xPB = new ProcessBuilder(dandere2xCppDir,
+                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", type,count + "");
+            createWaifu2xScript();
+        } else {
+            log.println("using windows...");
+            dandere2xPB = new ProcessBuilder("cmd.exe", "/C", "start", dandere2xCppDir,
+                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", type ,count + "");
+        }
+
+        System.out.println("type: " + type + " count: " + count);
+
+        return dandere2xPB;
+    }
 
     /*
     This is only for linux functions. This function will create a waifu2x_script.sh which the user is to
