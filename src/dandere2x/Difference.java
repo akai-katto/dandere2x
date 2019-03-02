@@ -1,18 +1,20 @@
 package dandere2x;
 
+import dandere2x.Utilities.DThread;
 import dandere2x.Utilities.DandereUtils;
 import dandere2x.Utilities.VectorDisplacement;
 import wrappers.Frame;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.io.File.separator;
 
-public class Difference implements Runnable {
+public class Difference extends DThread implements Runnable {
 
     private int blockSize;
     private int bleed;
@@ -22,42 +24,33 @@ public class Difference implements Runnable {
     private PrintStream log;
     private int currentFrame = 1; // allow this to be modifiable in event of resume
 
-    public Difference(int blockSize, int bleed, String workspace, int imageCount) {
-        this.blockSize = blockSize;
-        this.bleed = bleed;
-        this.workspace = workspace;
-        this.imageCount = imageCount;
+    public Difference(int blockSize, int bleed, String workspace, int imageCount, boolean isResume) {
+        super(isResume);
         try {
             log = new PrintStream(new File(workspace + "logs" + separator + "difference_logfile.txt"));
         } catch (FileNotFoundException e) {
             System.out.println("Fatal Error: Could not create file at " + workspace + "merge_logfile.txt");
         }
+
+        new File(workspace + "outputs" + separator + "metadata" + separator).mkdir();
+
+
+        this.blockSize = blockSize;
+        this.bleed = bleed;
+        this.workspace = workspace;
+        this.imageCount = imageCount;
+
+        if(isResume)
+            resumeCondition();
+
+
     }
 
 
-    /**
-     * Wait for the predictive data and inversion data to exist, then create the 'differences' image
-     * that will be upscaled later by waifu2x.
-     * <p>
-     * We do this by using the raw frames outputed from the video.
-     */
-    public void run() {
+    @Override
+    public void resumeCondition(){
         setCurrentFrame();
-        for (int x = currentFrame; x < imageCount; x++) {
-            log.println("Frame " + x);
-            Frame im2 = DandereUtils.listenImage(log, workspace + "inputs" + separator + "frame" + (x + 1) + ".jpg");
-            List<String> listPredictive = DandereUtils.listenText(log, workspace + "pframe_data" + separator + "pframe_" + x + ".txt");
-            List<String> listInversion = DandereUtils.listenText(log, workspace + "inversion_data" + separator + "inversion_" + x + ".txt");
-
-            saveInversion(x, im2, listPredictive,
-                    listInversion,
-                    workspace + "outputs" + separator + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
-
-            saveDebug(x, im2, workspace + "debug" + separator + "debug_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
-        }
     }
-
-
 
     /**
      * The protocol for resuming a dandere2x run is pretty similiar to that of starting a new one,
@@ -70,18 +63,50 @@ public class Difference implements Runnable {
      */
     public void setCurrentFrame(){
 
-        int frameCount = DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator,".jpg").size();
+        int frameCount = DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator + "metadata" + separator,".txt").size();
 
         if(frameCount==0 || frameCount == 1){
-            System.out.println("new session");
+            log.println("new session");
             this.currentFrame = 1;
         }else {
-            System.out.println("resuming session");
-            System.out.println(frameCount);
-            this.currentFrame = frameCount;
+            log.println("resuming session: " + (frameCount-1+""));
+            this.currentFrame = frameCount-1;
         }
         return;
     }
+
+    @Override
+    /**
+     * Wait for the predictive data and inversion data to exist, then create the 'differences' image
+     * that will be upscaled later by waifu2x.
+     * <p>
+     * We do this by using the raw frames outputed from the video.
+     */
+    public void run() {
+
+        for (int x = currentFrame; x < imageCount; x++) {
+            log.println("Frame " + x);
+            Frame im2 = DandereUtils.listenImage(log, workspace + "inputs" + separator + "frame" + (x + 1) + ".jpg");
+            List<String> listPredictive = DandereUtils.listenText(log, workspace + "pframe_data" + separator + "pframe_" + x + ".txt");
+            List<String> listInversion = DandereUtils.listenText(log, workspace + "inversion_data" + separator + "inversion_" + x + ".txt");
+
+            saveInversion(x, im2, listPredictive,
+                    listInversion,
+                    workspace + "outputs" + separator + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
+
+            try {
+                new File(workspace + "outputs" + separator + "metadata" + separator + "file" + x +".txt").createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            saveDebug(x, im2, workspace + "debug" + separator + "debug_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
+        }
+    }
+
+
+
+
 
     /**
      * @param frameNumber

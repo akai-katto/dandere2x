@@ -81,6 +81,12 @@ void driverDifferenceResume(std::string workspace,int resumeCount, int frameCoun
         std::cout << "Computing differences for frame" << x << endl;
         shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
         PDifference dif = PDifference(im1, im2,x, blockSize,bleed, tolerance, workspace, stepSize, debug);
+        if(x==resumeCount){
+            std::cout << "invoking force copy " << endl;
+            dif.forceCopy();
+            im1 = im2;
+            continue;
+        }
         dif.generatePData(); //2
         dif.drawOverIfRequired(); //3
         im1 = im2; //4

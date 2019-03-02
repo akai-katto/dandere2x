@@ -1,5 +1,6 @@
 package dandere2x;
 
+import dandere2x.Utilities.DThread;
 import dandere2x.Utilities.DandereUtils;
 import dandere2x.Utilities.VectorDisplacement;
 import wrappers.Frame;
@@ -13,7 +14,7 @@ import java.util.List;
 import static java.io.File.separator;
 import static java.lang.System.exit;
 
-public class Merge implements Runnable {
+public class Merge extends DThread implements Runnable {
 
     private int blockSize;
     private int bleed;
@@ -22,18 +23,32 @@ public class Merge implements Runnable {
     private int lexiConstant = 6;
     private PrintStream log;
     private int currentFrame;
+    private boolean isResume;
 
-    public Merge(int blockSize, int bleed, String workspace, int frameCount) {
-        this.blockSize = blockSize;
-        this.bleed = bleed;
-        this.workspace = workspace;
-        this.frameCount = frameCount;
+    public Merge(int blockSize, int bleed, String workspace, int frameCount, boolean isResume) {
+        super(isResume);
 
         try {
             log = new PrintStream(new File(workspace + "logs" + separator + "merge_logfile.txt"));
         } catch (FileNotFoundException e) {
             System.out.println("Fatal Error: Could not create file at " + workspace + "logs" + separator + "merge_logfile.txt");
         }
+
+        this.blockSize = blockSize;
+        this.bleed = bleed;
+        this.workspace = workspace;
+        this.frameCount = frameCount;
+
+        if(isResume)
+            setCurrentFrame();
+
+
+    }
+
+
+    @Override
+    public void resumeCondition(){
+        setCurrentFrame();
     }
 
 
@@ -51,6 +66,7 @@ public class Merge implements Runnable {
      * Once we construct an image out of upscaled differences and predictive vectors, this image becomes the base
      * for the preceding frame.
      */
+    @Override
     public void run() {
 
         setCurrentFrame(); //check if resuming or not
@@ -94,12 +110,11 @@ public class Merge implements Runnable {
         int frameCount = DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size();
 
         if(frameCount==0 || frameCount == 1){
-            System.out.println("new merged session");
+            log.println("new merged session");
             this.currentFrame = 1;
         }else {
-            System.out.println("resuming merged session");
-            System.out.println(frameCount);
-            this.currentFrame = frameCount;
+            log.println("resuming merged session: " + (frameCount-1+""));
+            this.currentFrame = frameCount-1;
         }
         return;
     }

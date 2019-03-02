@@ -69,7 +69,7 @@ public class DandereUtils {
     public static Frame listenImage(PrintStream log, String baseName) {
 
         boolean dneErrorShown = false;
-        Frame FrameLoad = null;
+        Frame frameLoad = null;
         int timeLimit = 100000;
 
         for (long x = 0; x < timeLimit; x++) {
@@ -83,7 +83,7 @@ public class DandereUtils {
             }
 
             try {
-                FrameLoad = new Frame(baseName);
+                frameLoad = new Frame(baseName);
             } catch (NullPointerException e) {
                 log.println("null pointer exception in image");
                 threadSleep(100);
@@ -98,15 +98,15 @@ public class DandereUtils {
                 continue;
             }
 
-            if (FrameLoad != null)
+            if (frameLoad != null)
                 break;
         }
 
-        if (FrameLoad == null) {
+        if (frameLoad == null) {
             log.print("Could not find " + baseName + " within 1000 seconds, execution halted");
             throw new IllegalArgumentException("Could not find " + baseName + " within 1000 seconds, execution halted");
         }
-        return FrameLoad;
+        return frameLoad;
     }
 
 

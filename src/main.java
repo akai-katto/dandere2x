@@ -1,4 +1,5 @@
 import dandere2x.Dandere2x;
+import dandere2x.Utilities.DandereUtils;
 import dandere2x.Utilities.ParseConfig;
 
 import java.io.File;
@@ -10,6 +11,20 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 
+//        int frameCount = 120;
+//        int lexiConstant = 6;
+//        String upscaledDir = "C:\\Users\\windwoz\\Desktop\\uhm\\upscaled\\";
+//        String outputs = "C:\\Users\\windwoz\\Desktop\\uhm\\outputs\\";
+//
+//        for(int x = 0; x < frameCount; x++){
+//            File temp = new File(upscaledDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".png");
+//            File deleteFile = new File(outputs + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
+//
+//            if(temp.exists() && deleteFile.exists()){
+//                deleteFile.delete();
+//            }
+//            System.out.println(temp.exists() + " " + deleteFile.exists());
+//        }
         //create main log
         PrintStream log = null;
         File logFile = new File("log.txt");

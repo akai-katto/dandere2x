@@ -129,6 +129,11 @@ public:
 
     }
 
+    
+    void forceCopy(){
+            this->inv->writeEmpty(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
+            this->printEmpty(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
+    }
     void saveInversion(string input) {
         inv = make_shared<Inversion>(blocks, blockSize, bleed, image2);
         inv->createInversion();

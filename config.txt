@@ -4,14 +4,14 @@
 waifu2xCaffeCUIDir=C:\\Users\\windwoz\\Desktop\\waifu2x-caffe\\waifu2x-caffe-cui.exe
 
 #file locations
-workspace=/home/linux/Documents/workspace/work/
-fileDir=/home/linux/Videos/Your_Name/yn.mkv
-dandere2xCppDir=/home/linux/Documents/dandere2x-master/dandere2x_cpp/dandere2xcpp_nb/dist/Debug/GNU-Linux/dandere2xcpp_nb
+workspace=C:\\Users\\windwoz\\Desktop\\uhm\\
+fileDir=C:\\Video\\yn\\yn.mkv
+dandere2xCppDir=C:\\Users\\windwoz\\Desktop\\dandere2x\\dandere2x-master\\dandere2x_cpp\\dandere2xcpp_nb\\dist\\Debug\\Cygwin-Windows\\dandere2xcpp_nb.exe
 ffmpegDir=ffmpeg
 
 #session settings
-timeFrame=00:04:14
-duration=00:00:10
+timeFrame=00:05:01
+duration=00:00:02
 audioLayer=0:1
 frameRate=24
 width=1920

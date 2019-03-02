@@ -15,6 +15,7 @@ package wrappers;/**
  * in the 'outputs' folder at a given time.
  **/
 
+import dandere2x.Utilities.DThread;
 import dandere2x.Utilities.DandereUtils;
 
 import java.io.File;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 
 import static java.io.File.separator;
 
-public class Waifu2xCaffe {
+public class Waifu2xCaffe extends DThread {
 
     //debugging main
 //    public static void main(String[] args){
@@ -50,8 +51,10 @@ public class Waifu2xCaffe {
     private int frameCount;
     private Process waifu2xProc = null;
     private PrintStream log;
+    private int scaledCount = 0;
 
-    public Waifu2xCaffe(String workspace, String waifu2xCaffeDir, String outputDir, String upscaledDir, int frameCount, String setting, String noiseLevel, String scaleFactor) {
+    public Waifu2xCaffe(String workspace, String waifu2xCaffeDir, String outputDir, String upscaledDir, int frameCount, String setting, String noiseLevel, String scaleFactor, boolean isResume) {
+        super(isResume);
         this.waifu2xCaffeDir = waifu2xCaffeDir;
         this.outputDir = outputDir;
         this.upscaledDir = upscaledDir;
@@ -64,6 +67,9 @@ public class Waifu2xCaffe {
         for (int x = 1; x < frameCount - 1; x++) {
             upscaledFrames.add(x);
         }
+
+        if(isResume)
+            resumeCondition();
 
         try {
             log = new PrintStream(new File(workspace + "logs" + separator + "waifu2x_logfile.txt"));
@@ -91,20 +97,63 @@ public class Waifu2xCaffe {
         }
     }
 
+    @Override
+    public void resumeCondition(){
+//        System.out.println("resume condition");
+//
+//        for(int x = 0; x < upscaledFrames.size(); x++){
+//            File temp = new File(upscaledDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".png");
+//            File deleteFile = new File(outputDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
+//
+//            if(temp.exists() && deleteFile.exists()){
+//                System.out.println("Deleting");
+//                deleteFile.delete();
+//            }
+//            System.out.println(temp.exists() + " " + deleteFile.exists());
+//        }
+    }
 
-    public void upscale() {
-        int scaledCount = 0;
+    @Override
+    public void run() {
+
+        System.out.println("waifu2x starting");
         shutdownHook();
-
         String upscaleCommand = waifu2xCaffeDir + " -i " + outputDir + " -p" + setting + " -n " + noiseLevel + " -s " + scaleFactor + " -o " + upscaledDir;
 
 
         /**
          * We keep track of how many frames are removed with 'scaledCount', and exit when we're done.
          */
-        while (scaledCount < frameCount - 4) { //todo im being real chief, idk why it's -4 right here.
-            Runtime run = Runtime.getRuntime();
 
+        //TODO resuming waifu2xCaffee run not working properly.
+        //files not being removed when they should from upscaled folder.
+        while (upscaledFrames.size() > 1) {
+            log.println(upscaledFrames.size());
+            log.println(upscaledFrames);
+            /**
+             * Waifu2x-Caffee will niavely upscale everything in a folder. To mitigate this, we upscale images
+             * in batches, in which at a given moment, create a list of all the images in 'outputs', upscale them
+             * (the previous command), and now here we delete the ones that upscaled, so the new batch
+             * of upscaled images won't be a part of the next batch.
+             */
+
+
+            //start backwards so .remove doesn't affect the ordering 
+            for(int x = upscaledFrames.size() - 1; x >= 0; x--){
+                File temp = new File(upscaledDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".png");
+                File deleteFile = new File(outputDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".jpg");
+
+
+                if(temp.exists() && deleteFile.exists()){
+                    deleteFile.delete();
+                    upscaledFrames.remove(upscaledFrames.get(x));
+                }
+                else if(temp.exists()){
+                    upscaledFrames.remove(upscaledFrames.get(x));
+                }
+            }
+
+            Runtime run = Runtime.getRuntime();
             try {
                 log.println("running command " + upscaleCommand);
                 waifu2xProc = run.exec(upscaleCommand);
@@ -120,26 +169,6 @@ public class Waifu2xCaffe {
                 }
             }
 
-            /**
-             * Waifu2x-Caffee will niavely upscale everything in a folder. To mitigate this, we upscale images
-             * in batches, in which at a given moment, create a list of all the images in 'outputs', upscale them
-             * (the previous command), and now here we delete the ones that upscaled, so the new batch
-             * of upscaled images won't be a part of the next batch.
-             */
-
-            for (int x = 0; x < upscaledFrames.size(); x++) {
-                File tmpDir = new File(upscaledDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".png");
-                if (tmpDir.exists()) {
-                    File deleteFile = new File(outputDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".jpg");
-                    if (deleteFile.exists()) {
-                        deleteFile.delete();
-                        upscaledFrames.remove(x);
-                        x--;
-                        scaledCount++;
-                        log.println("removed, scaleCoutn is  " + scaledCount);
-                    }
-                }
-            }
         }
     }
 

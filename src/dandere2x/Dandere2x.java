@@ -3,6 +3,7 @@ package dandere2x;
 import dandere2x.Utilities.Dandere2xCUI;
 import dandere2x.Utilities.DandereUtils;
 import dandere2x.Utilities.ParseConfig;
+import wrappers.Dandere2xCpp;
 import wrappers.FFMpeg;
 import wrappers.Waifu2xCaffe;
 
@@ -53,8 +54,8 @@ public class Dandere2x {
 
     //session stuff
     private Properties prop;
-    private Process dandere2xCppProc;
     private PrintStream log;
+    private boolean isResume;
 
 
     /**
@@ -68,10 +69,11 @@ public class Dandere2x {
 
         this.prop = config.getProp();
         this.assignProperties();
+        this.isResume = false;
     }
 
+    //todo implement resume
     public void start() throws IOException, InterruptedException {
-
         createDirs();
         try {
             log = new PrintStream(new File(workspace + "logs" + separator + "dandere2x_logfile.txt"));
@@ -79,28 +81,17 @@ public class Dandere2x {
             System.out.println("Fatal Error: Could not create file at " + workspace + "logs" + separator + "dandere2x_logfile.txt");
             exit(1);
         }
-
         frameCount = DandereUtils.getSecondsFromDuration(duration) * frameRate;
-
 
         //if the frames have already been extracted, don't do it again
         if((!new File(workspace + "inputs").exists()) || DandereUtils.getFileTypeInFolder(workspace + "inputs",".jpg").isEmpty()){
-            newRun();
+            this.isResume = false;
+            log.println("new dandere2x session");
+            ffmpegSetup();
         }
         else{
-            System.out.println("Resuming session");
-            log.println("Resuming session");
-
-            System.out.println("difference frames counted: " +
-                    DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator,".jpg").size());
-            System.out.println("merged frames counted: " +
-                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size());
-
-            log.println("difference frames counted: " +
-                    DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator,".jpg").size());
-            log.println("merged frames counted: " +
-                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size());
-
+            log.println("Dandere2x Is Resuming...");
+            this.isResume = true;
         }
 
         log.println("framecount: " + frameCount);
@@ -110,25 +101,17 @@ public class Dandere2x {
         log.println("calling initial setup");
         initialSetup();
 
-        log.println("initiating shutdown hook");
-        shutdownHook();
-
         log.println("starting threaded processes");
         startThreadedProcesses();
     }
 
-    public void newRun() throws IOException, InterruptedException{
+    public void ffmpegSetup() throws IOException, InterruptedException{
         log.println("extracting frames");
         FFMpeg.extractFrames(log, ffmpegDir, workspace, timeFrame, fileDir, duration);
 
         log.println("extracting audio");
         FFMpeg.extractAudio(log, ffmpegDir, workspace, timeFrame, duration, fileDir, audioLayer);
     }
-
-    public void resume() throws IOException, InterruptedException {
-
-    }
-
 
     private void assignProperties() {
 
@@ -157,20 +140,6 @@ public class Dandere2x {
 
     }
 
-    //if program exits and dandere2xCppProc is still running, close that up
-    private void shutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                if (dandere2xCppProc.isAlive()) {
-                    System.out.println("Unexpected shutting down before dandere2xCppProc finished! Attempting to close");
-                    log.println("Unexpected shutting down before dandere2xCppProc finished! Attempting to close");
-                    dandere2xCppProc.destroyForcibly();
-                    System.out.println("Exiting..");
-                    log.println("Exiting..");
-                }
-            }
-        });
-    }
 
 
     //setup folders in workspace
@@ -213,6 +182,26 @@ public class Dandere2x {
             System.out.println(key + ": " + value);
             log.println(key + ": " + value);
         }
+
+        if(isResume){
+            System.out.println("----resume notes------");
+            System.out.println("difference frames counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator + "metadata" + separator, ".txt").size());
+            System.out.println("merged frames counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size());
+            System.out.println("pdata counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "pframe_data" + separator,".txt").size());
+
+            log.println("----resume notes------");
+            log.println("difference frames counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator + "metadata" + separator, ".txt").size());
+            log.println("merged frames counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size());
+
+            log.println("pdata counted: " +
+                    DandereUtils.getFileTypeInFolder(workspace + "pframe_data" + separator,".txt").size());
+
+        }
         out.println("----------");
         System.out.println("----------");
     }
@@ -236,10 +225,15 @@ public class Dandere2x {
     private void startThreadedProcesses() throws IOException, InterruptedException {
 
         log.println("starting threaded processes...");
+        if(isResume)
+            log.println("is resume");
 
-
-        ProcessBuilder dandere2xPB = getDandere2xPB();
-        dandere2xCppProc = dandere2xPB.start();
+        Thread dandere2xCpp = new Thread() {
+            public void run() {
+                Dandere2xCpp cpp = new Dandere2xCpp(workspace,dandere2xCppDir,frameCount,blockSize,tolerance,stepSize,isResume);
+                cpp.run();
+            }
+        };
 
         Thread dandereCUI = new Thread() {
             public void run() {
@@ -250,17 +244,20 @@ public class Dandere2x {
 
         Thread inversionThread = new Thread() {
             public void run() {
-                Difference inv = new Difference(blockSize, 2, workspace, frameCount);
+                Difference inv = new Difference(blockSize, 2, workspace, frameCount, isResume);
                 inv.run();
             }
         };
 
         Thread mergeThread = new Thread() {
             public void run() {
-                Merge dif = new Merge(blockSize, 2, workspace, frameCount);
+                Merge dif = new Merge(blockSize, 2, workspace, frameCount, isResume);
                 dif.run();
             }
         };
+
+        log.println("Starting Dandere2xCpp Thread");
+        dandere2xCpp.start();
 
         log.println("Starting cui thread");
         dandereCUI.start();
@@ -284,10 +281,10 @@ public class Dandere2x {
 
             //start the process of upscaling every inversion
             log.println("starting waifu2x caffee upscaling...");
-            Waifu2xCaffe waifu = new Waifu2xCaffe(workspace, waifu2xCaffeCUIDir, outLocation, upscaledLocation, frameCount, processType, noiseLevel, "2");
+            Waifu2xCaffe waifu = new Waifu2xCaffe(workspace, waifu2xCaffeCUIDir, outLocation, upscaledLocation, frameCount, processType, noiseLevel, "2", isResume);
             Thread waifuxThread = new Thread() {
                 public void run() {
-                    waifu.upscale();
+                    waifu.run();
                 }
             };
             waifuxThread.start();
@@ -296,7 +293,6 @@ public class Dandere2x {
 
         inversionThread.join();
         mergeThread.join();
-        while (dandere2xCppProc.isAlive()) ;
         log.println("dandere2x finished correctly...");
     }
 
