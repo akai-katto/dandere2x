@@ -49,6 +49,7 @@ public class Dandere2x {
     private int blockSize;
     private int stepSize;
     private int bleed;
+    private double scaleFactor;
     private double tolerance;
 
 
@@ -72,7 +73,7 @@ public class Dandere2x {
         this.isResume = false;
     }
 
-    //todo implement resume
+    //I feel this can be cleaned more
     public void start() throws IOException, InterruptedException {
         createDirs();
         try {
@@ -84,19 +85,23 @@ public class Dandere2x {
         frameCount = DandereUtils.getSecondsFromDuration(duration) * frameRate;
 
         //if the frames have already been extracted, don't do it again
-        if((!new File(workspace + "inputs").exists()) || DandereUtils.getFileTypeInFolder(workspace + "inputs",".jpg").isEmpty()){
+        if ((!new File(workspace + "inputs").exists()) || DandereUtils.getFileTypeInFolder(workspace + "inputs", ".jpg").isEmpty()) {
             this.isResume = false;
             log.println("new dandere2x session");
             ffmpegSetup();
-        }
-        else{
+        } else {
             log.println("Dandere2x Is Resuming...");
             this.isResume = true;
         }
 
         log.println("framecount: " + frameCount);
 
+
+        //update properties file
+        this.prop.setProperty("frameCount", frameCount + "");
+
         printDandereSession();
+
 
         log.println("calling initial setup");
         initialSetup();
@@ -105,7 +110,7 @@ public class Dandere2x {
         startThreadedProcesses();
     }
 
-    public void ffmpegSetup() throws IOException, InterruptedException{
+    public void ffmpegSetup() throws IOException, InterruptedException {
         log.println("extracting frames");
         FFMpeg.extractFrames(log, ffmpegDir, workspace, timeFrame, fileDir, duration);
 
@@ -137,9 +142,8 @@ public class Dandere2x {
         this.noiseLevel = this.prop.getProperty("noiseLevel");
         this.processType = this.prop.getProperty("processType");
         this.bleed = Integer.parseInt(this.prop.getProperty("bleed"));
-
+        this.scaleFactor = Double.parseDouble(this.prop.getProperty("scaleFactor"));
     }
-
 
 
     //setup folders in workspace
@@ -183,23 +187,23 @@ public class Dandere2x {
             log.println(key + ": " + value);
         }
 
-        if(isResume){
+        if (isResume) {
             System.out.println("----resume notes------");
             System.out.println("difference frames counted: " +
                     DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator + "metadata" + separator, ".txt").size());
             System.out.println("merged frames counted: " +
-                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size());
+                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator, ".jpg").size());
             System.out.println("pdata counted: " +
-                    DandereUtils.getFileTypeInFolder(workspace + "pframe_data" + separator,".txt").size());
+                    DandereUtils.getFileTypeInFolder(workspace + "pframe_data" + separator, ".txt").size());
 
             log.println("----resume notes------");
             log.println("difference frames counted: " +
                     DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator + "metadata" + separator, ".txt").size());
             log.println("merged frames counted: " +
-                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size());
+                    DandereUtils.getFileTypeInFolder(workspace + "merged" + separator, ".jpg").size());
 
             log.println("pdata counted: " +
-                    DandereUtils.getFileTypeInFolder(workspace + "pframe_data" + separator,".txt").size());
+                    DandereUtils.getFileTypeInFolder(workspace + "pframe_data" + separator, ".txt").size());
 
         }
         out.println("----------");
@@ -225,12 +229,12 @@ public class Dandere2x {
     private void startThreadedProcesses() throws IOException, InterruptedException {
 
         log.println("starting threaded processes...");
-        if(isResume)
+        if (isResume)
             log.println("is resume");
 
         Thread dandere2xCpp = new Thread() {
             public void run() {
-                Dandere2xCpp cpp = new Dandere2xCpp(workspace,dandere2xCppDir,frameCount,blockSize,tolerance,stepSize,isResume);
+                Dandere2xCpp cpp = new Dandere2xCpp(workspace, dandere2xCppDir, frameCount, blockSize, tolerance, stepSize, isResume);
                 cpp.run();
             }
         };
@@ -244,14 +248,14 @@ public class Dandere2x {
 
         Thread inversionThread = new Thread() {
             public void run() {
-                Difference inv = new Difference(blockSize, 2, workspace, frameCount, isResume);
+                Difference inv = new Difference(blockSize, bleed, workspace, frameCount, isResume);
                 inv.run();
             }
         };
 
         Thread mergeThread = new Thread() {
             public void run() {
-                Merge dif = new Merge(blockSize, 2, workspace, frameCount, isResume);
+                Merge dif = new Merge(blockSize, bleed, workspace, frameCount, scaleFactor, isResume);
                 dif.run();
             }
         };
@@ -277,11 +281,11 @@ public class Dandere2x {
 
             //manually upscale first frame
             Waifu2xCaffe.upscaleFile(waifu2xCaffeCUIDir, fileLocation + "frame1.jpg",
-                    mergedDir + "merged_" + 1 + ".jpg", processType, noiseLevel, "2");
+                    mergedDir + "merged_" + 1 + ".jpg", processType, noiseLevel, scaleFactor);
 
             //start the process of upscaling every inversion
             log.println("starting waifu2x caffee upscaling...");
-            Waifu2xCaffe waifu = new Waifu2xCaffe(workspace, waifu2xCaffeCUIDir, outLocation, upscaledLocation, frameCount, processType, noiseLevel, "2", isResume);
+            Waifu2xCaffe waifu = new Waifu2xCaffe(workspace, waifu2xCaffeCUIDir, outLocation, upscaledLocation, frameCount, processType, noiseLevel, scaleFactor, isResume);
             Thread waifuxThread = new Thread() {
                 public void run() {
                     waifu.run();
@@ -297,23 +301,21 @@ public class Dandere2x {
     }
 
 
-
     /**
      * IF we're on linux, create the script for the user to run. The process builder command
      * to start waifu2x-cpp is also different than that of windows.
      */
-    private ProcessBuilder getDandere2xPB(){
+    private ProcessBuilder getDandere2xPB() {
 
-        int count = DandereUtils.getFileTypeInFolder(workspace + "pframe_data",".txt").size();
+        int count = DandereUtils.getFileTypeInFolder(workspace + "pframe_data", ".txt").size();
 
         String type = null;
-        if(count == 0){
+        if (count == 0) {
             log.print("New Dandere2x Session");
             type = "n";
-        }
-        else{
-            new File(workspace + "pframe_data" + separator + "pframe_"+count).delete();
-            new File(workspace + "inversion_data" + separator + "inversion_"+count).delete();
+        } else {
+            new File(workspace + "pframe_data" + separator + "pframe_" + count).delete();
+            new File(workspace + "inversion_data" + separator + "inversion_" + count).delete();
             log.println("Resuming Dandere2x Session: " + count);
             type = "r";
         }
@@ -324,12 +326,12 @@ public class Dandere2x {
         if (DandereUtils.isLinux()) {
             log.println("using linux...");
             dandere2xPB = new ProcessBuilder(dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", type,count + "");
+                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", type, count + "");
             createWaifu2xScript();
         } else {
             log.println("using windows...");
             dandere2xPB = new ProcessBuilder("cmd.exe", "/C", "start", dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", type ,count + "");
+                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", type, count + "");
         }
 
         System.out.println("type: " + type + " count: " + count);

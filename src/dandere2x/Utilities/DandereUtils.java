@@ -43,7 +43,7 @@ public class DandereUtils {
     }
 
 
-    public static ArrayList<String> getFileTypeInFolder(String path, String type){
+    public static ArrayList<String> getFileTypeInFolder(String path, String type) {
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
         ArrayList<String> fileList = new ArrayList<String>();
@@ -55,7 +55,6 @@ public class DandereUtils {
         Collections.sort(fileList);
         return fileList;
     }
-
 
 
     /**
@@ -111,6 +110,7 @@ public class DandereUtils {
 
 
     //this isnt working on linux
+
     /**
      * Listens in to see if a file is valid or not.
      * Continue to cycle within a time limit. Currently time limit is 10000 * 100 = 100 seconds.

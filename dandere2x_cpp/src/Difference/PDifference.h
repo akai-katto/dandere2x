@@ -94,6 +94,9 @@ public:
 
     }
 
+    
+    
+    //need to implement a better herustic 
     PDifference(std::string workspace,
             unsigned int blockSize,
             int bleed,

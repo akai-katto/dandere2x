@@ -23,9 +23,10 @@ public class Merge extends DThread implements Runnable {
     private int lexiConstant = 6;
     private PrintStream log;
     private int currentFrame;
+    private double scaleFactor;
     private boolean isResume;
 
-    public Merge(int blockSize, int bleed, String workspace, int frameCount, boolean isResume) {
+    public Merge(int blockSize, int bleed, String workspace, int frameCount, double scaleFactor, boolean isResume) {
         super(isResume);
 
         try {
@@ -38,8 +39,9 @@ public class Merge extends DThread implements Runnable {
         this.bleed = bleed;
         this.workspace = workspace;
         this.frameCount = frameCount;
+        this.scaleFactor = scaleFactor;
 
-        if(isResume)
+        if (isResume)
             setCurrentFrame();
 
 
@@ -47,7 +49,7 @@ public class Merge extends DThread implements Runnable {
 
 
     @Override
-    public void resumeCondition(){
+    public void resumeCondition() {
         setCurrentFrame();
     }
 
@@ -100,21 +102,21 @@ public class Merge extends DThread implements Runnable {
     /**
      * The protocol for resuming a dandere2x run is pretty similiar to that of starting a new one,
      * just change the 'current' frame so we don't have to start from scratch.
-     *
+     * <p>
      * Count how many images have been upscaled, and that's own new starting point.
-     *
+     * <p>
      * -1 in case previous image didnt save correctly.
      */
-    public void setCurrentFrame(){
+    public void setCurrentFrame() {
 
-        int frameCount = DandereUtils.getFileTypeInFolder(workspace + "merged" + separator,".jpg").size();
+        int countHowManyFrames = DandereUtils.getFileTypeInFolder(workspace + "merged" + separator, ".jpg").size();
 
-        if(frameCount==0 || frameCount == 1){
+        if (countHowManyFrames == 0 || countHowManyFrames == 1) {
             log.println("new merged session");
             this.currentFrame = 1;
-        }else {
-            log.println("resuming merged session: " + (frameCount-1+""));
-            this.currentFrame = frameCount-1;
+        } else {
+            log.println("resuming merged session: " + (countHowManyFrames - 1 + ""));
+            this.currentFrame = countHowManyFrames - 1;
         }
         return;
     }
@@ -175,20 +177,26 @@ public class Merge extends DThread implements Runnable {
         try {
             //piece together the image using predictive information
             for (int outer = 0; outer < vectorDisplacements.size(); outer++) {
-                for (int x = 0; x < blockSize * 2; x++) {
-                    for (int y = 0; y < blockSize * 2; y++) {
-                        out.set(x + 2 * vectorDisplacements.get(outer).x, y + 2 * vectorDisplacements.get(outer).y,
-                                base.getNoThrow(x + 2 * vectorDisplacements.get(outer).newX, y + 2 * vectorDisplacements.get(outer).newY));
+                for (int x = 0; x < blockSize * scaleFactor; x++) {
+                    for (int y = 0; y < blockSize * scaleFactor; y++) {
+                        out.set((int) (x + scaleFactor * vectorDisplacements.get(outer).x),
+                                (int) (y + scaleFactor * vectorDisplacements.get(outer).y),
+                                base.getNoThrow(
+                                        (int) (x + scaleFactor * vectorDisplacements.get(outer).newX),
+                                        (int) (y + scaleFactor * vectorDisplacements.get(outer).newY)));
                     }
                 }
             }
 
             //put inversion (the missing) information into the image
             for (int outer = 0; outer < inversionDisplacements.size(); outer++) {
-                for (int x = 0; x < (blockSize * 2); x++) {
-                    for (int y = 0; y < (blockSize * 2); y++) {
-                        out.set(inversionDisplacements.get(outer).x * 2 + x, inversionDisplacements.get(outer).y * 2 + y,
-                                inversion.get(inversionDisplacements.get(outer).newX * (2 * (blockSize + bleed)) + x + bleed, inversionDisplacements.get(outer).newY * (2 * (blockSize + bleed)) + y + bleed));
+                for (int x = 0; x < (blockSize * scaleFactor); x++) {
+                    for (int y = 0; y < (blockSize * scaleFactor); y++) {
+                        out.set((int) (inversionDisplacements.get(outer).x * scaleFactor + x),
+                                (int) (inversionDisplacements.get(outer).y * scaleFactor + y),
+                                inversion.get(
+                                        (int) (inversionDisplacements.get(outer).newX * (scaleFactor * (blockSize + bleed * 2)) + x + scaleFactor * bleed),
+                                        (int) (inversionDisplacements.get(outer).newY * (scaleFactor * (blockSize + bleed * 2)) + y + scaleFactor * bleed)));
 
                     }
                 }

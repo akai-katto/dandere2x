@@ -16,10 +16,12 @@ public abstract class DThread implements Runnable {
 
 
     boolean isResume;
-    public DThread(boolean isResume){
+
+    public DThread(boolean isResume) {
         this.isResume = isResume;
     }
 
     abstract public void run();
+
     abstract public void resumeCondition();
 }

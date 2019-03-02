@@ -46,14 +46,16 @@ public class Waifu2xCaffe extends DThread {
     private String upscaledDir;
     private String setting;
     private String noiseLevel;
-    private String scaleFactor;
     private ArrayList<Integer> upscaledFrames;
     private int frameCount;
     private Process waifu2xProc = null;
     private PrintStream log;
     private int scaledCount = 0;
+    private double scaleFactor;
 
-    public Waifu2xCaffe(String workspace, String waifu2xCaffeDir, String outputDir, String upscaledDir, int frameCount, String setting, String noiseLevel, String scaleFactor, boolean isResume) {
+    public Waifu2xCaffe(String workspace, String waifu2xCaffeDir, String outputDir, String upscaledDir, int frameCount,
+                        String setting, String noiseLevel, double scaleFactor, boolean isResume) {
+
         super(isResume);
         this.waifu2xCaffeDir = waifu2xCaffeDir;
         this.outputDir = outputDir;
@@ -68,7 +70,7 @@ public class Waifu2xCaffe extends DThread {
             upscaledFrames.add(x);
         }
 
-        if(isResume)
+        if (isResume)
             resumeCondition();
 
         try {
@@ -80,7 +82,7 @@ public class Waifu2xCaffe extends DThread {
     }
 
     //a function that exists soly for upscaling a single file.
-    public static void upscaleFile(String waifu2xCaffeDir, String input, String output, String setting, String noiseLevel, String scaleFactor) {
+    public static void upscaleFile(String waifu2xCaffeDir, String input, String output, String setting, String noiseLevel, double scaleFactor) {
         Process proc = null;
         Runtime run = Runtime.getRuntime();
 
@@ -98,7 +100,7 @@ public class Waifu2xCaffe extends DThread {
     }
 
     @Override
-    public void resumeCondition(){
+    public void resumeCondition() {
 //        System.out.println("resume condition");
 //
 //        for(int x = 0; x < upscaledFrames.size(); x++){
@@ -139,16 +141,15 @@ public class Waifu2xCaffe extends DThread {
 
 
             //start backwards so .remove doesn't affect the ordering 
-            for(int x = upscaledFrames.size() - 1; x >= 0; x--){
+            for (int x = upscaledFrames.size() - 1; x >= 0; x--) {
                 File temp = new File(upscaledDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".png");
                 File deleteFile = new File(outputDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".jpg");
 
 
-                if(temp.exists() && deleteFile.exists()){
+                if (temp.exists() && deleteFile.exists()) {
                     deleteFile.delete();
                     upscaledFrames.remove(upscaledFrames.get(x));
-                }
-                else if(temp.exists()){
+                } else if (temp.exists()) {
                     upscaledFrames.remove(upscaledFrames.get(x));
                 }
             }

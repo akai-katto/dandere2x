@@ -226,31 +226,4 @@ public class Frame {
     }
 
 
-    /**
-     * Unused function when Dandere was parallized. Leaving in for potential to parallize Dandere in future.
-     *
-     * @param output
-     */
-    public void saveFileThreaded(String output) {
-        JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
-        jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        jpegParams.setCompressionQuality(1f);
-        Thread t = new Thread() {
-            public void run() {
-                JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
-                jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                jpegParams.setCompressionQuality(1f);
-                final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next(); // specifies where the jpg image has to be written
-                try {
-                    writer.setOutput(new FileImageOutputStream(
-                            new File(output)));
-                    writer.write(null, new IIOImage(image, null, null), jpegParams);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        t.start();
-    }
-
 }

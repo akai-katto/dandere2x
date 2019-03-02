@@ -11,7 +11,7 @@ import java.io.PrintStream;
 import static java.io.File.separator;
 
 //wrapper for dandere2xCpp in a thread / runnable version
-public class Dandere2xCpp  extends DThread {
+public class Dandere2xCpp extends DThread {
 
     private Process dandere2xCppProc;
     private String runType;
@@ -24,7 +24,7 @@ public class Dandere2xCpp  extends DThread {
     private int stepSize;
     private double tolerance;
 
-    public Dandere2xCpp(String workspace, String dandere2xCppDir, int frameCount, int blockSize, double tolerance, int stepSize, boolean isResume){
+    public Dandere2xCpp(String workspace, String dandere2xCppDir, int frameCount, int blockSize, double tolerance, int stepSize, boolean isResume) {
         super(isResume);
 
         try {
@@ -41,17 +41,17 @@ public class Dandere2xCpp  extends DThread {
         this.tolerance = tolerance;
         this.count = 0;
 
-        if(isResume){
+        if (isResume) {
             log.println("resuming dandere2xcpp session");
-            resumeCondition();}
-        else {
+            resumeCondition();
+        } else {
             log.println("new dandere2xcpp session");
             this.runType = "n";
         }
     }
 
     @Override
-    public void run(){
+    public void run() {
         log.println("initiating shutdown hook");
         shutdownHook();
 
@@ -65,11 +65,11 @@ public class Dandere2xCpp  extends DThread {
     }
 
     @Override
-    public void resumeCondition(){
-        count = DandereUtils.getFileTypeInFolder(workspace + "pframe_data",".txt").size();
-        if(count != 0){
-            new File(workspace + "pframe_data" + separator + "pframe_"+count).delete();
-            new File(workspace + "inversion_data" + separator + "inversion_"+count).delete();
+    public void resumeCondition() {
+        count = DandereUtils.getFileTypeInFolder(workspace + "pframe_data", ".txt").size();
+        if (count != 0) {
+            new File(workspace + "pframe_data" + separator + "pframe_" + count).delete();
+            new File(workspace + "inversion_data" + separator + "inversion_" + count).delete();
             log.println("Resuming Dandere2x Session: " + count);
             this.runType = "r";
         }
@@ -89,22 +89,23 @@ public class Dandere2xCpp  extends DThread {
             }
         });
     }
+
     /**
      * IF we're on linux, create the script for the user to run. The process builder command
      * to start waifu2x-cpp is also different than that of windows.
      */
-    private ProcessBuilder getDandere2xPB(){
+    private ProcessBuilder getDandere2xPB() {
 
         ProcessBuilder dandere2xPB;
 
         if (DandereUtils.isLinux()) {
             log.println("using linux...");
             dandere2xPB = new ProcessBuilder(dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", runType,count + "");
+                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", runType, count + "");
         } else {
             log.println("using windows...");
             dandere2xPB = new ProcessBuilder("cmd.exe", "/C", "start", dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", runType ,count + "");
+                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", runType, count + "");
         }
 
         return dandere2xPB;

@@ -40,7 +40,7 @@ public class Difference extends DThread implements Runnable {
         this.workspace = workspace;
         this.imageCount = imageCount;
 
-        if(isResume)
+        if (isResume)
             resumeCondition();
 
 
@@ -48,29 +48,29 @@ public class Difference extends DThread implements Runnable {
 
 
     @Override
-    public void resumeCondition(){
+    public void resumeCondition() {
         setCurrentFrame();
     }
 
     /**
      * The protocol for resuming a dandere2x run is pretty similiar to that of starting a new one,
      * just change the 'current' frame so we don't have to start from scratch.
-     *
+     * <p>
      * Count how many images have been upscaled, and that's own new starting point
-     *
-     *
+     * <p>
+     * <p>
      * -1 in case previous image didnt save correctly.
      */
-    public void setCurrentFrame(){
+    public void setCurrentFrame() {
 
-        int frameCount = DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator + "metadata" + separator,".txt").size();
+        int frameCount = DandereUtils.getFileTypeInFolder(workspace + "outputs" + separator + "metadata" + separator, ".txt").size();
 
-        if(frameCount==0 || frameCount == 1){
+        if (frameCount == 0 || frameCount == 1) {
             log.println("new session");
             this.currentFrame = 1;
-        }else {
-            log.println("resuming session: " + (frameCount-1+""));
-            this.currentFrame = frameCount-1;
+        } else {
+            log.println("resuming session: " + (frameCount - 1 + ""));
+            this.currentFrame = frameCount - 1;
         }
         return;
     }
@@ -95,7 +95,7 @@ public class Difference extends DThread implements Runnable {
                     workspace + "outputs" + separator + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
 
             try {
-                new File(workspace + "outputs" + separator + "metadata" + separator + "file" + x +".txt").createNewFile();
+                new File(workspace + "outputs" + separator + "metadata" + separator + "file" + x + ".txt").createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -103,9 +103,6 @@ public class Difference extends DThread implements Runnable {
             saveDebug(x, im2, workspace + "debug" + separator + "debug_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
         }
     }
-
-
-
 
 
     /**
@@ -122,7 +119,7 @@ public class Difference extends DThread implements Runnable {
 
         //the size of the image needed is the square root (rougly) im dimensions. Might go over
         //sometimes, so we add + 1
-        int size = (int) (Math.sqrt(listInversion.size() / 4) + 1) * (blockSize + bleed);
+        int size = (int) (Math.sqrt(listInversion.size() / 4) + 1) * (blockSize + bleed * 2);
         Frame out = new Frame(size, size);
 
 
@@ -149,16 +146,20 @@ public class Difference extends DThread implements Runnable {
         }
 
 
-        //Use the vectors read to create a 'differences' image.
+        /**
+         * Bleed is multiplied twice because the bleed must be applied to both ends,
+         *
+         * but start getting colors from inputFile -1 from initial position.
+         */
         for (int outer = 0; outer < inversionVectors.size(); outer++) {
-            for (int x = 0; x < (blockSize + bleed); x++) {
-                for (int y = 0; y < (blockSize + bleed); y++) {
+            for (int x = 0; x < (blockSize + bleed * 2); x++) {
+                for (int y = 0; y < (blockSize + bleed * 2); y++) {
 
                     out.set(
-                            inversionVectors.get(outer).newX * (blockSize + bleed) + x,
-                            inversionVectors.get(outer).newY * (blockSize + bleed) + y,
-                            inputFile.getNoThrow(inversionVectors.get(outer).x + x - bleed / 2,
-                                    inversionVectors.get(outer).y + y - bleed / 2));
+                            inversionVectors.get(outer).newX * (blockSize + bleed * 2) + x,
+                            inversionVectors.get(outer).newY * (blockSize + bleed * 2) + y,
+                            inputFile.getNoThrow(inversionVectors.get(outer).x + x - bleed,
+                                    inversionVectors.get(outer).y + y - bleed));
 
                 }
             }
@@ -175,18 +176,18 @@ public class Difference extends DThread implements Runnable {
      * This function exists mostly to see what Dandere2x is seeing.
      *
      * @param ImageNumber
-     * @param Frame1
+     * @param frame1
      * @param outLocation
      * @return
      */
-    private boolean saveDebug(int ImageNumber, Frame Frame1, String outLocation) {
+    private boolean saveDebug(int ImageNumber, Frame frame1, String outLocation) {
         List<String> listPredictive = DandereUtils.listenText(log, workspace + separator + "pframe_data" + separator
                 + "pframe_" + ImageNumber + ".txt");
 
-        int xBounds = Frame1.width;
-        int yBounds = Frame1.height;
+        int xBounds = frame1.width;
+        int yBounds = frame1.height;
 
-        Frame PDImage = new Frame(xBounds, yBounds);
+        Frame debugImage = new Frame(xBounds, yBounds);
 
         ArrayList<VectorDisplacement> blocks = new ArrayList<>();
 
@@ -203,13 +204,13 @@ public class Difference extends DThread implements Runnable {
         for (int outer = 0; outer < blocks.size(); outer++) {
             for (int x = 0; x < blockSize; x++) {
                 for (int y = 0; y < blockSize; y++) {
-                    PDImage.set(x + blocks.get(outer).x, y + blocks.get(outer).y,
-                            Frame1.getNoThrow(x + blocks.get(outer).newX, y + blocks.get(outer).newY));
+                    debugImage.set(x + blocks.get(outer).x, y + blocks.get(outer).y,
+                            frame1.getNoThrow(x + blocks.get(outer).newX, y + blocks.get(outer).newY));
                 }
             }
         }
 
-        PDImage.saveFile(outLocation);
+        debugImage.saveFile(outLocation);
 
         return true;
     }
