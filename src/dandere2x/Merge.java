@@ -153,8 +153,6 @@ public class Merge extends DThread implements Runnable {
                             Integer.parseInt(listInversion.get(x * 4 + 2)),
                             Integer.parseInt(listInversion.get(x * 4 + 3))));
         }
-
-
         //if it is the case that both lists are empty, then the upscaled image is the new frame.
         //This is because if we have no predictive vectors, then the image we're looking at
         //right now has nothing to do with the previous frame
@@ -187,7 +185,6 @@ public class Merge extends DThread implements Runnable {
                     }
                 }
             }
-
             //put inversion (the missing) information into the image
             for (int outer = 0; outer < inversionDisplacements.size(); outer++) {
                 for (int x = 0; x < (blockSize * scaleFactor); x++) {

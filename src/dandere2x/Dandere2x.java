@@ -112,7 +112,7 @@ public class Dandere2x {
 
     public void ffmpegSetup() throws IOException, InterruptedException {
         log.println("extracting frames");
-        FFMpeg.extractFrames(log, ffmpegDir, workspace, timeFrame, fileDir, duration);
+        FFMpeg.extractFrames(log, ffmpegDir, workspace, timeFrame, fileDir, duration, frameRate);
 
         log.println("extracting audio");
         FFMpeg.extractAudio(log, ffmpegDir, workspace, timeFrame, duration, fileDir, audioLayer);
@@ -278,7 +278,6 @@ public class Dandere2x {
          */
         if (!DandereUtils.isLinux()) {
             log.println("upscaling frame1");
-
             //manually upscale first frame
             Waifu2xCaffe.upscaleFile(waifu2xCaffeCUIDir, fileLocation + "frame1.jpg",
                     mergedDir + "merged_" + 1 + ".jpg", processType, noiseLevel, scaleFactor);
@@ -294,6 +293,9 @@ public class Dandere2x {
             waifuxThread.start();
             waifuxThread.join();
         }
+        else{
+            createWaifu2xScript();
+        }
 
         inversionThread.join();
         mergeThread.join();
@@ -301,43 +303,6 @@ public class Dandere2x {
     }
 
 
-    /**
-     * IF we're on linux, create the script for the user to run. The process builder command
-     * to start waifu2x-cpp is also different than that of windows.
-     */
-    private ProcessBuilder getDandere2xPB() {
-
-        int count = DandereUtils.getFileTypeInFolder(workspace + "pframe_data", ".txt").size();
-
-        String type = null;
-        if (count == 0) {
-            log.print("New Dandere2x Session");
-            type = "n";
-        } else {
-            new File(workspace + "pframe_data" + separator + "pframe_" + count).delete();
-            new File(workspace + "inversion_data" + separator + "inversion_" + count).delete();
-            log.println("Resuming Dandere2x Session: " + count);
-            type = "r";
-        }
-
-
-        ProcessBuilder dandere2xPB;
-
-        if (DandereUtils.isLinux()) {
-            log.println("using linux...");
-            dandere2xPB = new ProcessBuilder(dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", type, count + "");
-            createWaifu2xScript();
-        } else {
-            log.println("using windows...");
-            dandere2xPB = new ProcessBuilder("cmd.exe", "/C", "start", dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", type, count + "");
-        }
-
-        System.out.println("type: " + type + " count: " + count);
-
-        return dandere2xPB;
-    }
 
     /*
     This is only for linux functions. This function will create a waifu2x_script.sh which the user is to
@@ -393,11 +358,11 @@ public class Dandere2x {
         StringBuilder frames = new StringBuilder();
         StringBuilder commands = new StringBuilder();
 
-        commands.append("Run these commands after runtime to remerge the videos at your own leisure.\n");
-        commands.append("ffmpeg -f image2 -framerate " + this.frameRate + " -i " + mergedDir + "merged_%d.jpg -r 24 " + workspace + "nosound.mp4\n");
+        commands.append("Run these commands after runtime to remerge the videos at your own leisure.\n\n");
+        commands.append("ffmpeg -f image2 -framerate " + this.frameRate + " -i " + mergedDir + "merged_%d.jpg -r 24 " + workspace + "nosound.mp4\n\n");
 
         commands.append("ffmpeg -i " + workspace + "nosound.mp4" + " -i " + workspace + "audio.mp3 -c copy "
-                + workspace + "sound.mp4\n");
+                + workspace + "sound.mp4\n\n");
 
 
         //this inner if statement creates a list of files for waifu2x to upscale. Waifu2x needs a list to upscale

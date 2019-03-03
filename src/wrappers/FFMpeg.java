@@ -69,7 +69,8 @@ public class FFMpeg {
     }
 
 
-    public static void extractFrames(PrintStream log, String ffmpegDir, String workspace, String timeFrame, String fileName, String duration) {
+    public static void extractFrames(PrintStream log, String ffmpegDir, String workspace, String timeFrame,
+                                     String fileName, String duration, int frameRate) {
 
         log.println("Extracting frames at " + workspace);
         new File(workspace + "inputs").mkdir();
@@ -81,12 +82,12 @@ public class FFMpeg {
 
         if (DandereUtils.isLinux()) {
             log.println("extracting frames on linux...");
-            command = "ffmpeg  -ss " + timeFrame + " -i " + fileName + " -qscale:v 2 " +
+            command = "ffmpeg  -ss " + timeFrame + " -i " + fileName + " -r " + frameRate + " -qscale:v 2 " +
                     " -t " + duration + " " + workspace + "inputs" + separator + "frame%01d.jpg";
         } else {
             log.println("extracting frames on windows..");
-            command = "cmd.exe /C start " + ffmpegDir + " -ss " + timeFrame + " -i " + fileName + " -qscale:v 2 " +
-                    " -t " + duration + " " + workspace + "inputs" + separator + "frame%01d.jpg";
+            command = "cmd.exe /C start " + ffmpegDir + " -ss " + timeFrame + " -i " + fileName + " -r "
+                    + frameRate + " -qscale:v 2 " + " -t " + duration + " " + workspace + "inputs" + separator + "frame%01d.jpg";
         }
 
         log.println("command for frame extraction: " + command);

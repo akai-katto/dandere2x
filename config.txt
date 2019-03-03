@@ -4,16 +4,15 @@
 waifu2xCaffeCUIDir=C:\\Users\\windwoz\\Desktop\\waifu2x-caffe\\waifu2x-caffe-cui.exe
 
 #file locations
-workspace=C:\\Users\\windwoz\\Desktop\\violet\\
-fileDir=C:\\Users\\windwoz\\Desktop\\release\\dandere2x-complete\\sample_videos\\violetcoolepisode.mkv
-#fileDir=C:\\Video\\yn\\yn.mkv
+workspace=C:\\Users\\windwoz\\Desktop\\workspaces\\violetforcedframelong\\
+fileDir=C:\\Users\\windwoz\\Desktop\\customvideos\\violetfull.mkv
 dandere2xCppDir=C:\\Users\\windwoz\\Desktop\\dandere2x\\dandere2x-master\\dandere2x_cpp\\dandere2xcpp_nb\\dist\\Debug\\Cygwin-Windows\\dandere2xcpp_nb.exe
 ffmpegDir=ffmpeg
 
 #session settings
-timeFrame=00:19:29
-duration=00:00:10
-audioLayer=0:1
+timeFrame=00:04:47
+duration=00:00:55
+audioLayer=0:2
 frameRate=24
 width=1920
 height=1080
@@ -27,7 +26,7 @@ bleed=1
 
 #waifu2x #customization
 noiseLevel=3
-scaleFactor=2.00
+scaleFactor=1.00
 processType=cudnn
 
 
