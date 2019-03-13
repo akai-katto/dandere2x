@@ -51,6 +51,8 @@ public class Dandere2x {
     private int bleed;
     private double scaleFactor;
     private double tolerance;
+    private double psnrHigh;
+    private double psnrLow;
 
 
     //session stuff
@@ -143,6 +145,9 @@ public class Dandere2x {
         this.processType = this.prop.getProperty("processType");
         this.bleed = Integer.parseInt(this.prop.getProperty("bleed"));
         this.scaleFactor = Double.parseDouble(this.prop.getProperty("scaleFactor"));
+
+        this.psnrHigh = Double.parseDouble(this.prop.getProperty("psnrHigh"));
+        this.psnrLow = Double.parseDouble(this.prop.getProperty("psnrLow"));
     }
 
 
@@ -234,7 +239,7 @@ public class Dandere2x {
 
         Thread dandere2xCpp = new Thread() {
             public void run() {
-                Dandere2xCpp cpp = new Dandere2xCpp(workspace, dandere2xCppDir, frameCount, blockSize, tolerance, stepSize, isResume);
+                Dandere2xCpp cpp = new Dandere2xCpp(workspace, dandere2xCppDir, frameCount, blockSize, tolerance,psnrHigh,psnrLow, stepSize, isResume);
                 cpp.run();
             }
         };

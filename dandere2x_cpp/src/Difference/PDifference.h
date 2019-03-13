@@ -94,9 +94,10 @@ public:
 
     }
 
-    
-    
+
+
     //need to implement a better herustic 
+
     PDifference(std::string workspace,
             unsigned int blockSize,
             int bleed,
@@ -113,30 +114,33 @@ public:
         this->tolerance = tolerence;
         this->debug = true;
     }
-    
+
     void generatePData() {
         if (!image1 || !image2)
             exit(1);
 
         matchAllBlocks();
 
+
+
+    }
+
+    void save() {
         if (!blocks.empty()) { //if parts of frame2 can be made of frame1, create frame2'
             saveInversion(workspace + separator() + "outputs" + separator() + "output_" + std::to_string(frameNumber) + ".jpg");
             this->writePFrameData(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
             this->inv->writeInversion(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
-        }
-        else { //if parts of frame2 cannot be made from frame1, just copy frame2. 
+        } else { //if parts of frame2 cannot be made from frame1, just copy frame2. 
             this->inv->writeEmpty(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
             this->printEmpty(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
         }
-
     }
 
-    
-    void forceCopy(){
-            this->inv->writeEmpty(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
-            this->printEmpty(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
+    void forceCopy() {
+        this->inv->writeEmpty(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
+        this->printEmpty(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
     }
+
     void saveInversion(string input) {
         inv = make_shared<Inversion>(blocks, blockSize, bleed, image2);
         inv->createInversion();
@@ -156,6 +160,7 @@ public:
 
 
     //match block is the inner call within 'matchAlBlocks' for readibility and maintability.
+
     inline void matchBlock(int x, int y) {
 
         //initial disp is currently deprecated, but has ambitiouns to be introduced later.
@@ -174,8 +179,7 @@ public:
             blocks.push_back(Block(x * blockSize, y * blockSize, x * blockSize + disp.x,
                     y * blockSize + disp.y, sum));
 
-        }
-            //if the blocks have been (potentially) displaced, conduct a diamond search to search for them. 
+        }            //if the blocks have been (potentially) displaced, conduct a diamond search to search for them. 
         else {
             //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
             Block result = DiamondSearch::diamondSearchIterativeSuper(
@@ -194,7 +198,6 @@ public:
         }
     }
 
-    
     /*
      Suppose frame1 (f1) and frame2 (f2) and f3 are the same image, but 
      * change 0.05 MSE each time. Suppose we allow a max of 0.06 MSE.
@@ -238,7 +241,6 @@ public:
         out.close();
     }
 
-
     void drawOver() {
         for (int outer = 0; outer < blocks.size(); outer++) {
             for (int x = 0; x < blockSize; x++) {
@@ -250,25 +252,25 @@ public:
         }
     }
 
-//    void save(std::string input, int compression = 100) {
-//
-//        unsigned int xBounds = image1->width;
-//        unsigned int yBounds = image1->height;
-//
-//        Image PFrame(xBounds, yBounds);
-//
-//        for (int outer = 0; outer < blocks.size(); outer++) {
-//            for (int x = 0; x < blockSize; x++) {
-//                for (int y = 0; y < blockSize; y++) {
-//                    PFrame.setColor(x + blocks[outer].xStart, y + blocks[outer].yStart,
-//                            image1->getColorNoThrow(x + blocks[outer].xEnd, y + blocks[outer].yEnd));
-//                }
-//            }
-//        }
-//
-//        PFrame.save(input.c_str(), compression);
-//
-//    }
+    //    void save(std::string input, int compression = 100) {
+    //
+    //        unsigned int xBounds = image1->width;
+    //        unsigned int yBounds = image1->height;
+    //
+    //        Image PFrame(xBounds, yBounds);
+    //
+    //        for (int outer = 0; outer < blocks.size(); outer++) {
+    //            for (int x = 0; x < blockSize; x++) {
+    //                for (int y = 0; y < blockSize; y++) {
+    //                    PFrame.setColor(x + blocks[outer].xStart, y + blocks[outer].yStart,
+    //                            image1->getColorNoThrow(x + blocks[outer].xEnd, y + blocks[outer].yEnd));
+    //                }
+    //            }
+    //        }
+    //
+    //        PFrame.save(input.c_str(), compression);
+    //
+    //    }
 
 
     /**

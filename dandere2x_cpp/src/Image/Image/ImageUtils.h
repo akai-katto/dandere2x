@@ -56,7 +56,7 @@ public:
      *
      * See https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio
      */
-    static double calculate(Image &imageA,
+    static double psnr(Image &imageA,
     Image &imageB){
         
         double sum = 0;
@@ -69,7 +69,7 @@ public:
         
         sum /= (imageA.height * imageA.width);
         
-        double result = 20 * log10(255) - 10 * log10(sum);
+        double result = 20 * log10(255*255) - 10 * log10(sum);
         return result;
     }
     

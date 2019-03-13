@@ -47,6 +47,7 @@ public:
     
 
     Image(std::string filename) {
+        
     	unsigned char* rgb; //the raw pixels
         int width, height, bpp;
         //decode
@@ -76,8 +77,9 @@ public:
             throw std::invalid_argument("invalid dimensions");
         }
 
-
         Color color;
+
+        
         color.r = input[x * 3 + 3 * y * width];
         color.g = input[x * 3 + 3 * y * width + 1];
         color.b = input[x * 3 + 3 * y * width + 2];

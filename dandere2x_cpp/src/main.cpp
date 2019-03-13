@@ -26,22 +26,27 @@ int main(int argc, char** argv){
     
     bool debug = false; //debug flag
     
-    string workspace;// = "/home/linux/Documents/workspace/work/";
-    int frameCount;// = 144;
-    int blockSize;// = 30;
-    double tolerance;// = 15;
-    int stepSize;// = 8;
-    string runType; // 'n' or 'r'
-    int resumeFrame; // 17
+    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\psnrtest\\";
+    int frameCount = 144;
+    int blockSize = 30;
+    double tolerance = 15;
+    double psnrMax = 95;
+    double psnrMin = 85;
+    int stepSize = 4;
+    string runType = "n";// 'n' or 'r'
+    int resumeFrame = 17;
+    
     
     if(!debug){
         workspace = argv[1];
         frameCount = stoi(argv[2]); 
         blockSize = atoi(argv[3]);
         tolerance = stod(argv[4]);
-        stepSize = stod(argv[5]);
-        runType = argv[6];
-        resumeFrame = atoi(argv[7]);
+        psnrMax = stod(argv[5]);
+        psnrMin = stod(argv[6]);
+        stepSize = stod(argv[7]);
+        runType = argv[8];
+        resumeFrame = atoi(argv[9]);
     }
 
     cout << "Settings" << endl;
@@ -49,15 +54,17 @@ int main(int argc, char** argv){
     cout << "frameCount: " << frameCount << endl;
     cout << "blockSize: " << blockSize << endl;
     cout << "tolerance: " << tolerance << endl;
+    cout << "psnrMin: " << psnrMin << endl;
+    cout << "psnrMax: " << psnrMax << endl;
     cout << "stepSize: " << stepSize << endl;
     cout << "runType: " << runType << endl;
     cout << "ResumeFrame (if valid): " << resumeFrame << endl;
     
     if(runType == "n"){
-        driverDifference(workspace,frameCount, blockSize, tolerance,stepSize);
+        driverDifference(workspace,frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize);
     }
     else if(runType == "r"){
-        driverDifferenceResume(workspace,resumeFrame, frameCount, blockSize, tolerance,stepSize);
+        driverDifferenceResume(workspace,resumeFrame, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize);
     }
     
     return 0;

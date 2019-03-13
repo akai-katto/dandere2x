@@ -22,9 +22,12 @@ public class Dandere2xCpp extends DThread {
     private int frameCount;
     private int blockSize;
     private int stepSize;
+    private double psnrHigh;
+    private double psnrLow;
     private double tolerance;
 
-    public Dandere2xCpp(String workspace, String dandere2xCppDir, int frameCount, int blockSize, double tolerance, int stepSize, boolean isResume) {
+    public Dandere2xCpp(String workspace, String dandere2xCppDir, int frameCount, int blockSize, double tolerance, double psnrHigh, double psnrLow,
+                        int stepSize, boolean isResume) {
         super(isResume);
 
         try {
@@ -39,6 +42,9 @@ public class Dandere2xCpp extends DThread {
         this.blockSize = blockSize;
         this.stepSize = stepSize;
         this.tolerance = tolerance;
+        this.psnrHigh = psnrHigh;
+        this.psnrLow = psnrLow;
+
         this.count = 0;
 
         if (isResume) {
@@ -105,7 +111,7 @@ public class Dandere2xCpp extends DThread {
         } else {
             log.println("using windows...");
             dandere2xPB = new ProcessBuilder("cmd.exe", "/C", "start", dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", stepSize + "", runType, count + "");
+                    workspace, frameCount + "", blockSize + "", tolerance + "", psnrHigh+"", psnrLow+"", stepSize + "", runType, count + "");
         }
 
         return dandere2xPB;
