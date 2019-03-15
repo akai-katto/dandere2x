@@ -247,12 +247,13 @@ public:
         out.close();
     }
 
-    void writeInversion(std::string input) {
-        std::ofstream out(input);
+    void writeInversion(std::string outputFile) {
+        std::ofstream out(outputFile + ".temp");
         for (int x = 0; x < invDifferences->list.size(); x++) {
             out << invDifferences->list[x].x << "\n" << invDifferences->list[x].y << "\n" <<
                     invDifferences->list[x].newX << "\n" << invDifferences->list[x].newY << std::endl;
         }
+        rename((outputFile + ".temp").c_str(), outputFile.c_str());
         out.close();
     }
 

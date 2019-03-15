@@ -123,6 +123,14 @@ public:
 
 
 
+//        std::cout << "blocks size " << blocks.size() << std::endl;
+//        std::cout << "maxBlocks " << maxBlocks << std::endl;
+//        if (maxBlocks - blocks.size() > (.80) * maxBlocks) {
+//            std::cout << "more dan 80 " << std::endl;
+//            blocks.clear();
+//        }
+
+
     }
 
     void save() {
@@ -179,7 +187,7 @@ public:
             blocks.push_back(Block(x * blockSize, y * blockSize, x * blockSize + disp.x,
                     y * blockSize + disp.y, sum));
 
-        }            //if the blocks have been (potentially) displaced, conduct a diamond search to search for them. 
+        }//if the blocks have been (potentially) displaced, conduct a diamond search to search for them. 
         else {
             //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
             Block result = DiamondSearch::diamondSearchIterativeSuper(
@@ -224,11 +232,13 @@ public:
      * @param outputFile - Where the file will be saved
      */
     void writePFrameData(string outputFile) {
-        std::ofstream out(outputFile);
+        std::ofstream out(outputFile + ".temp");
         for (int x = 0; x < blocks.size(); x++) {
             out << blocks[x].xStart << "\n" << blocks[x].yStart << "\n" <<
                     blocks[x].xEnd << "\n" << blocks[x].yEnd << endl;
         }
+        
+        rename((outputFile + ".temp").c_str(), outputFile.c_str());
         out.close();
     }
 
