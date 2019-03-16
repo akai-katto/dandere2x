@@ -120,16 +120,12 @@ public:
             exit(1);
 
         matchAllBlocks();
-
-
-
 //        std::cout << "blocks size " << blocks.size() << std::endl;
 //        std::cout << "maxBlocks " << maxBlocks << std::endl;
 //        if (maxBlocks - blocks.size() > (.80) * maxBlocks) {
 //            std::cout << "more dan 80 " << std::endl;
 //            blocks.clear();
 //        }
-
 
     }
 

@@ -40,6 +40,7 @@ public class Dandere2x {
     private String debugDir;
     private String logDir;
     private String ffmpegDir;
+    private String audioType;
 
     //custom but relevent settings
     private String noiseLevel;
@@ -117,7 +118,7 @@ public class Dandere2x {
         FFMpeg.extractFrames(log, ffmpegDir, workspace, timeFrame, fileDir, duration, frameRate);
 
         log.println("extracting audio");
-        FFMpeg.extractAudio(log, ffmpegDir, workspace, timeFrame, duration, fileDir, audioLayer);
+        FFMpeg.extractAudio(log, ffmpegDir, workspace, timeFrame, duration, fileDir, audioType, audioLayer);
     }
 
     private void assignProperties() {
@@ -145,6 +146,7 @@ public class Dandere2x {
         this.processType = this.prop.getProperty("processType");
         this.bleed = Integer.parseInt(this.prop.getProperty("bleed"));
         this.scaleFactor = Double.parseDouble(this.prop.getProperty("scaleFactor"));
+        this.audioType = this.prop.getProperty("audioType");
 
         this.psnrHigh = Double.parseDouble(this.prop.getProperty("psnrHigh"));
         this.psnrLow = Double.parseDouble(this.prop.getProperty("psnrLow"));
@@ -239,7 +241,7 @@ public class Dandere2x {
 
         Thread dandere2xCpp = new Thread() {
             public void run() {
-                Dandere2xCpp cpp = new Dandere2xCpp(workspace, dandere2xCppDir, frameCount, blockSize, tolerance,psnrHigh,psnrLow, stepSize, isResume);
+                Dandere2xCpp cpp = new Dandere2xCpp(workspace, dandere2xCppDir, frameCount, blockSize, tolerance, psnrHigh, psnrLow, stepSize, isResume);
                 cpp.run();
             }
         };
@@ -297,8 +299,7 @@ public class Dandere2x {
             };
             waifuxThread.start();
             waifuxThread.join();
-        }
-        else{
+        } else {
             createWaifu2xScript();
         }
 
@@ -306,7 +307,6 @@ public class Dandere2x {
         mergeThread.join();
         log.println("dandere2x finished correctly...");
     }
-
 
 
     /*
@@ -366,7 +366,7 @@ public class Dandere2x {
         commands.append("Run these commands after runtime to remerge the videos at your own leisure.\n\n");
         commands.append("ffmpeg -f image2 -framerate " + this.frameRate + " -i " + mergedDir + "merged_%d.jpg -r 24 " + workspace + "nosound.mp4\n\n");
 
-        commands.append("ffmpeg -i " + workspace + "nosound.mp4" + " -i " + workspace + "audio.mp3 -c copy "
+        commands.append("ffmpeg -i " + workspace + "nosound.mp4" + " -i " + workspace + "audio." + audioType + " -c copy "
                 + workspace + "sound.mp4\n\n");
 
 

@@ -1,5 +1,6 @@
 import dandere2x.Dandere2x;
 import dandere2x.Utilities.ParseConfig;
+import wrappers.Frame;
 
 import java.io.File;
 import java.io.FileNotFoundException;

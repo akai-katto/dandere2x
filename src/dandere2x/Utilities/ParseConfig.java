@@ -201,78 +201,78 @@ public class ParseConfig {
 
 
         if (!ParseConfig.blockSizeValid(blockSize, height, width)) {
-            log.println("--Invalid BlockSize--");
-            log.println("Your input: " + blockSize);
-            log.println("Valid blocksizes for your resolution are:");
+            System.out.println("--Invalid BlockSize--");
+            System.out.println("Your input: " + blockSize);
+            System.out.println("Valid blocksizes for your resolution are:");
 
             for (int x = 1; x < 250; x++) {
                 if (height % x == 0 && width % x == 0) {
                     log.print(x + ", ");
                 }
             }
-            log.println();
+             System.out.println();
             returnStatement = false;
         }
 
         if (DandereUtils.isLinux()) {
             if (!ParseConfig.dandereLuaValid(dandereDir)) {
-                log.println("--Invalid dandereDir--");
-                log.println("Your input: " + dandereDir);
+                 System.out.println("--Invalid dandereDir--");
+                 System.out.println("Your input: " + dandereDir);
                 returnStatement = false;
             }
         }
 
         if (!ParseConfig.workspaceValid(workspace)) {
-            log.println("--Invalid Workspace--");
-            log.println("Your input: " + workspace);
+             System.out.println("--Invalid Workspace--");
+             System.out.println("Your input: " + workspace);
             returnStatement = false;
         }
 
         if (!ParseConfig.fileValid(fileDir)) {
-            log.println("--Invalid Filedir--");
-            log.println("Your input: " + fileDir);
+             System.out.println("--Invalid Filedir--");
+             System.out.println("Your input: " + fileDir);
             returnStatement = false;
         }
 
         if (!ParseConfig.fileValid(dandere2xCppDir)) {
-            log.println("--Invalid Dandere2xCPPDir--");
-            log.println("Your input: " + dandere2xCppDir);
+             System.out.println("--Invalid Dandere2xCPPDir--");
+             System.out.println("Your input: " + dandere2xCppDir);
             returnStatement = false;
         }
 
         if (!DandereUtils.isLinux()) {
             if (!ParseConfig.fileValid(waifu2xCaffeCUIDir)) {
-                log.println("--Invalid waifu2xCaffeCUIDir--");
-                log.println("Your input: " + waifu2xCaffeCUIDir);
+                 System.out.println("--Invalid waifu2xCaffeCUIDir--");
+                 System.out.println("Your input: " + waifu2xCaffeCUIDir);
                 returnStatement = false;
             }
         }
 
         if (!DandereUtils.isLinux()) {
             if (ffmpegDir.equals("ffmpeg")) {
-                log.println("Using default ffmpeg");
+                 System.out.println("Using default ffmpeg");
             } else if (!ParseConfig.fileValid(ffmpegDir)) {
-                log.println("--Invalid ffmpegDir--");
-                log.println("Your input: " + ffmpegDir);
+                 System.out.println("--Invalid ffmpegDir--");
+                 System.out.println("Your input: " + ffmpegDir);
                 returnStatement = false;
             }
         }
 
         if (!ParseConfig.timeValid(timeFrame)) {
-            log.println("--Invalid timeFrame--");
-            log.println("Your input: " + timeFrame);
+             System.out.println("--Invalid timeFrame--");
+             System.out.println("Your input: " + timeFrame);
             returnStatement = false;
         }
 
         if (!ParseConfig.timeValid(duration)) {
-            log.println("--Invalid Duration--");
-            log.println("Your input: " + duration);
+             System.out.println("--Invalid Duration--");
+             System.out.println("Your input: " + duration);
             returnStatement = false;
         }
 
         if (!ParseConfig.audioLayerValid(audioLayer)) {
-            log.println("--Invalid audiolayer--");
-            log.println("Your input: " + audioLayer);
+             System.out.println("--Invalid audiolayer--");
+             System.out.println("Your input: " + audioLayer);
             returnStatement = false;
         }
 

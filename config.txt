@@ -4,33 +4,35 @@
 waifu2xCaffeCUIDir=C:\\Users\\windwoz\\Desktop\\waifu2x-caffe\\waifu2x-caffe-cui.exe
 
 #file locations
-workspace=C:\\Users\\windwoz\\Desktop\\workspace\\koth\\
-fileDir=C:\\Users\\windwoz\\Desktop\\customvideos\\koth.mkv
+workspace=C:\\Users\\windwoz\\Desktop\\workspace\\violettestsmall\\
+fileDir=C:\\Users\\windwoz\\Desktop\\customvideos\\violetfull.mkv
 dandere2xCppDir=C:\\Users\\windwoz\\Desktop\\dandere2x\\dandere2x\\dandere2x_cpp\\dandere2xcpp_nb\\dist\\Debug\\Cygwin-Windows\\dandere2xcpp_nb.exe
 ffmpegDir=ffmpeg
 
 #session settings
-timeFrame=00:01:08
-duration=00:00:50
+timeFrame=00:18:17
+duration=00:00:10
 audioLayer=0:1
 frameRate=24
-width=640
-height=480
+width=1920
+height=1080
 
 
 #customization
-blockSize=20
+blockSize=30
+
+#tolerance is deprecated rn I think
 tolerance=15
 stepSize=4
 bleed=1
-psnrLow=85
-psnrHigh=88
-
+psnrLow=92
+psnrHigh=95
+audioType=aac
 
 
 #waifu2x #customization
 noiseLevel=3
-scaleFactor=3.00
+scaleFactor=2.00
 processType=cudnn
 
 

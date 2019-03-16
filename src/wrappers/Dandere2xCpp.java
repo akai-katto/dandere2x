@@ -111,7 +111,7 @@ public class Dandere2xCpp extends DThread {
         } else {
             log.println("using windows...");
             dandere2xPB = new ProcessBuilder("cmd.exe", "/C", "start", dandere2xCppDir,
-                    workspace, frameCount + "", blockSize + "", tolerance + "", psnrHigh+"", psnrLow+"", stepSize + "", runType, count + "");
+                    workspace, frameCount + "", blockSize + "", tolerance + "", psnrHigh + "", psnrLow + "", stepSize + "", runType, count + "");
         }
 
         return dandere2xPB;

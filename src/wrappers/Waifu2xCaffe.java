@@ -122,7 +122,6 @@ public class Waifu2xCaffe extends DThread {
         shutdownHook();
         String upscaleCommand = waifu2xCaffeDir + " -i " + outputDir + " -p" + setting + " -n " + noiseLevel + " -s " + scaleFactor + " -o " + upscaledDir;
 
-
         /**
          * We keep track of how many frames are removed with 'scaledCount', and exit when we're done.
          */

@@ -21,7 +21,7 @@ public class FFMpeg {
      * @param audioLayer
      * @param duration
      */
-    public static void extractAudio(PrintStream log, String ffmpegDir, String workspace, String timeFrame, String duration, String fileName, String audioLayer) {
+    public static void extractAudio(PrintStream log, String ffmpegDir, String workspace, String timeFrame, String duration, String fileName, String audioType, String audioLayer) {
 
         Process proc = null;
         Runtime run = Runtime.getRuntime();
@@ -30,11 +30,11 @@ public class FFMpeg {
         if (DandereUtils.isLinux()) {
             log.println("extracting audio on linux..");
             command = "ffmpeg  -ss " + timeFrame + " -i " + fileName +
-                    " -t " + duration + " -map " + audioLayer + " " + workspace + "audio.mp3";
+                    " -t " + duration + " -map " + audioLayer + " " + workspace + "audio." + audioType;
         } else {
             log.println("extracting frames on windows...");
             command = "cmd.exe /C start " + ffmpegDir + " -ss " + timeFrame + " -i " + fileName +
-                    " -t " + duration + " -map " + audioLayer + " " + workspace + "audio.mp3";
+                    " -t " + duration + " -map " + audioLayer + " " + workspace + "audio." + audioType;
         }
         log.println("audio extraction command ..." + command);
 
