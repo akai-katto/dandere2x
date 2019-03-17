@@ -3,9 +3,9 @@
 
 ## What is Dandere2x? 
 
-Dandere2x is a lossy compression architecture specific for waifu2x. The goal of Dandere2x is to speed up waifu2x video processing by implementing traditional compression techniques. 
+Dandere2x is a lossy compression architecture specific for waifu2x. The goal of Dandere2x is to speed up waifu2x video processing by implementing traditional video compression techniques. 
 
-In other words, by introducing quality loss, the time it takes to upscale a video using waifu2x dramatically decreases. 
+In other words, Dandere2x reduces the time needed to process a video using waifu2x.
 
 ## Current Features
 
