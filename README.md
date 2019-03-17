@@ -1,10 +1,27 @@
-# dandere2x
-dandere2x.Dandere2x Source Code. Not very organized at the moment.
+# Dandere2x - Faster Waifu2x Video Upscaling
 
 
-For CPP module, I recommend either using netbeans or eclipse since the two are pretty much compatible. There's no dependent libaries insisde,
-so it should work out of the box. Only tested with cygwin c++ compiler at the moment.
+## What is Dandere2x? 
 
-The java component is compiled / made in intelij, but IDE shouldn't be as problematic. 
+Dandere2x is a lossy compression architecture specific for waifu2x. The goal of Dandere2x is to speed up waifu2x video processing by implementing traditional compression techniques. 
 
-Over the next week I plan on cleaning up the project, i.e making c++ more professional (although I've had issues with .cpp files in the past).
+In other words, by introducing quality loss, the time it takes to upscale a video using waifu2x dramatically decreases. 
+
+## Current Features
+
+- Block Matching Video Compression
+
+- Interpolated Frame Video Compression
+
+- Minimum / maximum quality loss
+
+- Custom block sizes
+
+- Custom scaling sizes (1x, 2x, 3x).
+
+## Development Status
+
+Dandere2x is written natively on ubuntu Linux but is ported and released on windows. I hope to have an official Linux release soon, but for the time being the windows version is easier to configure.
+
+The project is currently in alpha right now and is ready for testing (windows).
+
