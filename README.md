@@ -3,9 +3,9 @@
 
 ## What is Dandere2x? 
 
-Dandere2x is a lossy compression architecture specific for waifu2x. The goal of Dandere2x is to speed up waifu2x video processing by implementing traditional video compression techniques. 
+Dandere2x is a lossy video upscaler also built around waifu2x, but with video compression techniques to shorten the time needed to process a video.
 
-In other words, Dandere2x reduces the time needed to process a video using waifu2x.
+In other words, although lossy, dandere2x dramaticlly speeds up the time to process a video.
 
 ## Current Features
 
@@ -25,3 +25,9 @@ Dandere2x is written natively on ubuntu Linux but is ported and released on wind
 
 The project is currently in alpha right now and is ready for testing (windows).
 
+I highly recommend subscribing / checking reddit.com/r/dandere2x. I tend to be more active on there, as well as responding to PM's if problems come up .
+
+
+## Related Resources
+
+[Video2x](https://github.com/K4YT3X/video2x) A lossless video enlarger achieved with waifu2x. 
