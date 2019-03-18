@@ -134,6 +134,12 @@ public class Merge extends DThread implements Runnable {
     private Frame createPredictive(int frame, Frame inversion, Frame base, List<String> listPredictive, List<String> listInversion, String outLocation) {
         Frame out = new Frame(base.width, base.height);
 
+        for(int x = 0; x < base.width; x++){
+            for(int y = 0; y < base.height; y++){
+                out.setOpaque(x,y);
+            }
+        }
+
         ArrayList<VectorDisplacement> vectorDisplacements = new ArrayList<>();
         ArrayList<VectorDisplacement> inversionDisplacements = new ArrayList<>();
 
@@ -173,6 +179,20 @@ public class Merge extends DThread implements Runnable {
         }
 
         try {
+            //put inversion (the missing) information into the image
+            for (int outer = 0; outer < inversionDisplacements.size(); outer++) {
+                for (int x = 0; x < (blockSize * scaleFactor); x++) {
+                    for (int y = 0; y < (blockSize * scaleFactor); y++) {
+                        out.set((int) (inversionDisplacements.get(outer).x * scaleFactor + x),
+                                (int) (inversionDisplacements.get(outer).y * scaleFactor + y),
+                                inversion.get(
+                                        (int) (inversionDisplacements.get(outer).newX * (scaleFactor * (blockSize)) + (inversionDisplacements.get(outer).newX * scaleFactor) + x ),
+                                        (int) (inversionDisplacements.get(outer).newY * (scaleFactor * (blockSize)) + (inversionDisplacements.get(outer).newY * scaleFactor) + y )));
+
+                    }
+                }
+            }
+
             //piece together the image using predictive information
             for (int outer = 0; outer < vectorDisplacements.size(); outer++) {
                 for (int x = 0; x < blockSize * scaleFactor; x++) {
@@ -182,19 +202,6 @@ public class Merge extends DThread implements Runnable {
                                 base.getNoThrow(
                                         (int) (x + scaleFactor * vectorDisplacements.get(outer).newX),
                                         (int) (y + scaleFactor * vectorDisplacements.get(outer).newY)));
-                    }
-                }
-            }
-            //put inversion (the missing) information into the image
-            for (int outer = 0; outer < inversionDisplacements.size(); outer++) {
-                for (int x = 0; x < (blockSize * scaleFactor); x++) {
-                    for (int y = 0; y < (blockSize * scaleFactor); y++) {
-                        out.set((int) (inversionDisplacements.get(outer).x * scaleFactor + x),
-                                (int) (inversionDisplacements.get(outer).y * scaleFactor + y),
-                                inversion.get(
-                                        (int) (inversionDisplacements.get(outer).newX * (scaleFactor * (blockSize + bleed * 2)) + x + scaleFactor * bleed),
-                                        (int) (inversionDisplacements.get(outer).newY * (scaleFactor * (blockSize + bleed * 2)) + y + scaleFactor * bleed)));
-
                     }
                 }
             }

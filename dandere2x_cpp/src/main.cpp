@@ -66,6 +66,6 @@ int main(int argc, char** argv){
     else if(runType == "r"){
         driverDifferenceResume(workspace,resumeFrame, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize);
     }
-    
+//    
     return 0;
 }

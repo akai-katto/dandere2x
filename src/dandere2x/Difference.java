@@ -4,6 +4,7 @@ import dandere2x.Utilities.DThread;
 import dandere2x.Utilities.DandereUtils;
 import dandere2x.Utilities.VectorDisplacement;
 import wrappers.Frame;
+import wrappers.FrameOpaque;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +16,16 @@ import java.util.List;
 import static java.io.File.separator;
 
 public class Difference extends DThread implements Runnable {
+
+    public static void main(String[] args) throws FileNotFoundException {
+        PrintStream log = new PrintStream(new File("C:\\Users\\windwoz\\Desktop\\workspace\\violetforcedframelong\\debug.log"));
+        Frame base = new Frame("C:\\Users\\windwoz\\Desktop\\workspace\\violetforcedframelong\\inputs\\frame11.jpg");
+        List listInversion = DandereUtils.listenText(log,"C:\\Users\\windwoz\\Desktop\\workspace\\violetforcedframelong\\inversion_data\\inversion_12.txt");
+        saveInversionStatic(12,base,
+                listInversion,
+                listInversion,
+                "C:\\Users\\windwoz\\Desktop\\workspace\\violetforcedframelong\\output.png");
+    }
 
     private int blockSize;
     private int bleed;
@@ -92,7 +103,7 @@ public class Difference extends DThread implements Runnable {
 
             saveInversion(x, im2, listPredictive,
                     listInversion,
-                    workspace + "outputs" + separator + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".jpg");
+                    workspace + "outputs" + separator + "output_" + DandereUtils.getLexiconValue(lexiConstant, x) + ".png");
 
             try {
                 new File(workspace + "outputs" + separator + "metadata" + separator + "file" + x + ".txt").createNewFile();
@@ -105,22 +116,26 @@ public class Difference extends DThread implements Runnable {
     }
 
 
-    /**
-     * @param frameNumber
-     * @param inputFile     the smaller image
-     * @param listInversion we actually don't need predictive, it exists here to only let us know if we need to
-     *                      completely redraw a frame or not.
-     * @param listInversion we load the inversions from a textfile to create a list of vectors to recreate the missing parts of an image
-     * @param outLocation   the output location
-     * @return
-     */
-    private boolean saveInversion(int frameNumber, Frame inputFile, List<String> listPredictive, List<String> listInversion, String outLocation) {
+
+
+    private static boolean saveInversionStatic(int frameNumber, Frame inputFile, List<String> listPredictive, List<String> listInversion, String outLocation) {
+
+        int bleed = 0;
+        int blockSize = 30;
         ArrayList<VectorDisplacement> inversionVectors = new ArrayList<>();
 
         //the size of the image needed is the square root (rougly) im dimensions. Might go over
         //sometimes, so we add + 1
-        int size = (int) (Math.sqrt(listInversion.size() / 4) + 1) * (blockSize + bleed * 2);
+        int size = (int) (Math.sqrt(listInversion.size() / 4) + 1) * (blockSize) + (int) (Math.sqrt(listInversion.size() / 4) + 1);
+
+
         Frame out = new Frame(size, size);
+
+        for(int x = 0; x < size; x++){
+            for(int y = 0; y < size; y++){
+                out.setOpaque(x,y);
+            }
+        }
 
 
         //in the case where inversionVectors is empty but it is a predictive wrappers.Frame, then
@@ -152,14 +167,13 @@ public class Difference extends DThread implements Runnable {
          * but start getting colors from inputFile -1 from initial position.
          */
         for (int outer = 0; outer < inversionVectors.size(); outer++) {
-            for (int x = 0; x < (blockSize + bleed * 2); x++) {
-                for (int y = 0; y < (blockSize + bleed * 2); y++) {
-
+            for (int x = 0; x < (blockSize); x++) {
+                for (int y = 0; y < (blockSize); y++) {
                     out.set(
-                            inversionVectors.get(outer).newX * (blockSize + bleed * 2) + x,
-                            inversionVectors.get(outer).newY * (blockSize + bleed * 2) + y,
-                            inputFile.getNoThrow(inversionVectors.get(outer).x + x - bleed,
-                                    inversionVectors.get(outer).y + y - bleed));
+                            inversionVectors.get(outer).newX * (blockSize) + inversionVectors.get(outer).newX + x,
+                            inversionVectors.get(outer).newY * (blockSize) + inversionVectors.get(outer).newY + y,
+                            inputFile.getNoThrow(inversionVectors.get(outer).x + x ,
+                                    inversionVectors.get(outer).y + y));
 
                 }
             }
@@ -167,7 +181,77 @@ public class Difference extends DThread implements Runnable {
 
 
         //if none of the two cases above, we are working with a simple P wrappers.Frame.
-        out.saveFile(outLocation);
+        out.saveTest(outLocation);
+        return true;
+    }
+
+    /**
+     * @param frameNumber
+     * @param inputFile     the smaller image
+     * @param listInversion we actually don't need predictive, it exists here to only let us know if we need to
+     *                      completely redraw a frame or not.
+     * @param listInversion we load the inversions from a textfile to create a list of vectors to recreate the missing parts of an image
+     * @param outLocation   the output location
+     * @return
+     */
+    private boolean saveInversion(int frameNumber, Frame inputFile, List<String> listPredictive, List<String> listInversion, String outLocation) {
+        ArrayList<VectorDisplacement> inversionVectors = new ArrayList<>();
+
+        //the size of the image needed is the square root (rougly) im dimensions. Might go over
+        //sometimes, so we add + 1
+        int size = (int) (Math.sqrt(listInversion.size() / 4) + 1) * (blockSize) + (int) (Math.sqrt(listInversion.size() / 4) + 1);
+
+        FrameOpaque out = new FrameOpaque(size, size);
+
+        for(int x = 0; x < size; x++){
+            for(int y = 0; y < size; y++){
+                out.setOpaque(x,y);
+            }
+        }
+
+
+        //in the case where inversionVectors is empty but it is a predictive wrappers.Frame, then
+        //simply output an irrelevent image, as the entire wrappers.Frame is to be copied .
+        if (listInversion.isEmpty() && !listPredictive.isEmpty()) {
+            FrameOpaque no = new FrameOpaque(1, 1);
+            no.saveFile(outLocation);
+            return true;
+        }
+
+        //in the case where both lists are empty, then we are upscaling a brand new wrappers.Frame, in which case,
+        //otuput the entire image
+        if (listInversion.isEmpty() && listPredictive.isEmpty()) {
+            inputFile.saveFile(outLocation);
+            return true;
+        }
+        //for every item in the listInversion, create vector displacements out of them in the same order they were saved
+        for (int x = 0; x < listInversion.size() / 4; x++) {
+            inversionVectors.add(
+                    new VectorDisplacement(Integer.parseInt(listInversion.get(x * 4)), Integer.parseInt(listInversion.get(x * 4 + 1)),
+                            Integer.parseInt(listInversion.get(x * 4 + 2)),
+                            Integer.parseInt(listInversion.get(x * 4 + 3))));
+        }
+
+
+        /**
+         * Bleed is multiplied twice because the bleed must be applied to both ends,
+         *
+         */
+        for (int outer = 0; outer < inversionVectors.size(); outer++) {
+            for (int x = 0; x < (blockSize); x++) {
+                for (int y = 0; y < (blockSize); y++) {
+                    out.set(
+                            inversionVectors.get(outer).newX * (blockSize) + inversionVectors.get(outer).newX + x,
+                            inversionVectors.get(outer).newY * (blockSize) + inversionVectors.get(outer).newY + y,
+                            inputFile.getNoThrow(inversionVectors.get(outer).x + x ,
+                                    inversionVectors.get(outer).y + y));
+
+                }
+            }
+        }
+
+        //if none of the two cases above, we are working with a simple P wrappers.Frame.
+        out.saveTest(outLocation);
         return true;
     }
 

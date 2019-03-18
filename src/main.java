@@ -2,6 +2,7 @@ import dandere2x.Dandere2x;
 import dandere2x.Utilities.ParseConfig;
 import wrappers.Frame;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -15,6 +16,7 @@ import java.io.PrintStream;
 public class main {
 
     public static void main(String[] args) throws Exception {
+
 
         //create main log
         PrintStream log = null;
@@ -38,4 +40,5 @@ public class main {
         }
 
     }
+
 }

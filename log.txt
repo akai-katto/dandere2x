@@ -1,3 +1,2 @@
 log created
-Using default ffmpeg
 Valid config

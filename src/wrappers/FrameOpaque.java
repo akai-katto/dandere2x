@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class Frame {
+public class FrameOpaque {
 
     public int height;
     public int width;
@@ -26,7 +26,7 @@ public class Frame {
      *
      * @param url
      */
-    public Frame(String url) {
+    public FrameOpaque(String url) {
         try {
             image = ImageIO.read(new File(url));
         } catch (IOException e) {
@@ -49,7 +49,7 @@ public class Frame {
      *
      * @param file
      */
-    public Frame(File file) {
+    public FrameOpaque(File file) {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
@@ -68,12 +68,12 @@ public class Frame {
      * @param height
      * @param width
      */
-    public Frame(int width, int height) {
+    public FrameOpaque(int width, int height) {
         if (height <= 0 || width <= 0)
             throw new IllegalArgumentException("height / width must be above zero and non neg");
 
         try {
-            image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         } catch (NullPointerException e) {
             System.out.println(e);
             System.out.println("null ptr exception on custom image ");

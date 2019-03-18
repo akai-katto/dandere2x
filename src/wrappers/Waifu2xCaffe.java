@@ -142,7 +142,7 @@ public class Waifu2xCaffe extends DThread {
             //start backwards so .remove doesn't affect the ordering 
             for (int x = upscaledFrames.size() - 1; x >= 0; x--) {
                 File temp = new File(upscaledDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".png");
-                File deleteFile = new File(outputDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".jpg");
+                File deleteFile = new File(outputDir + "output_" + DandereUtils.getLexiconValue(lexiConstant, upscaledFrames.get(x)) + ".png");
 
 
                 if (temp.exists() && deleteFile.exists()) {
