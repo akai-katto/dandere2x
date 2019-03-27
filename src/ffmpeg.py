@@ -1,4 +1,4 @@
-#temp ffmpeg wrapper, terrible implementation fix later
+# temp ffmpeg wrapper, terrible implementation fix later
 import os
 import subprocess
 

@@ -1,7 +1,9 @@
-import math
 from datetime import timedelta
 from timeit import default_timer as timer
 
+import math
+
+from Dandere2xUtils import get_lexicon_value
 from Dandere2xUtils import wait_on_text
 from Frame import DisplacementVector
 from Frame import Frame
@@ -39,7 +41,7 @@ def generate_difference_image(raw_frame, block_size, bleed, list_difference, lis
                                                      int(list_difference[x * 4 + 2]), int(list_difference[x * 4 + 3])))
 
     # size of image is determined based off how many differences there are
-    image_size = int(math.sqrt(len(list_difference) / 4) + 2) * (block_size + bleed * 2)
+    image_size = int(math.sqrt(len(list_difference) / 4) + 1) * (block_size + bleed * 2)
     out_image = Frame()
     out_image.create_new(image_size, image_size)
 
@@ -49,13 +51,13 @@ def generate_difference_image(raw_frame, block_size, bleed, list_difference, lis
                              vector.y_1 + buffer + - bleed,
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
-
     out_image.save_image(out_location)
 
 
 def difference_loop(workspace, count, block_size):
     start = timer()
     bleed = 1
+    print(workspace, count, block_size)
     for x in range(1, count):
         f1 = Frame()
         f1.load_from_string_wait(workspace + "inputs/frame" + str(x + 1) + ".jpg")
@@ -64,14 +66,15 @@ def difference_loop(workspace, count, block_size):
         prediction_data = wait_on_text(workspace + "pframe_data/pframe_" + str(x) + ".txt")
 
         generate_difference_image(f1, block_size, bleed, difference_data, prediction_data,
-                                  workspace + "/outputs/output_" + str(x) + ".png")
+                                  workspace + "/outputs/output_" + get_lexicon_value(6, x) + ".png")
 
     end = timer()
     print(timedelta(seconds=end - start))
 
 
 def main():
-    difference_loop("/home/linux/Videos/testrun/testrun2/", 95)
+    difference_loop("C:\\Users\\windwoz\\Desktop\\pythontesting\\", 95, 30)
+
 
 if __name__ == "__main__":
     main()

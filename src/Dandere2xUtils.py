@@ -23,6 +23,7 @@ def wait_on_text(text_file):
 
     return text_list
 
+
 def wait_on_file(file_string):
     exists = exists = os.path.isfile(file_string)
     count = 0
@@ -33,6 +34,14 @@ def wait_on_file(file_string):
         count += 1
         time.sleep(.001)
 
+
+def get_lexicon_value(digits, val):
+    string = str(val)
+
+    while (len(string) < digits):
+        string = '0' + string
+
+    return string
 
 
 def main():

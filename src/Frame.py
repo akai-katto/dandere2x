@@ -1,9 +1,10 @@
 import os
 import time
+from dataclasses import dataclass
 
 import numpy as np
-from dataclasses import dataclass
-from scipy import misc # pip install Pillow
+from scipy import misc  # pip install Pillow
+
 from Dandere2xUtils import wait_on_file
 
 
@@ -62,7 +63,6 @@ class Frame:
             time.sleep(.2)
 
         self.load_from_string(input_string)
-
 
     # first save under a dif name, then rename
     # to prevent image from being read until finished

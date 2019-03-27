@@ -3,9 +3,10 @@ import os
 import subprocess
 import threading
 
-from Dandere2x_Cpp_Wrapper import Dandere2x_Cpp_Wrapper
+from Dandere2xCppWrapper import Dandere2xCppWrapper
 from Difference_Script import difference_loop
 from Merge_Script import merge_loop
+from Waifu2xCaffe import Waifu2xCaffe
 from ffmpeg import extract_frames
 
 
@@ -50,20 +51,35 @@ class Dandere2x:
     def run(self):
         self.create_dirs()
         self.extract_frames()
-        self.start_dandere2x_cpp()
+        # self.start_dandere2x_cpp()
         self.create_waifu2x_script()
         self.write_frames()
 
-        merge_thread = threading.Thread(target=merge_loop, args=("/home/linux/Videos/testrun/testrun2/", self.frame_count, self.block_size))
-        difference_thread = threading.Thread(target=difference_loop, args=("/home/linux/Videos/testrun/testrun2/", self.frame_count, self.block_size))
+        waifu2x = Waifu2xCaffe(self.frame_count, self.waifu2x_caffe_cui_dir, self.out_location, self.upscaled_location,
+                                "cudnn", "3", "2.0")
+        d = Dandere2xCppWrapper(self.workspace, self.dandere2x_cpp_dir, self.frame_count, self.block_size,
+                                self.tolerance, self.psnr_high, self.psnr_low, self.step_size)
+
+        merge_thread = threading.Thread(target=merge_loop, args=(self.workspace, self.frame_count, self.block_size))
+        difference_thread = threading.Thread(target=difference_loop,
+                                             args=(self.workspace, self.frame_count, self.block_size))
+
+        Waifu2xCaffe.upscale_file(self.waifu2x_caffe_cui_dir, self.file_location + "frame1.jpg",
+                                  self.merged_dir + "merged_1.jpg", "cudnn", "3", "2.0")
+        waifu2x.start()
 
         merge_thread.start()
         difference_thread.start()
-
-        self.start_waifu2x_script()
+        d.start()
 
         merge_thread.join()
+        d.join()
         difference_thread.join()
+
+    def dif_thread(self):
+        difference_thread = threading.Thread(target=difference_loop,
+                                             args=(self.workspace, self.frame_count, self.block_size))
+        difference_thread.start()
 
     def create_dirs(self):
 
@@ -85,7 +101,6 @@ class Dandere2x:
     def create_waifu2x_script(self):
 
         input_list = []
-
         input_list.append("cd /home/linux/Documents/waifu2x/")
 
         input_list.append(
@@ -105,8 +120,8 @@ class Dandere2x:
         subprocess.call(["bash", "-c", self.workspace + os.path.sep + 'waifu2x_script.sh'])
 
     def start_dandere2x_cpp(self):
-        cpp = Dandere2x_Cpp_Wrapper(self.workspace, self.dandere2x_cpp_dir, self.frame_count, self.block_size,
-                                    self.tolerance, self.psnr_high, self.psnr_low, self.step_size)
+        cpp = Dandere2xCppWrapper(self.workspace, self.dandere2x_cpp_dir, self.frame_count, self.block_size,
+                                  self.tolerance, self.psnr_high, self.psnr_low, self.step_size)
         cpp.start()
 
     def write_frames(self):
