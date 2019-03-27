@@ -23,6 +23,17 @@ def wait_on_text(text_file):
 
     return text_list
 
+def wait_on_file(file_string):
+    exists = exists = os.path.isfile(file_string)
+    count = 0
+    while not exists:
+        if count % 1000 == 0:
+            print(file_string, "dne")
+        exists = os.path.isfile(file_string)
+        count += 1
+        time.sleep(.001)
+
+
 
 def main():
     text = wait_on_text("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")

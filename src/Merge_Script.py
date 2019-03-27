@@ -10,18 +10,14 @@ def merge(block_size, bleed, frame_inversion, frame_base, list_predictive, list_
     predictive_vectors = []
     diference_vectors = []
     out_image = Frame()
-    out_image.create_new(3840, 2160)
+    out_image.create_new(frame_base.width, frame_base.height)
 
     if not list_predictive and not list_differences:
-        out_image = Frame()
-        out_image.create_new(3840, 2160)
         out_image.copy_image(frame_inversion)
         out_image.save_image(output_location)
         return
 
     if list_predictive and not list_differences:
-        out_image = Frame()
-        out_image.create_new(3840, 2160)
         out_image.copy_image(frame_base)
         out_image.save_image(output_location)
         return
@@ -51,11 +47,9 @@ def merge(block_size, bleed, frame_inversion, frame_base, list_predictive, list_
     print(timedelta(seconds=end - start))
 
 
-
-def merge_loop(workspace, count):
-    block_size = 30
+def merge_loop(workspace, count, block_size):
     bleed = 1
-    for x in range(1,count):
+    for x in range(1, count):
 
         f1 = Frame()
         f1.load_from_string_wait(workspace + "upscaled/output_" + str(x) + ".png")

@@ -25,7 +25,7 @@ class Dandere2x:
         self.frame_rate = config.get('dandere2x', 'frame_rate')
         self.width = config.get('dandere2x', 'width')
         self.height = config.get('dandere2x', 'height')
-        self.block_size = config.get('dandere2x', 'block_size')
+        self.block_size = int(config.get('dandere2x', 'block_size'))
         self.tolerance = config.get('dandere2x', 'tolerance')
         self.step_size = config.get('dandere2x', 'step_size')
         self.bleed = config.get('dandere2x', 'bleed')
@@ -45,7 +45,7 @@ class Dandere2x:
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
 
-        self.frame_count = 120
+        self.frame_count = 240
 
     def run(self):
         self.create_dirs()
@@ -54,8 +54,8 @@ class Dandere2x:
         self.create_waifu2x_script()
         self.write_frames()
 
-        merge_thread = threading.Thread(target=merge_loop, args=("/home/linux/Videos/testrun/testrun2/", self.frame_count))
-        difference_thread = threading.Thread(target=difference_loop, args=("/home/linux/Videos/testrun/testrun2/", self.frame_count))
+        merge_thread = threading.Thread(target=merge_loop, args=("/home/linux/Videos/testrun/testrun2/", self.frame_count, self.block_size))
+        difference_thread = threading.Thread(target=difference_loop, args=("/home/linux/Videos/testrun/testrun2/", self.frame_count, self.block_size))
 
         merge_thread.start()
         difference_thread.start()
@@ -84,19 +84,19 @@ class Dandere2x:
 
     def create_waifu2x_script(self):
 
-        input = []
+        input_list = []
 
-        input.append("cd /home/linux/Documents/waifu2x/")
+        input_list.append("cd /home/linux/Documents/waifu2x/")
 
-        input.append(
+        input_list.append(
             "th " + self.dandere_dir + " -m noise_scale -noise_level 3 -i " + self.file_location + "frame1.jpg" +
             " -o " + self.merged_dir + "merged_1.jpg\n")
 
-        input.append("th " + self.dandere_dir + " -m noise_scale -noise_level 3 -resume 1 -l "
-                     + self.workspace + "frames.txt -o " + self.upscaled_location + "output_%d.png")
+        input_list.append("th " + self.dandere_dir + " -m noise_scale -noise_level 3 -resume 1 -l "
+                          + self.workspace + "frames.txt -o " + self.upscaled_location + "output_%d.png")
 
         with open(self.workspace + os.path.sep + 'waifu2x_script.sh', 'w') as f:
-            for item in input:
+            for item in input_list:
                 f.write("%s\n" % item)
 
         os.chmod(self.workspace + os.path.sep + 'waifu2x_script.sh', 0o777)
@@ -107,7 +107,6 @@ class Dandere2x:
     def start_dandere2x_cpp(self):
         cpp = Dandere2x_Cpp_Wrapper(self.workspace, self.dandere2x_cpp_dir, self.frame_count, self.block_size,
                                     self.tolerance, self.psnr_high, self.psnr_low, self.step_size)
-
         cpp.start()
 
     def write_frames(self):

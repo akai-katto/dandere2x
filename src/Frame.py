@@ -4,6 +4,7 @@ import time
 import numpy as np
 from dataclasses import dataclass
 from scipy import misc # pip install Pillow
+from Dandere2xUtils import wait_on_file
 
 
 # fuck this function, lmao
@@ -62,8 +63,16 @@ class Frame:
 
         self.load_from_string(input_string)
 
+
+    # first save under a dif name, then rename
+    # to prevent image from being read until finished
     def save_image(self, out_location):
-        misc.imsave(out_location, self.frame)
+        extension = os.path.splitext(os.path.basename(out_location))[1]
+
+        misc.imsave(out_location + "temp" + extension, self.frame)
+        wait_on_file(out_location + "temp" + extension)
+
+        os.rename(out_location + "temp" + extension, out_location)
 
     def copy_image(self, frame_other):
         copy_from(frame_other.frame, self.frame, (0, 0), (0, 0),

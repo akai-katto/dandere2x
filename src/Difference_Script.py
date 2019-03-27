@@ -28,13 +28,10 @@ def generate_difference_image(raw_frame, block_size, bleed, list_difference, lis
     # in this case copy the entire frame over
     if not list_difference and not list_predictive:
         out_image = Frame()
-        out_image.create_new(1920, 1080)
+        out_image.create_new(raw_frame.width, raw_frame.height)
         out_image.copy_image(raw_frame)
         out_image.save_image(out_location)
         return
-
-    debug = Frame()
-    debug.create_new(1920, 1080)
 
     # turn the list of differences into a list of vectors
     for x in range(int(len(list_difference) / 4)):
@@ -52,14 +49,12 @@ def generate_difference_image(raw_frame, block_size, bleed, list_difference, lis
                              vector.y_1 + buffer + - bleed,
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
-    debug.save_image("/home/linux/Videos/testrun/testrun2/huh.jpg")
 
     out_image.save_image(out_location)
 
 
-def difference_loop(workspace, count):
+def difference_loop(workspace, count, block_size):
     start = timer()
-    block_size = 30
     bleed = 1
     for x in range(1, count):
         f1 = Frame()
@@ -77,26 +72,6 @@ def difference_loop(workspace, count):
 
 def main():
     difference_loop("/home/linux/Videos/testrun/testrun2/", 95)
-    #
-    # f1 = Frame()
-    # f1.load_from_string("/home/linux/Videos/newdebug/yn2/inputs/frame1.jpg")
-    #
-    # a = open("/home/linux/Videos/newdebug/yn2/inversion_data/inversion_1.txt", "r")
-    #
-    # inversion_data = a.read().split('\n')
-    # a.close()
-    #
-    # b = open("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt", "r")
-    #
-    # difference_data = b.read().split('\n')
-    # b.close()
-    #
-    # block_size = 30
-    # bleed = 1
-    # generate_difference_image(f1, block_size, bleed, inversion_data, difference_data , "/home/linux/Videos/newdebug/yn2/huh8.png")
-    #
-    # print("hi")
-
 
 if __name__ == "__main__":
     main()
