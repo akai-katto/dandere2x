@@ -1,17 +1,15 @@
-from Frame import Frame
-from Frame import DisplacementVector
-
-
+import math
 from datetime import timedelta
 from timeit import default_timer as timer
-from Dandere2xUtils import wait_on_text
 
-import math
-from scipy import misc
+from Dandere2xUtils import wait_on_text
+from Frame import DisplacementVector
+from Frame import Frame
+
 
 def generate_difference_image(raw_frame, block_size, bleed, list_difference, list_predictive, out_location):
     difference_vectors = []
-    buffer = 2
+    buffer = 5
 
     # first make a 'bleeded' version of input_frame
     # so we can preform numpy calculations w.o having to catch
@@ -21,7 +19,7 @@ def generate_difference_image(raw_frame, block_size, bleed, list_difference, lis
     # then the two frames are identical, so no differences image needed.
     if not list_difference and list_predictive:
         out_image = Frame()
-        out_image.create_new(1,1)
+        out_image.create_new(1, 1)
         out_image.save_image(out_location)
         return
 
@@ -29,48 +27,56 @@ def generate_difference_image(raw_frame, block_size, bleed, list_difference, lis
     # then the frame is a brand new frame with no resemblence to previous frame.
     # in this case copy the entire frame over
     if not list_difference and not list_predictive:
-        raw_frame.save_image(out_location)
+        out_image = Frame()
+        out_image.create_new(1920, 1080)
+        out_image.copy_image(raw_frame)
+        out_image.save_image(out_location)
         return
 
+    debug = Frame()
+    debug.create_new(1920, 1080)
+
     # turn the list of differences into a list of vectors
-    for x in range(int(len(list_difference)/4)):
+    for x in range(int(len(list_difference) / 4)):
         difference_vectors.append(DisplacementVector(int(list_difference[x * 4]), int(list_difference[x * 4 + 1]),
                                                      int(list_difference[x * 4 + 2]), int(list_difference[x * 4 + 3])))
 
     # size of image is determined based off how many differences there are
-    image_size = int(math.sqrt(len(list_difference) / 4) + 1) * (block_size + bleed * 2)
+    image_size = int(math.sqrt(len(list_difference) / 4) + 2) * (block_size + bleed * 2)
     out_image = Frame()
     out_image.create_new(image_size, image_size)
 
     # move every block from the complete frame to the differences frame using vectors.
     for vector in difference_vectors:
-        out_image.copy_block(bleed_frame, block_size + bleed * 2, vector.x_1 + buffer, vector.y_1 + buffer,
+        out_image.copy_block(bleed_frame, block_size + bleed * 2, vector.x_1 + buffer - bleed,
+                             vector.y_1 + buffer + - bleed,
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
-
+    debug.save_image("/home/linux/Videos/testrun/testrun2/huh.jpg")
 
     out_image.save_image(out_location)
 
-def loop():
+
+def difference_loop(workspace, count):
     start = timer()
     block_size = 30
     bleed = 1
-    for x in range(1,120):
+    for x in range(1, count):
         f1 = Frame()
-        f1.load_from_string("/home/linux/Videos/testrun/vynn2/inputs/frame" +  str(x) +  ".jpg")
+        f1.load_from_string_wait(workspace + "inputs/frame" + str(x + 1) + ".jpg")
 
-        difference_data = wait_on_text("/home/linux/Videos/testrun/vynn2/inversion_data/inversion_" +  str(x) +  ".txt")
-        prediction_data = wait_on_text("/home/linux/Videos/testrun/vynn2/pframe_data/pframe_" + str(x) + ".txt")
+        difference_data = wait_on_text(workspace + "inversion_data/inversion_" + str(x) + ".txt")
+        prediction_data = wait_on_text(workspace + "pframe_data/pframe_" + str(x) + ".txt")
 
-        generate_difference_image(f1, block_size,bleed, difference_data, prediction_data,
-                                  "/home/linux/Videos/testrun/vynn2/outputs/output_" + str(x) + ".jpg")
-
+        generate_difference_image(f1, block_size, bleed, difference_data, prediction_data,
+                                  workspace + "/outputs/output_" + str(x) + ".png")
 
     end = timer()
     print(timedelta(seconds=end - start))
 
+
 def main():
-    loop()
+    difference_loop("/home/linux/Videos/testrun/testrun2/", 95)
     #
     # f1 = Frame()
     # f1.load_from_string("/home/linux/Videos/newdebug/yn2/inputs/frame1.jpg")
@@ -92,6 +98,5 @@ def main():
     # print("hi")
 
 
-
-if __name__== "__main__":
-  main()
+if __name__ == "__main__":
+    main()
