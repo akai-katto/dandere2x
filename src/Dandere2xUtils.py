@@ -1,17 +1,19 @@
+import logging
 import os
 import time
 
 
 # waits for a text file, then returns
 def wait_on_text(text_file):
+    logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
     while not exists:
-        if count % 1000 == 0:
-            print(text_file, "dne")
+        if count % 10000 == 0:
+            logger.info(text_file + "dne, waiting")
         exists = os.path.isfile(text_file)
         count += 1
-        time.sleep(.2)
+        time.sleep(.01)
 
     file = open(text_file, "r")
 
@@ -25,11 +27,12 @@ def wait_on_text(text_file):
 
 
 def wait_on_file(file_string):
+    logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(file_string)
     count = 0
     while not exists:
-        if count % 1000 == 0:
-            print(file_string, "dne")
+        if count % 1000000 == 0:
+            logger.info(file_string + "dne, waiting")
         exists = os.path.isfile(file_string)
         count += 1
         time.sleep(.001)

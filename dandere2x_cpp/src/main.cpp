@@ -26,16 +26,16 @@ int main(int argc, char** argv){
     
     bool debug = false; //debug flag
     
-    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\psnrtest\\";
+    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\";
     int frameCount = 144;
-    int blockSize = 30;
+    int blockSize = 16;
     double tolerance = 15;
     double psnrMax = 95;
     double psnrMin = 85;
     int stepSize = 4;
-    string runType = "n";// 'n' or 'r'
+    string runType = "r";// 'n' or 'r'
     int resumeFrame = 17;
-    
+    string extensionType = ".jpg";
     
     if(!debug){
         workspace = argv[1];
@@ -47,6 +47,8 @@ int main(int argc, char** argv){
         stepSize = stod(argv[7]);
         runType = argv[8];
         resumeFrame = atoi(argv[9]);
+        extensionType = argv[10];
+        
     }
 
     cout << "Settings" << endl;
@@ -59,12 +61,13 @@ int main(int argc, char** argv){
     cout << "stepSize: " << stepSize << endl;
     cout << "runType: " << runType << endl;
     cout << "ResumeFrame (if valid): " << resumeFrame << endl;
+    cout << "extensionType: " << extensionType << endl;
     
     if(runType == "n"){
-        driverDifference(workspace,frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize);
+        driverDifference(workspace,frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize, extensionType);
     }
     else if(runType == "r"){
-        driverDifferenceResume(workspace,resumeFrame, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize);
+        driverDifferenceResume(workspace,resumeFrame, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize, extensionType);
     }
 //    
     return 0;

@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 from dataclasses import dataclass
@@ -15,11 +16,15 @@ def copy_from(A, B, A_start, B_start, B_end):
     B_start is the index with respect to B of the upper left corner of the overlap
     B_end is the index of with respect to B of the lower right corner of the overlap
     """
-    A_start, B_start, B_end = map(np.asarray, [A_start, B_start, B_end])
-    shape = B_end - B_start
-    B_slices = tuple(map(slice, B_start, B_end + 1))
-    A_slices = tuple(map(slice, A_start, A_start + shape + 1))
-    B[B_slices] = A[A_slices]
+    try:
+        A_start, B_start, B_end = map(np.asarray, [A_start, B_start, B_end])
+        shape = B_end - B_start
+        B_slices = tuple(map(slice, B_start, B_end + 1))
+        A_slices = tuple(map(slice, A_start, A_start + shape + 1))
+        B[B_slices] = A[A_slices]
+    except ValueError:
+        logging.info("fatal error copying block")
+        raise ValueError
 
 
 @dataclass
@@ -39,6 +44,7 @@ class Frame:
         self.width = ''
         self.height = ''
         self.string_name = ''
+        self.logger = logging.getLogger(__name__)
 
     def create_new(self, width, height):
         self.frame = np.zeros([height, width, 3], dtype=np.uint8)
@@ -53,11 +59,12 @@ class Frame:
         self.string_name = input_string
 
     def load_from_string_wait(self, input_string):
+        logger = logging.getLogger(__name__)
         exists = exists = os.path.isfile(input_string)
         count = 0
         while not exists:
-            if count % 1000 == 0:
-                print(input_string, " dne")
+            if count % 10000 == 0:
+                logger.info(input_string + " dne")
             exists = os.path.isfile(input_string)
             count += 1
             time.sleep(.2)
@@ -100,8 +107,6 @@ class Frame:
         shape = self.frame.shape
         x = shape[0] + bleed + bleed
         y = shape[1] + bleed + bleed
-
-        print(shape[0])
         out_image = np.zeros([x, y, 3], dtype=np.uint8)
         copy_from(self.frame, out_image, (0, 0), (bleed, bleed), (shape[0] + bleed - 1, shape[1] + bleed - 1))
 

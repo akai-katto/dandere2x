@@ -41,25 +41,27 @@
  * @param tolerance
  * @param stepSize
  */
-void driverDifference(std::string workspace, int frameCount, int blockSize, double tolerance, double psnrMax, double psnrMin, int stepSize){
+void driverDifference(std::string workspace, int frameCount, int blockSize,
+        double tolerance, double psnrMax, double psnrMin, int stepSize,
+        std::string extensionType){
     
     
     int bleed = 2; //i dont think bleed is actually used? 
     bool debug = true;
     
     //1 
-    waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + ".jpg");
-    shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + ".jpg");
+    waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
+    shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
     
     for(int x = 1; x < frameCount; x++){
-        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
+        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
         std::cout << "Computing differences for frame" << x << endl;
-        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
+        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
         PDifference dif = PDifference(im1, im2,x, blockSize,bleed, tolerance, workspace, stepSize, debug);
         dif.generatePData(); //2
         dif.drawOverIfRequired(); //3
         
-        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
+        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
         
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
         
@@ -92,20 +94,20 @@ void driverDifference(std::string workspace, int frameCount, int blockSize, doub
 
 //resume and start can be combined. Do this in future
 void driverDifferenceResume(std::string workspace,int resumeCount, int frameCount, int blockSize, double tolerance, double psnrMax, double psnrMin,
-        int stepSize){
+        int stepSize, std::string extensionType){
     
     
     int bleed = 2;
     bool debug = true;
     
     //1 
-    waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + ".jpg");
-    shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + ".jpg");
+    waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + extensionType);
+    shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + extensionType);
     
     for(int x = resumeCount; x < frameCount; x++){
-        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
+        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
         std::cout << "Computing differences for frame" << x << endl;
-        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
+        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
         PDifference dif = PDifference(im1, im2,x, blockSize,bleed, tolerance, workspace, stepSize, debug);
         if(x==resumeCount){
             std::cout << "invoking force copy " << endl;
@@ -117,7 +119,7 @@ void driverDifferenceResume(std::string workspace,int resumeCount, int frameCoun
         dif.generatePData(); //2
         dif.drawOverIfRequired();
         
-        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + ".jpg");
+        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
         
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
