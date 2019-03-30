@@ -46,6 +46,15 @@ def get_lexicon_value(digits, val):
 
     return string
 
+# get frame count from a string input
+def get_seconds_from_time(time_frame):
+    splitted = time_frame.split(":")
+    print(splitted)
+    hours_seconds = int(splitted[0]) * 3600
+    minutes_seconds = int(splitted[1]) * 60
+    seconds = int(splitted[2])
+
+    return hours_seconds + minutes_seconds + seconds
 
 def main():
     text = wait_on_text("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")

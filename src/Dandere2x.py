@@ -10,20 +10,45 @@ from Difference import difference_loop_resume
 from Merge import merge_loop
 from Merge import merge_loop_resume
 from Waifu2xCaffe import Waifu2xCaffe
-from ffmpeg import extract_frames
-from ffmpeg import extract_audio
-
+from ffmpeg import extract_frames as ffmpeg_extract_frames
+from ffmpeg import extract_audio as ffmpeg_extract_audio
+from Dandere2xUtils import get_seconds_from_time
 
 class Dandere2x:
     def __init__(self, config_file):
         config = configparser.ConfigParser()
         config.read(config_file)
 
+        self.this_folder = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
+
+        # directories
         self.waifu2x_caffe_cui_dir = config.get('dandere2x', 'waifu2x_caffe_cui_dir')
         self.workspace = config.get('dandere2x', 'workspace')
-        self.file_dir = config.get('dandere2x', 'file_dir')
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
+        self.file_dir = config.get('dandere2x', 'file_dir')
+
+        # parse [this] for release versions (removing this feature in the future, just for early testing.
+
+        if self.waifu2x_caffe_cui_dir.find('[this'):
+            self.waifu2x_caffe_cui_dir = self.waifu2x_caffe_cui_dir.replace('[this]', self.this_folder)
+
+        if self.workspace.find('[this'):
+            self.workspace = self.workspace.replace('[this]', self.this_folder)
+
+        if self.dandere2x_cpp_dir.find('[this'):
+            self.dandere2x_cpp_dir = self.dandere2x_cpp_dir.replace('[this]', self.this_folder)
+
+        if self.ffmpeg_dir.find('[this'):
+            self.ffmpeg_dir = self.ffmpeg_dir.replace('[this]', self.this_folder)
+
+        if self.file_dir.find('[this'):
+            self.file_dir = self.file_dir.replace('[this]', self.this_folder)
+
+        # linux
+        self.dandere_dir = config.get('dandere2x', 'dandere_dir')
+
+        # User Settings
         self.time_frame = config.get('dandere2x', 'time_frame')
         self.duration = config.get('dandere2x', 'duration')
         self.audio_layer = config.get('dandere2x', 'audio_layer')
@@ -36,14 +61,18 @@ class Dandere2x:
         self.bleed = config.get('dandere2x', 'bleed')
         self.psnr_low = config.get('dandere2x', 'psnr_low')
         self.psnr_high = config.get('dandere2x', 'psnr_high')
+
+
+        # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
         self.scale_factor = config.get('dandere2x', 'scale_factor')
         self.process_type = config.get('dandere2x', 'process_type')
-        self.dandere_dir = config.get('dandere2x', 'dandere_dir')
         self.extension_type = config.get('dandere2x', 'extension_type')
         self.model_dir = config.get('dandere2x', 'model_dir')
         self.audio_type = config.get('dandere2x', 'audio_type')
 
+
+        # setup directories
         self.file_location = self.workspace + "inputs" + os.path.sep
         self.out_location = self.workspace + "outputs" + os.path.sep
         self.upscaled_location = self.workspace + "upscaled" + os.path.sep
@@ -52,8 +81,7 @@ class Dandere2x:
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
-
-        self.frame_count = 240
+        self.frame_count = get_seconds_from_time(self.duration)*int(self.frame_rate)
 
         logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
@@ -106,9 +134,9 @@ class Dandere2x:
         self.logger.info("Threaded Processes Finished succcesfully")
 
     def resume(self):
-        waifu2x = Waifu2xCaffe(self.workspace, self.frame_count, self.waifu2x_caffe_cui_dir, self.model_dir,
-                               self.out_location,
-                               self.upscaled_location, self.process_type, self.noise_level, self.scale_factor)
+        waifu2x = Waifu2xCaffe(self.workspace, self.frame_count, self.waifu2x_caffe_cui_dir,
+                               self.model_dir, self.out_location, self.upscaled_location, self.process_type,
+                               self.noise_level, self.scale_factor)
 
         d = Dandere2xCppWrapper(self.workspace, self.dandere2x_cpp_dir, self.frame_count, self.block_size,
                                 self.tolerance, self.psnr_high, self.psnr_low, self.step_size, resume=True,
@@ -120,7 +148,8 @@ class Dandere2x:
 
         difference_thread = threading.Thread(target=difference_loop_resume,
                                              args=(
-                                             self.workspace, self.frame_count, self.block_size, self.extension_type))
+                                                    self.workspace, self.frame_count,
+                                                    self.block_size, self.extension_type))
 
         waifu2x.start()
         merge_thread.start()
@@ -151,12 +180,12 @@ class Dandere2x:
                 print("Successfully created the directory %s " % subdirectory)
 
     def extract_frames(self):
-        extract_frames(self.ffmpeg_dir, self.time_frame, self.file_dir, self.frame_rate, self.duration, self.workspace,
-                       self.extension_type)
+        ffmpeg_extract_frames(self.ffmpeg_dir, self.time_frame, self.file_dir, self.frame_rate, self.duration,
+                              self.workspace, self.extension_type)
 
     def extract_audio(self):
-        extract_audio(self.ffmpeg_dir, self.time_frame, self.file_dir, self.audio_layer, self.duration, self.workspace,
-                       self.audio_type)
+        ffmpeg_extract_audio(self.ffmpeg_dir, self.time_frame, self.file_dir, self.audio_layer, self.duration,
+                             self.workspace, self.audio_type)
 
     def create_waifu2x_script(self):
         input_list = []

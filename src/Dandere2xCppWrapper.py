@@ -53,6 +53,8 @@ class Dandere2xCppWrapper(threading.Thread):
             elif exists:
                 break
 
+        last_found = last_found - 1
+
         logger.info("last found is " + str(last_found))
 
         exec = [self.dandere2x_cpp_dir, self.workspace, str(self.frame_count),

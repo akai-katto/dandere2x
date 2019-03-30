@@ -1,6 +1,5 @@
 import logging
 import os
-
 import math
 
 from Dandere2xUtils import get_lexicon_value
@@ -53,6 +52,46 @@ def generate_difference_image(raw_frame, block_size, bleed, list_difference, lis
 
     out_image.save_image(out_location)
 
+# for printing out what Dandere2x predictive frames are doing
+def debug(workspace, block_size, bleed,frame_base, list_predictive, list_differences,
+          output_location):
+    logger = logging.getLogger(__name__)
+
+    predictive_vectors = []
+    difference_vectors = []
+    out_image = Frame()
+    out_image.create_new(frame_base.width, frame_base.height)
+
+    if not list_predictive and not list_differences:
+        logger.info("list_predictive and not list_differences: true")
+        logger.info("Saving inversion image..")
+        out_image.save_image(output_location)
+        return
+
+    if list_predictive and not list_differences:
+        logger.info("list_predictive and not list_differences")
+        logger.info("saving last image..")
+
+        out_image.copy_image(frame_base)
+        out_image.save_image(output_location)
+        return
+
+    # load list into vector displacements
+    for x in range(int(len(list_differences) / 4)):
+        difference_vectors.append(DisplacementVector(int(list_differences[x * 4]), int(list_differences[x * 4 + 1]),
+                                                     int(list_differences[x * 4 + 2]),
+                                                     int(list_differences[x * 4 + 3])))
+
+    for x in range(int(len(list_predictive) / 4)):
+        predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4]), int(list_predictive[x * 4 + 1]),
+                                                     int(list_predictive[x * 4 + 2]), int(list_predictive[x * 4 + 3])))
+
+    # copy over predictive vectors into new image
+    for vector in predictive_vectors:
+        out_image.copy_block(frame_base, block_size, vector.x_2, vector.y_2, vector.x_1, vector.y_1)
+
+    out_image.save_image(output_location)
+
 
 def difference_loop(workspace, start_frame, count, block_size, file_type):
     logger = logging.getLogger(__name__)
@@ -68,6 +107,9 @@ def difference_loop(workspace, start_frame, count, block_size, file_type):
 
         generate_difference_image(f1, block_size, bleed, difference_data, prediction_data,
                                   workspace + "outputs" + os.path.sep + "output_" + get_lexicon_value(6, x) + ".png")
+
+        debug(workspace, block_size, bleed, f1, prediction_data, difference_data,
+              workspace + "debug/debug" + str(x + 1) + file_type)
 
 
 # def difference_loop(workspace, start_frame, count, block_size):
@@ -92,7 +134,7 @@ def difference_loop_resume(workspace, count, block_size, file_type):
 
 def main():
     print("path sep", os.path.sep)
-    difference_loop_resume("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\", 95, 16)
+    difference_loop("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\", 95, 16)
 
 
 if __name__ == "__main__":

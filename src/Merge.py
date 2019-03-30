@@ -62,13 +62,13 @@ def merge_loop(workspace, start_frame, count, block_size, file_type):
     for x in range(start_frame, count):
         logger.info("Upscaling frame " + str(x))
         f1 = Frame()
-        f1.load_from_string_wait(workspace + "upscaled/output_" + get_lexicon_value(6, x) + ".png")
+        f1.load_from_string_wait(workspace + "upscaled" + os.path.sep + "output_" + get_lexicon_value(6, x) + ".png")
 
         base = Frame()
-        base.load_from_string_wait(workspace + "merged/merged_" + str(x) + file_type)
+        base.load_from_string_wait(workspace + "merged" + os.path.sep + "merged_" + str(x) + file_type)
 
-        difference_data = wait_on_text(workspace + "inversion_data/inversion_" + str(x) + ".txt")
-        prediction_data = wait_on_text(workspace + "pframe_data/pframe_" + str(x) + ".txt")
+        difference_data = wait_on_text(workspace + "inversion_data" + os.path.sep + "inversion_" + str(x) + ".txt")
+        prediction_data = wait_on_text(workspace + "pframe_data" + os.path.sep + "pframe_" + str(x) + ".txt")
 
         merge(workspace, block_size, bleed, f1, base, prediction_data, difference_data,
               workspace + "merged/merged_" + str(x + 1) + file_type)
