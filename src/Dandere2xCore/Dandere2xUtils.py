@@ -26,6 +26,8 @@ def wait_on_text(text_file):
     return text_list
 
 
+# many times a file may not exist yet, so just have this function
+# wait if it does not.
 def wait_on_file(file_string):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(file_string)
@@ -42,12 +44,12 @@ def wait_on_file(file_string):
 def rename_file(file1, file2):
     try:
         os.rename(file1, file2)
-
     except FileExistsError:
         os.remove(file2)
         os.rename(file1, file2)
 
-
+# Both waifu2x-Caffe and waifu2x-conv read images in lexiconic order, so in order
+# to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.
 def get_lexicon_value(digits, val):
     string = str(val)
 

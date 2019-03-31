@@ -7,9 +7,13 @@ from Dandere2xCore.Dandere2xUtils import get_lexicon_value
 from Dandere2xCore.Dandere2xUtils import rename_file
 
 
-# temporary implementation of waifu2x-caffe wrapper
-# note to self - add listener to delete files in real time(maybe?) for resume.
-# Not sure if Video2x wants that as a feature, though.
+# A pretty hacky wrapper
+# For Waifu2x-Conveter-Cpp
+# Behaves pretty similair to
+# Waifu2x-Caffe- except directory must be set  (for subprocess call)
+# and arguments are slightly different.
+# furthermore, waifu2x-conv-caffe saves files in an annoying way.
+# so we need to correct those odd namings
 
 class Waifu2xConv(threading.Thread):
 
@@ -31,9 +35,13 @@ class Waifu2xConv(threading.Thread):
     def upscale_file(workspace, waifu2x_conv_dir, waifu2x_conv_dir_dir, input_file, output, noise_level, scale_factor):
         logger = logging.getLogger(__name__)
 
-        exec = [waifu2x_conv_dir, "-i", input_file, "-o", output, "--model-dir",
-                "C:\\Users\\windwoz\\Desktop\\waifu2x-cpp\\models_rgb", "--force-OpenCL", "-s", "--noise-level",
-                noise_level, "--scale-ratio", scale_factor]
+        exec = [waifu2x_conv_dir,
+                "-i", input_file, "-o", output,
+                "--model-dir", waifu2x_conv_dir_dir + "models_rgb",
+                "--force-OpenCL",
+                "-s",
+                "--noise-level", noise_level,
+                "--scale-ratio", scale_factor]
 
         os.chdir(waifu2x_conv_dir_dir)
 
@@ -41,6 +49,8 @@ class Waifu2xConv(threading.Thread):
         logger.info(exec)
         subprocess.run(exec)
 
+    # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
+    # this function just renames the files so Dandere2x can interpret them correctly.
     def fix_names(self):
         list = os.listdir(self.upscaled_dir)
         for name in list:
@@ -51,10 +61,18 @@ class Waifu2xConv(threading.Thread):
         logger = logging.getLogger(__name__)
 
         self.fix_names()
-        os.chdir("C:\\Users\\windwoz\\Desktop\\waifu2x-cpp")
-        exec = [self.waifu2x_conv_dir, "-i", self.output_dir, "-o", self.upscaled_dir, "--model-dir",
-                "C:\\Users\\windwoz\\Desktop\\waifu2x-cpp\\models_rgb", "--force-OpenCL", "-s", "--noise-level",
-                self.noise_level, "--scale-ratio", self.scale_factor]
+
+        #we need to os.chdir or else waifu2x-conveter won't work.
+        os.chdir(self.waifu2x_conv_dir_dir)
+
+        exec = [self.waifu2x_conv_dir,
+                "-i", self.output_dir,
+                "-o", self.upscaled_dir,
+                "--model-dir", self.waifu2x_conv_dir_dir + "models_rgb",
+                "--force-OpenCL",
+                "-s",
+                "--noise-level", self.noise_level,
+                "--scale-ratio", self.scale_factor]
 
         logger.info("waifu2xconv session")
         logger.info(exec)

@@ -8,7 +8,7 @@ from Dandere2xCore.Difference import difference_loop
 from Dandere2xCore.Difference import difference_loop_resume
 from Dandere2xCore.Merge import merge_loop
 from Dandere2xCore.Merge import merge_loop_resume
-from Wrappers.Dandere2xCppWrapper import Dandere2xCppWrapper
+from Wrappers.Dandere2xCpp import Dandere2xCppWrapper
 from Wrappers.Waifu2xCaffe import Waifu2xCaffe
 from Wrappers.Waifu2xConv import Waifu2xConv
 from Wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
@@ -26,6 +26,8 @@ class Dandere2x:
         self.waifu2x_caffe_cui_dir = config.get('waifu2x_caffe', 'waifu2x_caffe_cui_dir')
         self.model_dir = config.get('waifu2x_caffe', 'model_dir')
 
+
+
         self.workspace = config.get('dandere2x', 'workspace')
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
@@ -34,6 +36,12 @@ class Dandere2x:
 
         self.waifu2x_conv_dir = config.get('waifu2x_conv', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('waifu2x_conv', 'waifu2x_conv_dir_dir')
+
+        if '[this]' in self.waifu2x_conv_dir:
+            self.waifu2x_conv_dir = self.waifu2x_conv_dir.replace('[this]', self.this_folder)
+
+        if '[this]' in self.waifu2x_conv_dir_dir:
+            self.waifu2x_conv_dir_dir = self.waifu2x_conv_dir_dir.replace('[this]', self.this_folder)
 
         # parse [this] for release versions (removing this feature in the future, just for early testing.
 

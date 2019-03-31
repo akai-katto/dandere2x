@@ -10,7 +10,8 @@ from Dandere2xCore.Dandere2xUtils import rename_file
 from Dandere2xCore.Dandere2xUtils import wait_on_file
 
 
-# fuck this function, lmao
+# fuck this function, lmao. Credits to
+# https://stackoverflow.com/questions/52702809/copy-array-into-part-of-another-array-in-numpy
 def copy_from(A, B, A_start, B_start, B_end):
     """
     A_start is the index with respect to A of the upper left corner of the overlap
@@ -28,6 +29,7 @@ def copy_from(A, B, A_start, B_start, B_end):
         raise ValueError
 
 
+# A vector class
 @dataclass
 class DisplacementVector:
     x_1: int
@@ -59,6 +61,8 @@ class Frame:
         self.width = self.frame.shape[1]
         self.string_name = input_string
 
+    # Wait on a file if it does not exist yet.
+
     def load_from_string_wait(self, input_string):
         logger = logging.getLogger(__name__)
         exists = exists = os.path.isfile(input_string)
@@ -79,8 +83,8 @@ class Frame:
                 logger.info("Permission Error")
                 loaded = False
 
-    # first save under a dif name, then rename
-    # to prevent image from being read until finished
+    # Save an image, then rename it. This prevents other parts of Dandere2x
+    # from accessing an image file that hasn't finished saving.
     def save_image(self, out_location):
         extension = os.path.splitext(os.path.basename(out_location))[1]
 
@@ -89,9 +93,22 @@ class Frame:
 
         rename_file(out_location + "temp" + extension, out_location)
 
+    # This function exists because the act of numpy processing an image
+    # changes the overall look of an image. (I guess?). In the case
+    # where Dandere2x needs to just load an image and save it somewhere else,
+    # Dandere2x needs to copy the image using numpy to maintain visual aesthetic.
+
     def copy_image(self, frame_other):
         copy_from(frame_other.frame, self.frame, (0, 0), (0, 0),
                   (frame_other.frame.shape[1], frame_other.frame[1].shape[0]))
+
+    # this uses the 'copy_from' function I found on stackoverflow.
+    # We have to use this function because using ' for x in range(...) ' is too
+    # slow for python, so we have to use specialized functions to copy
+    # blocks en masse.
+
+    # This function exists as a wrapper mostly to give detailed errors if something goes wrong,
+    # as copy_from won't give any meaningful errors.
 
     def copy_block(self, frame_other, block_size, other_x, other_y, this_x, this_y):
         if this_x + block_size - 1 > self.width or this_y + block_size - 1 > self.height:
@@ -110,6 +127,11 @@ class Frame:
 
         copy_from(frame_other.frame, self.frame, (other_y, other_x), (this_y, this_x),
                   (this_y + block_size - 1, this_x + block_size - 1))
+
+    # Sometimes we need to copy a block + some bleed as a result of Waifu2x Bleeding. (see documentation).
+    # Sometimes this bleed may or may not actually exist, in which case just put a color like black or something.
+    # This function creates an image 'bleed' pixels larger than the original image, as to avoid
+    # accessing pixels that may not exist.
 
     def create_bleeded_image(self, bleed):
         shape = self.frame.shape
