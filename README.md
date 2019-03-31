@@ -39,6 +39,7 @@ Changelog (since 0.3)
 - Support for resuming Dandere2x Sessions
 - Custom model type for Waifu2x-Caffe
 - Entirely reworked in python
+- Support for .pngs, although I do not recommend this
 
 https://www.reddit.com/r/Dandere2x/comments/b1lmeh/dandere2x_alpha_03_release/
 
