@@ -1,5 +1,4 @@
 # temp ffmpeg wrapper, terrible implementation fix later
-import os
 import subprocess
 
 
@@ -12,6 +11,7 @@ def extract_frames(ffmpeg_dir, time_frame, file_dir, frame_rate, duration, input
     print(exec)
 
     subprocess.run(exec)
+
 
 def extract_audio(ffmpeg_dir, time_frame, file_dir, audio_layer, duration, workspace, audio_type):
     command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir + \

@@ -7,7 +7,6 @@ from Wrappers.Frame import DisplacementVector
 from Wrappers.Frame import Frame
 
 
-# L
 def make_merge_image(workspace, block_size, bleed, frame_inversion, frame_base, list_predictive, list_differences,
                      output_location):
     logger = logging.getLogger(__name__)
@@ -66,27 +65,28 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
     for x in range(start_frame, count):
         logger.info("Upscaling frame " + str(x))
 
-        #load images required to merge this frame
+        # load images required to merge this frame
         f1 = Frame()
         f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
         base = Frame()
         base.load_from_string_wait(merged_dir + "merged_" + str(x) + file_type)
 
-        #load vectors needed to piece image back together
+        # load vectors needed to piece image back together
         difference_data = wait_on_text(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
         make_merge_image(workspace, block_size, bleed, f1, base, prediction_data, difference_data,
                          workspace + "merged/merged_" + str(x + 1) + file_type)
 
-#merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
+
+# merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
 #               start_frame, count, block_size, file_type)
 
 # find the last photo to be merged, then start the loop from there
 
 
 def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-               count, block_size, file_type):
+                      count, block_size, file_type):
     logger = logging.getLogger(__name__)
     last_found = count
 
@@ -103,8 +103,9 @@ def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, p
     merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
                last_found, count, block_size, file_type)
 
-#(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-             #  count, block_size, file_type)
+
+# (workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
+#  count, block_size, file_type)
 def main():
     # merge_loop("/home/linux/Videos/testrun/testrun2/", 120)
     merge_loop_resume("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\",
@@ -112,9 +113,7 @@ def main():
                       "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\merged\\",
                       "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inversion_data\\",
                       "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\pframe_data\\",
-                      120,30,".jpg")
-
-
+                      120, 30, ".jpg")
 
 
 if __name__ == "__main__":

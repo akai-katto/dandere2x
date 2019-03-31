@@ -32,7 +32,7 @@ class Waifu2xConv(threading.Thread):
         logger = logging.getLogger(__name__)
 
         exec = [waifu2x_conv_dir, "-i", input_file, "-o", output, "--model-dir",
-                "C:\\Users\\windwoz\\Desktop\\waifu2x-cpp\\models_rgb", "--force-OpenCL","-s", "--noise-level",
+                "C:\\Users\\windwoz\\Desktop\\waifu2x-cpp\\models_rgb", "--force-OpenCL", "-s", "--noise-level",
                 noise_level, "--scale-ratio", scale_factor]
 
         os.chdir(waifu2x_conv_dir_dir)
@@ -47,18 +47,16 @@ class Waifu2xConv(threading.Thread):
             if '[NS-L3][x2.000000]' in name:
                 rename_file(self.upscaled_dir + name, self.upscaled_dir + name.replace('_[NS-L3][x2.000000]', ''))
 
-
     def run(self):
         logger = logging.getLogger(__name__)
-
 
         self.fix_names()
         os.chdir("C:\\Users\\windwoz\\Desktop\\waifu2x-cpp")
         exec = [self.waifu2x_conv_dir, "-i", self.output_dir, "-o", self.upscaled_dir, "--model-dir",
-                "C:\\Users\\windwoz\\Desktop\\waifu2x-cpp\\models_rgb", "--force-OpenCL","-s", "--noise-level",
+                "C:\\Users\\windwoz\\Desktop\\waifu2x-cpp\\models_rgb", "--force-OpenCL", "-s", "--noise-level",
                 self.noise_level, "--scale-ratio", self.scale_factor]
 
-        logger.info("waifu2xcaffe session")
+        logger.info("waifu2xconv session")
         logger.info(exec)
 
         names = []

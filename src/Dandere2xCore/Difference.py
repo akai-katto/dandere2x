@@ -1,5 +1,6 @@
 import logging
 import os
+
 import math
 
 from Dandere2xCore.Dandere2xUtils import get_lexicon_value
@@ -101,7 +102,6 @@ def debug(workspace, block_size, bleed, frame_base, list_predictive, list_differ
 
 def difference_loop(workspace, difference_dir, inversion_data_dir, pframe_data_dir,
                     input_frames_dir, start_frame, count, block_size, file_type):
-
     logger = logging.getLogger(__name__)
     bleed = 1
     logger.info((workspace, start_frame, count, block_size))
@@ -124,7 +124,6 @@ def difference_loop(workspace, difference_dir, inversion_data_dir, pframe_data_d
 
 def difference_loop_resume(workspace, upscaled_dir, difference_dir, inversion_data_dir, pframe_data_dir,
                            input_frames_dir, count, block_size, file_type):
-
     logger = logging.getLogger(__name__)
 
     last_found = count
@@ -141,27 +140,22 @@ def difference_loop_resume(workspace, upscaled_dir, difference_dir, inversion_da
     last_found -= 1
     logger.info("difference loop last frame found: " + str(last_found))
 
-
     difference_loop(workspace, difference_dir, inversion_data_dir, pframe_data_dir,
                     input_frames_dir, last_found, count, block_size, file_type)
 
 
 def main():
     print("path sep", os.path.sep)
-    #difference_loop("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\", 95, 16)
-
-
-
+    # difference_loop("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\", 95, 16)
 
     difference_loop_resume("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\",
-                            "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\differences\\",
-                            "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inversion_data\\",
-                            "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\pframe_data\\",
-                            "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inputs\\",
-                            120,
-                            30,
-                            ".jpg")
-
+                           "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\differences\\",
+                           "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inversion_data\\",
+                           "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\pframe_data\\",
+                           "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inputs\\",
+                           120,
+                           30,
+                           ".jpg")
 
 
 if __name__ == "__main__":

@@ -3,18 +3,16 @@ import logging
 import os
 import threading
 
-from Wrappers.Dandere2xCppWrapper import Dandere2xCppWrapper
+from Dandere2xCore.Dandere2xUtils import get_seconds_from_time
 from Dandere2xCore.Difference import difference_loop
 from Dandere2xCore.Difference import difference_loop_resume
-
 from Dandere2xCore.Merge import merge_loop
 from Dandere2xCore.Merge import merge_loop_resume
+from Wrappers.Dandere2xCppWrapper import Dandere2xCppWrapper
 from Wrappers.Waifu2xCaffe import Waifu2xCaffe
 from Wrappers.Waifu2xConv import Waifu2xConv
-
-from Wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from Wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
-from Dandere2xCore.Dandere2xUtils import get_seconds_from_time
+from Wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 
 
 class Dandere2x:
@@ -33,7 +31,6 @@ class Dandere2x:
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
         self.file_dir = config.get('dandere2x', 'file_dir')
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
-
 
         self.waifu2x_conv_dir = config.get('waifu2x_conv', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('waifu2x_conv', 'waifu2x_conv_dir_dir')
@@ -74,14 +71,12 @@ class Dandere2x:
         self.psnr_low = config.get('dandere2x', 'psnr_low')
         self.psnr_high = config.get('dandere2x', 'psnr_high')
 
-
         # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
         self.scale_factor = config.get('dandere2x', 'scale_factor')
         self.process_type = config.get('dandere2x', 'process_type')
         self.extension_type = config.get('dandere2x', 'extension_type')
         self.audio_type = config.get('dandere2x', 'audio_type')
-
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
@@ -92,9 +87,7 @@ class Dandere2x:
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
-        self.frame_count = get_seconds_from_time(self.duration)*int(self.frame_rate)
-
-
+        self.frame_count = get_seconds_from_time(self.duration) * int(self.frame_rate)
 
         logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
@@ -107,7 +100,6 @@ class Dandere2x:
         self.create_waifu2x_script()
         self.write_frames()
         self.write_merge_commands()
-
 
     # Run Dandere2x concurrently with all the other processes.
     # Waifu2xCaffe, Dandere2xCpp, Merging and Differences all run in seperate / external processes
@@ -185,9 +177,8 @@ class Dandere2x:
                                                    self.block_size,
                                                    self.extension_type))
 
-
-
         self.logger.info("Starting Threaded Processes..")
+
         waifu2x.start()
         merge_thread.start()
         difference_thread.start()
@@ -200,7 +191,7 @@ class Dandere2x:
 
         self.logger.info("Threaded Processes Finished succcesfully")
 
-    # Not working entirely at the moment
+    # Resume a Dandere2x Session
     def resume_concurrent(self):
         if self.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.workspace,
@@ -235,17 +226,25 @@ class Dandere2x:
                                                   resume=True,
                                                   extension_type=self.extension_type)
 
-        merge_thread = threading.Thread(target=merge_loop_resume, args=(self.workspace, self.upscaled_dir,
-                                                                        self.merged_dir, self.inversion_data_dir,
-                                                                        self.pframe_data_dir, self.frame_count,
-                                                                        self.block_size, self.extension_type))
+        merge_thread = threading.Thread(target=merge_loop_resume, args=(self.workspace,
+                                                                        self.upscaled_dir,
+                                                                        self.merged_dir,
+                                                                        self.inversion_data_dir,
+                                                                        self.pframe_data_dir,
+                                                                        self.frame_count,
+                                                                        self.block_size,
+                                                                        self.extension_type))
 
         difference_thread = threading.Thread(target=difference_loop_resume,
-                                             args=(self.workspace, self.upscaled_dir,
-                                                   self.differences_dir, self.inversion_data_dir,
-                                                   self.pframe_data_dir, self.input_frames_dir,
-                                                   self.frame_count, self.block_size, self.extension_type))
-
+                                             args=(self.workspace,
+                                                   self.upscaled_dir,
+                                                   self.differences_dir,
+                                                   self.inversion_data_dir,
+                                                   self.pframe_data_dir,
+                                                   self.input_frames_dir,
+                                                   self.frame_count,
+                                                   self.block_size,
+                                                   self.extension_type))
 
         self.logger.info("Starting Threaded Processes..")
         waifu2x.start()
@@ -259,7 +258,6 @@ class Dandere2x:
         waifu2x.join()
 
         self.logger.info("Threaded Processes Finished succcesfully")
-
 
     # only calculate the differences. To be implemented in video2x / converter-cpp
     def difference_only(self):
@@ -308,7 +306,6 @@ class Dandere2x:
         merge_thread.start()
         merge_thread.join()
 
-
     def create_dirs(self):
         directories = {self.workspace,
                        self.input_frames_dir,
@@ -331,14 +328,22 @@ class Dandere2x:
                 print("Successfully created the directory %s " % subdirectory)
 
     def extract_frames(self):
-        ffmpeg_extract_frames(self.ffmpeg_dir, self.time_frame, self.file_dir, self.frame_rate, self.duration,
-                              self.input_frames_dir, self.extension_type)
+        ffmpeg_extract_frames(self.ffmpeg_dir,
+                              self.time_frame,
+                              self.file_dir,
+                              self.frame_rate,
+                              self.duration,
+                              self.input_frames_dir,
+                              self.extension_type)
 
     def extract_audio(self):
-        ffmpeg_extract_audio(self.ffmpeg_dir, self.time_frame, self.file_dir, self.audio_layer, self.duration,
-                             self.workspace, self.audio_type)
-
-
+        ffmpeg_extract_audio(self.ffmpeg_dir,
+                             self.time_frame,
+                             self.file_dir,
+                             self.audio_layer,
+                             self.duration,
+                             self.workspace,
+                             self.audio_type)
 
     # for linux
     def create_waifu2x_script(self):
@@ -358,7 +363,6 @@ class Dandere2x:
 
         os.chmod(self.workspace + os.path.sep + 'waifu2x_script.sh', 0o777)
 
-
     def write_frames(self):
         with open(self.workspace + os.path.sep + 'frames.txt', 'w') as f:
             for x in range(1, self.frame_count):
@@ -366,8 +370,10 @@ class Dandere2x:
 
     def write_merge_commands(self):
         with open(self.workspace + os.path.sep + 'commands.txt', 'w') as f:
-            f.write("ffmpeg -f image2 -framerate " + self.frame_rate + " -i " + self.merged_dir + "merged_%d.jpg -r 24 " + self.workspace + "nosound.mp4\n\n")
-            f.write("ffmpeg -i " + self.workspace + "nosound.mp4" + " -i " + self.workspace + "audio" + self.audio_type + " -c copy "
+            f.write(
+                self.ffmpeg_dir + " -f image2 -framerate " + self.frame_rate + " -i " + self.merged_dir + "merged_%d.jpg -r 24 " + self.workspace + "nosound.mp4\n\n")
+            f.write(
+                self.ffmpeg_dir + " -i " + self.workspace + "nosound.mp4" + " -i " + self.workspace + "audio" + self.audio_type + " -c copy "
                 + self.workspace + "sound.mp4\n\n")
 
     def make_dif(self):

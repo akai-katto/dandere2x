@@ -6,8 +6,8 @@ from dataclasses import dataclass
 import numpy as np
 from scipy import misc  # pip install Pillow
 
-from Dandere2xCore.Dandere2xUtils import wait_on_file
 from Dandere2xCore.Dandere2xUtils import rename_file
+from Dandere2xCore.Dandere2xUtils import wait_on_file
 
 
 # fuck this function, lmao

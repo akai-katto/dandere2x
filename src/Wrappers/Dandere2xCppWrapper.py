@@ -3,12 +3,10 @@ import os
 import subprocess
 import threading
 
-
-# should this be a script instead of a class?
-
 class Dandere2xCppWrapper(threading.Thread):
     def __init__(self, workspace, dandere2x_cpp_dir, frame_count, block_size, tolerance, psnr_high, \
                  psnr_low, step_size, extension_type, resume):
+
         self.workspace = workspace
         self.dandere2x_cpp_dir = dandere2x_cpp_dir
         self.frame_count = frame_count
