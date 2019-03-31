@@ -38,6 +38,16 @@ def wait_on_file(file_string):
         time.sleep(.001)
 
 
+# custom function to rename file if it already exists
+def rename_file(file1, file2):
+    try:
+        os.rename(file1, file2)
+
+    except FileExistsError:
+        os.remove(file2)
+        os.rename(file1, file2)
+
+
 def get_lexicon_value(digits, val):
     string = str(val)
 

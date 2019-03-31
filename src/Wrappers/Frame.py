@@ -6,7 +6,8 @@ from dataclasses import dataclass
 import numpy as np
 from scipy import misc  # pip install Pillow
 
-from Dandere2xUtils import wait_on_file
+from Dandere2xCore.Dandere2xUtils import wait_on_file
+from Dandere2xCore.Dandere2xUtils import rename_file
 
 
 # fuck this function, lmao
@@ -69,7 +70,14 @@ class Frame:
             count += 1
             time.sleep(.2)
 
-        self.load_from_string(input_string)
+        loaded = False
+        while not loaded:
+            try:
+                self.load_from_string(input_string)
+                loaded = True
+            except PermissionError:
+                logger.info("Permission Error")
+                loaded = False
 
     # first save under a dif name, then rename
     # to prevent image from being read until finished
@@ -79,7 +87,7 @@ class Frame:
         misc.imsave(out_location + "temp" + extension, self.frame)
         wait_on_file(out_location + "temp" + extension)
 
-        os.rename(out_location + "temp" + extension, out_location)
+        rename_file(out_location + "temp" + extension, out_location)
 
     def copy_image(self, frame_other):
         copy_from(frame_other.frame, self.frame, (0, 0), (0, 0),
