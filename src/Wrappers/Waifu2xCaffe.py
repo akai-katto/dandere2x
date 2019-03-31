@@ -30,8 +30,12 @@ class Waifu2xCaffe(threading.Thread):
     def upscale_file(workspace, waifu2x_caffe_dir, model_dir, input_file, output, setting, noise_level, scale_factor):
         logger = logging.getLogger(__name__)
 
-        exec = [waifu2x_caffe_dir, "-i", input_file, "-p", setting, "-n", noise_level, "-s",
-                scale_factor, "-o", output]
+        exec = [waifu2x_caffe_dir,
+                "-i", input_file,
+                "-p", setting,
+                "-n", noise_level,
+                "-s", scale_factor,
+                "-o", output]
 
         if model_dir != "default":
             exec.append("--model_dir")
@@ -43,8 +47,13 @@ class Waifu2xCaffe(threading.Thread):
 
     def run(self):
         logger = logging.getLogger(__name__)
-        exec = [self.waifu2x_caffe_dir, "-i", self.output_dir, "-p",
-                self.p_setting, "-n", self.noise_level, "-s", self.scale_factor, "-o", self.upscaled_dir]
+        
+        exec = [self.waifu2x_caffe_dir,
+                "-i", self.output_dir,
+                "-p", self.p_setting,
+                "-n", self.noise_level,
+                "-s", self.scale_factor,
+                "-o", self.upscaled_dir]
 
         if self.model_dir != "default":
             exec.append("--model_dir")
@@ -53,13 +62,14 @@ class Waifu2xCaffe(threading.Thread):
         logger.info("waifu2xcaffe session")
         logger.info(exec)
 
+        # make a list of names that will eventually (past or future) be upscaled
         names = []
         for x in range(1, self.frame_count):
             names.append("output_" + get_lexicon_value(6, x) + ".png")
 
         count_removed = 0
 
-        # for resuming
+        # remove from the list images that have already been upscaled
         for item in names[::-1]:
             if os.path.isfile(self.upscaled_dir + item):
                 names.remove(item)
@@ -68,6 +78,7 @@ class Waifu2xCaffe(threading.Thread):
         if count_removed:
             logger.info("Already have " + str(count_removed) + " upscaled")
 
+        # while there are pictures that have yet to be upscaled, keep calling the upscale command
         while names:
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))

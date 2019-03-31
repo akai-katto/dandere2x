@@ -44,15 +44,18 @@ def make_merge_image(workspace, block_size, bleed, frame_inversion, frame_base, 
     # copy over predictive vectors into new image
     for vector in predictive_vectors:
         out_image.copy_block(frame_base, block_size * 2,
-                             vector.x_2 * 2, vector.y_2 * 2,
-                             vector.x_1 * 2, vector.y_1 * 2)
+                             vector.x_2 * 2,
+                             vector.y_2 * 2,
+                             vector.x_1 * 2,
+                             vector.y_1 * 2)
 
     # copy over inversion vectors (the difference images) into new image
     for vector in difference_vectors:
         out_image.copy_block(frame_inversion, block_size * 2,
                              vector.x_2 * (block_size + bleed * 2) * 2 + 2,
                              vector.y_2 * (block_size + bleed * 2) * 2 + 2,
-                             vector.x_1 * 2, vector.y_1 * 2)
+                             vector.x_1 * 2,
+                             vector.y_1 * 2)
 
     out_image.save_image(output_location)
 
@@ -68,6 +71,7 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
         # load images required to merge this frame
         f1 = Frame()
         f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
+
         base = Frame()
         base.load_from_string_wait(merged_dir + "merged_" + str(x) + file_type)
 
@@ -81,10 +85,7 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
 
 # merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
 #               start_frame, count, block_size, file_type)
-
 # find the last photo to be merged, then start the loop from there
-
-
 def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
                       count, block_size, file_type):
     logger = logging.getLogger(__name__)
@@ -93,6 +94,7 @@ def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, p
     while last_found > 1:
         exists = os.path.isfile(workspace + os.path.sep + "merged" + os.path.sep + "merged_" + str(last_found) + ".jpg")
         logging.info(workspace + os.path.sep + "merged" + os.path.sep + "merged_" + str(last_found) + ".jpg")
+
         if not exists:
             last_found -= 1
 

@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config.ini">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+            <state relative-caret-position="125">
+              <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
             </state>
           </provider>
         </entry>
@@ -35,7 +35,7 @@
         <entry file="file://$PROJECT_DIR$/resume.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="100">
-              <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+              <caret line="4" selection-start-line="4" selection-end-line="4" />
             </state>
           </provider>
         </entry>
@@ -43,11 +43,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Dandere2x.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4025">
-              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="-539">
+              <caret line="90" column="33" selection-start-line="90" selection-start-column="33" selection-end-line="90" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -55,17 +52,19 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Dandere2xCore/Dandere2xUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-500">
-              <caret line="29" column="22" selection-start-line="29" selection-start-column="22" selection-end-line="29" selection-end-column="22" />
+            <state>
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Wrappers/Waifu2xConv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="298">
-              <caret line="42" column="45" lean-forward="true" selection-start-line="42" selection-start-column="45" selection-end-line="42" selection-end-column="45" />
+            <state relative-caret-position="1600">
+              <caret line="64" column="89" selection-start-line="64" selection-start-column="89" selection-end-line="64" selection-end-column="89" />
             </state>
           </provider>
         </entry>
@@ -73,8 +72,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Wrappers/Dandere2xCpp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="825">
-              <caret line="48" column="31" lean-forward="true" selection-start-line="48" selection-start-column="31" selection-end-line="48" selection-end-column="31" />
+            <state relative-caret-position="-875">
+              <caret line="19" column="28" lean-forward="true" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -85,8 +84,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Wrappers/Frame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="19" column="7" lean-forward="true" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
+            <state relative-caret-position="3225">
+              <caret line="142" selection-start-line="142" selection-end-line="142" />
             </state>
           </provider>
         </entry>
@@ -94,8 +93,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Dandere2xCore/Merge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-850">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="-325">
+              <caret line="80" lean-forward="true" selection-start-line="80" selection-end-line="80" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -103,11 +102,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Wrappers/Waifu2xCaffe.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="56" column="44" lean-forward="true" selection-start-line="56" selection-start-column="44" selection-end-line="56" selection-end-column="44" />
+            <state relative-caret-position="200">
+              <caret line="49" column="8" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="8" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -181,7 +180,6 @@
         <option value="$PROJECT_DIR$/Dandere2xConverterCpp.py" />
         <option value="$PROJECT_DIR$/Dandere2xConverterCore/Dandere2xConverterCpp.py" />
         <option value="$PROJECT_DIR$/Dandere2xConverterCore/Waifu2xConv.py" />
-        <option value="$PROJECT_DIR$/Wrappers/Waifu2xCaffe.py" />
         <option value="$PROJECT_DIR$/Dandere2xConverterCore/Dandere2x_Conv.py" />
         <option value="$PROJECT_DIR$/Dandere2xCore/Difference.py" />
         <option value="$PROJECT_DIR$/main.py" />
@@ -190,12 +188,14 @@
         <option value="$PROJECT_DIR$/new.py" />
         <option value="$PROJECT_DIR$/resume.py" />
         <option value="$PROJECT_DIR$/Wrappers/Dandere2xCppWrapper.py" />
-        <option value="$PROJECT_DIR$/Dandere2xCore/Merge.py" />
         <option value="$PROJECT_DIR$/config.ini" />
         <option value="$PROJECT_DIR$/Dandere2x.py" />
         <option value="$PROJECT_DIR$/Dandere2xCore/Dandere2xUtils.py" />
-        <option value="$PROJECT_DIR$/Wrappers/Frame.py" />
         <option value="$PROJECT_DIR$/Wrappers/Waifu2xConv.py" />
+        <option value="$PROJECT_DIR$/Wrappers/Frame.py" />
+        <option value="$PROJECT_DIR$/Wrappers/Dandere2xCpp.py" />
+        <option value="$PROJECT_DIR$/Dandere2xCore/Merge.py" />
+        <option value="$PROJECT_DIR$/Wrappers/Waifu2xCaffe.py" />
       </list>
     </option>
   </component>
@@ -428,7 +428,7 @@
       <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.20231824" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="0" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="1" visible="true" weight="0.27302274" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.27302274" />
       <window_info anchor="bottom" id="Terminal" order="2" weight="0.32936078" />
       <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
       <window_info anchor="bottom" id="TODO" order="4" />
@@ -500,61 +500,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resume.py">
+    <entry file="file://$PROJECT_DIR$/Wrappers/Waifu2xConv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Dandere2x.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4025">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Wrappers/Frame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="19" column="7" lean-forward="true" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
+        <state relative-caret-position="1600">
+          <caret line="64" column="89" selection-start-line="64" selection-start-column="89" selection-end-line="64" selection-end-column="89" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Dandere2xCore/Dandere2xUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-500">
-          <caret line="29" column="22" selection-start-line="29" selection-start-column="22" selection-end-line="29" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Dandere2xCore/Merge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-850">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        <state>
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Wrappers/Waifu2xCaffe.py">
+    <entry file="file://$PROJECT_DIR$/Dandere2x.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="56" column="44" lean-forward="true" selection-start-line="56" selection-start-column="44" selection-end-line="56" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        <state relative-caret-position="-539">
+          <caret line="90" column="33" selection-start-line="90" selection-start-column="33" selection-end-line="90" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -565,20 +530,54 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resume.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Wrappers/Dandere2xCpp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
-          <caret line="48" column="31" lean-forward="true" selection-start-line="48" selection-start-column="31" selection-end-line="48" selection-end-column="31" />
+        <state relative-caret-position="-875">
+          <caret line="19" column="28" lean-forward="true" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Wrappers/Waifu2xConv.py">
+    <entry file="file://$PROJECT_DIR$/Wrappers/Frame.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="42" column="45" lean-forward="true" selection-start-line="42" selection-start-column="45" selection-end-line="42" selection-end-column="45" />
+        <state relative-caret-position="3225">
+          <caret line="142" selection-start-line="142" selection-end-line="142" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Dandere2xCore/Merge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-325">
+          <caret line="80" lean-forward="true" selection-start-line="80" selection-end-line="80" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Wrappers/Waifu2xCaffe.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="49" column="8" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

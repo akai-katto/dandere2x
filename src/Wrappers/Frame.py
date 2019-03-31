@@ -24,6 +24,7 @@ def copy_from(A, B, A_start, B_start, B_end):
         B_slices = tuple(map(slice, B_start, B_end + 1))
         A_slices = tuple(map(slice, A_start, A_start + shape + 1))
         B[B_slices] = A[A_slices]
+
     except ValueError:
         logging.info("fatal error copying block")
         raise ValueError
@@ -40,6 +41,14 @@ class DisplacementVector:
 
 # Custom Wrapper for Numpy to better resemble Java's Image API
 # Fuck using numpy for images, lmfao.
+
+# usage:
+# frame = Frame()
+# frame.load_from_string("input.png")
+# frame2 = Frame()
+# frame2.copy_image(frame)
+# frame3 = frame()
+# frame3.create_new(1920,1080)
 
 class Frame:
     def __init__(self):
@@ -90,7 +99,6 @@ class Frame:
 
         misc.imsave(out_location + "temp" + extension, self.frame)
         wait_on_file(out_location + "temp" + extension)
-
         rename_file(out_location + "temp" + extension, out_location)
 
     # This function exists because the act of numpy processing an image

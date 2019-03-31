@@ -26,8 +26,6 @@ class Dandere2x:
         self.waifu2x_caffe_cui_dir = config.get('waifu2x_caffe', 'waifu2x_caffe_cui_dir')
         self.model_dir = config.get('waifu2x_caffe', 'model_dir')
 
-
-
         self.workspace = config.get('dandere2x', 'workspace')
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
@@ -109,9 +107,9 @@ class Dandere2x:
         self.write_frames()
         self.write_merge_commands()
 
-    # Run Dandere2x concurrently with all the other processes.
-    # Waifu2xCaffe, Dandere2xCpp, Merging and Differences all run in seperate / external processes
-    # For real time performance
+    # create a series of threads and external processes
+    # to run in real time with eachother for the dandere2x session.
+    # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()
 
@@ -359,7 +357,8 @@ class Dandere2x:
         input_list.append("cd /home/linux/Documents/waifu2x/")
 
         input_list.append(
-            "th " + self.dandere_dir + " -m noise_scale -noise_level 3 -i " + self.input_frames_dir + "frame1" + self.extension_type +
+            "th " + self.dandere_dir + " -m noise_scale -noise_level 3 -i "
+            + self.input_frames_dir + "frame1" + self.extension_type +
             " -o " + self.merged_dir + "merged_1" + self.extension_type + "\n")
 
         input_list.append("th " + self.dandere_dir + " -m noise_scale -noise_level 3 -resume 1 -l "
@@ -371,11 +370,13 @@ class Dandere2x:
 
         os.chmod(self.workspace + os.path.sep + 'waifu2x_script.sh', 0o777)
 
+    # for linux
     def write_frames(self):
         with open(self.workspace + os.path.sep + 'frames.txt', 'w') as f:
             for x in range(1, self.frame_count):
                 f.write(self.differences_dir + "output_" + str(x) + ".png\n")
 
+    # for re-merging the files after runtime is done
     def write_merge_commands(self):
         with open(self.workspace + os.path.sep + 'commands.txt', 'w') as f:
             f.write(
@@ -383,9 +384,3 @@ class Dandere2x:
             f.write(
                 self.ffmpeg_dir + " -i " + self.workspace + "nosound.mp4" + " -i " + self.workspace + "audio" + self.audio_type + " -c copy "
                 + self.workspace + "sound.mp4\n\n")
-
-    def make_dif(self):
-        difference_loop(self.workspace, self.frame_count)
-
-    def merge(self):
-        merge_loop(self.workspace, self.frame_count)

@@ -3,7 +3,7 @@ import os
 import time
 
 
-# waits for a text file, then returns
+# waits for a text file, then returns the file as a list sperated by lines
 def wait_on_text(text_file):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
@@ -47,6 +47,7 @@ def rename_file(file1, file2):
     except FileExistsError:
         os.remove(file2)
         os.rename(file1, file2)
+
 
 # Both waifu2x-Caffe and waifu2x-conv read images in lexiconic order, so in order
 # to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.
