@@ -24,17 +24,24 @@ using namespace std;
 //args = workspace, framecount, blockSize, tolerance, stepSize, 
 int main(int argc, char** argv){
     
+//    Image im1 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.4\\demo_folder\\workspace\\inputs\\frame1029.jpg");
+//    Image im2 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.4\\demo_folder\\workspace\\inputs\\frame1032.jpg");
+//    
+//    
+//    std::cout << CImageUtils::psnr(im1, im2) << std::endl;
+    
+    
     bool debug = false; //debug flag
     
     string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\";
-    int frameCount = 144;
-    int blockSize = 16;
+    int frameCount = 2000;
+    int blockSize = 30;
     double tolerance = 15;
-    double psnrMax = 95;
-    double psnrMin = 85;
+    double psnrMax = 98;
+    double psnrMin = 94;
     int stepSize = 4;
-    string runType = "r";// 'n' or 'r'
-    int resumeFrame = 17;
+    string runType = "n";// 'n' or 'r'
+    int resumeFrame = 23;
     string extensionType = ".jpg";
     
     if(!debug){

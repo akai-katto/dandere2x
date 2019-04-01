@@ -17,7 +17,6 @@
 #include "DandereUtils/DandereUtils.h" //waitForFile
 #include "Difference/PDifference.h"
 
-
 /**
  * 
  * 1) In Dandere2x, the first frame of any function is seen as different.
@@ -43,108 +42,113 @@
  */
 void driverDifference(std::string workspace, int frameCount, int blockSize,
         double tolerance, double psnrMax, double psnrMin, int stepSize,
-        std::string extensionType){
-    
-    
+        std::string extensionType) {
+
+
     int bleed = 2; //i dont think bleed is actually used? 
     bool debug = true;
-    
+
     //1 
     waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
     shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
-    
-    for(int x = 1; x < frameCount; x++){
-        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
+
+    for (int x = 1; x < frameCount; x++) {
+        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         std::cout << "Computing differences for frame" << x << endl;
-        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
-        PDifference dif = PDifference(im1, im2,x, blockSize,bleed, tolerance, workspace, stepSize, debug);
+
+        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
+        PDifference dif = PDifference(im1, im2, x, blockSize, bleed, tolerance, workspace, stepSize, debug);
+
         dif.generatePData(); //2
+
         dif.drawOverIfRequired(); //3
-        
-        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
-        
+
+        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
+
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
-        
+
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
-        
-        if(psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80){
+
+        if (psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80) {
             std::cout << "Psnr too low: " << psnrPFrame << " < " << psnrMin << std::endl;
-            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance-1 << std::endl;
+            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << std::endl;
             tolerance--;
             x--;
             continue;
         }
-        
-        if(psnrPFrame > psnrMax && tolerance < 30 && psnrPFrame < 99){
+
+        if (psnrPFrame > psnrMax && tolerance < 30 && psnrPFrame < 99) {
             std::cout << "Psnr too high: " << psnrPFrame << " > " << psnrMax << std::endl;
-            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance+1 << std::endl;
+            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << std::endl;
             tolerance++;
         }
-        
-        
+
+
         dif.save();
         im1 = im2; //4
 
     }
-    
+
 }
 
-
-
-
 //resume and start can be combined. Do this in future
-void driverDifferenceResume(std::string workspace,int resumeCount, int frameCount, int blockSize, double tolerance, double psnrMax, double psnrMin,
-        int stepSize, std::string extensionType){
-    
-    
+// 4-1-19, I still have not updated this
+
+void driverDifferenceResume(std::string workspace, int resumeCount, int frameCount, int blockSize, double tolerance, double psnrMax, double psnrMin,
+        int stepSize, std::string extensionType) {
+
+
     int bleed = 2;
     bool debug = true;
-    
+
     //1 
     waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + extensionType);
     shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + extensionType);
-    
-    for(int x = resumeCount; x < frameCount; x++){
-        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
+
+    for (int x = resumeCount; x < frameCount; x++) {
+        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         std::cout << "Computing differences for frame" << x << endl;
-        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
-        PDifference dif = PDifference(im1, im2,x, blockSize,bleed, tolerance, workspace, stepSize, debug);
-        if(x==resumeCount){
+
+        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
+        PDifference dif = PDifference(im1, im2, x, blockSize, bleed, tolerance, workspace, stepSize, debug);
+
+        if (x == resumeCount) {
             std::cout << "invoking force copy " << endl;
             dif.forceCopy();
             dif.save();
             im1 = im2;
             continue;
         }
+
         dif.generatePData(); //2
         dif.drawOverIfRequired();
-        
-        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x+1) + extensionType);
+
+        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
-        
+
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
-        
-        if(psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80){
+
+        if (psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80) {
             std::cout << "Psnr too low: " << psnrPFrame << " < " << psnrMin << std::endl;
-            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance-1 << std::endl;
+            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << std::endl;
             tolerance--;
             x--;
             continue;
         }
-        
-        if(psnrPFrame > psnrMax && tolerance < 30 && psnrPFrame < 99){
+
+        if (psnrPFrame > psnrMax && tolerance < 30 && psnrPFrame < 99) {
             std::cout << "Psnr too high: " << psnrPFrame << " > " << psnrMax << std::endl;
-            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance+1 << std::endl;
+            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << std::endl;
             tolerance++;
         }
-        
+
         dif.save();
-        
-        
+
+
         im1 = im2; //4
 
     }
-    
+
 }
 
 

@@ -115,17 +115,39 @@ public:
         this->debug = true;
     }
 
+    /*
+     First, conduct a quick PSNR check between the two images.
+     * If the PSNR is particularly bad, (i.e less than 60), just
+     * assume it's a redraw.
+     * 
+     * 
+     * second, if all the match blocks are larger than a set amount,
+     * simply redraw the image
+     
+     */
     void generatePData() {
-        if (!image1 || !image2)
-            exit(1);
+        double psnr = CImageUtils::psnr(*image1, *image2);
 
-        matchAllBlocks();
-//        std::cout << "blocks size " << blocks.size() << std::endl;
-//        std::cout << "maxBlocks " << maxBlocks << std::endl;
-//        if (maxBlocks - blocks.size() > (.80) * maxBlocks) {
-//            std::cout << "more dan 80 " << std::endl;
-//            blocks.clear();
-//        }
+        if (psnr < 60) {
+            std::cout << "PSNR is pretty low, not conducting match" << std::endl;
+            blocks.clear();
+        } else {
+            matchAllBlocks();
+        }
+
+        int maxBlocks = (this->height * this->width) / (this->blockSize * this->blockSize);
+        std::cout << "missing blocks: " << (maxBlocks - blocks.size()) << std::endl;
+
+
+
+        //subtract block size from amount of missing blocks.
+        //if this number is greater than the max desired blocks (i.e there's
+        //a lot of missing blocks), decide whether to reject or accept
+        if ((maxBlocks - blocks.size()) > (.85) * maxBlocks) {
+            std::cout << " Missing blocks is 85 more than total image-"
+                    "Initiating redraw. " << std::endl;
+            blocks.clear();
+        }
 
     }
 
@@ -149,8 +171,6 @@ public:
         inv = make_shared<Inversion>(blocks, blockSize, bleed, image2);
         inv->createInversion();
     }
-
-
 
     //for every block in frame1 and frame2, try and find a best match between the two. 
 
@@ -233,7 +253,7 @@ public:
             out << blocks[x].xStart << "\n" << blocks[x].yStart << "\n" <<
                     blocks[x].xEnd << "\n" << blocks[x].yEnd << endl;
         }
-        
+
         rename((outputFile + ".temp").c_str(), outputFile.c_str());
         out.close();
     }
