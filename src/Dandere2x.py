@@ -162,15 +162,17 @@ class Dandere2x:
                                                   resume=False,
                                                   extension_type=self.extension_type)
 
-        merge_thread = threading.Thread(target=merge_loop, args=(self.workspace,
-                                                                 self.upscaled_dir,
-                                                                 self.merged_dir,
-                                                                 self.inversion_data_dir,
-                                                                 self.pframe_data_dir,
-                                                                 1,
-                                                                 self.frame_count,
-                                                                 self.block_size,
-                                                                 self.extension_type))
+        merge_thread = threading.Thread(target=merge_loop,
+                                        args=(self.workspace,
+                                              self.upscaled_dir,
+                                              self.merged_dir,
+                                              self.inversion_data_dir,
+                                              self.pframe_data_dir,
+                                              1,
+                                              self.frame_count,
+                                              self.block_size,
+                                              self.scale_factor,
+                                              self.extension_type))
 
         difference_thread = threading.Thread(target=difference_loop,
                                              args=(self.workspace,
@@ -232,14 +234,16 @@ class Dandere2x:
                                                   resume=True,
                                                   extension_type=self.extension_type)
 
-        merge_thread = threading.Thread(target=merge_loop_resume, args=(self.workspace,
-                                                                        self.upscaled_dir,
-                                                                        self.merged_dir,
-                                                                        self.inversion_data_dir,
-                                                                        self.pframe_data_dir,
-                                                                        self.frame_count,
-                                                                        self.block_size,
-                                                                        self.extension_type))
+        merge_thread = threading.Thread(target=merge_loop_resume,
+                                        args=(self.workspace,
+                                              self.upscaled_dir,
+                                              self.merged_dir,
+                                              self.inversion_data_dir,
+                                              self.pframe_data_dir,
+                                              self.frame_count,
+                                              self.block_size,
+                                              self.scale_factor,
+                                              self.extension_type))
 
         difference_thread = threading.Thread(target=difference_loop_resume,
                                              args=(self.workspace,
@@ -300,15 +304,17 @@ class Dandere2x:
         difference_thread.join()
 
     def merge_only(self):
-        merge_thread = threading.Thread(target=merge_loop, args=(self.workspace,
-                                                                 self.upscaled_dir,
-                                                                 self.merged_dir,
-                                                                 self.inversion_data_dir,
-                                                                 self.pframe_data_dir,
-                                                                 1,
-                                                                 self.frame_count,
-                                                                 self.block_size,
-                                                                 self.extension_type))
+        merge_thread = threading.Thread(target=merge_loop,
+                                        args=(self.workspace,
+                                              self.upscaled_dir,
+                                              self.merged_dir,
+                                              self.inversion_data_dir,
+                                              self.pframe_data_dir,
+                                              1,
+                                              self.frame_count,
+                                              self.block_size,
+                                              self.scale_factor,
+                                              self.extension_type))
         merge_thread.start()
         merge_thread.join()
 

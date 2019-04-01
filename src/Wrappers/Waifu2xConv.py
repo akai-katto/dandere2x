@@ -56,8 +56,8 @@ class Waifu2xConv(threading.Thread):
     def fix_names(self):
         list = os.listdir(self.upscaled_dir)
         for name in list:
-            if '[NS-L3][x2.000000]' in name:
-                rename_file(self.upscaled_dir + name, self.upscaled_dir + name.replace('_[NS-L3][x2.000000]', ''))
+            if '[NS-L3][x' + self.scale_factor +'.000000]' in name:
+                rename_file(self.upscaled_dir + name, self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor +'.000000]', ''))
 
     def run(self):
         logger = logging.getLogger(__name__)

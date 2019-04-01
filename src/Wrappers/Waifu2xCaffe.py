@@ -47,7 +47,7 @@ class Waifu2xCaffe(threading.Thread):
 
     def run(self):
         logger = logging.getLogger(__name__)
-        
+
         exec = [self.waifu2x_caffe_dir,
                 "-i", self.output_dir,
                 "-p", self.p_setting,

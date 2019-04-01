@@ -7,7 +7,7 @@ from Wrappers.Frame import DisplacementVector
 from Wrappers.Frame import Frame
 
 
-def make_merge_image(workspace, block_size, bleed, frame_inversion, frame_base, list_predictive, list_differences,
+def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion, frame_base, list_predictive, list_differences,
                      output_location):
     logger = logging.getLogger(__name__)
 
@@ -15,6 +15,11 @@ def make_merge_image(workspace, block_size, bleed, frame_inversion, frame_base, 
     difference_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
+
+    # ngl i'm probably not going to add support for 1.5x ever, it's a genuine headache
+    # upscaling the real numbers rather than natural numbers.
+
+    scale_factor = int(scale_factor)
 
     if not list_predictive and not list_differences:
         logger.info("list_predictive and not list_differences: true")
@@ -43,25 +48,25 @@ def make_merge_image(workspace, block_size, bleed, frame_inversion, frame_base, 
                                                      int(list_predictive[x * 4 + 3])))
     # copy over predictive vectors into new image
     for vector in predictive_vectors:
-        out_image.copy_block(frame_base, block_size * 2,
-                             vector.x_2 * 2,
-                             vector.y_2 * 2,
-                             vector.x_1 * 2,
-                             vector.y_1 * 2)
+        out_image.copy_block(frame_base, block_size * scale_factor,
+                             vector.x_2 * scale_factor,
+                             vector.y_2 * scale_factor,
+                             vector.x_1 * scale_factor,
+                             vector.y_1 * scale_factor)
 
     # copy over inversion vectors (the difference images) into new image
     for vector in difference_vectors:
-        out_image.copy_block(frame_inversion, block_size * 2,
-                             vector.x_2 * (block_size + bleed * 2) * 2 + 2,
-                             vector.y_2 * (block_size + bleed * 2) * 2 + 2,
-                             vector.x_1 * 2,
-                             vector.y_1 * 2)
+        out_image.copy_block(frame_inversion, block_size * scale_factor,
+                             (vector.x_2 * (block_size + bleed * 2)) * scale_factor + (bleed * scale_factor),
+                             (vector.y_2 * (block_size + bleed * 2)) * scale_factor + (bleed * scale_factor),
+                             vector.x_1 * scale_factor,
+                             vector.y_1 * scale_factor)
 
     out_image.save_image(output_location)
 
 
 def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-               start_frame, count, block_size, file_type):
+               start_frame, count, block_size, scale_factor, file_type):
     logger = logging.getLogger(__name__)
     bleed = 1
 
@@ -79,7 +84,7 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
         difference_data = wait_on_text(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
-        make_merge_image(workspace, block_size, bleed, f1, base, prediction_data, difference_data,
+        make_merge_image(workspace, block_size, scale_factor, bleed, f1, base, prediction_data, difference_data,
                          workspace + "merged/merged_" + str(x + 1) + file_type)
 
 
@@ -87,7 +92,7 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
 #               start_frame, count, block_size, file_type)
 # find the last photo to be merged, then start the loop from there
 def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-                      count, block_size, file_type):
+                      count, block_size, scale_factor, file_type):
     logger = logging.getLogger(__name__)
     last_found = count
 
@@ -103,7 +108,7 @@ def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, p
 
     logger.info("resume info: last found: " + str(last_found))
     merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-               last_found, count, block_size, file_type)
+               last_found, count, block_size, scale_factor, file_type)
 
 
 # (workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
