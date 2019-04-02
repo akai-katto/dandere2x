@@ -66,6 +66,7 @@
         <ccTool>
           <developmentMode>6</developmentMode>
           <commandlineTool>g++</commandlineTool>
+          <commandLine>-ffast-math</commandLine>
         </ccTool>
       </compileType>
       <item path="../src/DandereUtils/DandereUtils.h" ex="false" tool="3" flavor2="0">
