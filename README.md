@@ -1,22 +1,17 @@
 # Dandere2x - Faster Waifu2x Video Upscaling
 
+## What is Dandere2x
 
-## What is Dandere2x? 
+Dandere2x is a lossy video upscaler also built around waifu2x, with video compression techniques to shorten the time required to process videos.
 
-Dandere2x is a lossy video upscaler also built around waifu2x, but with video compression techniques to shorten the time needed to process a video.
-
-In other words, although lossy, dandere2x dramaticlly speeds up the time to process a video.
+In another word, although lossy, dandere2x dramatically increases the video processing speed.
 
 ## Current Features
 
 - Block Matching Video Compression
-
 - Interpolated Frame Video Compression
-
 - Minimum / maximum quality loss
-
 - Custom block sizes
-
 - Custom scaling sizes (1x, 2x, 3x).
 
 ## Development Status
@@ -31,9 +26,7 @@ I highly recommend subscribing / checking reddit.com/r/dandere2x. I tend to be m
 
 Latests releases are uploaded on my subreddit (at the moment).
 
-0.4 
-
-Changelog (since 0.3)
+### 0.4 Changelog (since 0.3)
 
 - Support for OpenCL (via Waifu2x-Conveter-Cpp)
 - Support for resuming Dandere2x Sessions
@@ -41,27 +34,22 @@ Changelog (since 0.3)
 - Entirely reworked in python
 - Support for .pngs, although I do not recommend this
 
-https://www.reddit.com/r/Dandere2x/comments/b1lmeh/dandere2x_alpha_03_release/
-
-
-
-
+Reddit Link: https://www.reddit.com/r/Dandere2x/comments/b1lmeh/dandere2x_alpha_03_release/
 
 ## Related Resources
 
-[Video2x](https://github.com/K4YT3X/video2x) A lossless video enlarger achieved with waifu2x. 
+[Video2x](https://github.com/k4yt3x/video2x): A lossless video enlarger/video upscaler achieved with waifu2x.
 
 ## Legal Stuff
 
-'Dandere2x' Copyright (C) 2018 
+`Dandere2x` Copyright (C) 2018-2019
+Licensed under GPLv3
 
-Credits
+## Credits
 
 This project relies on the following software and projects.
 
-- Waifu2x-Caffe
-- Waifu2x
-- FFMPEG
+- waifu2x-caffe
+- waifu2x
+- FFmpeg
 - STB Image
-
-

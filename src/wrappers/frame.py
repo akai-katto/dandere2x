@@ -1,13 +1,19 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Name: Dandere2X Frame
+Author: CardinalPanda
+Date Created: March 22, 2019
+Last Modified: April 2, 2019
+"""
+from dandere2x_core.dandere2x_utils import rename_file
+from dandere2x_core.dandere2x_utils import wait_on_file
+from dataclasses import dataclass
+from scipy import misc  # pip install Pillow
 import logging
+import numpy as np
 import os
 import time
-from dataclasses import dataclass
-
-import numpy as np
-from scipy import misc  # pip install Pillow
-
-from Dandere2xCore.Dandere2xUtils import rename_file
-from Dandere2xCore.Dandere2xUtils import wait_on_file
 
 
 # fuck this function, lmao. Credits to
