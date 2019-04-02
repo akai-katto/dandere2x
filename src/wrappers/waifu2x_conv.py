@@ -1,19 +1,24 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Name: Dandere2X waifu2x-conv
+Author: CardinalPanda
+Date Created: March 22, 2019
+Last Modified: April 2, 2019
+
+Description: # A pretty hacky wrapper for Waifu2x-Conveter-Cpp.
+Behaves pretty similair to waifu2x-caffe, except directory must be
+set  (for subprocess call) and arguments are slightly different.
+Furthermore, waifu2x-conv-caffe saves files in an annoying way,
+so we need to correct those odd namings.
+"""
+from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import rename_file
 import logging
 import os
 import subprocess
 import threading
 
-from Dandere2xCore.Dandere2xUtils import get_lexicon_value
-from Dandere2xCore.Dandere2xUtils import rename_file
-
-
-# A pretty hacky wrapper
-# For Waifu2x-Conveter-Cpp
-# Behaves pretty similair to
-# Waifu2x-Caffe- except directory must be set  (for subprocess call)
-# and arguments are slightly different.
-# furthermore, waifu2x-conv-caffe saves files in an annoying way.
-# so we need to correct those odd namings
 
 class Waifu2xConv(threading.Thread):
 
@@ -56,8 +61,8 @@ class Waifu2xConv(threading.Thread):
     def fix_names(self):
         list = os.listdir(self.upscaled_dir)
         for name in list:
-            if '[NS-L3][x' + self.scale_factor +'.000000]' in name:
-                rename_file(self.upscaled_dir + name, self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor +'.000000]', ''))
+            if '[NS-L3][x' + self.scale_factor + '.000000]' in name:
+                rename_file(self.upscaled_dir + name, self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
 
     def run(self):
         logger = logging.getLogger(__name__)

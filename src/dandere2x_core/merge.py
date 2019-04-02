@@ -1,10 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Name: Dandere2X Merge
+Author: CardinalPanda
+Date Created: March 22, 2019
+Last Modified: April 2, 2019
+"""
+from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import wait_on_text
+from wrappers.frame import DisplacementVector
+from wrappers.frame import Frame
 import logging
 import os
-
-from Dandere2xCore.Dandere2xUtils import get_lexicon_value
-from Dandere2xCore.Dandere2xUtils import wait_on_text
-from Wrappers.Frame import DisplacementVector
-from Wrappers.Frame import Frame
 
 
 def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion, frame_base, list_predictive, list_differences,

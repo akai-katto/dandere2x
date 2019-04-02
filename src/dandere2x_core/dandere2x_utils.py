@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Name: Dandere2X Utils
+Author: CardinalPanda
+Date Created: March 22, 2019
+Last Modified: April 2, 2019
+"""
 import logging
 import os
 import time
