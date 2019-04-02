@@ -1,12 +1,18 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Name: Dandere2X Differences
+Author: CardinalPanda
+Date Created: March 22, 2019
+Last Modified: April 2, 2019
+"""
+from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import wait_on_text
+from wrappers.frame import DisplacementVector
+from wrappers.frame import Frame
 import logging
-import os
-
 import math
-
-from Dandere2xCore.Dandere2xUtils import get_lexicon_value
-from Dandere2xCore.Dandere2xUtils import wait_on_text
-from Wrappers.Frame import DisplacementVector
-from Wrappers.Frame import Frame
+import os
 
 
 def make_difference_image(raw_frame, block_size, bleed, list_difference, list_predictive, out_location):
