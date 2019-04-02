@@ -52,6 +52,15 @@ class Waifu2xCaffe(threading.Thread):
         logger.info(exec)
         subprocess.run(exec)
 
+    # The current Dandere2x implementation requires files to be removed from the folder
+    # During runtime. As files produced by Dandere2x don't all exist during the initial
+    # Waifu2x call, various work arounds are in place to allow Dandere2x and Waifu2x to work in real time.
+
+    # Briefly, 1) Create a list of names that will be upscaled by waifu2x,
+    #          2) Call waifu2x to upscale whatever images are in 'differences' folder
+    #          3) After waifu2x call is finished, delete whatever files were upscaled, and remove those names from list.
+    #             (this is to prevent Waifu2x from re-upscaling the same image again)
+    #          4) Repeat this process until all the names are removed.
     def run(self):
         logger = logging.getLogger(__name__)
 

@@ -21,16 +21,16 @@
 using namespace std;
 
 
-//args = workspace, framecount, blockSize, tolerance, stepSize, 
+//note to readers,
+//I plan on re-organizing Dandere2xCpp as I have a better idea of how I want
+//the project to be organized as I move into the future.
+
+//FutureList:
+//-CLI
+//-Subproccesses
+//-More heuristics
+
 int main(int argc, char** argv){
-    
-//    Image im1 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.4\\demo_folder\\workspace\\inputs\\frame1029.jpg");
-//    Image im2 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.4\\demo_folder\\workspace\\inputs\\frame1032.jpg");
-//    
-//    
-//    std::cout << CImageUtils::psnr(im1, im2) << std::endl;
-    
-    
     bool debug = false; //debug flag
     
     string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\";

@@ -5,6 +5,16 @@ Name: Dandere2X Frame
 Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
+
+Description: Simplify the Dandere2x by not having to interact with numpy itself.
+             All operations on images ideally should be done through the functions here.
+
+             Current Tools:
+             - New Image
+             - Load Image (can wait on file)
+             - Copy Block
+             - Copy Image
+             - Saving (can overwrite)
 """
 from dandere2x_core.dandere2x_utils import rename_file
 from dandere2x_core.dandere2x_utils import wait_on_file
@@ -14,7 +24,6 @@ import logging
 import numpy as np
 import os
 import time
-
 
 # fuck this function, lmao. Credits to
 # https://stackoverflow.com/questions/52702809/copy-array-into-part-of-another-array-in-numpy
@@ -43,10 +52,6 @@ class DisplacementVector:
     y_1: int
     x_2: int
     y_2: int
-
-
-# Custom Wrapper for Numpy to better resemble Java's Image API
-# Fuck using numpy for images, lmfao.
 
 # usage:
 # frame = Frame()

@@ -47,6 +47,9 @@ import threading
 
 
 class Dandere2x:
+
+    # init is pretty messy at the moment. I'll look into
+    # cleaning this up in the future ;-;
     def __init__(self, config_file):
         config = configparser.ConfigParser()
         config.read(config_file)
@@ -139,7 +142,7 @@ class Dandere2x:
         self.write_merge_commands()
 
     # create a series of threads and external processes
-    # to run in real time with eachother for the dandere2x session.
+    # to run in real time with each other for the dandere2x session.
     # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()

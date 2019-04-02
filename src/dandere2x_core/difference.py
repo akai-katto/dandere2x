@@ -151,9 +151,6 @@ def difference_loop_resume(workspace, upscaled_dir, difference_dir, inversion_da
 
 
 def main():
-    print("path sep", os.path.sep)
-    # difference_loop("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\", 95, 16)
-
     difference_loop_resume("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\",
                            "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\differences\\",
                            "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inversion_data\\",

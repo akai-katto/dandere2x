@@ -14,18 +14,14 @@ import logging
 import os
 
 
-def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion, frame_base, list_predictive, list_differences,
-                     output_location):
+def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion,
+                     frame_base, list_predictive, list_differences, output_location):
     logger = logging.getLogger(__name__)
 
     predictive_vectors = []
     difference_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
-
-    # ngl i'm probably not going to add support for 1.5x ever, it's a genuine headache
-    # upscaling the real numbers rather than natural numbers.
-
     scale_factor = int(scale_factor)
 
     if not list_predictive and not list_differences:
@@ -95,8 +91,6 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
                          workspace + "merged/merged_" + str(x + 1) + file_type)
 
 
-# merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-#               start_frame, count, block_size, file_type)
 # find the last photo to be merged, then start the loop from there
 def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
                       count, block_size, scale_factor, file_type):
@@ -117,9 +111,6 @@ def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, p
     merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
                last_found, count, block_size, scale_factor, file_type)
 
-
-# (workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-#  count, block_size, file_type)
 def main():
     # merge_loop("/home/linux/Videos/testrun/testrun2/", 120)
     merge_loop_resume("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\",

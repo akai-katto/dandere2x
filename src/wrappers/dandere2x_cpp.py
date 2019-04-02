@@ -55,6 +55,9 @@ class Dandere2xCppWrapper(threading.Thread):
         subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE)
         logger.info("finished correctly")
 
+    # Count how many p_frame_data files exist, then start at that minus 1.
+    # Consider including counting how many inversion_data files exist also, but
+    # Doesn't seem necessary.
     def resume_run(self):
         logger = logging.getLogger(__name__)
         last_found = int(self.frame_count)

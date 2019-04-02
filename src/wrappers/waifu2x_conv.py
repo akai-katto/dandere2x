@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Name: Dandere2X waifu2x-conv
+Name: Dandere2X waifu2x-conv (abbreviated waifu2x-cpp-conveter)
 Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 
 Description: # A pretty hacky wrapper for Waifu2x-Conveter-Cpp.
-Behaves pretty similair to waifu2x-caffe, except directory must be
+Behaves pretty similar to waifu2x-caffe, except directory must be
 set  (for subprocess call) and arguments are slightly different.
-Furthermore, waifu2x-conv-caffe saves files in an annoying way,
+Furthermore, waifu2x-conv saves files in an annoying way,
 so we need to correct those odd namings.
 """
 from dandere2x_core.dandere2x_utils import get_lexicon_value
@@ -62,11 +62,21 @@ class Waifu2xConv(threading.Thread):
         list = os.listdir(self.upscaled_dir)
         for name in list:
             if '[NS-L3][x' + self.scale_factor + '.000000]' in name:
-                rename_file(self.upscaled_dir + name, self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
+                rename_file(self.upscaled_dir + name,
+                            self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
 
+    # (description from waifu2x_caffe)
+    # The current Dandere2x implementation requires files to be removed from the folder
+    # During runtime. As files produced by Dandere2x don't all exist during the initial
+    # Waifu2x call, various work arounds are in place to allow Dandere2x and Waifu2x to work in real time.
+
+    # Briefly, 1) Create a list of names that will be upscaled by waifu2x,
+    #          2) Call waifu2x to upscale whatever images are in 'differences' folder
+    #          3) After waifu2x call is finished, delete whatever files were upscaled, and remove those names from list.
+    #             (this is to prevent Waifu2x from re-upscaling the same image again)
+    #          4) Repeat this process until all the names are removed.
     def run(self):
         logger = logging.getLogger(__name__)
-
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
 
