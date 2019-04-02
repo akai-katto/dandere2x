@@ -1,18 +1,49 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Name: Dandere2X
+Author: CardinalPanda
+Date Created: March 22, 2019
+Last Modified: April 2, 2019
+
+Licensed under the GNU General Public License Version 3 (GNU GPL v3),
+    available at: https://www.gnu.org/licenses/gpl-3.0.txt
+
+(C) 2018-2019 CardinalPanda
+
+Dandere2X is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Dandere2X is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Description: Dandere2X is an automation software based on waifu2x image
+enlarging engine. It extracts frames from a video, enlarge it by a
+number of times without losing any details or quality, keeping lines
+smooth and edges sharp.
+"""
+
+from dandere2x_core.dandere2x_utils import get_seconds_from_time
+from dandere2x_core.difference import difference_loop
+from dandere2x_core.difference import difference_loop_resume
+from dandere2x_core.merge import merge_loop
+from dandere2x_core.merge import merge_loop_resume
+from wrappers.dandere2x_cpp import Dandere2xCppWrapper
+from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
+from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
+from wrappers.waifu2x_caffe import Waifu2xCaffe
+from wrappers.waifu2x_conv import Waifu2xConv
 import configparser
 import logging
 import os
 import threading
-
-from Dandere2xCore.Dandere2xUtils import get_seconds_from_time
-from Dandere2xCore.Difference import difference_loop
-from Dandere2xCore.Difference import difference_loop_resume
-from Dandere2xCore.Merge import merge_loop
-from Dandere2xCore.Merge import merge_loop_resume
-from Wrappers.Dandere2xCpp import Dandere2xCppWrapper
-from Wrappers.Waifu2xCaffe import Waifu2xCaffe
-from Wrappers.Waifu2xConv import Waifu2xConv
-from Wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
-from Wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 
 
 class Dandere2x:
@@ -212,7 +243,6 @@ class Dandere2x:
                                    self.noise_level,
                                    self.scale_factor)
 
-
         elif self.waifu2x_type == "conv":
             waifu2x = Waifu2xConv(self.workspace,
                                   self.frame_count,
@@ -363,12 +393,12 @@ class Dandere2x:
         input_list.append("cd /home/linux/Documents/waifu2x/")
 
         input_list.append(
-            "th " + self.dandere_dir + " -m noise_scale -noise_level 3 -i "
-            + self.input_frames_dir + "frame1" + self.extension_type +
+            "th " + self.dandere_dir + " -m noise_scale -noise_level 3 -i " +
+            self.input_frames_dir + "frame1" + self.extension_type +
             " -o " + self.merged_dir + "merged_1" + self.extension_type + "\n")
 
-        input_list.append("th " + self.dandere_dir + " -m noise_scale -noise_level 3 -resume 1 -l "
-                          + self.workspace + "frames.txt -o " + self.upscaled_dir + "output_%d.png")
+        input_list.append("th " + self.dandere_dir + " -m noise_scale -noise_level 3 -resume 1 -l " +
+                          self.workspace + "frames.txt -o " + self.upscaled_dir + "output_%d.png")
 
         with open(self.workspace + os.path.sep + 'waifu2x_script.sh', 'w') as f:
             for item in input_list:
@@ -388,5 +418,5 @@ class Dandere2x:
             f.write(
                 self.ffmpeg_dir + " -f image2 -framerate " + self.frame_rate + " -i " + self.merged_dir + "merged_%d.jpg -r 24 " + self.workspace + "nosound.mp4\n\n")
             f.write(
-                self.ffmpeg_dir + " -i " + self.workspace + "nosound.mp4" + " -i " + self.workspace + "audio" + self.audio_type + " -c copy "
-                + self.workspace + "sound.mp4\n\n")
+                self.ffmpeg_dir + " -i " + self.workspace + "nosound.mp4" + " -i " + self.workspace + "audio" + self.audio_type + " -c copy " +
+                self.workspace + "sound.mp4\n\n")
