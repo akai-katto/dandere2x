@@ -70,6 +70,17 @@ I'm aware that the experience is not very user-friendly at the moment.
 6)  Note, block_size must be a common factor between the width and height of your input.
 
     https://www.calculatorsoup.com/calculators/math/commonfactors.php
+    
+7)  Run 'run.bat' after you're all done. After runtime, there's a textfile called 'command.txt', and run these commands
+    to merge your individual frames back into a video.
+    
+### Debug and Tips
+
+
+1) I highly recommend playing with psnr_low and psnr_high before starting a long upscale. Do a small test of 10-15 seconds, see
+   if you like the way it looks, and adjust accordingly.
+    
+2) I highly recommend using compressed footage.
 
 
 
