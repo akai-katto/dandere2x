@@ -55,27 +55,14 @@ for the general masses.
 
 I'm aware that the experience is not very user-friendly at the moment. 
 
-### Upscaling Your Own Custom Video
+1) Run new.bat
 
-1)  Within the Dandere2x folder, open config.ini with a text editor
+2) Let Dandere2x run 
 
-2)  Under the tag  USER SETTINGS, there is a series of directories specific for where files are located.
+3) After Dandere2x is finished, run the commands in the 'commands.txt' folder (found in demo_folder\workspace\ ) to remerge the video back together (this will be automated soon).
 
-3)  Drag your video into the '\demofolder\video\' directory.
 
-4)  Change the 'file_dir' variable in the config accordingly.
 
-5)  Under #session setting, edit these variables to your liking. 
-
-6)  Note, block_size must be a common factor between the width and height of your input.
-
-    https://www.calculatorsoup.com/calculators/math/commonfactors.php
-    
-7)  Set a name for the workspace Dandere2x will operate in in the 'workspace' variable.
-    
-8)  Run 'run.bat' after you're all done. After runtime, there's a textfile called 'command.txt', and run these commands
-    to merge your individual frames back into a video.
-    
 ### Debug and Tips
 
 
@@ -83,6 +70,38 @@ I'm aware that the experience is not very user-friendly at the moment.
    if you like the way it looks, and adjust accordingly.
     
 2) I highly recommend using compressed footage.
+
+
+### Upscaling Your Own Video ###
+
+(You may operate out of any directory, but I recommend following this guide for beginners)
+
+0) Open up your Dandere2x Folder
+
+1) Open up 'config.ini' using a text editor
+
+2) Place your video, "YOUR_VIDEO.mkv" into \demo_folder\video\
+
+3) Edit the variable **workspace** to house a new workspace. For begineers, I recommend changing
+
+[this]demo_folder\shelter\ -> [this]demo_folder\YOUR_VIDEO\
+
+
+4) Edit the variable **file_dir** to point to your file. For begineers, I recommend changing
+
+file_dir=[this]demo_folder\video\shelter.mkv -> file_dir=[this]demo_folder\video\YOUR_VIDEO.mkv
+
+5) Change block size to match your input video's resolution. The blocksize must be a common factor between the height and width of your video. You can calculate common factors here: https://www.calculatorsoup.com/calculators/math/commonfactors.php
+
+
+If "YOUR_VIDEO.mkv" is 1280x720, a common factor is 16. So change blocksize
+
+block_size=30 -> block_size=16
+
+
+
+
+
 
 
 
