@@ -45,7 +45,7 @@ Reddit Link: https://www.reddit.com/r/Dandere2x/comments/b1lmeh/dandere2x_alpha_
 
 - Download the latest release (probably from subreddit).
 
-- Install requirements.txt (can be found inside the latest release).
+- Install requirements.txt (can be found inside the latest release) (can also be installed in 'install' folder in the latest release)
 
 
 ## Usage
@@ -84,20 +84,24 @@ I'm aware that the experience is not very user-friendly at the moment.
 
 3) Edit the variable **workspace** to house a new workspace. For begineers, I recommend changing
 
-'workspace=[this]demo_folder\shelter\ -> workspace=[this]demo_folder\YOUR_VIDEO\'
-
+~~~~
+workspace=[this]demo_folder\shelter\ -> workspace=[this]demo_folder\YOUR_VIDEO\
+~~~~
 
 4) Edit the variable **file_dir** to point to your file. For begineers, I recommend changing
 
-'file_dir=[this]demo_folder\video\shelter.mkv -> file_dir=[this]demo_folder\video\YOUR_VIDEO.mkv'
+~~~~
+file_dir=[this]demo_folder\video\shelter.mkv -> file_dir=[this]demo_folder\video\YOUR_VIDEO.mkv
+~~~~
 
 5) Change block size to match your input video's resolution. The blocksize must be a common factor between the height and width of your video. You can calculate common factors here: https://www.calculatorsoup.com/calculators/math/commonfactors.php
 
 
 If **"YOUR_VIDEO.mkv"** is **1280x720**, a common factor is 16. So change blocksize
 
+~~~~
 'block_size=30 -> block_size=16'
-
+~~~~
 
 ## Related Resources
 
