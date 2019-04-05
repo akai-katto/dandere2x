@@ -71,7 +71,9 @@ I'm aware that the experience is not very user-friendly at the moment.
 
     https://www.calculatorsoup.com/calculators/math/commonfactors.php
     
-7)  Run 'run.bat' after you're all done. After runtime, there's a textfile called 'command.txt', and run these commands
+7)  Set a name for the workspace Dandere2x will operate in in the 'workspace' variable.
+    
+8)  Run 'run.bat' after you're all done. After runtime, there's a textfile called 'command.txt', and run these commands
     to merge your individual frames back into a video.
     
 ### Debug and Tips
