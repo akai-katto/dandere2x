@@ -71,6 +71,7 @@ I'm aware that the experience is not very user-friendly at the moment.
     
 2) I highly recommend using compressed footage.
 
+3) I recommend block sizes in the range 15-30 
 
 ### Upscaling Your Own Video ###
 
@@ -102,6 +103,18 @@ If **"YOUR_VIDEO.mkv"** is **1280x720**, a common factor is 16. So change blocks
 ~~~~
 'block_size=30 -> block_size=16'
 ~~~~
+
+### Customization 
+
+You can edit how strict / relaxed Dandere2x will behaved. 
+
+~~~
+
+psnr_low=85
+psnr_high=90
+
+~~~
+
 
 ## Related Resources
 
