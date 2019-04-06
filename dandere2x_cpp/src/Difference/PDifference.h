@@ -37,11 +37,7 @@ typedef DiamondSearch::point Point;
 
 class PDifference {
 public:
-    //PDifference(const PDifference& orig);
 
-    ~PDifference() {
-        //inversion.reset();
-    }
 
     int searchRadius = 80;
     int stepSize;
@@ -49,26 +45,28 @@ public:
     unsigned int blockSize;
     int width;
     int height;
-    unsigned int frameNumber;
     unsigned int bleed;
     double tolerance;
     bool debug;
 
-    std::string workspace;
+    std::string pFrameFile;
+    std::string inversionFile;
+    
+    
     std::vector<Block> blocks;
     std::shared_ptr<Image> image1;
     std::shared_ptr<Image> image2;
-    std::shared_ptr<char> workDir;
     std::shared_ptr<Inversion> inv;
     Point disp;
 
-    PDifference(std::shared_ptr<Image> image1,
+    PDifference(
+            std::shared_ptr<Image> image1,
             std::shared_ptr<Image> image2,
-            int frameNumber,
             unsigned int blockSize,
             int bleed,
             double tolerence,
-            std::string workspace,
+            std::string pFrameFile,
+            std::string inversionFile,
             int stepSize = 5,
             bool debug = true) {
 
@@ -76,17 +74,15 @@ public:
         this->image2 = image2;
         this->stepSize = stepSize;
         this->maxChecks = 128; //prevent diamond search from going on forever
-        //this->workDir = workDir;
         this->blockSize = blockSize;
         this->width = image1->width;
         this->height = image1->height;
         this->inv = nullptr;
-        this->frameNumber = frameNumber;
-        this->workspace = workspace;
+        this->pFrameFile = pFrameFile;
+        this->inversionFile = inversionFile;
         this->bleed = bleed;
         this->tolerance = tolerence;
         this->debug = true;
-
 
         //preform checks to ensure given information is valid
         if (image1->height != image2->height || image1->width != image2->width)
@@ -94,27 +90,12 @@ public:
 
     }
 
-
-
-    //need to implement a better herustic 
-
-    PDifference(std::string workspace,
-            unsigned int blockSize,
-            int bleed,
-            double tolerence,
-            int stepSize = 5,
-            bool debug = true) {
-        this->stepSize = stepSize;
-        this->maxChecks = 128; //prevent diamond search from going on forever
-        this->blockSize = blockSize;
-        this->inv = nullptr;
-        this->frameNumber = 0;
-        this->workspace = workspace;
-        this->bleed = bleed;
-        this->tolerance = tolerence;
-        this->debug = true;
+    //no primative data types to cause memory leak
+    ~PDifference(){
+        
     }
-
+    
+    
     /*
      First, conduct a quick PSNR check between the two images.
      * If the PSNR is particularly bad, (i.e less than 60), just
@@ -153,21 +134,25 @@ public:
 
     void save() {
         if (!blocks.empty()) { //if parts of frame2 can be made of frame1, create frame2'
-            saveInversion(workspace + separator() + "outputs" + separator() + "output_" + std::to_string(frameNumber) + ".jpg");
-            this->writePFrameData(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
-            this->inv->writeInversion(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
-        } else { //if parts of frame2 cannot be made from frame1, just copy frame2. 
-            this->inv->writeEmpty(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
-            this->printEmpty(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
+            createInversion();
+            
+            this->inv->writeInversion(this->inversionFile);
+            this->writePFrameData(this->pFrameFile);
+        } 
+        
+        else { //if parts of frame2 cannot be made from frame1, just copy frame2. 
+            
+            this->inv->writeEmpty(this->inversionFile);
+            this->printEmpty(this->pFrameFile);
         }
     }
 
     void forceCopy() {
-        this->inv->writeEmpty(workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(frameNumber) + ".txt");
-        this->printEmpty(workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(frameNumber) + ".txt");
+        this->inv->writeEmpty(this->inversionFile);
+        this->printEmpty(this->pFrameFile);
     }
 
-    void saveInversion(string input) {
+    void createInversion() {
         inv = make_shared<Inversion>(blocks, blockSize, bleed, image2);
         inv->createInversion();
     }
@@ -192,29 +177,36 @@ public:
         disp.x = 0;
         disp.y = 0;
 
-
-        double sum = CImageUtils::variance(*image1, *image2, x * blockSize, y * blockSize,
-                x * blockSize + disp.x, y * blockSize + disp.y, blockSize);
+        double sum = CImageUtils::MSE(
+                                           *image1,
+                                           *image2,
+                                           x * blockSize,
+                                           y * blockSize,
+                                           x * blockSize + disp.x,
+                                           y * blockSize + disp.y,
+                                           blockSize);
 
         //first we check if the blocks are in identical positions inbetween two frames.
         //if they are, we can skip doing a diamond search
         if (sum < tolerance) {
-
-            blocks.push_back(Block(x * blockSize, y * blockSize, x * blockSize + disp.x,
-                    y * blockSize + disp.y, sum));
-
+            blocks.push_back(Block(x * blockSize,
+                                   y * blockSize,
+                                   x * blockSize + disp.x,
+                                   y * blockSize + disp.y, sum));
         }//if the blocks have been (potentially) displaced, conduct a diamond search to search for them. 
         else {
             //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
-            Block result = DiamondSearch::diamondSearchIterativeSuper(
-                    *image2,
-                    *image1,
-                    x * blockSize + disp.x,
-                    y * blockSize,
-                    x * blockSize + disp.x,
-                    y * blockSize + disp.y, blockSize,
-                    stepSize,
-                    maxChecks);
+            Block result =
+                    DiamondSearch::diamondSearchIterativeSuper(
+                                                        *image2,
+                                                        *image1,
+                                                        x * blockSize + disp.x,
+                                                        y * blockSize,
+                                                        x * blockSize + disp.x,
+                                                        y * blockSize + disp.y,
+                                                        blockSize,
+                                                        stepSize,
+                                                        maxChecks);
 
             //if the found block is lower than the required PSNR, we add it. Else, do nothing
             if (result.sum < tolerance)
@@ -250,8 +242,11 @@ public:
     void writePFrameData(string outputFile) {
         std::ofstream out(outputFile + ".temp");
         for (int x = 0; x < blocks.size(); x++) {
-            out << blocks[x].xStart << "\n" << blocks[x].yStart << "\n" <<
-                    blocks[x].xEnd << "\n" << blocks[x].yEnd << endl;
+            out << 
+                    blocks[x].xStart << "\n" <<
+                    blocks[x].yStart << "\n" <<
+                    blocks[x].xEnd << "\n" <<
+                    blocks[x].yEnd << endl;
         }
 
         rename((outputFile + ".temp").c_str(), outputFile.c_str());
@@ -271,8 +266,11 @@ public:
         for (int outer = 0; outer < blocks.size(); outer++) {
             for (int x = 0; x < blockSize; x++) {
                 for (int y = 0; y < blockSize; y++) {
-                    image2->setColor(x + blocks[outer].xStart, y + blocks[outer].yStart,
-                            image1->getColorNoThrow(x + blocks[outer].xEnd, y + blocks[outer].yEnd));
+                    image2->setColor(x + blocks[outer].xStart,
+                                     y + blocks[outer].yStart,
+                                    image1->getColorNoThrow(
+                                            x + blocks[outer].xEnd,
+                                            y + blocks[outer].yEnd));
                 }
             }
         }

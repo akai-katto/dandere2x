@@ -58,13 +58,13 @@ public:
             blocks.clear();
             //if we ran out of moves
             if (x == max - 1) {
-                double sum = CImageUtils::variance(imageA, imageB, initialX, initialY, xOrigin, yOrigin, boxSize);
+                double sum = CImageUtils::MSE(imageA, imageB, initialX, initialY, xOrigin, yOrigin, boxSize);
                 return Block(initialX, initialY, xOrigin, yOrigin, sum);
             }
             
             //if step size is 0 we cannot continue
             if (stepSize <= 0) {
-                double sum = CImageUtils::variance(imageA, imageB, initialX, initialY, xOrigin, yOrigin, boxSize);
+                double sum = CImageUtils::MSE(imageA, imageB, initialX, initialY, xOrigin, yOrigin, boxSize);
                 return Block(initialX, initialY, xOrigin, yOrigin, sum);
             }
             
@@ -136,7 +136,7 @@ public:
             for (int j = 0; j < 15; j++) {
                 
                 if (!flagArray[j]) {
-                    sum = CImageUtils::variance(imageA, imageB, initialX, initialY, pointArray[j].x, pointArray[j].y,
+                    sum = CImageUtils::MSE(imageA, imageB, initialX, initialY, pointArray[j].x, pointArray[j].y,
                             boxSize);
                     
                     Block block = Block(initialX, initialY, pointArray[j].x, pointArray[j].y, sum);

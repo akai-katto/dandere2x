@@ -101,7 +101,7 @@ public:
         return sum;
     }
     
-    inline static double variance(Image &imageA,Image &imageB, 
+    inline static double MSE(Image &imageA,Image &imageB, 
     int initialX, int initialY,
     int variableX, int variableY, 
     int blockSize) {

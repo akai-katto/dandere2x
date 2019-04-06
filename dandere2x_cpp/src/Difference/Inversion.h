@@ -51,12 +51,16 @@ public:
     int blocksNeeded;
     int dimensions;
     
-    Inversion(std::vector<Block> &blocks, int blockSize, int bleed, std::shared_ptr<Image> frame2) {
+    Inversion(
+            std::vector<Block> &blocks,
+            int blockSize,
+            int bleed,
+            std::shared_ptr<Image> frame2) {
+        
         this->blocks = blocks;
         this->blockSize = blockSize;
         this->frame2 = frame2;
         this->bleed = bleed;
-
         this->height = frame2->height;
         this->width = frame2->width;
 
@@ -102,6 +106,7 @@ public:
      * those missing pixels into a new image to be upscaled.
      */
     void flagPixels() {
+        
         //we create a 2d vector called (occupied pixels) which
         //determines which pixels are vacent.
         this->occupiedPixel.resize(this->width, std::vector<bool>(this->height));
@@ -222,8 +227,10 @@ public:
      */
     void addMissingBlocksInvDifferences() {
                 //create an object to organize the output image (see reading on DifferenceBlocks)
-        invDifferences = std::make_unique<DifferenceBlocks>(dimensions * (blockSize + bleed),
-                dimensions * (blockSize + bleed), blockSize + bleed);
+        invDifferences = std::make_unique<DifferenceBlocks>(
+                            dimensions * (blockSize + bleed),
+                            dimensions * (blockSize + bleed),
+                            blockSize + bleed);
         
         //now that we have a list of every pixel that needs to be redrawn
         for (int x = 0; x < frame2->width; x++) {
@@ -250,9 +257,12 @@ public:
     void writeInversion(std::string outputFile) {
         std::ofstream out(outputFile + ".temp");
         for (int x = 0; x < invDifferences->list.size(); x++) {
-            out << invDifferences->list[x].x << "\n" << invDifferences->list[x].y << "\n" <<
-                    invDifferences->list[x].newX << "\n" << invDifferences->list[x].newY << std::endl;
+            out << invDifferences->list[x].x << "\n" <<
+                    invDifferences->list[x].y << "\n" <<
+                    invDifferences->list[x].newX << "\n" <<
+                    invDifferences->list[x].newY << std::endl;
         }
+        
         rename((outputFile + ".temp").c_str(), outputFile.c_str());
         out.close();
     }

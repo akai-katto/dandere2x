@@ -40,8 +40,16 @@
  * @param tolerance
  * @param stepSize
  */
-void driverDifference(std::string workspace, int frameCount, int blockSize,
-        double tolerance, double psnrMax, double psnrMin, int stepSize,
+
+
+void driverDifference(
+        std::string workspace,
+        int frameCount,
+        int blockSize,
+        double tolerance,
+        double psnrMax,
+        double psnrMin,
+        int stepSize,
         std::string extensionType) {
 
 
@@ -53,22 +61,24 @@ void driverDifference(std::string workspace, int frameCount, int blockSize,
     shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
 
     for (int x = 1; x < frameCount; x++) {
-        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         std::cout << "Computing differences for frame" << x << endl;
 
+        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
-        PDifference dif = PDifference(im1, im2, x, blockSize, bleed, tolerance, workspace, stepSize, debug);
+        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType); //for psnr
+
+        std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
+        std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
+
+        PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
 
         dif.generatePData(); //2
-
         dif.drawOverIfRequired(); //3
-
-        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
 
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
 
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
-
+        
         if (psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80) {
             std::cout << "Psnr too low: " << psnrPFrame << " < " << psnrMin << std::endl;
             std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << std::endl;
@@ -83,7 +93,6 @@ void driverDifference(std::string workspace, int frameCount, int blockSize,
             tolerance++;
         }
 
-
         dif.save();
         im1 = im2; //4
 
@@ -91,11 +100,20 @@ void driverDifference(std::string workspace, int frameCount, int blockSize,
 
 }
 
-//resume and start can be combined. Do this in future
-// 4-1-19, I still have not updated this
+////resume and start can be combined. Do this in future
+//// 4-1-19, I still have not updated this
+//
 
-void driverDifferenceResume(std::string workspace, int resumeCount, int frameCount, int blockSize, double tolerance, double psnrMax, double psnrMin,
-        int stepSize, std::string extensionType) {
+void driverDifferenceResume(
+        std::string workspace,
+        int resumeCount,
+        int frameCount,
+        int blockSize,
+        double tolerance,
+        double psnrMax,
+        double psnrMin,
+        int stepSize,
+        std::string extensionType) {
 
 
     int bleed = 2;
@@ -106,12 +124,18 @@ void driverDifferenceResume(std::string workspace, int resumeCount, int frameCou
     shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + extensionType);
 
     for (int x = resumeCount; x < frameCount; x++) {
-        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         std::cout << "Computing differences for frame" << x << endl;
 
+        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
-        PDifference dif = PDifference(im1, im2, x, blockSize, bleed, tolerance, workspace, stepSize, debug);
+        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType); //for psnr
 
+        std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
+        std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
+
+        PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
+        
+        //Resumed frame must be a new copy (to prevent buginess)
         if (x == resumeCount) {
             std::cout << "invoking force copy " << endl;
             dif.forceCopy();
@@ -123,7 +147,6 @@ void driverDifferenceResume(std::string workspace, int resumeCount, int frameCou
         dif.generatePData(); //2
         dif.drawOverIfRequired();
 
-        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
 
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
