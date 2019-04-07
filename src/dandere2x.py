@@ -122,6 +122,7 @@ class Dandere2x:
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
         self.differences_dir = self.workspace + "differences" + os.path.sep
         self.upscaled_dir = self.workspace + "upscaled" + os.path.sep
+        self.correction_data_dir = self.workspace + "correction_data" + os.path.sep
         self.merged_dir = self.workspace + "merged" + os.path.sep
         self.inversion_data_dir = self.workspace + "inversion_data" + os.path.sep
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
@@ -202,6 +203,7 @@ class Dandere2x:
                                               self.merged_dir,
                                               self.inversion_data_dir,
                                               self.pframe_data_dir,
+                                              self.correction_data_dir,
                                               1,
                                               self.frame_count,
                                               self.block_size,
@@ -353,6 +355,7 @@ class Dandere2x:
 
     def create_dirs(self):
         directories = {self.workspace,
+                       self.correction_data_dir,
                        self.input_frames_dir,
                        self.differences_dir,
                        self.upscaled_dir,

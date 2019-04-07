@@ -16,6 +16,7 @@
 
 #include "DandereUtils/DandereUtils.h" //waitForFile
 #include "Difference/PDifference.h"
+#include "Difference/Correction.h"
 
 /**
  * 
@@ -69,11 +70,17 @@ void driverDifference(
 
         std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
         std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
+        std::string correctionFile = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(x) + ".txt";
 
+     
         PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
 
         dif.generatePData(); //2
         dif.drawOverIfRequired(); //3
+        
+        Correction c = Correction(im2, copy, 4, bleed, tolerance, correctionFile, 2, true);
+        c.matchAllBlocks();
+        c.drawOver();
 
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
 
@@ -94,6 +101,7 @@ void driverDifference(
         }
 
         dif.save();
+        c.writeCorrection();
         im1 = im2; //4
 
     }

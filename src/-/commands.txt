@@ -1,0 +1,4 @@
+C:\Users\windwoz\Documents\ffmpeg-20190328-f8fa8bb-win64-static\bin\ffmpeg.exe -f image2 -framerate 24 -i -merged\merged_%d.jpg -r 24 -nosound.mp4
+
+C:\Users\windwoz\Documents\ffmpeg-20190328-f8fa8bb-win64-static\bin\ffmpeg.exe -i -nosound.mp4 -i -audio.mp3 -c copy -sound.mp4
+

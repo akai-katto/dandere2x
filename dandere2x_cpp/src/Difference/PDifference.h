@@ -58,7 +58,21 @@ public:
     std::shared_ptr<Image> image2;
     std::shared_ptr<Inversion> inv;
     Point disp;
-
+    
+    
+    /**
+     * 
+     * @param image1 Stays the same
+     * @param image2 is modified 
+     * @param blockSize
+     * @param bleed
+     * @param tolerence
+     * @param pFrameFile output for p-frame text file
+     * @param inversionFile output for inversion text file
+     * @param stepSize
+     * @param debug
+     * @return 
+     */
     PDifference(
             std::shared_ptr<Image> image1,
             std::shared_ptr<Image> image2,

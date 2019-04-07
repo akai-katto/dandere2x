@@ -12,6 +12,7 @@ import time
 
 
 # waits for a text file, then returns the file as a list sperated by lines
+# to do - I've gotton permission errors. Perhaps adding a catch for that.
 def wait_on_text(text_file):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
@@ -23,7 +24,17 @@ def wait_on_text(text_file):
         count += 1
         time.sleep(.01)
 
-    file = open(text_file, "r")
+    file = None
+    try:
+        file = open(text_file, "r")
+    except PermissionError:
+        logging.info("permission error on file" + text_file)
+
+    while not file:
+        try:
+            file = open(text_file, "r")
+        except PermissionError:
+            logging.info("permission error on file" + text_file)
 
     text_list = file.read().split('\n')
     file.close()

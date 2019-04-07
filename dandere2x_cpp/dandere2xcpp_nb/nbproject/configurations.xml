@@ -20,6 +20,7 @@
         <itemPath>../src/DandereUtils/DandereUtils.h</itemPath>
       </logicalFolder>
       <logicalFolder name="Difference" displayName="Difference" projectFiles="true">
+        <itemPath>../src/Difference/Correction.h</itemPath>
         <itemPath>../src/Difference/DifferenceBlocks.h</itemPath>
         <itemPath>../src/Difference/Inversion.h</itemPath>
         <itemPath>../src/Difference/PDifference.h</itemPath>
@@ -70,6 +71,8 @@
         </ccTool>
       </compileType>
       <item path="../src/DandereUtils/DandereUtils.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../src/Difference/Correction.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Difference/DifferenceBlocks.h"
             ex="false"
@@ -124,6 +127,8 @@
         </asmTool>
       </compileType>
       <item path="../src/DandereUtils/DandereUtils.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../src/Difference/Correction.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Difference/DifferenceBlocks.h"
             ex="false"
