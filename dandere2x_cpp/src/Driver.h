@@ -64,26 +64,35 @@ void driverDifference(
     for (int x = 1; x < frameCount; x++) {
         std::cout << "Computing differences for frame" << x << endl;
 
+        //Load Images for this iteration
         waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType); //for psnr
-
+        
+        //File locations that will be produced 
         std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
         std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
-        std::string correctionFile = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(x) + ".txt";
-
-     
+        std::string correctionFile1 = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(x) + ".txt";
+        std::string correctionFile2 = workspace + separator() + "correction_data" + separator() + "correction2_" + std::to_string(x) + ".txt";
+        std::string correctionFile3 = workspace + separator() + "correction_data" + separator() + "correction3_" + std::to_string(x) + ".txt";
+    
         PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
-
         dif.generatePData(); //2
-        dif.drawOverIfRequired(); //3
+        dif.drawOver(); //3
         
-        Correction c = Correction(im2, copy, 4, bleed, tolerance, correctionFile, 2, true);
-        c.matchAllBlocks();
-        c.drawOver();
+        Correction cor1 = Correction(im2, copy, 16, bleed, tolerance, correctionFile1, 4, true);
+        cor1.matchAllBlocks();
+        cor1.drawOver();
 
+        Correction cor2 = Correction(im2, copy, 8, bleed, tolerance, correctionFile2, 4, true);
+        cor2.matchAllBlocks();
+        cor2.drawOver();
+        
+        Correction cor3 = Correction(im2, copy, 4, bleed, tolerance, correctionFile3, 4, true);
+        cor3.matchAllBlocks();
+        cor3.drawOver();
+        
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
-
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
         
         if (psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80) {
@@ -101,7 +110,9 @@ void driverDifference(
         }
 
         dif.save();
-        c.writeCorrection();
+        cor1.writeCorrection();
+        cor2.writeCorrection();
+        cor3.writeCorrection();
         im1 = im2; //4
 
     }
@@ -132,33 +143,35 @@ void driverDifferenceResume(
     shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + extensionType);
 
     for (int x = resumeCount; x < frameCount; x++) {
-        std::cout << "Computing differences for frame" << x << endl;
-
+         std::cout << "Computing differences for frame" << x << endl;
+        //File locations that will be produced 
+        std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
+        std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
+        std::string correctionFile = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(x) + ".txt";
+         
+        //Load Images for this iteration
         waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
         shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType); //for psnr
-
-        std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
-        std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
-
-        PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
-        
-        //Resumed frame must be a new copy (to prevent buginess)
-        if (x == resumeCount) {
-            std::cout << "invoking force copy " << endl;
-            dif.forceCopy();
-            dif.save();
+           
+        if(x == resumeCount){
+            writeEmpty(pDataFile);
+            writeEmpty(inversionFile);
+            writeEmpty(correctionFile);
             im1 = im2;
-            continue;
-        }
-
+        } 
+        
+        PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
         dif.generatePData(); //2
-        dif.drawOverIfRequired();
+        dif.drawOver(); //3
+        
+        Correction cor = Correction(im2, copy, 8, bleed, tolerance, correctionFile, 2, true);
+        cor.matchAllBlocks();
+        cor.drawOver();
 
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
-
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
-
+        
         if (psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80) {
             std::cout << "Psnr too low: " << psnrPFrame << " < " << psnrMin << std::endl;
             std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << std::endl;
@@ -174,10 +187,8 @@ void driverDifferenceResume(
         }
 
         dif.save();
-
-
+        cor.writeCorrection();
         im1 = im2; //4
-
     }
 
 }

@@ -57,8 +57,8 @@ class Dandere2x:
         self.this_folder = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
 
         # directories
-        self.waifu2x_caffe_cui_dir = config.get('waifu2x_caffe', 'waifu2x_caffe_cui_dir')
-        self.model_dir = config.get('waifu2x_caffe', 'model_dir')
+        self.waifu2x_caffe_cui_dir = config.get('dandere2x', 'waifu2x_caffe_cui_dir')
+        self.model_dir = config.get('dandere2x', 'model_dir')
 
         self.workspace = config.get('dandere2x', 'workspace')
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
@@ -66,8 +66,8 @@ class Dandere2x:
         self.file_dir = config.get('dandere2x', 'file_dir')
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
 
-        self.waifu2x_conv_dir = config.get('waifu2x_conv', 'waifu2x_conv_dir')
-        self.waifu2x_conv_dir_dir = config.get('waifu2x_conv', 'waifu2x_conv_dir_dir')
+        self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
+        self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
 
         if '[this]' in self.waifu2x_conv_dir:
             self.waifu2x_conv_dir = self.waifu2x_conv_dir.replace('[this]', self.this_folder)
@@ -129,9 +129,9 @@ class Dandere2x:
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.frame_count = get_seconds_from_time(self.duration) * int(self.frame_rate)
-
-        logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
+        logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+
 
     def pre_setup(self):
         self.logger.info("Starting new dandere2x session")
@@ -141,6 +141,8 @@ class Dandere2x:
         self.create_waifu2x_script()
         self.write_frames()
         self.write_merge_commands()
+        logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
 
     # create a series of threads and external processes
     # to run in real time with each other for the dandere2x session.
@@ -275,6 +277,7 @@ class Dandere2x:
                                               self.merged_dir,
                                               self.inversion_data_dir,
                                               self.pframe_data_dir,
+                                              self.correction_data_dir,
                                               self.frame_count,
                                               self.block_size,
                                               self.scale_factor,
@@ -354,9 +357,8 @@ class Dandere2x:
         merge_thread.join()
 
     def create_dirs(self):
-        directories = {self.workspace,
+        directories = {self.input_frames_dir,
                        self.correction_data_dir,
-                       self.input_frames_dir,
                        self.differences_dir,
                        self.upscaled_dir,
                        self.merged_dir,
@@ -367,6 +369,14 @@ class Dandere2x:
                        self.debug_dir,
                        self.log_dir}
 
+        # need to create workspace befroe anything else
+        try:
+            os.mkdir(self.workspace)
+        except OSError:
+            print("Creation of the directory %s failed" % self.workspace)
+        else:
+            print("Successfully created the directory %s " % self.workspace)
+
         for subdirectory in directories:
             try:
                 os.mkdir(subdirectory)
@@ -374,6 +384,7 @@ class Dandere2x:
                 print("Creation of the directory %s failed" % subdirectory)
             else:
                 print("Successfully created the directory %s " % subdirectory)
+
 
     def extract_frames(self):
         ffmpeg_extract_frames(self.ffmpeg_dir,

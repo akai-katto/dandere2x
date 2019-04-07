@@ -28,6 +28,11 @@ inline bool fileExists(const std::string& name) {
     return f.good();
 }
 
+void writeEmpty(string input) {
+    std::ofstream out(input);
+    out.close();
+}
+
 
 //wait for a file to exist. Consider adding a time out / throw time if not, 
 //but for the time being this is a system agnostic function call.

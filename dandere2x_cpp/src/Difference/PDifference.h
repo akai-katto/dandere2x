@@ -227,27 +227,6 @@ public:
                 blocks.push_back(result);
         }
     }
-
-    /*
-     Suppose frame1 (f1) and frame2 (f2) and f3 are the same image, but 
-     * change 0.05 MSE each time. Suppose we allow a max of 0.06 MSE.
-     * 
-     * If we were to match f1 with f2, all is good. If we were to match
-     * f2 with f3, we're in trouble. Since f2 in upscaled reality
-     * is made out of pieces from f1, then the difference between f2
-     * and f3 is actually 0.10, since f2 is actually made of f1.
-     * 
-     * As such, we need to use a new image, f2' (f2 prime) to compare
-     * f2 to f3. f2' is the image of f2 from f1, and is made from drawing over.
-     * 
-     * We only draw over if it's required.  
-     */
-    void drawOverIfRequired() {
-        if (!blocks.empty()) { //if parts of frame2 can be made of frame1, create frame2'
-            drawOver();
-        }
-    }
-
     /**
      * 
      * WRites all data from a pFrame to a text fil

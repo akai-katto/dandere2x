@@ -58,8 +58,6 @@ int main(int argc, char** argv) {
 //
 //    cout << CImageUtils::psnr(*im1, *im2) << endl;
 
-
-
         bool debug = false; //debug flag
         
         string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\";
