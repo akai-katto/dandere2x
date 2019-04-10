@@ -22,6 +22,11 @@ The project is currently in alpha right now and is ready for testing (windows).
 
 I highly recommend subscribing/checking reddit.com/r/dandere2x. I tend to be more active on there, as well as responding to PM's if problems come up.
 
+
+## What's going on right now?
+
+Documentation is kind of meh at the moment. Dandere2x changes way too often for me to write an official specifications manual / guide. For the time being I have minimal setup versions of older builds out there on my subreddit with a basic tutorial.
+
 ## Current Releases
 
 Latest releases are uploaded on my subreddit (at the moment).
