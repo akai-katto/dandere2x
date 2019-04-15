@@ -73,25 +73,16 @@ void driverDifference(
         std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
         std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
         std::string correctionFile1 = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(x) + ".txt";
-        std::string correctionFile2 = workspace + separator() + "correction_data" + separator() + "correction2_" + std::to_string(x) + ".txt";
-        std::string correctionFile3 = workspace + separator() + "correction_data" + separator() + "correction3_" + std::to_string(x) + ".txt";
-    
+
         PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
         dif.generatePData(); //2
         dif.drawOver(); //3
         
-        Correction cor1 = Correction(im2, copy, 16, bleed, tolerance, correctionFile1, 4, true);
+        Correction cor1 = Correction(im2, copy, 4, bleed, tolerance * 2.7, correctionFile1, 4, true);
         cor1.matchAllBlocks();
         cor1.drawOver();
+        
 
-        Correction cor2 = Correction(im2, copy, 8, bleed, tolerance, correctionFile2, 4, true);
-        cor2.matchAllBlocks();
-        cor2.drawOver();
-        
-        Correction cor3 = Correction(im2, copy, 4, bleed, tolerance, correctionFile3, 4, true);
-        cor3.matchAllBlocks();
-        cor3.drawOver();
-        
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
         
@@ -111,8 +102,7 @@ void driverDifference(
 
         dif.save();
         cor1.writeCorrection();
-        cor2.writeCorrection();
-        cor3.writeCorrection();
+        //cor1.writeEmpty();
         im1 = im2; //4
 
     }

@@ -16,8 +16,7 @@ import os
 
 
 def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion,
-                     frame_base, list_predictive, list_differences, list_corrections,
-                     list_corrections2, list_corrections3, output_location):
+                     frame_base, list_predictive, list_differences, list_corrections, output_location):
 
     logger = logging.getLogger(__name__)
 
@@ -68,11 +67,12 @@ def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion
                              vector.x_1 * scale_factor,
                              vector.y_1 * scale_factor)
 
-    out_image = correct_image(16, scale_factor, out_image, list_corrections)
-    out_image = correct_image(8, scale_factor, out_image, list_corrections2)
-    out_image = correct_image(4, scale_factor, out_image, list_corrections3)
+    out_image = correct_image(4, scale_factor, out_image, list_corrections)
 
     out_image.save_image(output_location)
+    #gradfun_save('ffmpeg', out_image, output_location)
+
+
 
 
 def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
@@ -95,12 +95,9 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
         prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
         correction_data = wait_on_text(correction_data_dir + "correction_" + str(x) + ".txt")
-        correction_data2 = wait_on_text(correction_data_dir + "correction2_" + str(x) + ".txt")
-        correction_data3 = wait_on_text(correction_data_dir + "correction3_" + str(x) + ".txt")
 
         make_merge_image(workspace, block_size, scale_factor, bleed, f1, base, prediction_data,
-                         difference_data, correction_data,correction_data2, correction_data3,
-                         workspace + "merged/merged_" + str(x + 1) + file_type)
+                         difference_data, correction_data, workspace + "merged/merged_" + str(x + 1) + file_type)
 
 
 # find the last photo to be merged, then start the loop from there

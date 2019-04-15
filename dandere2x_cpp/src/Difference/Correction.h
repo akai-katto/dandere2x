@@ -46,7 +46,7 @@ public:
         this->image1 = image1;
         this->image2 = image2;
         this->stepSize = stepSize;
-        this->maxChecks = 128; //prevent diamond search from going on forever
+        this->maxChecks = 64; //prevent diamond search from going on forever
         this->blockSize = blockSize;
         this->width = image1->width;
         this->height = image1->height;
@@ -94,14 +94,15 @@ public:
                     x * blockSize + disp.x,
                     y * blockSize,
                     x * blockSize + disp.x,
-                    y * blockSize + disp.y, blockSize,
+                    y * blockSize + disp.y,
+                    blockSize,
                     stepSize,
                     maxChecks);
 
             //std::cout << "Tolerance: " << result.sum << std::endl;
 
             //if the found block is lower than the required PSNR, we add it. Else, do nothing
-            if (result.sum < sum) {
+            if (result.sum < tolerance ) {
                 //std::cout << "matched block" << std::endl;
                 blocks.push_back(result);
             }
@@ -135,8 +136,8 @@ public:
         out.close();
     }
 
-    void writeEmpty(string input) {
-        std::ofstream out(input);
+    void writeEmpty() {
+        std::ofstream out(this->correctionFile);
         out.close();
     }
 
