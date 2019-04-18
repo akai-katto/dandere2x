@@ -101,7 +101,7 @@ void driverDifference(
         cor1.matchAllBlocks();
         cor1.drawOver();
         
-        double psnrPFrame = CImageUtils::psnr(*im2, *copy);
+        double psnrPFrame = ImageUtils::psnr(*im2, *copy);
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
         
         if (psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80) {

@@ -10,12 +10,12 @@
  * Created on December 16, 2018, 4:38 PM
  */
 
-#ifndef CIMAGEUTILS_H
-#define CIMAGEUTILS_H
+#ifndef IMAGEUTILS_H
+#define IMAGEUTILS_H
 
 #include "../Image/Image.h"
 
-class CImageUtils{
+class ImageUtils{
 public:
     
     inline static double deltaC(const Image::Color &colorA, const Image::Color &colorB) {
@@ -129,5 +129,5 @@ public:
     }
     
 };
-#endif /* CIMAGEUTILS_H */
+#endif /* IMAGEUTILS_H */
 

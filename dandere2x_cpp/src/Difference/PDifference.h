@@ -128,7 +128,7 @@ public:
      
      */
     void generatePData() {
-        double psnr = CImageUtils::psnr(*image1, *image2);
+        double psnr = ImageUtils::psnr(*image1, *image2);
 
         if (psnr < 60) {
             std::cout << "PSNR is pretty low, not conducting match" << std::endl;
@@ -198,7 +198,7 @@ public:
         disp.x = 0;
         disp.y = 0;
 
-        double sum = CImageUtils::MSE(
+        double sum = ImageUtils::MSE(
                                            *image1,
                                            *image2,
                                            x * blockSize,

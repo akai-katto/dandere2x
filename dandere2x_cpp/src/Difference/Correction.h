@@ -75,7 +75,7 @@ public:
         disp.x = 0;
         disp.y = 0;
 
-        double sum = CImageUtils::MSE(*image1, *image2, x * blockSize, y * blockSize,
+        double sum = ImageUtils::MSE(*image1, *image2, x * blockSize, y * blockSize,
                 x * blockSize + disp.x, y * blockSize + disp.y, blockSize);
 
         //std::cout << sum << std::endl;
