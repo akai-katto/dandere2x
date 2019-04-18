@@ -98,10 +98,10 @@ int main(int argc, char** argv) {
         cout << "extensionType: " << extensionType << endl;
         
         if(runType == "n"){
-            driverDifference(workspace,frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize, extensionType);
+            driverDifference(workspace, 1, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize, extensionType);
         }
         else if(runType == "r"){
-            driverDifferenceResume(workspace,resumeFrame, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize, extensionType);
+            driverDifference(workspace,resumeFrame, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize, extensionType);
         }
     ////    
     return 0;

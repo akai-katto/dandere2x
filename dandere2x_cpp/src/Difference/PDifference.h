@@ -31,6 +31,13 @@
 #include "DifferenceBlocks.h"
 #include "Inversion.h"
 
+/*
+ todos
+ 
+ - If predictive vectors are same position, don't save to save
+ * computational time.
+ */
+
 
 
 typedef DiamondSearch::point Point;

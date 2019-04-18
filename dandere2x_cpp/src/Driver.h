@@ -42,9 +42,11 @@
  * @param stepSize
  */
 
+const int correctionBlockSize = 4;
 
 void driverDifference(
         std::string workspace,
+        int resumeCount, 
         int frameCount,
         int blockSize,
         double tolerance,
@@ -61,7 +63,23 @@ void driverDifference(
     waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
     shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
 
-    for (int x = 1; x < frameCount; x++) {
+    
+    //for resume case, we need to manually process this frame in a different manner.
+    if (resumeCount != 1) {
+        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount + 1) + extensionType);
+        //File locations that will be produced 
+        std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(resumeCount) + ".txt";
+        std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(resumeCount) + ".txt";
+        std::string correctionFile1 = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(resumeCount) + ".txt";
+        writeEmpty(pDataFile);
+        writeEmpty(inversionFile);
+        writeEmpty(correctionFile1);
+        im1 = im2;
+
+        resumeCount++;
+    }
+
+    for (int x = resumeCount; x < frameCount; x++) {
         std::cout << "Computing differences for frame" << x << endl;
 
         //Load Images for this iteration
@@ -77,12 +95,12 @@ void driverDifference(
         PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
         dif.generatePData(); //2
         dif.drawOver(); //3
-        
-        Correction cor1 = Correction(im2, copy, 4, bleed, tolerance * 2.7, correctionFile1, 4, true);
+   
+        int correction_factor = sqrt(blockSize) / sqrt(correctionBlockSize); // not rly sure why this works tbh
+        Correction cor1 = Correction(im2, copy, correctionBlockSize, bleed, tolerance * correction_factor, correctionFile1, correctionBlockSize, true);
         cor1.matchAllBlocks();
         cor1.drawOver();
         
-
         double psnrPFrame = CImageUtils::psnr(*im2, *copy);
         std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
         
@@ -102,90 +120,8 @@ void driverDifference(
 
         dif.save();
         cor1.writeCorrection();
-        //cor1.writeEmpty();
-        im1 = im2; //4
-
-    }
-
-}
-
-////resume and start can be combined. Do this in future
-//// 4-1-19, I still have not updated this
-//
-
-void driverDifferenceResume(
-        std::string workspace,
-        int resumeCount,
-        int frameCount,
-        int blockSize,
-        double tolerance,
-        double psnrMax,
-        double psnrMin,
-        int stepSize,
-        std::string extensionType) {
-
-
-    int bleed = 2;
-    bool debug = true;
-
-    //1 
-    waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + extensionType);
-    shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount) + extensionType);
-
-    for (int x = resumeCount; x < frameCount; x++) {
-         std::cout << "Computing differences for frame" << x << endl;
-        //File locations that will be produced 
-        std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
-        std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
-        std::string correctionFile = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(x) + ".txt";
-         
-        //Load Images for this iteration
-        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
-        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
-        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType); //for psnr
-           
-        if(x == resumeCount){
-            writeEmpty(pDataFile);
-            writeEmpty(inversionFile);
-            writeEmpty(correctionFile);
-            im1 = im2;
-        } 
-        
-        PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
-        dif.generatePData(); //2
-        dif.drawOver(); //3
-        
-        Correction cor = Correction(im2, copy, 8, bleed, tolerance, correctionFile, 2, true);
-        cor.matchAllBlocks();
-        cor.drawOver();
-
-        double psnrPFrame = CImageUtils::psnr(*im2, *copy);
-        std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
-        
-        if (psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80) {
-            std::cout << "Psnr too low: " << psnrPFrame << " < " << psnrMin << std::endl;
-            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << std::endl;
-            tolerance--;
-            x--;
-            continue;
-        }
-
-        if (psnrPFrame > psnrMax && tolerance < 30 && psnrPFrame < 99) {
-            std::cout << "Psnr too high: " << psnrPFrame << " > " << psnrMax << std::endl;
-            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << std::endl;
-            tolerance++;
-        }
-
-        dif.save();
-        cor.writeCorrection();
         im1 = im2; //4
     }
-
 }
-
-
-
-
-
 #endif /* DRIVER_H */
 

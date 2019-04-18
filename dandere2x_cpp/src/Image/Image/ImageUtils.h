@@ -51,6 +51,10 @@ public:
     
     
     
+    /*
+     Todo:
+     
+     Why can PSNR be above 100? */
     
     /**Calculuate psnr
      *
