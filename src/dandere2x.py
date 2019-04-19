@@ -110,8 +110,8 @@ class Dandere2x:
         self.tolerance = config.get('dandere2x', 'tolerance')
         self.step_size = config.get('dandere2x', 'step_size')
         self.bleed = config.get('dandere2x', 'bleed')
-        self.psnr_low = config.get('dandere2x', 'psnr_low')
-        self.psnr_high = config.get('dandere2x', 'psnr_high')
+        self.quality_low = int(config.get('dandere2x', 'quality_low'))
+        self.quality_high = int(config.get('dandere2x', 'quality_high'))
 
         # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
@@ -135,8 +135,8 @@ class Dandere2x:
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-        self.min_mse = 0
-        self.max_mse = 0
+        self.mse_min = 0
+        self.mse_max = 0
 
 
     def pre_setup(self):
@@ -156,20 +156,20 @@ class Dandere2x:
 
     def set_mse(self):
 
+
         print("calculating mse")
+
         list = []
         for x in range(1, 15):
             num = random.randint(1, self.frame_count)
-            print(num)
-
             f1 = Frame()
             f1.load_from_string(self.input_frames_dir + "frame" + str(num) + ".jpg")
-            list.append(determine_sens(self.workspace, f1, 50, 60))
+            list.append(determine_sens(self.workspace, f1, self.quality_low, self.quality_high))
 
         output = [sum(y) / len(y) for y in zip(*list)]
 
-        self.max_mse = output[0]
-        self.min_mse = output[1]
+        self.mse_max = output[0]
+        self.mse_min = output[1]
         print("mse is ")
         print(output)
 
@@ -223,8 +223,8 @@ class Dandere2x:
                                                   self.frame_count,
                                                   self.block_size,
                                                   self.tolerance,
-                                                  self.max_mse,
-                                                  self.min_mse,
+                                                  self.mse_max,
+                                                  self.mse_min,
                                                   self.step_size,
                                                   resume=False,
                                                   extension_type=self.extension_type)
@@ -295,8 +295,8 @@ class Dandere2x:
                                                   self.frame_count,
                                                   self.block_size,
                                                   self.tolerance,
-                                                  self.psnr_high,
-                                                  self.psnr_low,
+                                                  self.mse_max,
+                                                  self.mse_min,
                                                   self.step_size,
                                                   resume=True,
                                                   extension_type=self.extension_type)
@@ -346,8 +346,8 @@ class Dandere2x:
                                                   self.frame_count,
                                                   self.block_size,
                                                   self.tolerance,
-                                                  self.psnr_high,
-                                                  self.psnr_low,
+                                                  self.mse_max,
+                                                  self.mse_min,
                                                   self.step_size,
                                                   resume=False,
                                                   extension_type=self.extension_type)
@@ -463,7 +463,7 @@ class Dandere2x:
     def write_merge_commands(self):
         with open(self.workspace + os.path.sep + 'commands.txt', 'w') as f:
             f.write(
-                self.ffmpeg_dir + " -f image2 -framerate " + self.frame_rate + " -i " + self.merged_dir + "merged_%d.jpg -r " + self.frame_rate + " -vf deband=range=30:blur=true " + self.workspace + "nosound.mp4\n\n")
+                self.ffmpeg_dir + " -f image2 -framerate " + self.frame_rate + " -i " + self.merged_dir + "merged_%d.jpg -r " + self.frame_rate + " -vf deband " + self.workspace + "nosound.mp4\n\n")
             f.write(
                 self.ffmpeg_dir + " -i " + self.workspace + "nosound.mp4" + " -i " + self.workspace + "audio" + self.audio_type + " -c copy " +
                 self.workspace + "sound.mp4\n\n")
