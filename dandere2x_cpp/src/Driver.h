@@ -50,8 +50,8 @@ void driverDifference(
         int frameCount,
         int blockSize,
         double tolerance,
-        double psnrMax,
-        double psnrMin,
+        double mse_max,
+        double mse_min,
         int stepSize,
         std::string extensionType) {
 
@@ -101,19 +101,19 @@ void driverDifference(
         cor1.matchAllBlocks();
         cor1.drawOver();
         
-        double psnrPFrame = ImageUtils::psnr(*im2, *copy);
-        std::cout << "Frame " << x << " psnr: " << psnrPFrame << endl;
+        double p_mse = ImageUtils::mse_image(*im2, *copy);
+        std::cout << "p_frame " << x << "mse: " << p_mse << endl;
         
-        if (psnrPFrame < psnrMin && tolerance > 1.5 && psnrPFrame > 80) {
-            std::cout << "Psnr too low: " << psnrPFrame << " < " << psnrMin << std::endl;
+        if (p_mse > mse_max && tolerance > 1) {
+            std::cout << "mse too high " << p_mse << " > " << mse_max << std::endl;
             std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << std::endl;
             tolerance--;
             x--;
-            continue;
+            continue; //redo this current for loop iteration with different settings
         }
 
-        if (psnrPFrame > psnrMax && tolerance < 30 && psnrPFrame < 99) {
-            std::cout << "Psnr too high: " << psnrPFrame << " > " << psnrMax << std::endl;
+        if (p_mse < mse_min && tolerance < 30) {
+            std::cout << "mse too too low: " << p_mse << " < " << mse_min << std::endl;
             std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << std::endl;
             tolerance++;
         }

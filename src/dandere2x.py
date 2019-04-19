@@ -30,6 +30,7 @@ number of times without losing any details or quality, keeping lines
 smooth and edges sharp.
 """
 
+from dandere2x_core.dandere2x_utils import determine_sens
 from dandere2x_core.dandere2x_utils import get_seconds_from_time
 from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
@@ -40,11 +41,12 @@ from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
 from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
+from wrappers.frame import Frame
 import configparser
 import logging
 import os
 import threading
-
+import random
 
 class Dandere2x:
 
@@ -129,8 +131,12 @@ class Dandere2x:
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.frame_count = get_seconds_from_time(self.duration) * int(self.frame_rate)
+
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+
+        self.min_mse = 0
+        self.max_mse = 0
 
 
     def pre_setup(self):
@@ -141,8 +147,32 @@ class Dandere2x:
         self.create_waifu2x_script()
         self.write_frames()
         self.write_merge_commands()
+
         logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+
+        self.set_mse()
+
+
+    def set_mse(self):
+
+        print("calculating mse")
+        list = []
+        for x in range(1, 15):
+            num = random.randint(1, self.frame_count)
+            print(num)
+
+            f1 = Frame()
+            f1.load_from_string(self.input_frames_dir + "frame" + str(num) + ".jpg")
+            list.append(determine_sens(self.workspace, f1, 50, 60))
+
+        output = [sum(y) / len(y) for y in zip(*list)]
+
+        self.max_mse = output[0]
+        self.min_mse = output[1]
+        print("mse is ")
+        print(output)
+
 
     # create a series of threads and external processes
     # to run in real time with each other for the dandere2x session.
@@ -193,8 +223,8 @@ class Dandere2x:
                                                   self.frame_count,
                                                   self.block_size,
                                                   self.tolerance,
-                                                  self.psnr_high,
-                                                  self.psnr_low,
+                                                  self.max_mse,
+                                                  self.min_mse,
                                                   self.step_size,
                                                   resume=False,
                                                   extension_type=self.extension_type)

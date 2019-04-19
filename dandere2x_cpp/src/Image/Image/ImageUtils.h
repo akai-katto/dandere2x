@@ -76,6 +76,22 @@ public:
         double result = 20 * log10(255*255) - 10 * log10(sum);
         return result;
     }
+
+    static double mse_image(Image &imageA,
+            Image &imageB) {
+
+        double sum = 0;
+
+        for (int x = 0; x < imageA.width; x++) {
+            for (int y = 0; y < imageA.height; y++) {
+                sum += pow(deltaC(imageA.getColor(x, y), imageB.getColor(x, y)), 2);
+            }
+        }
+
+        sum /= (imageA.height * imageA.width);
+
+        return sum;
+    }
     
     /**
      Calculate a mean square error between two blocks in two different images at two locations

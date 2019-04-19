@@ -89,6 +89,27 @@ def get_seconds_from_time(time_frame):
 
     return hours_seconds + minutes_seconds + seconds
 
+def determine_sens(workspace, frame, lower_val, higher_val):
+    from wrappers.frame import Frame
+
+    frame.save_image_quality(workspace + "lower.jpg", lower_val)
+    frame.save_image_quality(workspace + "higher.jpg", higher_val)
+
+    lower_image = Frame()
+    lower_image.load_from_string(workspace + "lower.jpg")
+
+    higher_image = Frame()
+    higher_image.load_from_string(workspace + "higher.jpg")
+
+    lower_mse = frame.mean(lower_image)
+    higher_mse = frame.mean(higher_image)
+
+    os.remove(workspace + "lower.jpg")
+    os.remove(workspace + "higher.jpg")
+
+    return lower_mse, higher_mse
+
+
 
 def main():
     text = wait_on_text("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
