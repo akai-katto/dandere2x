@@ -25,11 +25,20 @@ I highly recommend subscribing/checking reddit.com/r/dandere2x. I tend to be mor
 
 ## What's going on right now?
 
-Documentation is kind of meh at the moment. Dandere2x changes way too often for me to write an official specifications manual / guide. For the time being I have minimal setup versions of older builds out there on my subreddit with a basic tutorial.
+I'm moving away from doing R&D as I'm feeling content to start pushing for an initial release. A proper GUI, optimizations are the priority at the moment. 
 
 ## Current Releases
 
 Latest releases are uploaded on my subreddit (at the moment).
+
+### 0.6 Changelog
+
+- Added 'corrections' to live build, fixes small imperfections produced by Dandere2x.
+- Maximum image loss is determined by user via JPG compression.
+
+https://www.reddit.com/r/Dandere2x/comments/bf4ayt/06_experimental_huge_quality_change/
+
+Overall, this is the first build I've trusted to run on my system for more than 30 minutes. 
 
 ### 0.4 Changelog (since 0.3)
 
@@ -115,9 +124,8 @@ You can edit how strict / relaxed Dandere2x will behaved.
 
 ~~~
 
-psnr_low=85
-psnr_high=90
-
+quality_low=56
+quality_high=65
 ~~~
 
 
