@@ -80,7 +80,7 @@ void driverDifference(
     }
 
     for (int x = resumeCount; x < frameCount; x++) {
-        std::cout << "Computing differences for frame" << x << endl;
+        std::cout << "\n\n Computing differences for frame" << x << endl;
 
         //Load Images for this iteration
         waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
@@ -102,7 +102,7 @@ void driverDifference(
         cor1.drawOver();
         
         double p_mse = ImageUtils::mse_image(*im2, *copy);
-        std::cout << "p_frame " << x << "mse: " << p_mse << endl;
+        std::cout << "p_frame # " << x << "  mse: " << p_mse << endl;
         
         if (p_mse > mse_max && tolerance > 1) {
             std::cout << "mse too high " << p_mse << " > " << mse_max << std::endl;
@@ -112,7 +112,7 @@ void driverDifference(
             continue; //redo this current for loop iteration with different settings
         }
 
-        if (p_mse < mse_min && tolerance < 30) {
+        if (p_mse < mse_min && tolerance < 30 && p_mse != 0) {
             std::cout << "mse too too low: " << p_mse << " < " << mse_min << std::endl;
             std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << std::endl;
             tolerance++;

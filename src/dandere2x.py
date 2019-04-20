@@ -47,6 +47,7 @@ import logging
 import os
 import threading
 import random
+import math
 
 class Dandere2x:
 
@@ -160,7 +161,8 @@ class Dandere2x:
         print("calculating mse")
 
         list = []
-        for x in range(1, 15):
+        for x in range(1, int(math.sqrt(self.frame_count))):
+            print(str(x) + " out of " + str(int(math.sqrt(self.frame_count))))
             num = random.randint(1, self.frame_count)
             f1 = Frame()
             f1.load_from_string(self.input_frames_dir + "frame" + str(num) + ".jpg")
