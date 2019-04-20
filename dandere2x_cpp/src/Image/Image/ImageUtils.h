@@ -10,12 +10,12 @@
  * Created on December 16, 2018, 4:38 PM
  */
 
-#ifndef CIMAGEUTILS_H
-#define CIMAGEUTILS_H
+#ifndef IMAGEUTILS_H
+#define IMAGEUTILS_H
 
 #include "../Image/Image.h"
 
-class CImageUtils{
+class ImageUtils{
 public:
     
     inline static double deltaC(const Image::Color &colorA, const Image::Color &colorB) {
@@ -51,6 +51,10 @@ public:
     
     
     
+    /*
+     Todo:
+     
+     Why can PSNR be above 100? */
     
     /**Calculuate psnr
      *
@@ -71,6 +75,22 @@ public:
         
         double result = 20 * log10(255*255) - 10 * log10(sum);
         return result;
+    }
+
+    static double mse_image(Image &imageA,
+            Image &imageB) {
+
+        double sum = 0;
+
+        for (int x = 0; x < imageA.width; x++) {
+            for (int y = 0; y < imageA.height; y++) {
+                sum += pow(deltaC(imageA.getColor(x, y), imageB.getColor(x, y)), 2);
+            }
+        }
+
+        sum /= (imageA.height * imageA.width);
+
+        return sum;
     }
     
     /**
@@ -125,5 +145,5 @@ public:
     }
     
 };
-#endif /* CIMAGEUTILS_H */
+#endif /* IMAGEUTILS_H */
 

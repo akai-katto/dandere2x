@@ -31,6 +31,13 @@
 #include "DifferenceBlocks.h"
 #include "Inversion.h"
 
+/*
+ todos
+ 
+ - If predictive vectors are same position, don't save to save
+ * computational time.
+ */
+
 
 
 typedef DiamondSearch::point Point;
@@ -58,7 +65,21 @@ public:
     std::shared_ptr<Image> image2;
     std::shared_ptr<Inversion> inv;
     Point disp;
-
+    
+    
+    /**
+     * 
+     * @param image1 Stays the same
+     * @param image2 is modified 
+     * @param blockSize
+     * @param bleed
+     * @param tolerence
+     * @param pFrameFile output for p-frame text file
+     * @param inversionFile output for inversion text file
+     * @param stepSize
+     * @param debug
+     * @return 
+     */
     PDifference(
             std::shared_ptr<Image> image1,
             std::shared_ptr<Image> image2,
@@ -107,7 +128,7 @@ public:
      
      */
     void generatePData() {
-        double psnr = CImageUtils::psnr(*image1, *image2);
+        double psnr = ImageUtils::psnr(*image1, *image2);
 
         if (psnr < 60) {
             std::cout << "PSNR is pretty low, not conducting match" << std::endl;
@@ -177,7 +198,7 @@ public:
         disp.x = 0;
         disp.y = 0;
 
-        double sum = CImageUtils::MSE(
+        double sum = ImageUtils::MSE(
                                            *image1,
                                            *image2,
                                            x * blockSize,
@@ -213,27 +234,6 @@ public:
                 blocks.push_back(result);
         }
     }
-
-    /*
-     Suppose frame1 (f1) and frame2 (f2) and f3 are the same image, but 
-     * change 0.05 MSE each time. Suppose we allow a max of 0.06 MSE.
-     * 
-     * If we were to match f1 with f2, all is good. If we were to match
-     * f2 with f3, we're in trouble. Since f2 in upscaled reality
-     * is made out of pieces from f1, then the difference between f2
-     * and f3 is actually 0.10, since f2 is actually made of f1.
-     * 
-     * As such, we need to use a new image, f2' (f2 prime) to compare
-     * f2 to f3. f2' is the image of f2 from f1, and is made from drawing over.
-     * 
-     * We only draw over if it's required.  
-     */
-    void drawOverIfRequired() {
-        if (!blocks.empty()) { //if parts of frame2 can be made of frame1, create frame2'
-            drawOver();
-        }
-    }
-
     /**
      * 
      * WRites all data from a pFrame to a text fil

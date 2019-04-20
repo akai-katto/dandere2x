@@ -7,14 +7,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/windwoz/Desktop/dandere2xpython/dandere2x_cpp/src/Difference/PDifference.h</file>
-            <file>file:/C:/Users/windwoz/Desktop/dandere2xpython/dandere2x_cpp/src/Difference/DifferenceBlocks.h</file>
-            <file>file:/C:/Users/windwoz/Desktop/dandere2xpython/dandere2x_cpp/src/Image/Image/Image.h</file>
-            <file>file:/C:/Users/windwoz/Desktop/dandere2xpython/dandere2x_cpp/src/main.cpp</file>
-            <file>file:/C:/Users/windwoz/Desktop/dandere2xpython/dandere2x_cpp/src/Driver.h</file>
-            <file>file:/C:/Users/windwoz/Desktop/dandere2xpython/dandere2x_cpp/src/Image/BlockMatch/DiamondSearch.h</file>
-            <file>file:/C:/Users/windwoz/Desktop/dandere2xpython/dandere2x_cpp/src/Image/Image/ImageUtils.h</file>
-            <file>file:/C:/Users/windwoz/Desktop/dandere2xpython/dandere2x_cpp/src/Image/BlockMatch/Block.h</file>
+            <file>file:/C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/BlockMatch/DiamondSearch.h</file>
+            <file>file:/C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image/Image.h</file>
+            <file>file:/C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/DandereUtils/DandereUtils.h</file>
+            <file>file:/C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Difference/Inversion.h</file>
+            <file>file:/C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image/ImageUtils.h</file>
+            <file>file:/C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Driver.h</file>
+            <file>file:/C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/main.cpp</file>
         </group>
     </open-files>
 </project-private>

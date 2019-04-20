@@ -10,12 +10,14 @@ from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_text
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
+from dandere2x_core.Correction import correct_image
 import logging
 import os
 
 
 def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion,
-                     frame_base, list_predictive, list_differences, output_location):
+                     frame_base, list_predictive, list_differences, list_corrections, output_location):
+
     logger = logging.getLogger(__name__)
 
     predictive_vectors = []
@@ -65,11 +67,16 @@ def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion
                              vector.x_1 * scale_factor,
                              vector.y_1 * scale_factor)
 
+    out_image = correct_image(4, scale_factor, out_image, list_corrections)
+
     out_image.save_image(output_location)
+    #gradfun_save('ffmpeg', out_image, output_location)
+
+
 
 
 def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-               start_frame, count, block_size, scale_factor, file_type):
+               correction_data_dir, start_frame, count, block_size, scale_factor, file_type):
     logger = logging.getLogger(__name__)
     bleed = 1
 
@@ -87,13 +94,15 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
         difference_data = wait_on_text(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
-        make_merge_image(workspace, block_size, scale_factor, bleed, f1, base, prediction_data, difference_data,
-                         workspace + "merged/merged_" + str(x + 1) + file_type)
+        correction_data = wait_on_text(correction_data_dir + "correction_" + str(x) + ".txt")
+
+        make_merge_image(workspace, block_size, scale_factor, bleed, f1, base, prediction_data,
+                         difference_data, correction_data, workspace + "merged/merged_" + str(x + 1) + file_type)
 
 
 # find the last photo to be merged, then start the loop from there
-def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-                      count, block_size, scale_factor, file_type):
+def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir,
+                      pframe_data_dir, correction_data_dir, count, block_size, scale_factor, file_type):
     logger = logging.getLogger(__name__)
     last_found = count
 
@@ -108,7 +117,7 @@ def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir, p
             break
 
     logger.info("resume info: last found: " + str(last_found))
-    merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
+    merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir, correction_data_dir,
                last_found, count, block_size, scale_factor, file_type)
 
 def main():

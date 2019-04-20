@@ -30,6 +30,7 @@ number of times without losing any details or quality, keeping lines
 smooth and edges sharp.
 """
 
+from dandere2x_core.dandere2x_utils import determine_sens
 from dandere2x_core.dandere2x_utils import get_seconds_from_time
 from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
@@ -40,11 +41,13 @@ from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
 from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
+from wrappers.frame import Frame
 import configparser
 import logging
 import os
 import threading
-
+import random
+import math
 
 class Dandere2x:
 
@@ -57,8 +60,8 @@ class Dandere2x:
         self.this_folder = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
 
         # directories
-        self.waifu2x_caffe_cui_dir = config.get('waifu2x_caffe', 'waifu2x_caffe_cui_dir')
-        self.model_dir = config.get('waifu2x_caffe', 'model_dir')
+        self.waifu2x_caffe_cui_dir = config.get('dandere2x', 'waifu2x_caffe_cui_dir')
+        self.model_dir = config.get('dandere2x', 'model_dir')
 
         self.workspace = config.get('dandere2x', 'workspace')
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
@@ -66,8 +69,8 @@ class Dandere2x:
         self.file_dir = config.get('dandere2x', 'file_dir')
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
 
-        self.waifu2x_conv_dir = config.get('waifu2x_conv', 'waifu2x_conv_dir')
-        self.waifu2x_conv_dir_dir = config.get('waifu2x_conv', 'waifu2x_conv_dir_dir')
+        self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
+        self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
 
         if '[this]' in self.waifu2x_conv_dir:
             self.waifu2x_conv_dir = self.waifu2x_conv_dir.replace('[this]', self.this_folder)
@@ -108,8 +111,8 @@ class Dandere2x:
         self.tolerance = config.get('dandere2x', 'tolerance')
         self.step_size = config.get('dandere2x', 'step_size')
         self.bleed = config.get('dandere2x', 'bleed')
-        self.psnr_low = config.get('dandere2x', 'psnr_low')
-        self.psnr_high = config.get('dandere2x', 'psnr_high')
+        self.quality_low = int(config.get('dandere2x', 'quality_low'))
+        self.quality_high = int(config.get('dandere2x', 'quality_high'))
 
         # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
@@ -122,6 +125,7 @@ class Dandere2x:
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
         self.differences_dir = self.workspace + "differences" + os.path.sep
         self.upscaled_dir = self.workspace + "upscaled" + os.path.sep
+        self.correction_data_dir = self.workspace + "correction_data" + os.path.sep
         self.merged_dir = self.workspace + "merged" + os.path.sep
         self.inversion_data_dir = self.workspace + "inversion_data" + os.path.sep
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
@@ -129,8 +133,12 @@ class Dandere2x:
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.frame_count = get_seconds_from_time(self.duration) * int(self.frame_rate)
 
-        logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
+        logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+
+        self.mse_min = 0
+        self.mse_max = 0
+
 
     def pre_setup(self):
         self.logger.info("Starting new dandere2x session")
@@ -140,6 +148,33 @@ class Dandere2x:
         self.create_waifu2x_script()
         self.write_frames()
         self.write_merge_commands()
+
+        logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
+
+        self.set_mse()
+
+
+    def set_mse(self):
+
+
+        print("calculating mse")
+
+        list = []
+        for x in range(1, int(math.sqrt(self.frame_count))):
+            print(str(x) + " out of " + str(int(math.sqrt(self.frame_count))))
+            num = random.randint(1, self.frame_count)
+            f1 = Frame()
+            f1.load_from_string(self.input_frames_dir + "frame" + str(num) + ".jpg")
+            list.append(determine_sens(self.workspace, f1, self.quality_low, self.quality_high))
+
+        output = [sum(y) / len(y) for y in zip(*list)]
+
+        self.mse_max = output[0]
+        self.mse_min = output[1]
+        print("mse is ")
+        print(output)
+
 
     # create a series of threads and external processes
     # to run in real time with each other for the dandere2x session.
@@ -190,8 +225,8 @@ class Dandere2x:
                                                   self.frame_count,
                                                   self.block_size,
                                                   self.tolerance,
-                                                  self.psnr_high,
-                                                  self.psnr_low,
+                                                  self.mse_max,
+                                                  self.mse_min,
                                                   self.step_size,
                                                   resume=False,
                                                   extension_type=self.extension_type)
@@ -202,6 +237,7 @@ class Dandere2x:
                                               self.merged_dir,
                                               self.inversion_data_dir,
                                               self.pframe_data_dir,
+                                              self.correction_data_dir,
                                               1,
                                               self.frame_count,
                                               self.block_size,
@@ -261,8 +297,8 @@ class Dandere2x:
                                                   self.frame_count,
                                                   self.block_size,
                                                   self.tolerance,
-                                                  self.psnr_high,
-                                                  self.psnr_low,
+                                                  self.mse_max,
+                                                  self.mse_min,
                                                   self.step_size,
                                                   resume=True,
                                                   extension_type=self.extension_type)
@@ -273,6 +309,7 @@ class Dandere2x:
                                               self.merged_dir,
                                               self.inversion_data_dir,
                                               self.pframe_data_dir,
+                                              self.correction_data_dir,
                                               self.frame_count,
                                               self.block_size,
                                               self.scale_factor,
@@ -311,8 +348,8 @@ class Dandere2x:
                                                   self.frame_count,
                                                   self.block_size,
                                                   self.tolerance,
-                                                  self.psnr_high,
-                                                  self.psnr_low,
+                                                  self.mse_max,
+                                                  self.mse_min,
                                                   self.step_size,
                                                   resume=False,
                                                   extension_type=self.extension_type)
@@ -352,8 +389,8 @@ class Dandere2x:
         merge_thread.join()
 
     def create_dirs(self):
-        directories = {self.workspace,
-                       self.input_frames_dir,
+        directories = {self.input_frames_dir,
+                       self.correction_data_dir,
                        self.differences_dir,
                        self.upscaled_dir,
                        self.merged_dir,
@@ -364,6 +401,14 @@ class Dandere2x:
                        self.debug_dir,
                        self.log_dir}
 
+        # need to create workspace befroe anything else
+        try:
+            os.mkdir(self.workspace)
+        except OSError:
+            print("Creation of the directory %s failed" % self.workspace)
+        else:
+            print("Successfully created the directory %s " % self.workspace)
+
         for subdirectory in directories:
             try:
                 os.mkdir(subdirectory)
@@ -371,6 +416,7 @@ class Dandere2x:
                 print("Creation of the directory %s failed" % subdirectory)
             else:
                 print("Successfully created the directory %s " % subdirectory)
+
 
     def extract_frames(self):
         ffmpeg_extract_frames(self.ffmpeg_dir,
@@ -419,7 +465,7 @@ class Dandere2x:
     def write_merge_commands(self):
         with open(self.workspace + os.path.sep + 'commands.txt', 'w') as f:
             f.write(
-                self.ffmpeg_dir + " -f image2 -framerate " + self.frame_rate + " -i " + self.merged_dir + "merged_%d.jpg -r 24 " + self.workspace + "nosound.mp4\n\n")
+                self.ffmpeg_dir + " -f image2 -framerate " + self.frame_rate + " -i " + self.merged_dir + "merged_%d.jpg -r " + self.frame_rate + " -vf deband " + self.workspace + "nosound.mp4\n\n")
             f.write(
                 self.ffmpeg_dir + " -i " + self.workspace + "nosound.mp4" + " -i " + self.workspace + "audio" + self.audio_type + " -c copy " +
                 self.workspace + "sound.mp4\n\n")

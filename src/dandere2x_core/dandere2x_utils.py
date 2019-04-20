@@ -12,6 +12,7 @@ import time
 
 
 # waits for a text file, then returns the file as a list sperated by lines
+# to do - I've gotton permission errors. Perhaps adding a catch for that.
 def wait_on_text(text_file):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
@@ -23,7 +24,17 @@ def wait_on_text(text_file):
         count += 1
         time.sleep(.01)
 
-    file = open(text_file, "r")
+    file = None
+    try:
+        file = open(text_file, "r")
+    except PermissionError:
+        logging.info("permission error on file" + text_file)
+
+    while not file:
+        try:
+            file = open(text_file, "r")
+        except PermissionError:
+            logging.info("permission error on file" + text_file)
 
     text_list = file.read().split('\n')
     file.close()
@@ -77,6 +88,27 @@ def get_seconds_from_time(time_frame):
     seconds = int(splitted[2])
 
     return hours_seconds + minutes_seconds + seconds
+
+def determine_sens(workspace, frame, lower_val, higher_val):
+    from wrappers.frame import Frame
+
+    frame.save_image_quality(workspace + "lower.jpg", lower_val)
+    frame.save_image_quality(workspace + "higher.jpg", higher_val)
+
+    lower_image = Frame()
+    lower_image.load_from_string(workspace + "lower.jpg")
+
+    higher_image = Frame()
+    higher_image.load_from_string(workspace + "higher.jpg")
+
+    lower_mse = frame.mean(lower_image)
+    higher_mse = frame.mean(higher_image)
+
+    os.remove(workspace + "lower.jpg")
+    os.remove(workspace + "higher.jpg")
+
+    return lower_mse, higher_mse
+
 
 
 def main():

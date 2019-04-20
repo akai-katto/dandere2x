@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Name: Dandere2X Merge
+Author: CardinalPanda
+Date Created: March 22, 2019
+Last Modified: April 2, 2019
+"""
+from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import wait_on_text
+from wrappers.frame import DisplacementVector
+from wrappers.frame import Frame
+import logging
+import os
+
+
+def correct_image(block_size, scale_factor, frame_base, list_correction):
+    logger = logging.getLogger(__name__)
+
+    predictive_vectors = []
+    difference_vectors = []
+    out_image = Frame()
+    out_image.create_new(frame_base.width, frame_base.height)
+    out_image.copy_image(frame_base)
+    scale_factor = int(scale_factor)
+
+    for x in range(int(len(list_correction) / 4)):
+        predictive_vectors.append(DisplacementVector(int(list_correction[x * 4]),
+                                                     int(list_correction[x * 4 + 1]),
+                                                     int(list_correction[x * 4 + 2]),
+                                                     int(list_correction[x * 4 + 3])))
+    # copy over predictive vectors into new image
+    for vector in predictive_vectors:
+        out_image.copy_block(frame_base, block_size * scale_factor,
+                             vector.x_2 * scale_factor,
+                             vector.y_2 * scale_factor,
+                             vector.x_1 * scale_factor,
+                             vector.y_1 * scale_factor)
+
+    return out_image
+
+#block_size, scale_factor, frame_base, list_predictive, output_location):
+def main():
+    block_size = 4
+    scale_factor = 2
+
+    frame_base = Frame()
+    frame_base.load_from_string("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\merged2x.jpg")
+    list_predictive = wait_on_text("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\correction.txt")
+    out_location = ("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\new_correction.jpg")
+
+    correct_image(block_size,scale_factor,frame_base,list_predictive,out_location)
+
+
+
+if __name__ == "__main__":
+    main()

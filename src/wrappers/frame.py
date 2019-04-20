@@ -24,6 +24,8 @@ import logging
 import numpy as np
 import os
 import time
+import numpy
+from PIL import Image
 
 # fuck this function, lmao. Credits to
 # https://stackoverflow.com/questions/52702809/copy-array-into-part-of-another-array-in-numpy
@@ -105,12 +107,35 @@ class Frame:
 
     # Save an image, then rename it. This prevents other parts of Dandere2x
     # from accessing an image file that hasn't finished saving.
+    # Have to convert image using Pillow before saving to get Quality = 100
+    # for jpeg output
     def save_image(self, out_location):
         extension = os.path.splitext(os.path.basename(out_location))[1]
 
-        misc.imsave(out_location + "temp" + extension, self.frame)
-        wait_on_file(out_location + "temp" + extension)
-        rename_file(out_location + "temp" + extension, out_location)
+        if 'jpg' in extension:
+            jpegsave = Image.fromarray(self.frame.astype(np.uint8))
+            jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=100)
+            wait_on_file(out_location + "temp" + extension)
+            rename_file(out_location + "temp" + extension, out_location)
+        else:
+            misc.imsave(out_location + "temp" + extension, self.frame)
+            wait_on_file(out_location + "temp" + extension)
+            rename_file(out_location + "temp" + extension, out_location)
+
+    #save the picture given a specific quality setting
+    def save_image_quality(self, out_location, quality_per):
+        extension = os.path.splitext(os.path.basename(out_location))[1]
+
+        if 'jpg' in extension:
+            jpegsave = Image.fromarray(self.frame.astype(np.uint8))
+            jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=quality_per)
+            wait_on_file(out_location + "temp" + extension)
+            rename_file(out_location + "temp" + extension, out_location)
+        else:
+            misc.imsave(out_location + "temp" + extension, self.frame)
+            wait_on_file(out_location + "temp" + extension)
+            rename_file(out_location + "temp" + extension, out_location)
+
 
     # This function exists because the act of numpy processing an image
     # changes the overall look of an image. (I guess?). In the case
@@ -165,3 +190,7 @@ class Frame:
         im_out.height = out_image.shape[0]
 
         return im_out
+
+    def mean(self, other):
+        return numpy.mean( (self.frame - other.frame) ** 2 )
+
