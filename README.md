@@ -4,7 +4,7 @@
 
 Dandere2x is a lossy video upscaler also built around waifu2x, with video compression techniques to shorten the time required to process videos.
 
-In other words, although lossy, dandere2x dramatically increases the video processing speed.
+In other words, although lossy, dandere2x dramatically reduces the time needed to upscale most anime videos. 
 
 ## Current Features
 
