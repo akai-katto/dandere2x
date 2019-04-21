@@ -50,8 +50,8 @@ void driverDifference(
         int frameCount,
         int blockSize,
         double tolerance,
-        double mse_max,
-        double mse_min,
+        double mseMax,
+        double mseMin,
         int stepSize,
         std::string extensionType) {
 
@@ -104,16 +104,16 @@ void driverDifference(
         double p_mse = ImageUtils::mse_image(*im2, *copy);
         std::cout << "p_frame # " << x << "  mse: " << p_mse << endl;
         
-        if (p_mse > mse_max && tolerance > 1) {
-            std::cout << "mse too high " << p_mse << " > " << mse_max << std::endl;
+        if (p_mse > mseMax && tolerance > 1) {
+            std::cout << "mse too high " << p_mse << " > " << mseMax << std::endl;
             std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << std::endl;
             tolerance--;
             x--;
             continue; //redo this current for loop iteration with different settings
         }
 
-        if (p_mse < mse_min && tolerance < 30 && p_mse != 0) {
-            std::cout << "mse too too low: " << p_mse << " < " << mse_min << std::endl;
+        if (p_mse < mseMin && tolerance < 30 && p_mse != 0) {
+            std::cout << "mse too too low: " << p_mse << " < " << mseMin << std::endl;
             std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << std::endl;
             tolerance++;
         }

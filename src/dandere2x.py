@@ -155,11 +155,11 @@ class Dandere2x:
         self.set_mse()
 
 
+    # Calculate the mean MSE by samping sqrt(frame_count) images and their
+    # respective MSE loss, then average across all
     def set_mse(self):
 
-
         print("calculating mse")
-
         list = []
         for x in range(1, int(math.sqrt(self.frame_count))):
             print(str(x) + " out of " + str(int(math.sqrt(self.frame_count))))

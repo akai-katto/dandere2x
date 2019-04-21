@@ -6,19 +6,17 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
-from dandere2x_core.dandere2x_utils import get_lexicon_value
+
 from dandere2x_core.dandere2x_utils import wait_on_text
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
 import logging
-import os
 
 
+# Correct an image by using itself as reference points
+# to remove errors / specs produced by dandere2x
 def correct_image(block_size, scale_factor, frame_base, list_correction):
-    logger = logging.getLogger(__name__)
-
     predictive_vectors = []
-    difference_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
     out_image.copy_image(frame_base)
@@ -39,7 +37,7 @@ def correct_image(block_size, scale_factor, frame_base, list_correction):
 
     return out_image
 
-#block_size, scale_factor, frame_base, list_predictive, output_location):
+
 def main():
     block_size = 4
     scale_factor = 2
@@ -50,7 +48,6 @@ def main():
     out_location = ("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\new_correction.jpg")
 
     correct_image(block_size,scale_factor,frame_base,list_predictive,out_location)
-
 
 
 if __name__ == "__main__":

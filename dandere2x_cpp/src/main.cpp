@@ -64,8 +64,8 @@ int main(int argc, char** argv) {
         int frameCount = 2000;
         int blockSize = 30;
         double tolerance = 15;
-        double psnrMax = 98;
-        double psnrMin = 94;
+        double mseMax = 4;
+        double mseMin = 1;
         int stepSize = 4;
         string runType = "n";// 'n' or 'r'
         int resumeFrame = 23;
@@ -76,8 +76,8 @@ int main(int argc, char** argv) {
             frameCount = stoi(argv[2]); 
             blockSize = atoi(argv[3]);
             tolerance = stod(argv[4]);
-            psnrMax = stod(argv[5]);
-            psnrMin = stod(argv[6]);
+            mseMax = stod(argv[5]);
+            mseMin = stod(argv[6]);
             stepSize = stod(argv[7]);
             runType = argv[8];
             resumeFrame = atoi(argv[9]);
@@ -90,18 +90,18 @@ int main(int argc, char** argv) {
         cout << "frameCount: " << frameCount << endl;
         cout << "blockSize: " << blockSize << endl;
         cout << "tolerance: " << tolerance << endl;
-        cout << "psnrMin: " << psnrMin << endl;
-        cout << "psnrMax: " << psnrMax << endl;
+        cout << "mseMax: " << mseMax << endl;
+        cout << "mseMin: " << mseMin << endl;
         cout << "stepSize: " << stepSize << endl;
         cout << "runType: " << runType << endl;
         cout << "ResumeFrame (if valid): " << resumeFrame << endl;
         cout << "extensionType: " << extensionType << endl;
         
         if(runType == "n"){
-            driverDifference(workspace, 1, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize, extensionType);
+            driverDifference(workspace, 1, frameCount, blockSize, tolerance, mseMax, mseMin, stepSize, extensionType);
         }
         else if(runType == "r"){
-            driverDifference(workspace,resumeFrame, frameCount, blockSize, tolerance, psnrMax, psnrMin, stepSize, extensionType);
+            driverDifference(workspace,resumeFrame, frameCount, blockSize, tolerance, mseMax, mseMin, stepSize, extensionType);
         }
     ////    
     return 0;
