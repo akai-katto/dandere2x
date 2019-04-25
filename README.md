@@ -10,7 +10,7 @@ In other words, although lossy, dandere2x dramatically reduces the time needed t
 
 - Block Matching Video Compression
 - Interpolated Frame Video Compression
-- Minimum / maximum quality loss
+- Minimum / maximum quality loss (By JPEG standards)
 - Custom block sizes
 - Custom scaling sizes (1x, 2x, 3x).
 
@@ -40,20 +40,25 @@ https://www.reddit.com/r/Dandere2x/comments/bf4ayt/06_experimental_huge_quality_
 
 Overall, this is the first build I've trusted to run on my system for more than 30 minutes. 
 
-### 0.4 Changelog (since 0.3)
+### My Upscales:
 
-- Support for OpenCL (via Waifu2x-Converter-Cpp)
-- Support for resuming Dandere2x Sessions
-- Custom model type for Waifu2x-Caffe
-- Entirely reworked in python
-- Support for .pngs, although I do not recommend this
+What are 'debug frames'?
 
-Reddit Link: https://www.reddit.com/r/Dandere2x/comments/b1lmeh/dandere2x_alpha_03_release/
+If you want to see how well Dandere2x is preforming, black boxes denote redrawn blocks, while non-block boxes represent saved GPU time.
+
+
+4k: https://vimeo.com/331606773
+
+Debug Frames: https://www.youtube.com/watch?v=1-JbjSxoNH4&t
 
 
 ### Requirements
 
 - Python 3: https://www.python.org/downloads/windows/
+
+- OpenCL compatabile system
+
+- CUDA (Nvidia) (preferred) 
 
 ### Installation
 
