@@ -25,7 +25,7 @@ I highly recommend subscribing/checking reddit.com/r/dandere2x. I tend to be mor
 
 ## What's going on right now?
 
-I'm moving away from doing R&D as I'm feeling content to start pushing for an initial release. A proper GUI, optimizations are the priority at the moment. 
+Hiatus until I finish out academic year, with on and off support until then. Not planning on doing R&D until free time opens up again.
 
 ## Current Releases
 
@@ -47,10 +47,11 @@ What are 'debug frames'?
 If you want to see how well Dandere2x is preforming, black boxes denote redrawn blocks, while non-block boxes represent saved GPU time.
 
 
-4k: https://vimeo.com/331606773
+Violet Evergarden 4k: https://vimeo.com/331606773
 
-Debug Frames: https://www.youtube.com/watch?v=1-JbjSxoNH4&t
+Violet Evergarden Debug Frames: https://www.youtube.com/watch?v=1-JbjSxoNH4&t
 
+Your Name 4k: https://vimeo.com/332114690
 
 ### Requirements
 
