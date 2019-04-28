@@ -4,12 +4,12 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.cpp" "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.obj"
-  "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.cpp" "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/Image/Image.cpp.obj"
-  "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.cpp" "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/PFrame/Correction/Correction.cpp.obj"
-  "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.cpp" "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.obj"
-  "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.cpp" "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj"
-  "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/main.cpp" "C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/main.cpp.obj"
+  "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.cpp" "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.o"
+  "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.cpp" "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/Image/Image.cpp.o"
+  "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.cpp" "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/PFrame/Correction/Correction.cpp.o"
+  "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.cpp" "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.o"
+  "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.cpp" "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.o"
+  "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/main.cpp" "/cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir/src/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
