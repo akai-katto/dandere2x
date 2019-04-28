@@ -1,127 +1,162 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+//
+// Created by https://github.com/CardinalPanda
+//
+//Licensed under the GNU General Public License Version 3 (GNU GPL v3),
+//    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
-/* 
- * File:   Driver.h
- * Author: linux
- *
- * Created on February 9, 2019, 5:45 PM
- */
+#ifndef DANDERE2X_DRIVER_H
+#define DANDERE2X_DRIVER_H
 
-#ifndef DRIVER_H
-#define DRIVER_H
+#include "PFrame/Correction/Correction.h"
+#include "PFrame/PFrame.h"
+#include "Dandere2xUtils/Dandere2xUtils.h"
 
-#include "DandereUtils/DandereUtils.h" //waitForFile
-#include "Difference/PDifference.h"
-#include "Difference/Correction.h"
+
 
 /**
- * 
- * 1) In Dandere2x, the first frame of any function is seen as different.
- * Reiterating, parts of frame1 can exists in parts of frame2, frame5, or frame1000.
- * 
- * That is to say, every frame preceding frame1 can possibely have parts derived
- * from frame1. As a result, we load frame1 seperate from the rest,
- * and continually make modifications as we go.
- * 
- * 
- * 2) Given two frames and the data required to start finding differences, 
- * compute the differences between two frames. 
- * 
- * 3) Read comment method for this. We need to draw over the previous frame
- * 
- * 4) Assign drawn over frame as the new base frame. 
- * 
- * @param workspace
- * @param frameCount
- * @param blockSize
- * @param tolerance
- * @param stepSize
+ * Todo:
+ * - Simplify this driver class
+ * - Add individual testing wrapper for debugging
  */
 
+
+/**
+ * Description:
+ *
+ * This is like the control room for Dandere2x - if you wish to add more additions to Dandere2x on the c++ side,
+ * this where it is going to do it here.  Block matching, quality control, and saving of vectors all happen here.
+ *
+ *
+ * Overview:
+ *
+ * - First we check if this is a resume frame, if it is, manually save the files as empty
+ *   to create a p_frame at the resume frames position
+ *
+ * - For every frame, we do the following
+ *      0) Load the next frame
+ *      a) Conduct a block match with the next frame
+ *      b) Preform corrections on the predictive frame
+ *      c) Check if the predictive frame is good enough to accept
+ *          aa) If it is , save our files
+ *          bb) If it not, increase the tolerance and start again
+ *
+ *
+ *
+ */
+using namespace dandere2x;
+using namespace std;
 const int correctionBlockSize = 4;
 
-void driverDifference(
-        std::string workspace,
-        int resumeCount, 
-        int frameCount,
-        int blockSize,
-        double tolerance,
-        double mseMax,
-        double mseMin,
-        int stepSize,
-        std::string extensionType) {
 
+void driver_difference(string workspace, int resume_count, int frame_count, int block_size,
+                       double tolerance, double mse_max, double mse_min, int step_size, string extension_type) {
 
-    int bleed = 2; //i dont think bleed is actually used? 
+    int bleed = 2; //i dont think bleed is actually used?
     bool debug = true;
 
-    //1 
-    waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
-    shared_ptr<Image> im1 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extensionType);
+    wait_for_file(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extension_type);
+    shared_ptr<Image> im1 = make_shared<Image>(
+            workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extension_type);
 
-    
-    //for resume case, we need to manually process this frame in a different manner.
-    if (resumeCount != 1) {
-        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(resumeCount + 1) + extensionType);
-        //File locations that will be produced 
-        std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(resumeCount) + ".txt";
-        std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(resumeCount) + ".txt";
-        std::string correctionFile1 = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(resumeCount) + ".txt";
-        writeEmpty(pDataFile);
-        writeEmpty(inversionFile);
-        writeEmpty(correctionFile1);
+
+    /**
+     * Handle Cases for Resuming Here
+     */
+    if (resume_count != 1) {
+        shared_ptr<Image> im2 = make_shared<Image>(
+                workspace + separator() + "inputs" + separator() + "frame" + to_string(resume_count + 1) +
+                extension_type);
+
+        //File locations that will be produced
+        string p_data_file =
+                workspace + separator() + "pframe_data" + separator() + "pframe_" + to_string(resume_count) + ".txt";
+
+        string difference_file =
+                workspace + separator() + "inversion_data" + separator() + "inversion_" + to_string(resume_count) +
+                ".txt";
+
+        string correction_file =
+                workspace + separator() + "correction_data" + separator() + "correction_" + to_string(resume_count) +
+                ".txt";
+
+        write_empty(p_data_file);
+        write_empty(difference_file);
+        write_empty(correction_file);
         im1 = im2;
 
-        resumeCount++;
+        resume_count++;
     }
 
-    for (int x = resumeCount; x < frameCount; x++) {
-        std::cout << "\n\n Computing differences for frame" << x << endl;
 
-        //Load Images for this iteration
-        waitForFile(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
-        shared_ptr<Image> im2 = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType);
-        shared_ptr<Image> copy = make_shared<Image>(workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extensionType); //for psnr
-        
-        //File locations that will be produced 
-        std::string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + std::to_string(x) + ".txt";
-        std::string inversionFile = workspace + separator() + "inversion_data" + separator() + "inversion_" + std::to_string(x) + ".txt";
-        std::string correctionFile1 = workspace + separator() + "correction_data" + separator() + "correction_" + std::to_string(x) + ".txt";
 
-        PDifference dif = PDifference(im1, im2, blockSize, bleed, tolerance, pDataFile, inversionFile, stepSize, debug);
-        dif.generatePData(); //2
-        dif.drawOver(); //3
-   
-        int correction_factor = sqrt(blockSize) / sqrt(correctionBlockSize); // not rly sure why this works tbh
-        Correction cor1 = Correction(im2, copy, correctionBlockSize, bleed, tolerance * correction_factor, correctionFile1, correctionBlockSize, true);
-        cor1.matchAllBlocks();
-        cor1.drawOver();
-        
+    for (int x = resume_count; x < frame_count; x++) {
+        cout << "\n\n Computing differences for frame" << x << endl;
+
+        shared_ptr<Image> im2 = make_shared<Image>(
+                workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extension_type);
+        shared_ptr<Image> copy = make_shared<Image>(
+                workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) +
+                extension_type); //for psnr
+
+        //File locations that will be produced
+        string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + to_string(x) + ".txt";
+
+        string inversionFile =
+                workspace + separator() + "inversion_data" + separator() + "inversion_" + to_string(x) + ".txt";
+
+        string correctionFile1 =
+                workspace + separator() + "correction_data" + separator() + "correction_" + to_string(x) + ".txt";
+
+
+
+        /**
+         * Begin Image Prediction Area.
+         *
+         * If you wish to make a block-matching improvement for dandere2x, the plugin will go here
+         *
+         */
+        PFrame pframe = PFrame(im1, im2, block_size, bleed, tolerance, pDataFile, inversionFile, step_size, debug);
+        pframe.run();
+
+        int correction_factor = sqrt(block_size) / sqrt(correctionBlockSize); // not rly sure why this works tbh
+
+        Correction correction = Correction(im2, copy, correctionBlockSize, tolerance * correction_factor,
+                                           correctionFile1,
+                                           correctionBlockSize);
+        correction.run();
+
+
+        /**
+        * Evaluate the final image after being processed by block match and corrections
+        */
+
         double p_mse = ImageUtils::mse_image(*im2, *copy);
-        std::cout << "p_frame # " << x << "  mse: " << p_mse << endl;
-        
-        if (p_mse > mseMax && tolerance > 1) {
-            std::cout << "mse too high " << p_mse << " > " << mseMax << std::endl;
-            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << std::endl;
+        cout << "p_frame # " << x << "  mse: " << p_mse << endl;
+
+        if (p_mse > mse_max && tolerance > 1) {
+            cout << "mse too high " << p_mse << " > " << mse_max << endl;
+            cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << endl;
             tolerance--;
             x--;
             continue; //redo this current for loop iteration with different settings
         }
 
-        if (p_mse < mseMin && tolerance < 30 && p_mse != 0) {
-            std::cout << "mse too too low: " << p_mse << " < " << mseMin << std::endl;
-            std::cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << std::endl;
+        if (p_mse < mse_min && tolerance < 30 && p_mse != 0) {
+            cout << "mse too too low: " << p_mse << " < " << mse_min << endl;
+            cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << endl;
             tolerance++;
         }
 
-        dif.save();
-        cor1.writeCorrection();
+
+        /**
+         * Save files if whatever plugins we ran through the image passed the quality test
+         */
+
+        pframe.save();
+        correction.save();
+
         im1 = im2; //4
     }
 }
-#endif /* DRIVER_H */
 
+#endif //DANDERE2X_DRIVER_H
