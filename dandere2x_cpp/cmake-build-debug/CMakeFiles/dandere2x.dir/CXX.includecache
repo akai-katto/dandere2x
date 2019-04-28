@@ -6,25 +6,29 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/Block.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/Block.h
 iostream
 -
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/DiamondSearch.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/DiamondSearch.h
 vector
 -
 algorithm
 -
 Block.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/Block.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/Block.h
 ../Image/Image.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/Image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 ../Image/Image.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/Image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 ../Image/ImageUtils.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/ImageUtils.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/ImageUtils.h
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/Dandere2xUtils.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.cpp
+Dandere2xUtils.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.h
+
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.h
 string
 -
 iostream
@@ -32,15 +36,21 @@ iostream
 fstream
 -
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/Driver.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Driver.h
 PFrame/Correction/Correction.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Correction/Correction.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.h
 PFrame/PFrame.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/PFrame.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.h
 Dandere2xUtils/Dandere2xUtils.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/Dandere2xUtils.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.h
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/Image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.cpp
+Image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
+stb_image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/stb_image.h
+
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 iostream
 -
 vector
@@ -52,15 +62,15 @@ exception
 stdexcept
 -
 stb_image.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/stb_image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/stb_image.h
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/ImageUtils.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/ImageUtils.h
 ../Image/Image.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/Image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/stb_image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/stb_image.h
 stb_image.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/stb_image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/stb_image.h
 stdio.h
 -
 stdlib.h
@@ -90,7 +100,11 @@ intrin.h
 arm_neon.h
 -
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Correction/Correction.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.cpp
+Correction.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.h
+
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.h
 memory
 -
 iostream
@@ -98,19 +112,25 @@ iostream
 fstream
 -
 ../../Image/Image.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/Image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 ../../BlockMatch/DiamondSearch.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/DiamondSearch.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/DiamondSearch.h
 ../../Dandere2xUtils/Dandere2xUtils.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/Dandere2xUtils.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.h
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Difference/DifferenceBlocks.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/DifferenceBlocks.h
 vector
 -
 ../../BlockMatch/Block.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/Block.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/Block.h
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Difference/Differences.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.cpp
+Differences.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.h
+DifferenceBlocks.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/DifferenceBlocks.h
+
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.h
 memory
 -
 vector
@@ -120,13 +140,17 @@ iostream
 fstream
 -
 ../../Image/Image.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/Image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 ../../BlockMatch/Block.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/Block.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/Block.h
 DifferenceBlocks.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Difference/DifferenceBlocks.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/DifferenceBlocks.h
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/PFrame.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.cpp
+PFrame.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.h
+
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.h
 memory
 -
 iostream
@@ -134,15 +158,15 @@ iostream
 fstream
 -
 ../BlockMatch/DiamondSearch.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/DiamondSearch.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/DiamondSearch.h
 ../Image/Image.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Image/Image.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 ../Dandere2xUtils/Dandere2xUtils.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/Dandere2xUtils.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.h
 Difference/Differences.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Difference/Differences.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.h
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/main.cpp
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/main.cpp
 Driver.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Driver.h
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Driver.h
 

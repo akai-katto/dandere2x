@@ -18,6 +18,31 @@
  * - Simplify this driver class
  * - Add individual testing wrapper for debugging
  */
+
+
+/**
+ * Description:
+ *
+ * This is like the control room for Dandere2x - if you wish to add more additions to Dandere2x on the c++ side,
+ * this where it is going to do it here.  Block matching, quality control, and saving of vectors all happen here.
+ *
+ *
+ * Overview:
+ *
+ * - First we check if this is a resume frame, if it is, manually save the files as empty
+ *   to create a p_frame at the resume frames position
+ *
+ * - For every frame, we do the following
+ *      0) Load the next frame
+ *      a) Conduct a block match with the next frame
+ *      b) Preform corrections on the predictive frame
+ *      c) Check if the predictive frame is good enough to accept
+ *          aa) If it is , save our files
+ *          bb) If it not, increase the tolerance and start again
+ *
+ *
+ *
+ */
 using namespace dandere2x;
 using namespace std;
 const int correctionBlockSize = 4;
@@ -29,15 +54,15 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
     int bleed = 2; //i dont think bleed is actually used?
     bool debug = true;
 
-    //1
     wait_for_file(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extension_type);
     shared_ptr<Image> im1 = make_shared<Image>(
             workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extension_type);
 
 
-    //for resume case, we need to manually process this frame in a different manner.
+    /**
+     * Handle Cases for Resuming Here
+     */
     if (resume_count != 1) {
-
         shared_ptr<Image> im2 = make_shared<Image>(
                 workspace + separator() + "inputs" + separator() + "frame" + to_string(resume_count + 1) +
                 extension_type);
@@ -62,6 +87,8 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
         resume_count++;
     }
 
+
+
     for (int x = resume_count; x < frame_count; x++) {
         cout << "\n\n Computing differences for frame" << x << endl;
 
@@ -73,19 +100,35 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
 
         //File locations that will be produced
         string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + to_string(x) + ".txt";
+
         string inversionFile =
                 workspace + separator() + "inversion_data" + separator() + "inversion_" + to_string(x) + ".txt";
+
         string correctionFile1 =
                 workspace + separator() + "correction_data" + separator() + "correction_" + to_string(x) + ".txt";
 
-        PFrame p = PFrame(im1, im2, block_size, bleed, tolerance, pDataFile, inversionFile, step_size, debug);
-        p.run();
+
+
+        /**
+         * Begin Image Prediction Area.
+         *
+         * If you wish to make a block-matching improvement for dandere2x, the plugin will go here
+         *
+         */
+        PFrame pframe = PFrame(im1, im2, block_size, bleed, tolerance, pDataFile, inversionFile, step_size, debug);
+        pframe.run();
 
         int correction_factor = sqrt(block_size) / sqrt(correctionBlockSize); // not rly sure why this works tbh
 
-        Correction c = Correction(im2, copy, correctionBlockSize, tolerance * correction_factor, correctionFile1,
-                                  correctionBlockSize);
-        c.run();
+        Correction correction = Correction(im2, copy, correctionBlockSize, tolerance * correction_factor,
+                                           correctionFile1,
+                                           correctionBlockSize);
+        correction.run();
+
+
+        /**
+        * Evaluate the final image after being processed by block match and corrections
+        */
 
         double p_mse = ImageUtils::mse_image(*im2, *copy);
         cout << "p_frame # " << x << "  mse: " << p_mse << endl;
@@ -104,8 +147,14 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
             tolerance++;
         }
 
-        p.save();
-        c.save();
+
+        /**
+         * Save files if whatever plugins we ran through the image passed the quality test
+         */
+
+        pframe.save();
+        correction.save();
+
         im1 = im2; //4
     }
 }
