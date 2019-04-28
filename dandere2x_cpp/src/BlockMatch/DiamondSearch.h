@@ -29,6 +29,8 @@
 #include "../Image/Image.h"
 #include "../Image/ImageUtils.h"
 
+
+
 class DiamondSearch {
 
 public:

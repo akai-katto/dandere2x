@@ -32,8 +32,6 @@ iostream
 fstream
 -
 
-C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/VectorDisplacement.h
-
 C:/Users/windwoz/CLionProjects/dandere2x/src/Driver.h
 PFrame/Correction/Correction.h
 C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Correction/Correction.h
@@ -107,10 +105,10 @@ C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/DiamondSearch.h
 C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/Dandere2xUtils.h
 
 C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Difference/DifferenceBlocks.h
-../../Dandere2xUtils/VectorDisplacement.h
-C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/VectorDisplacement.h
 vector
 -
+../../BlockMatch/Block.h
+C:/Users/windwoz/CLionProjects/dandere2x/src/BlockMatch/Block.h
 
 C:/Users/windwoz/CLionProjects/dandere2x/src/PFrame/Difference/Differences.h
 memory

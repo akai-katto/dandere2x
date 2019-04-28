@@ -15,15 +15,38 @@
 #include "../../BlockMatch/DiamondSearch.h"
 #include "../../Dandere2xUtils/Dandere2xUtils.h"
 
+/**
+ * This can be seen as a second order approximation given the restrictions
+ * outlined in the Dandere2x research paper ( see Restrictions)
+ *
+ * Given the fake version of an image and the real version, try to fix the fake
+ * version of the image by using nearby blocks to correct the 'blemishes'
+ * produced by waifu2x.
+ *
+ * In the end, we should have a series of vectors to help correct the 'fake' image,
+ * as well as drawing over the fake image with said corrections.
+ *
+ *
+ * Runtime
+ *
+ * - Correct image1_fake with relation to image1_true, looking for nearby
+ *   blocks to hide artifacts produced by Dandere2x
+ *
+ * Results
+ *
+ * - A series of vectors to correct image1_fake with itself
+ * - Draw over image1_fake with said produced vectors
+ *
+ */
 class Correction {
 
 public:
-    Correction(std::shared_ptr<Image> image1,
-               std::shared_ptr<Image> image2,
+    Correction(std::shared_ptr<Image> image1_fake,
+               std::shared_ptr<Image> image1_true,
                unsigned int block_size,
                double tolerance,
                std::string correction_file,
-               int stepSize);
+               int step_size);
 
 
     void run();
@@ -41,8 +64,8 @@ private:
     std::string correction_file;
 
     std::vector<Block> blocks;
-    std::shared_ptr<Image> image1;
-    std::shared_ptr<Image> image2;
+    std::shared_ptr<Image> image1_fake;
+    std::shared_ptr<Image> image1_true;
 
     void draw_over();
 

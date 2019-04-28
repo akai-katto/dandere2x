@@ -7,8 +7,8 @@
 #ifndef DANDERE2X_DIFFERENCEBLOCKS_H
 #define DANDERE2X_DIFFERENCEBLOCKS_H
 
-#include "../../Dandere2xUtils/VectorDisplacement.h"
 #include <vector>
+#include "../../BlockMatch/Block.h"
 
 class DifferenceBlocks {
 
@@ -20,7 +20,7 @@ public:
     int yCount;
     int xDimension;
     int yDimension;
-    std::vector<VectorDisplacement> list = std::vector<VectorDisplacement>();
+    std::vector<Block> list = std::vector<Block>();
 
 
     DifferenceBlocks(int xDimension, int yDimension, int size) {
@@ -37,12 +37,12 @@ public:
         size++;
         if (xCount + 1 < xMax) {
             xCount++;
-            list.push_back(VectorDisplacement(x, y, xCount, yCount));
+            list.push_back(Block(x, y, xCount, yCount, 9999));
             //xCount++;
         } else {
             yCount++;
             xCount = 0;
-            list.push_back(VectorDisplacement(x, y, xCount, yCount));
+            list.push_back(Block(x, y, xCount, yCount, 9999));
 
         }
     }

@@ -5,7 +5,7 @@
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
 #include "Differences.h"
-
+#include "DifferenceBlocks.h"
 
 //public code
 void Differences::run() {
@@ -32,10 +32,10 @@ void Differences::write(std::string output_file) {
 
     //write vectors to temp file
     for (int x = 0; x < difference_blocks->list.size(); x++) {
-        out << difference_blocks->list[x].x << "\n" <<
-            difference_blocks->list[x].y << "\n" <<
-            difference_blocks->list[x].new_x << "\n" <<
-            difference_blocks->list[x].new_y << std::endl;
+        out << difference_blocks->list[x].x_start << "\n" <<
+            difference_blocks->list[x].y_start << "\n" <<
+            difference_blocks->list[x].x_end << "\n" <<
+            difference_blocks->list[x].y_end << std::endl;
     }
     out.close();
     rename((output_file + ".temp").c_str(), output_file.c_str());

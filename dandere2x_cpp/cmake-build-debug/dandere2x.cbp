@@ -92,9 +92,6 @@
 		<Unit filename="C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/Dandere2xUtils.h">
 			<Option target="dandere2x"/>
 		</Unit>
-		<Unit filename="C:/Users/windwoz/CLionProjects/dandere2x/src/Dandere2xUtils/VectorDisplacement.h">
-			<Option target="dandere2x"/>
-		</Unit>
 		<Unit filename="C:/Users/windwoz/CLionProjects/dandere2x/src/Driver.h">
 			<Option target="dandere2x"/>
 		</Unit>

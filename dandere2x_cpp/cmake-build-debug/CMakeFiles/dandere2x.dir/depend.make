@@ -18,7 +18,6 @@ CMakeFiles/dandere2x.dir/src/PFrame/Correction/Correction.cpp.obj: ../src/PFrame
 CMakeFiles/dandere2x.dir/src/PFrame/Correction/Correction.cpp.obj: ../src/PFrame/Correction/Correction.h
 
 CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.obj: ../src/BlockMatch/Block.h
-CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.obj: ../src/Dandere2xUtils/VectorDisplacement.h
 CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.obj: ../src/Image/Image.h
 CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.obj: ../src/Image/stb_image.h
 CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.obj: ../src/PFrame/Difference/DifferenceBlocks.h
@@ -28,7 +27,6 @@ CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.obj: ../src/PFram
 CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj: ../src/BlockMatch/Block.h
 CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj: ../src/BlockMatch/DiamondSearch.h
 CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj: ../src/Dandere2xUtils/Dandere2xUtils.h
-CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj: ../src/Dandere2xUtils/VectorDisplacement.h
 CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj: ../src/Image/Image.h
 CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj: ../src/Image/ImageUtils.h
 CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj: ../src/Image/stb_image.h
@@ -40,7 +38,6 @@ CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj: ../src/PFrame/PFrame.h
 CMakeFiles/dandere2x.dir/src/main.cpp.obj: ../src/BlockMatch/Block.h
 CMakeFiles/dandere2x.dir/src/main.cpp.obj: ../src/BlockMatch/DiamondSearch.h
 CMakeFiles/dandere2x.dir/src/main.cpp.obj: ../src/Dandere2xUtils/Dandere2xUtils.h
-CMakeFiles/dandere2x.dir/src/main.cpp.obj: ../src/Dandere2xUtils/VectorDisplacement.h
 CMakeFiles/dandere2x.dir/src/main.cpp.obj: ../src/Driver.h
 CMakeFiles/dandere2x.dir/src/main.cpp.obj: ../src/Image/Image.h
 CMakeFiles/dandere2x.dir/src/main.cpp.obj: ../src/Image/ImageUtils.h

@@ -5,13 +5,12 @@
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
 
-/*
+/**
  * Description:
  *
- * A class to hold variables that denote where a block moved between two frames, and the MSE
- * difference between the two blocks.
- *
- * Having this be an object allows us to call vector sort.
+ * A recurring object that needs to be moved around in Dandere2x is something that holds the coordinates
+ * of a block in one image, the coordinates of a block in another, and the MSE difference between the true
+ * image.
  */
 #ifndef DANDERE2X_BLOCK_H
 #define DANDERE2X_BLOCK_H
@@ -32,13 +31,6 @@ public:
         this->x_end = x_end;
         this->y_end = y_end;
         this->sum = sum;
-    }
-
-    Block(int xStart, int yStart, int xEnd, int yEnd) {
-        this->x_start = xStart;
-        this->y_start = yStart;
-        this->x_end = xEnd;
-        this->y_end = yEnd;
     }
 
     Block(const Block &other) {

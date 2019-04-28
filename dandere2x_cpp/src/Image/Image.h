@@ -15,7 +15,7 @@
 #include "stb_image.h"
 
 
-/*
+/**
  * Description:
  *
  * A simple wrapper for the stb_image library for Dandere2x compression.

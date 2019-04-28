@@ -30,11 +30,10 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, uns
 }
 
 
-//if someone is doing code-review, what do you prefer? if-else or if(...){return;} <- what I have
-//written at the moment
+/**
+ * Run will modify image2 when the draw over command is called.
+ */
 void PFrame::run() {
-
-
     double psnr = ImageUtils::psnr(*image1, *image2);
 
     //if the psnr is really low between two images, don't bother trying to match blocks, as they're
@@ -61,6 +60,10 @@ void PFrame::run() {
 
 }
 
+
+/**
+ * Saves the blocks (if they are there) into a relevent text files
+ */
 void PFrame::save() {
     if (!blocks.empty()) { //if parts of frame2 can be made of frame1, create frame2'
         create_difference();
@@ -78,7 +81,9 @@ void PFrame::create_difference() {
     dif->run();
 }
 
-
+/**
+ * Modifies image2 to carry the modifications given by the p_frame
+ */
 void PFrame::draw_over() {
     for (int outer = 0; outer < blocks.size(); outer++) {
         for (int x = 0; x < block_size; x++) {

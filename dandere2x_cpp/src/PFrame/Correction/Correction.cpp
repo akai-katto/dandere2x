@@ -6,21 +6,21 @@
 
 #include "Correction.h"
 
-Correction::Correction(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, unsigned int block_size,
-                       double tolerance, std::string correction_file, int stepSize) {
+Correction::Correction(std::shared_ptr<Image> image1_fake, std::shared_ptr<Image> image1_true, unsigned int block_size,
+                       double tolerance, std::string correction_file, int step_size) {
 
-    this->image1 = image1;
-    this->image2 = image2;
-    this->step_size = stepSize;
+    this->image1_fake = image1_fake;
+    this->image1_true = image1_true;
+    this->step_size = step_size;
     this->max_checks = 64; //prevent diamond search from going on forever
     this->block_size = block_size;
-    this->width = image1->width;
-    this->height = image1->height;
+    this->width = image1_fake->width;
+    this->height = image1_fake->height;
     this->correction_file = correction_file;
     this->tolerance = tolerance;
 
     //preform checks to ensure given information is valid
-    if (image1->height != image2->height || image1->width != image2->width)
+    if (image1_fake->height != image1_true->height || image1_fake->width != image1_true->width)
         throw std::invalid_argument("PDifference image resolution does not match!");
 
 }
@@ -48,10 +48,10 @@ void Correction::draw_over() {
     for (int outer = 0; outer < blocks.size(); outer++) {
         for (int x = 0; x < block_size; x++) {
             for (int y = 0; y < block_size; y++) {
-                image1->set_color(
+                image1_fake->set_color(
                         x + blocks[outer].x_start,
                         y + blocks[outer].y_start,
-                        image1->get_color(x + blocks[outer].x_end,
+                        image1_fake->get_color(x + blocks[outer].x_end,
                                           y + blocks[outer].y_end));
             }
         }
@@ -59,7 +59,7 @@ void Correction::draw_over() {
 }
 
 void Correction::match_block(int x, int y) {
-    double sum = ImageUtils::mse(*image1, *image2, x * block_size, y * block_size,
+    double sum = ImageUtils::mse(*image1_fake, *image1_true, x * block_size, y * block_size,
                                  x * block_size, y * block_size, block_size);
 
 
@@ -68,8 +68,8 @@ void Correction::match_block(int x, int y) {
         //std::cout << "Conducting a diamond search" << std::endl;
         //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
         Block result = DiamondSearch::diamond_search_iterative_super(
-                *image2,
-                *image1,
+                *image1_true,
+                *image1_fake,
                 x * block_size,
                 y * block_size,
                 x * block_size,

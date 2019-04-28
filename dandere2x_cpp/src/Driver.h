@@ -12,11 +12,15 @@
 #include "Dandere2xUtils/Dandere2xUtils.h"
 
 
+
+/**
+ * Todo:
+ * - Simplify this driver class
+ * - Add individual testing wrapper for debugging
+ */
 using namespace dandere2x;
 using namespace std;
-
 const int correctionBlockSize = 4;
-
 
 
 void driver_difference(string workspace, int resume_count, int frame_count, int block_size,
