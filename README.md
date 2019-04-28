@@ -25,7 +25,8 @@ I highly recommend subscribing/checking reddit.com/r/dandere2x. I tend to be mor
 
 ## What's going on right now?
 
-Hiatus until I finish out academic year, with on and off support until then. Not planning on doing R&D until free time opens up again.
+I'm working on documenting how Dandere2x in a more coherent format rather than working on GUI / R&D while the school year finishes out.
+
 
 ## Current Releases
 
