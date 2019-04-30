@@ -49,6 +49,33 @@ import threading
 import random
 import math
 
+import sys
+
+
+def make_logger(path=""):
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+
+    # create a file handler
+    fh = logging.FileHandler(f'{path}dandere2x.log')
+    fh.setLevel(logging.INFO)
+
+    # create a print(stdout) handler
+    ph = logging.StreamHandler(sys.stdout)
+    ph.setLevel(logging.INFO)
+
+    # create a logging format
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ph.setFormatter(formatter)
+
+    # add the handlers to the logger
+    logger.addHandler(fh)
+    logger.addHandler(ph)
+    return logger
+
 class Dandere2x:
 
     # init is pretty messy at the moment. I'll look into
@@ -133,8 +160,7 @@ class Dandere2x:
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.frame_count = get_seconds_from_time(self.duration) * int(self.frame_rate)
 
-        logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
+        self.logger = make_logger()
 
         self.mse_min = 0
         self.mse_max = 0
@@ -149,8 +175,7 @@ class Dandere2x:
         self.write_frames()
         self.write_merge_commands()
 
-        logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
+        self.logger = self.logger = make_logger(self.workspace)
 
         self.set_mse()
 
