@@ -175,7 +175,7 @@ class Dandere2x:
         self.write_frames()
         self.write_merge_commands()
 
-        self.logger = self.logger = make_logger(self.workspace)
+        self.logger = make_logger(self.workspace)
 
         self.set_mse()
 
