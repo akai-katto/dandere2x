@@ -52,7 +52,7 @@ Violet Evergarden 4k: https://vimeo.com/331606773
 
 Violet Evergarden Debug Frames: https://www.youtube.com/watch?v=1-JbjSxoNH4&t
 
-Your Name 4k: https://vimeo.com/332114690
+Your Name 4k: https://vimeo.com/332114690 [removed lol]
 
 ### Requirements
 
@@ -127,7 +127,7 @@ If **"YOUR_VIDEO.mkv"** is **1280x720**, a common factor is 16. So change blocks
 
 ### Customization 
 
-You can edit how strict / relaxed Dandere2x will behaved. 
+You can edit how strict / relaxed Dandere2x will behaved. I recommend a minimum of 50 for quality loss and a maximum of 65
 
 ~~~
 
