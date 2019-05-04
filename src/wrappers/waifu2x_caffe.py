@@ -11,39 +11,50 @@ import logging
 import os
 import subprocess
 import threading
+from dandere2x_core.context import Context
 
 
 # temporary implementation of waifu2x-caffe wrapper
 # note to self - add listener to delete files in real time(maybe?) for resume.
 # Not sure if Video2x wants that as a feature, though.
 
-class Waifu2xCaffe(threading.Thread):
-    def __init__(self, workspace, frame_count, waifu2x_caffe_dir, model_dir, output_dir, upscaled_dir, p_setting,
-                 noise_level, scale_factor):
+# workspace, frame_count, waifu2x_caffe_dir, model_dir, output_dir, upscaled_dir, p_setting,
+#                  noise_level, scale_factor
 
-        self.frame_count = frame_count
-        self.waifu2x_caffe_dir = waifu2x_caffe_dir
-        self.output_dir = output_dir
-        self.upscaled_dir = upscaled_dir
-        self.p_setting = p_setting
-        self.noise_level = noise_level
-        self.scale_factor = scale_factor
-        self.model_dir = model_dir
-        self.workspace = workspace
+class Waifu2xCaffe(threading.Thread):
+    def __init__(self, context: Context):
+        self.frame_count = context.frame_count
+        self.waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir
+        self.differences_dir = context.differences_dir
+        self.upscaled_dir = context.upscaled_dir
+        self.process_type = context.process_type
+        self.noise_level = context.noise_level
+        self.scale_factor = context.scale_factor
+        self.model_dir = context.model_dir
+        self.workspace = context.workspace
+
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
     @staticmethod
-    def upscale_file(workspace, waifu2x_caffe_dir, model_dir, input_file, output, setting, noise_level, scale_factor):
+    def upscale_file(context: Context, input_file : str, output_file: str):
+        # load variables from context
+        process_type = context.process_type
+        noise_level = context.noise_level
+        scale_factor = context.scale_factor
+        model_dir = context.model_dir
+        waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir
+
         logger = logging.getLogger(__name__)
 
-        exec = [waifu2x_caffe_dir,
+        exec = [waifu2x_caffe_cui_dir,
                 "-i", input_file,
-                "-p", setting,
+                "-p", process_type,
                 "-n", noise_level,
                 "-s", scale_factor,
-                "-o", output]
+                "-o", output_file]
 
+        # if the user is using a custom model
         if model_dir != "default":
             exec.append("--model_dir")
             exec.append(model_dir)
@@ -64,9 +75,9 @@ class Waifu2xCaffe(threading.Thread):
     def run(self):
         logger = logging.getLogger(__name__)
 
-        exec = [self.waifu2x_caffe_dir,
-                "-i", self.output_dir,
-                "-p", self.p_setting,
+        exec = [self.waifu2x_caffe_cui_dir,
+                "-i", self.differences_dir,
+                "-p", self.process_type,
                 "-n", self.noise_level,
                 "-s", self.scale_factor,
                 "-o", self.upscaled_dir]
@@ -101,5 +112,5 @@ class Waifu2xCaffe(threading.Thread):
             subprocess.run(exec)
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
-                    os.remove(self.output_dir + item)
+                    os.remove(self.differences_dir + item)
                     names.remove(item)

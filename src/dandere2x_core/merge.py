@@ -6,6 +6,7 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
+from dandere2x_core.context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_text
 from wrappers.frame import DisplacementVector
@@ -15,11 +16,14 @@ import logging
 import os
 
 
+def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
+                     list_predictive: list, list_differences: list, list_corrections: list,
+                     output_location: str):
 
-# Merge an image together given the previous frame, the upscaled differences,
-# and the correction data.
-def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion,
-                     frame_base, list_predictive, list_differences, list_corrections, output_location):
+    # Load context
+    block_size = context.block_size
+    scale_factor = context.scale_factor
+    bleed = context.bleed
 
     logger = logging.getLogger(__name__)
 
@@ -70,21 +74,24 @@ def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion
                              vector.x_1 * scale_factor,
                              vector.y_1 * scale_factor)
 
-
-    # Correct the image before saving.
-    out_image = correct_image(4, scale_factor, out_image, list_corrections)
+    out_image = correct_image(context, 4, out_image, list_corrections)
     out_image.save_image(output_location)
 
 
+def merge_loop(context: Context, start_frame: int):
 
-
-
-def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-               correction_data_dir, start_frame, count, block_size, scale_factor, file_type):
+    # load variables from context
+    workspace = context.workspace
+    upscaled_dir = context.upscaled_dir
+    merged_dir = context.merged_dir
+    inversion_data_dir = context.inversion_data_dir
+    pframe_data_dir = context.pframe_data_dir
+    correction_data_dir = context.correction_data_dir
+    frame_count = context.frame_count
+    extension_type = context.extension_type
     logger = logging.getLogger(__name__)
-    bleed = 1
 
-    for x in range(start_frame, count):
+    for x in range(start_frame, frame_count):
         logger.info("Upscaling frame " + str(x))
 
         # load images required to merge this frame
@@ -92,24 +99,28 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
         f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
 
         base = Frame()
-        base.load_from_string_wait(merged_dir + "merged_" + str(x) + file_type)
+        base.load_from_string_wait(merged_dir + "merged_" + str(x) + extension_type)
 
         # load vectors needed to piece image back together
         difference_data = wait_on_text(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
-
         correction_data = wait_on_text(correction_data_dir + "correction_" + str(x) + ".txt")
+        output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
 
-        make_merge_image(workspace, block_size, scale_factor, bleed, f1, base, prediction_data,
-                         difference_data, correction_data, workspace + "merged/merged_" + str(x + 1) + file_type)
+        make_merge_image(context, f1, base, prediction_data,
+                         difference_data, correction_data, output_file)
 
 
 # find the last photo to be merged, then start the loop from there
-def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir,
-                      pframe_data_dir, correction_data_dir, count, block_size, scale_factor, file_type):
-    logger = logging.getLogger(__name__)
-    last_found = count
+def merge_loop_resume(context: Context):
 
+    workspace = context.workspace
+    frame_count = context.frame_count
+
+    logger = logging.getLogger(__name__)
+    last_found = frame_count
+
+    # to-do, replace this file with the actual variable for merged
     while last_found > 1:
         exists = os.path.isfile(workspace + os.path.sep + "merged" + os.path.sep + "merged_" + str(last_found) + ".jpg")
         logging.info(workspace + os.path.sep + "merged" + os.path.sep + "merged_" + str(last_found) + ".jpg")
@@ -121,8 +132,7 @@ def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir,
             break
 
     logger.info("resume info: last found: " + str(last_found))
-    merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir, correction_data_dir,
-               last_found, count, block_size, scale_factor, file_type)
+    merge_loop(context, start_frame=last_found)
 
 def main():
     # merge_loop("/home/linux/Videos/testrun/testrun2/", 120)

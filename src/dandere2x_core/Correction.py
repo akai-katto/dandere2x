@@ -6,16 +6,20 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
-
+from dandere2x_core.context import Context
+from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_text
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
 import logging
 
 
-# Correct an image by using itself as reference points
-# to remove errors / specs produced by dandere2x
-def correct_image(block_size, scale_factor, frame_base, list_correction):
+def correct_image(context, block_size, frame_base: Frame, list_correction: list):
+    logger = logging.getLogger(__name__)
+
+    # load context
+    scale_factor = context.scale_factor
+
     predictive_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)

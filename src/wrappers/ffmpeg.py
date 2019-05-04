@@ -10,18 +10,38 @@ Description: temp ffmpeg wrapper, terrible implementation fix later
 """
 import subprocess
 import os
+
+from dandere2x_core.context import Context
 from dandere2x_core.dandere2x_utils import wait_on_file
 
-def extract_frames(ffmpeg_dir, time_frame, file_dir, frame_rate, duration, input_frames_dir, file_type):
+
+def extract_frames(context: Context):
+
+    ffmpeg_dir = context.ffmpeg_dir
+    time_frame = context.time_frame
+    file_dir = context.file_dir
+    frame_rate = context.frame_rate
+    duration = context.duration
+    input_frames_dir = context.input_frames_dir
+    extension_type = context.extension_type
+
     command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir + " -r " + frame_rate + " -qscale:v 2" + \
-        " -t " + duration + " " + input_frames_dir + "frame%01d" + file_type
+        " -t " + duration + " " + input_frames_dir + "frame%01d" + extension_type
 
     exec = command.split(" ")
     print(exec)
     subprocess.run(exec)
 
 
-def extract_audio(ffmpeg_dir, time_frame, file_dir, audio_layer, duration, workspace, audio_type):
+def extract_audio(context: Context):
+    ffmpeg_dir = context.ffmpeg_dir
+    time_frame = context.time_frame
+    file_dir = context.file_dir
+    workspace = context.workspace
+    duration = context.duration
+    audio_layer = context.audio_layer
+    audio_type = context.audio_type
+
     command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir + \
         " -t " + duration + " -map " + audio_layer + " " + workspace + "audio" + audio_type
 
