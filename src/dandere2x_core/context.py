@@ -88,6 +88,7 @@ class Context:
         self.process_type = config.get('dandere2x', 'process_type')
         self.extension_type = config.get('dandere2x', 'extension_type')
         self.audio_type = config.get('dandere2x', 'audio_type')
+        self.gpu_number = config.get('dandere2x', 'gpu_number')
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
