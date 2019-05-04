@@ -45,16 +45,16 @@ from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
 from wrappers.frame import Frame
-import configparser
 import logging
 import os
 import threading
 import random
 import math
 
+
 class Dandere2x:
 
-    def __init__(self, config_file):
+    def __init__(self, config_file: str):
 
         self.context = Context(config_file)
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
@@ -135,16 +135,15 @@ class Dandere2x:
     # Resume a Dandere2x Session
     # Consider merging this into one function, but for the time being I prefer it seperate
     def resume_concurrent(self):
+
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
-
             Waifu2xCaffe.upscale_file(self.context,
                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "conv":
             waifu2x = Waifu2xConv(self.context)
-
             Waifu2xConv.upscale_file(self.context,
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
@@ -154,6 +153,7 @@ class Dandere2x:
         difference_thread = threading.Thread(target=difference_loop_resume, args=(self.context,))
 
         self.context.logger.info("Starting Threaded Processes..")
+
         waifu2x.start()
         merge_thread.start()
         difference_thread.start()
@@ -164,33 +164,14 @@ class Dandere2x:
         difference_thread.join()
         waifu2x.join()
 
-        self.context.logger.info("Threaded Processes Finished succcesfully")
+        self.context.logger.info("Threaded Processes Finished successfully")
 
     # only calculate the differences. To be implemented in video2x / converter-cpp
     def difference_only(self):
         self.pre_setup()
 
-        dandere2xcpp_thread = Dandere2xCppWrapper(self.context.workspace,
-                                                  self.context.dandere2x_cpp_dir,
-                                                  self.context.frame_count,
-                                                  self.context.block_size,
-                                                  self.context.tolerance,
-                                                  self.context.mse_max,
-                                                  self.context.mse_min,
-                                                  self.context.step_size,
-                                                  resume=False,
-                                                  extension_type=self.context.extension_type)
-
-        difference_thread = threading.Thread(target=difference_loop,
-                                             args=(self.context.workspace,
-                                                   self.context.differences_dir,
-                                                   self.context.inversion_data_dir,
-                                                   self.context.pframe_data_dir,
-                                                   self.context.input_frames_dir,
-                                                   1,
-                                                   self.context.frame_count,
-                                                   self.context.block_size,
-                                                   self.context.extension_type))
+        dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
+        difference_thread = threading.Thread(target=difference_loop, args=(self.context, 1))
 
         self.context.logger.info("Starting Threaded Processes..")
 
@@ -201,17 +182,7 @@ class Dandere2x:
         difference_thread.join()
 
     def merge_only(self):
-        merge_thread = threading.Thread(target=merge_loop,
-                                        args=(self.context.workspace,
-                                              self.context.upscaled_dir,
-                                              self.context.merged_dir,
-                                              self.context.inversion_data_dir,
-                                              self.context.pframe_data_dir,
-                                              1,
-                                              self.context.frame_count,
-                                              self.context.block_size,
-                                              self.context.scale_factor,
-                                              self.context.extension_type))
+        merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
         merge_thread.start()
         merge_thread.join()
 
@@ -229,7 +200,7 @@ class Dandere2x:
                        self.context.debug_dir,
                        self.context.log_dir}
 
-        # need to create workspace befroe anything else
+        # need to create workspace before anything else
         try:
             os.mkdir(self.context.workspace)
         except OSError:

@@ -58,7 +58,6 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
     shared_ptr<Image> im1 = make_shared<Image>(
             workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extension_type);
 
-
     /**
      * Handle Cases for Resuming Here
      */
@@ -121,8 +120,7 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
         int correction_factor = sqrt(block_size) / sqrt(correctionBlockSize); // not rly sure why this works tbh
 
         Correction correction = Correction(im2, copy, correctionBlockSize, tolerance * correction_factor,
-                                           correctionFile1,
-                                           correctionBlockSize);
+                                           correctionFile1, correctionBlockSize);
         correction.run();
 
 

@@ -21,7 +21,7 @@ import logging
 # cleaning this up in the future ;-;
 class Context:
 
-    def __init__(self, config_file):
+    def __init__(self, config_file: str):
         config = configparser.ConfigParser()
         config.read(config_file)
 

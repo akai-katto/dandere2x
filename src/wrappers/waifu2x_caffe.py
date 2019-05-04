@@ -11,6 +11,7 @@ import logging
 import os
 import subprocess
 import threading
+from dandere2x_core.context import Context
 
 
 # temporary implementation of waifu2x-caffe wrapper
@@ -21,7 +22,7 @@ import threading
 #                  noise_level, scale_factor
 
 class Waifu2xCaffe(threading.Thread):
-    def __init__(self, context):
+    def __init__(self, context: Context):
         self.frame_count = context.frame_count
         self.waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir
         self.differences_dir = context.differences_dir
@@ -36,7 +37,7 @@ class Waifu2xCaffe(threading.Thread):
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
     @staticmethod
-    def upscale_file(context, input_file, output_file):
+    def upscale_file(context: Context, input_file : str, output_file: str):
         # load variables from context
         process_type = context.process_type
         noise_level = context.noise_level

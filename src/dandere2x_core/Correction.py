@@ -6,6 +6,7 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
+from dandere2x_core.context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_text
 from wrappers.frame import DisplacementVector
@@ -14,8 +15,12 @@ import logging
 import os
 
 
-def correct_image(block_size, scale_factor, frame_base, list_correction):
+def correct_image(context: Context, frame_base: Frame, list_correction: list):
     logger = logging.getLogger(__name__)
+
+    # load context
+    scale_factor = context.scale_factor
+    block_size = context.scale_factor
 
     predictive_vectors = []
     out_image = Frame()
@@ -38,7 +43,7 @@ def correct_image(block_size, scale_factor, frame_base, list_correction):
 
     return out_image
 
-#block_size, scale_factor, frame_base, list_predictive, output_location):
+
 def main():
     block_size = 4
     scale_factor = 2

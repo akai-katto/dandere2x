@@ -69,13 +69,13 @@ def debug(block_size, frame_base, list_predictive, list_differences, output_loca
     logger = logging.getLogger(__name__)
 
     predictive_vectors = []
-    difference_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
 
     if not list_predictive and not list_differences:
         logger.info("list_predictive and not list_differences: true")
         logger.info("Saving inversion image..")
+
         out_image.save_image(output_location)
         return
 
@@ -88,12 +88,6 @@ def debug(block_size, frame_base, list_predictive, list_differences, output_loca
         return
 
     # load list into vector displacements
-    for x in range(int(len(list_differences) / 4)):
-        difference_vectors.append(DisplacementVector(int(list_differences[x * 4]),
-                                                     int(list_differences[x * 4 + 1]),
-                                                     int(list_differences[x * 4 + 2]),
-                                                     int(list_differences[x * 4 + 3])))
-
     for x in range(int(len(list_predictive) / 4)):
         predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4]),
                                                      int(list_predictive[x * 4 + 1]),

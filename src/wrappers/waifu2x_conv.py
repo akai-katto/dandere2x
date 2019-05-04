@@ -13,7 +13,7 @@ Furthermore, waifu2x-conv saves files in an annoying way,
 so we need to correct those odd namings.
 """
 
-
+from dandere2x_core.context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import rename_file
 import logging
@@ -24,8 +24,8 @@ import threading
 
 # 5-4-19 untested
 class Waifu2xConv(threading.Thread):
-    def __init__(self, context):
-        #load context
+    def __init__(self, context: Context):
+        # load context
         self.frame_count = context.frame_count
         self.waifu2x_conv_dir = context.waifu2x_conv_dir
         self.waifu2x_conv_dir_dir = context.waifu2x_conv_dir_dir
@@ -42,13 +42,14 @@ class Waifu2xConv(threading.Thread):
 
     # manually upscale a single file
     @staticmethod
-    def upscale_file(context, input_file, output_file):
-        logger = logging.getLogger(__name__)
-
+    def upscale_file(context: Context, input_file: str, output_file: str):
+        # load context
         waifu2x_conv_dir = context.waifu2x_conv_dir
         waifu2x_conv_dir_dir = context.waifu2x_conv_dir_dir
         noise_level = context.noise_level
         scale_factor = context.scale_factor
+
+        logger = logging.getLogger(__name__)
 
         exec = [waifu2x_conv_dir,
                 "-i", input_file,

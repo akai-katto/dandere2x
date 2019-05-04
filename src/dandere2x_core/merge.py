@@ -17,8 +17,8 @@ import os
 
 
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
-                     list_predictive, list_differences, list_corrections,
-                     output_location):
+                     list_predictive: list, list_differences: list, list_corrections: list,
+                     output_location: str):
 
     # Load context
     block_size = context.block_size

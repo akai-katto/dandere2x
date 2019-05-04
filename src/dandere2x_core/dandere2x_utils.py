@@ -9,11 +9,12 @@ Last Modified: April 2, 2019
 import logging
 import os
 import time
+from wrappers.frame import Frame
 
 
 # waits for a text file, then returns the file as a list sperated by lines
 # to do - I've gotton permission errors. Perhaps adding a catch for that.
-def wait_on_text(text_file):
+def wait_on_text(text_file: str):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
@@ -47,7 +48,7 @@ def wait_on_text(text_file):
 
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
-def wait_on_file(file_string):
+def wait_on_file(file_string: str):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(file_string)
     count = 0
@@ -70,7 +71,7 @@ def rename_file(file1, file2):
 
 # Both waifu2x-Caffe and waifu2x-conv read images in lexiconic order, so in order
 # to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.
-def get_lexicon_value(digits, val):
+def get_lexicon_value(digits: int, val: int):
     string = str(val)
 
     while (len(string) < digits):
@@ -80,7 +81,7 @@ def get_lexicon_value(digits, val):
 
 
 # get frame count from a string input
-def get_seconds_from_time(time_frame):
+def get_seconds_from_time(time_frame: int):
     splitted = time_frame.split(":")
     print(splitted)
     hours_seconds = int(splitted[0]) * 3600
@@ -89,7 +90,8 @@ def get_seconds_from_time(time_frame):
 
     return hours_seconds + minutes_seconds + seconds
 
-def determine_sens(workspace, frame, lower_val, higher_val):
+
+def determine_sens(workspace: str, frame: Frame, lower_val: int, higher_val: int):
     from wrappers.frame import Frame
 
     frame.save_image_quality(workspace + "lower.jpg", lower_val)

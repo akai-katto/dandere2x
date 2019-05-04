@@ -10,11 +10,11 @@ import logging
 import os
 import subprocess
 import threading
-
+from dandere2x_core.context import Context
 
 class Dandere2xCppWrapper(threading.Thread):
 
-    def __init__(self, context, resume):
+    def __init__(self, context: Context, resume: bool):
         # load stuff from context
         self.workspace = context.workspace
         self.dandere2x_cpp_dir = context.dandere2x_cpp_dir
