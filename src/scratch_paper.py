@@ -1,13 +1,13 @@
-from wrappers.frame import Frame
-from dandere2x_core.dandere2x_utils import determine_sens
-import random
-from scipy import misc  # pip install Pillow
-
-frame1 = misc.imread("C:\\Users\\windwoz\\Pictures\\ynn\\compression\\frame1.jpg").astype(float)
-
-frame2 = misc.imread("C:\\Users\\windwoz\\Pictures\\ynn\\compression\\frame1comp.jpg").astype(float)
-
-out = frame1 - frame2
+from time import sleep
+import sys
 
 
-misc.imsave("C:\\Users\\windwoz\\Pictures\\ynn\\compression\\hmm2.png", out)
+
+
+
+for i in range(1000):
+    sys.stdout.write('\r')
+    # the exact output you're looking for:
+    sys.stdout.write("Frame: [%s] %d%%    Average of Last 10 Frames: %s" % (i, 5*i, i*1.1))
+    sys.stdout.flush()
+    sleep(0.25)

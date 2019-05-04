@@ -113,7 +113,7 @@ class Waifu2xCaffe(threading.Thread):
         while names:
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.run(exec)
+            subprocess.run(exec, stdout=open(os.devnull, 'wb'))
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
                     os.remove(self.differences_dir + item)

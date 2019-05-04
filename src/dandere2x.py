@@ -37,7 +37,7 @@ from dandere2x_core.difference import difference_loop_resume
 from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
 from dandere2x_core.context import Context
-
+from dandere2x_core.status import print_status
 
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
@@ -115,6 +115,7 @@ class Dandere2x:
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
         difference_thread = threading.Thread(target=difference_loop, args=(self.context, 1))
+        status_thread = threading.Thread(target=print_status, args=(self.context,))
 
         self.context.logger.info("Starting Threaded Processes..")
 
@@ -122,11 +123,13 @@ class Dandere2x:
         merge_thread.start()
         difference_thread.start()
         dandere2xcpp_thread.start()
+        status_thread.start()
 
         merge_thread.join()
         dandere2xcpp_thread.join()
         difference_thread.join()
         waifu2x.join()
+        status_thread.join()
 
         self.context.logger.info("Threaded Processes Finished succcesfully")
 
