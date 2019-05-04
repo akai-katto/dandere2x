@@ -6,6 +6,7 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
+from dandere2x_core.context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_text
 from wrappers.frame import DisplacementVector
@@ -15,9 +16,11 @@ import math
 import os
 
 
-def make_difference_image(raw_frame, block_size, bleed, list_difference, list_predictive, out_location):
+def make_difference_image(context: Context, raw_frame, list_difference, list_predictive, out_location):
     difference_vectors = []
     buffer = 5
+    block_size = context.block_size
+    bleed = context.bleed
 
     # first make a 'bleeded' version of input_frame
     # so we can preform numpy calculations w.o having to catch
@@ -61,8 +64,8 @@ def make_difference_image(raw_frame, block_size, bleed, list_difference, list_pr
 
 
 # for printing out what Dandere2x predictive frames are doing
-def debug(workspace, block_size, bleed, frame_base, list_predictive, list_differences,
-          output_location):
+def debug(block_size, frame_base, list_predictive, list_differences, output_location):
+
     logger = logging.getLogger(__name__)
 
     predictive_vectors = []
@@ -105,8 +108,6 @@ def debug(workspace, block_size, bleed, frame_base, list_predictive, list_differ
 
     out_image.save_image(output_location)
 
-#workspace, difference_dir, inversion_data_dir, pframe_data_dir,
-                    #input_frames_dir, start_frame, count, block_size, file_type
 
 def difference_loop(context, start_frame):
 
@@ -119,9 +120,9 @@ def difference_loop(context, start_frame):
     frame_count = context.frame_count
     block_size = context.block_size
     extension_type = context.extension_type
+    bleed = context.bleed
 
     logger = logging.getLogger(__name__)
-    bleed = 1
     logger.info((workspace, start_frame, frame_count, block_size))
 
     for x in range(start_frame, frame_count):
@@ -133,11 +134,12 @@ def difference_loop(context, start_frame):
         difference_data = wait_on_text(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
-        make_difference_image(f1, block_size, bleed, difference_data, prediction_data,
+        make_difference_image(context, f1, difference_data, prediction_data,
                               differences_dir + "output_" + get_lexicon_value(6, x) + ".png")
 
-        debug(workspace, block_size, bleed, f1, prediction_data, difference_data,
-              workspace + "debug/debug" + str(x + 1) + extension_type)
+        output_file = workspace + "debug/debug" + str(x + 1) + extension_type
+
+        debug(block_size, f1, prediction_data, difference_data, output_file)
 
 
 def difference_loop_resume(context):

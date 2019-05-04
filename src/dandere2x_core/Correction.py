@@ -18,7 +18,6 @@ def correct_image(block_size, scale_factor, frame_base, list_correction):
     logger = logging.getLogger(__name__)
 
     predictive_vectors = []
-    difference_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
     out_image.copy_image(frame_base)

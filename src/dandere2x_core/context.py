@@ -106,3 +106,6 @@ class Context:
 
         self.mse_min = 0
         self.mse_max = 0
+
+        # Bleed has not changed
+        self.bleed = 1

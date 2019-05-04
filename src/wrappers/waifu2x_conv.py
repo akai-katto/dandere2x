@@ -21,9 +21,9 @@ import os
 import subprocess
 import threading
 
+
 # 5-4-19 untested
 class Waifu2xConv(threading.Thread):
-
     def __init__(self, context):
         #load context
         self.frame_count = context.frame_count

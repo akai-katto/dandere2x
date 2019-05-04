@@ -15,7 +15,7 @@ import threading
 class Dandere2xCppWrapper(threading.Thread):
 
     def __init__(self, context, resume):
-        #load stuff from context
+        # load stuff from context
         self.workspace = context.workspace
         self.dandere2x_cpp_dir = context.dandere2x_cpp_dir
         self.frame_count = context.frame_count
