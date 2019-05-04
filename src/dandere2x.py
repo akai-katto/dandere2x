@@ -74,8 +74,6 @@ class Dandere2x:
         logging.basicConfig(filename=self.context.workspace + 'dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-        self.set_mse()
-
     def set_mse(self):
         print("calculating mse")
 
@@ -99,6 +97,7 @@ class Dandere2x:
     # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()
+        self.set_mse()
 
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
@@ -135,6 +134,7 @@ class Dandere2x:
     # Resume a Dandere2x Session
     # Consider merging this into one function, but for the time being I prefer it seperate
     def resume_concurrent(self):
+        self.set_mse()
 
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
