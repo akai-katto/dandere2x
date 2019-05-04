@@ -22,7 +22,7 @@ import subprocess
 import threading
 
 
-# 5-4-19 untested
+# this is pretty ugly
 class Waifu2xConv(threading.Thread):
     def __init__(self, context: Context):
         # load context
@@ -95,7 +95,7 @@ class Waifu2xConv(threading.Thread):
 
         # calling waifu2x-conv command
         exec = [self.waifu2x_conv_dir,
-                "-i", self.output_dir,
+                "-i", self.differences_dir,
                 "-o", self.upscaled_dir,
                 "--model-dir", self.waifu2x_conv_dir_dir + "models_rgb",
                 "--force-OpenCL",
@@ -130,5 +130,5 @@ class Waifu2xConv(threading.Thread):
             self.fix_names()
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
-                    os.remove(self.output_dir + item)
+                    os.remove(self.differences_dir + item)
                     names.remove(item)
