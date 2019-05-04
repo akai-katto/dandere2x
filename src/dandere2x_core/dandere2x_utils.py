@@ -9,7 +9,7 @@ Last Modified: April 2, 2019
 import logging
 import os
 import time
-from wrappers.frame import Frame
+
 
 
 # waits for a text file, then returns the file as a list sperated by lines
@@ -91,7 +91,7 @@ def get_seconds_from_time(time_frame: int):
     return hours_seconds + minutes_seconds + seconds
 
 
-def determine_sens(workspace: str, frame: Frame, lower_val: int, higher_val: int):
+def determine_sens(workspace: str, frame, lower_val: int, higher_val: int):
     from wrappers.frame import Frame
 
     frame.save_image_quality(workspace + "lower.jpg", lower_val)

@@ -61,12 +61,12 @@ class Dandere2x:
         self.context.logger = logging.getLogger(__name__)
 
 
-
+    # Order matters here in command calls.
     def pre_setup(self):
         self.context.logger.info("Starting new dandere2x session")
         self.create_dirs()
-        self.extract_frames()
-        self.extract_audio()
+        ffmpeg_extract_audio(self.context)
+        ffmpeg_extract_frames(self.context)
         self.create_waifu2x_script()
         self.write_frames()
         self.write_merge_commands()
@@ -217,23 +217,6 @@ class Dandere2x:
             else:
                 print("Successfully created the directory %s " % subdirectory)
 
-    def extract_frames(self):
-        ffmpeg_extract_frames(self.context.ffmpeg_dir,
-                              self.context.time_frame,
-                              self.context.file_dir,
-                              self.context.frame_rate,
-                              self.context.duration,
-                              self.context.input_frames_dir,
-                              self.context.extension_type)
-
-    def extract_audio(self):
-        ffmpeg_extract_audio(self.context.ffmpeg_dir,
-                             self.context.time_frame,
-                             self.context.file_dir,
-                             self.context.audio_layer,
-                             self.context.duration,
-                             self.context.workspace,
-                             self.context.audio_type)
 
     # for linux. Currently deprecated as Linux development has stopped for a bit.
     def create_waifu2x_script(self):

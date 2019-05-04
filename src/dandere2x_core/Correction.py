@@ -15,12 +15,11 @@ import logging
 import os
 
 
-def correct_image(context: Context, frame_base: Frame, list_correction: list):
+def correct_image(context, block_size, frame_base: Frame, list_correction: list):
     logger = logging.getLogger(__name__)
 
     # load context
     scale_factor = context.scale_factor
-    block_size = context.scale_factor
 
     predictive_vectors = []
     out_image = Frame()
