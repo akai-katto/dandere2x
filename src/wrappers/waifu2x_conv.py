@@ -12,6 +12,8 @@ set  (for subprocess call) and arguments are slightly different.
 Furthermore, waifu2x-conv saves files in an annoying way,
 so we need to correct those odd namings.
 """
+
+
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import rename_file
 import logging
@@ -19,31 +21,38 @@ import os
 import subprocess
 import threading
 
-
+# 5-4-19 untested
 class Waifu2xConv(threading.Thread):
 
-    def __init__(self, workspace, frame_count, waifu2x_conv_dir, waifu2x_conv_dir_dir, output_dir, upscaled_dir,
-                 noise_level, scale_factor):
+    def __init__(self, context):
+        #load context
+        self.frame_count = context.frame_count
+        self.waifu2x_conv_dir = context.waifu2x_conv_dir
+        self.waifu2x_conv_dir_dir = context.waifu2x_conv_dir_dir
+        self.differences_dir = context.differences_dir
+        self.upscaled_dir = context.upscaled_dir
+        self.process_type = context.process_type
+        self.noise_level = context.noise_level
+        self.scale_factor = context.scale_factor
+        self.model_dir = context.model_dir
+        self.workspace = context.workspace
 
-        self.frame_count = frame_count
-        self.waifu2x_conv_dir = waifu2x_conv_dir
-        self.waifu2x_conv_dir_dir = waifu2x_conv_dir_dir
-        self.output_dir = output_dir
-        self.upscaled_dir = upscaled_dir
-        self.noise_level = noise_level
-        self.scale_factor = scale_factor
-        self.workspace = workspace
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
     # manually upscale a single file
     @staticmethod
-    def upscale_file(workspace, waifu2x_conv_dir, waifu2x_conv_dir_dir, input_file, output, noise_level, scale_factor):
+    def upscale_file(context, input_file, output_file):
         logger = logging.getLogger(__name__)
+
+        waifu2x_conv_dir = context.waifu2x_conv_dir
+        waifu2x_conv_dir_dir = context.waifu2x_conv_dir_dir
+        noise_level = context.noise_level
+        scale_factor = context.scale_factor
 
         exec = [waifu2x_conv_dir,
                 "-i", input_file,
-                "-o", output,
+                "-o", output_file,
                 "--model-dir", waifu2x_conv_dir_dir + "models_rgb",
                 "--force-OpenCL",
                 "-s",

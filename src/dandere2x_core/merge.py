@@ -10,7 +10,7 @@ from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_text
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
-from dandere2x_core.Correction import correct_image
+from dandere2x_core.correction import correct_image
 import logging
 import os
 
@@ -70,17 +70,28 @@ def make_merge_image(workspace, block_size, scale_factor, bleed, frame_inversion
     out_image = correct_image(4, scale_factor, out_image, list_corrections)
 
     out_image.save_image(output_location)
-    #gradfun_save('ffmpeg', out_image, output_location)
 
+#workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
+               #correction_data_dir, start_frame, count, block_size, scale_factor, file_type
 
+def merge_loop(context, start_frame):
 
+    #load variables from context
+    workspace = context.workspace
+    upscaled_dir = context.upscaled_dir
+    merged_dir = context.merged_dir
+    inversion_data_dir = context.inversion_data_dir
+    pframe_data_dir = context.pframe_data_dir
+    correction_data_dir = context.correction_data_dir
+    frame_count = context.frame_count
+    block_size = context.block_size
+    scale_factor = context.scale_factor
+    extension_type = context.extension_type
 
-def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir,
-               correction_data_dir, start_frame, count, block_size, scale_factor, file_type):
     logger = logging.getLogger(__name__)
     bleed = 1
 
-    for x in range(start_frame, count):
+    for x in range(start_frame, frame_count):
         logger.info("Upscaling frame " + str(x))
 
         # load images required to merge this frame
@@ -88,7 +99,7 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
         f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
 
         base = Frame()
-        base.load_from_string_wait(merged_dir + "merged_" + str(x) + file_type)
+        base.load_from_string_wait(merged_dir + "merged_" + str(x) + extension_type)
 
         # load vectors needed to piece image back together
         difference_data = wait_on_text(inversion_data_dir + "inversion_" + str(x) + ".txt")
@@ -97,15 +108,19 @@ def merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_d
         correction_data = wait_on_text(correction_data_dir + "correction_" + str(x) + ".txt")
 
         make_merge_image(workspace, block_size, scale_factor, bleed, f1, base, prediction_data,
-                         difference_data, correction_data, workspace + "merged/merged_" + str(x + 1) + file_type)
+                         difference_data, correction_data, workspace + "merged/merged_" + str(x + 1) + extension_type)
 
 
 # find the last photo to be merged, then start the loop from there
-def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir,
-                      pframe_data_dir, correction_data_dir, count, block_size, scale_factor, file_type):
-    logger = logging.getLogger(__name__)
-    last_found = count
+def merge_loop_resume(context):
 
+    workspace = context.workspace
+    frame_count = context.frame_count
+
+    logger = logging.getLogger(__name__)
+    last_found = frame_count
+
+    # to-do, replace this file with the actual variable for merged
     while last_found > 1:
         exists = os.path.isfile(workspace + os.path.sep + "merged" + os.path.sep + "merged_" + str(last_found) + ".jpg")
         logging.info(workspace + os.path.sep + "merged" + os.path.sep + "merged_" + str(last_found) + ".jpg")
@@ -117,8 +132,7 @@ def merge_loop_resume(workspace, upscaled_dir, merged_dir, inversion_data_dir,
             break
 
     logger.info("resume info: last found: " + str(last_found))
-    merge_loop(workspace, upscaled_dir, merged_dir, inversion_data_dir, pframe_data_dir, correction_data_dir,
-               last_found, count, block_size, scale_factor, file_type)
+    merge_loop(context, start_frame=last_found)
 
 def main():
     # merge_loop("/home/linux/Videos/testrun/testrun2/", 120)

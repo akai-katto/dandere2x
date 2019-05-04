@@ -105,16 +105,28 @@ def debug(workspace, block_size, bleed, frame_base, list_predictive, list_differ
 
     out_image.save_image(output_location)
 
+#workspace, difference_dir, inversion_data_dir, pframe_data_dir,
+                    #input_frames_dir, start_frame, count, block_size, file_type
 
-def difference_loop(workspace, difference_dir, inversion_data_dir, pframe_data_dir,
-                    input_frames_dir, start_frame, count, block_size, file_type):
+def difference_loop(context, start_frame):
+
+    # load variables from context
+    workspace = context.workspace
+    differences_dir = context.differences_dir
+    inversion_data_dir = context.inversion_data_dir
+    pframe_data_dir = context.pframe_data_dir
+    input_frames_dir = context.input_frames_dir
+    frame_count = context.frame_count
+    block_size = context.block_size
+    extension_type = context.extension_type
+
     logger = logging.getLogger(__name__)
     bleed = 1
-    logger.info((workspace, start_frame, count, block_size))
+    logger.info((workspace, start_frame, frame_count, block_size))
 
-    for x in range(start_frame, count):
+    for x in range(start_frame, frame_count):
         f1 = Frame()
-        f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + file_type)
+        f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
         logger.info("waiting on text")
         logger.info(f1)
 
@@ -122,17 +134,27 @@ def difference_loop(workspace, difference_dir, inversion_data_dir, pframe_data_d
         prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
         make_difference_image(f1, block_size, bleed, difference_data, prediction_data,
-                              difference_dir + "output_" + get_lexicon_value(6, x) + ".png")
+                              differences_dir + "output_" + get_lexicon_value(6, x) + ".png")
 
         debug(workspace, block_size, bleed, f1, prediction_data, difference_data,
-              workspace + "debug/debug" + str(x + 1) + file_type)
+              workspace + "debug/debug" + str(x + 1) + extension_type)
 
 
-def difference_loop_resume(workspace, upscaled_dir, difference_dir, inversion_data_dir, pframe_data_dir,
-                           input_frames_dir, count, block_size, file_type):
+def difference_loop_resume(context):
+    # load variables from context
+    workspace = context.workspace
+    differences_dir = context.differences_dir
+    inversion_data_dir = context.inversion_data_dir
+    pframe_data_dir = context.pframe_data_dir
+    input_frames_dir = context.input_frames_dir
+    frame_count = context.frame_count
+    block_size = context.block_size
+    extension_type = context.extension_type
+    upscaled_dir = context.upscaled_dir
+
     logger = logging.getLogger(__name__)
 
-    last_found = count
+    last_found = frame_count
     while last_found > 1:
         exists = os.path.isfile(
             upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
@@ -146,8 +168,7 @@ def difference_loop_resume(workspace, upscaled_dir, difference_dir, inversion_da
     last_found -= 1
     logger.info("difference loop last frame found: " + str(last_found))
 
-    difference_loop(workspace, difference_dir, inversion_data_dir, pframe_data_dir,
-                    input_frames_dir, last_found, count, block_size, file_type)
+    difference_loop(context, start_frame=last_found)
 
 
 def main():
