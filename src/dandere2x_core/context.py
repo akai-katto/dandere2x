@@ -100,7 +100,7 @@ class Context:
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
-        self.frame_count = get_seconds_from_time(self.duration) * int(self.frame_rate)
+        self.frame_count = get_seconds_from_time(self.duration) * int(float(self.frame_rate))
 
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)

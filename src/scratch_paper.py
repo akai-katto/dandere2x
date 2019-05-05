@@ -1,13 +1,17 @@
-from time import sleep
+import time
 import sys
+from wrappers.frame import Frame
+
+before = time.time()
 
 
 
+f1 = Frame()
+f1.load_from_string('C:\\Users\\windwoz\\Desktop\\workspace\\yn\\inputs\\frame1.jpg')
 
+f1.save_image_quality('C:\\Users\\windwoz\\Desktop\\workspace\\yn\\quality.jpg', 100)
 
-for i in range(1000):
-    sys.stdout.write('\r')
-    # the exact output you're looking for:
-    sys.stdout.write("Frame: [%s] %d%%    Average of Last 10 Frames: %s" % (i, 5*i, i*1.1))
-    sys.stdout.flush()
-    sleep(0.25)
+f2 = Frame()
+f2.load_from_string('C:\\Users\\windwoz\\Desktop\\workspace\\yn\\quality.jpg')
+
+print(time.time() - before)

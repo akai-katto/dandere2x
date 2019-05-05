@@ -120,7 +120,7 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
         int correction_factor = sqrt(block_size) / sqrt(correctionBlockSize); // not rly sure why this works tbh
 
         Correction correction = Correction(im2, copy, correctionBlockSize, tolerance * correction_factor,
-                                           correctionFile1, correctionBlockSize);
+                                           correctionFile1, step_size);
         correction.run();
 
 

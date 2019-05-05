@@ -74,15 +74,19 @@ class Dandere2x:
         logging.basicConfig(filename=self.context.workspace + 'dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
+
     def set_mse(self):
+        import time
         print("calculating mse")
         list = []
         for x in range(1, int(math.sqrt(self.context.frame_count))):
+            before = time.time()
             print(str(x) + " out of " + str(int(math.sqrt(self.context.frame_count))))
             num = random.randint(1, self.context.frame_count)
             f1 = Frame()
             f1.load_from_string(self.context.input_frames_dir + "frame" + str(num) + ".jpg")
             list.append(determine_sens(self.context.workspace, f1, self.context.quality_low, self.context.quality_high))
+            print(time.time() - before)
 
         output = [sum(y) / len(y) for y in zip(*list)]
 
