@@ -25,8 +25,7 @@ I highly recommend subscribing/checking reddit.com/r/dandere2x. I tend to be mor
 
 ## What's going on right now?
 
-I'm working on documenting how Dandere2x in a more coherent format rather than working on GUI / R&D while the school year finishes out. I've started a Developer Wiki to document the current layout and format of Dandere2x. 
-
+Inbetween R&D and cleaning up code. 
 
 ## Current Releases
 
