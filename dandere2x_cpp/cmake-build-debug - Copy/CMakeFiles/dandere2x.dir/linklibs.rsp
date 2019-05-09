@@ -1,1 +1,0 @@
--static-libgcc -static-libstdc++ -lwsock32 -lws2_32  

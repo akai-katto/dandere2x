@@ -110,17 +110,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named dandere2x
+# Target rules for targets named dandere2x_cpp
 
 # Build rule for target.
-dandere2x: cmake_check_build_system
-	$(MAKE) -f CMakeFiles\Makefile2 dandere2x
-.PHONY : dandere2x
+dandere2x_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles\Makefile2 dandere2x_cpp
+.PHONY : dandere2x_cpp
 
 # fast build rule for target.
-dandere2x/fast:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/build
-.PHONY : dandere2x/fast
+dandere2x_cpp/fast:
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/build
+.PHONY : dandere2x_cpp/fast
 
 src/Dandere2xUtils/Dandere2xUtils.obj: src/Dandere2xUtils/Dandere2xUtils.cpp.obj
 
@@ -128,7 +128,7 @@ src/Dandere2xUtils/Dandere2xUtils.obj: src/Dandere2xUtils/Dandere2xUtils.cpp.obj
 
 # target to build an object file
 src/Dandere2xUtils/Dandere2xUtils.cpp.obj:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.obj
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.obj
 .PHONY : src/Dandere2xUtils/Dandere2xUtils.cpp.obj
 
 src/Dandere2xUtils/Dandere2xUtils.i: src/Dandere2xUtils/Dandere2xUtils.cpp.i
@@ -137,7 +137,7 @@ src/Dandere2xUtils/Dandere2xUtils.i: src/Dandere2xUtils/Dandere2xUtils.cpp.i
 
 # target to preprocess a source file
 src/Dandere2xUtils/Dandere2xUtils.cpp.i:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.i
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.i
 .PHONY : src/Dandere2xUtils/Dandere2xUtils.cpp.i
 
 src/Dandere2xUtils/Dandere2xUtils.s: src/Dandere2xUtils/Dandere2xUtils.cpp.s
@@ -146,7 +146,7 @@ src/Dandere2xUtils/Dandere2xUtils.s: src/Dandere2xUtils/Dandere2xUtils.cpp.s
 
 # target to generate assembly for a file
 src/Dandere2xUtils/Dandere2xUtils.cpp.s:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.s
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.s
 .PHONY : src/Dandere2xUtils/Dandere2xUtils.cpp.s
 
 src/Image/DebugImage/lodepng.obj: src/Image/DebugImage/lodepng.cpp.obj
@@ -155,7 +155,7 @@ src/Image/DebugImage/lodepng.obj: src/Image/DebugImage/lodepng.cpp.obj
 
 # target to build an object file
 src/Image/DebugImage/lodepng.cpp.obj:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Image/DebugImage/lodepng.cpp.obj
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Image/DebugImage/lodepng.cpp.obj
 .PHONY : src/Image/DebugImage/lodepng.cpp.obj
 
 src/Image/DebugImage/lodepng.i: src/Image/DebugImage/lodepng.cpp.i
@@ -164,7 +164,7 @@ src/Image/DebugImage/lodepng.i: src/Image/DebugImage/lodepng.cpp.i
 
 # target to preprocess a source file
 src/Image/DebugImage/lodepng.cpp.i:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Image/DebugImage/lodepng.cpp.i
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Image/DebugImage/lodepng.cpp.i
 .PHONY : src/Image/DebugImage/lodepng.cpp.i
 
 src/Image/DebugImage/lodepng.s: src/Image/DebugImage/lodepng.cpp.s
@@ -173,7 +173,7 @@ src/Image/DebugImage/lodepng.s: src/Image/DebugImage/lodepng.cpp.s
 
 # target to generate assembly for a file
 src/Image/DebugImage/lodepng.cpp.s:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Image/DebugImage/lodepng.cpp.s
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Image/DebugImage/lodepng.cpp.s
 .PHONY : src/Image/DebugImage/lodepng.cpp.s
 
 src/Image/Image.obj: src/Image/Image.cpp.obj
@@ -182,7 +182,7 @@ src/Image/Image.obj: src/Image/Image.cpp.obj
 
 # target to build an object file
 src/Image/Image.cpp.obj:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Image/Image.cpp.obj
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Image/Image.cpp.obj
 .PHONY : src/Image/Image.cpp.obj
 
 src/Image/Image.i: src/Image/Image.cpp.i
@@ -191,7 +191,7 @@ src/Image/Image.i: src/Image/Image.cpp.i
 
 # target to preprocess a source file
 src/Image/Image.cpp.i:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Image/Image.cpp.i
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Image/Image.cpp.i
 .PHONY : src/Image/Image.cpp.i
 
 src/Image/Image.s: src/Image/Image.cpp.s
@@ -200,7 +200,7 @@ src/Image/Image.s: src/Image/Image.cpp.s
 
 # target to generate assembly for a file
 src/Image/Image.cpp.s:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/Image/Image.cpp.s
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/Image/Image.cpp.s
 .PHONY : src/Image/Image.cpp.s
 
 src/PFrame/Correction/Correction.obj: src/PFrame/Correction/Correction.cpp.obj
@@ -209,7 +209,7 @@ src/PFrame/Correction/Correction.obj: src/PFrame/Correction/Correction.cpp.obj
 
 # target to build an object file
 src/PFrame/Correction/Correction.cpp.obj:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/Correction/Correction.cpp.obj
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/Correction/Correction.cpp.obj
 .PHONY : src/PFrame/Correction/Correction.cpp.obj
 
 src/PFrame/Correction/Correction.i: src/PFrame/Correction/Correction.cpp.i
@@ -218,7 +218,7 @@ src/PFrame/Correction/Correction.i: src/PFrame/Correction/Correction.cpp.i
 
 # target to preprocess a source file
 src/PFrame/Correction/Correction.cpp.i:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/Correction/Correction.cpp.i
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/Correction/Correction.cpp.i
 .PHONY : src/PFrame/Correction/Correction.cpp.i
 
 src/PFrame/Correction/Correction.s: src/PFrame/Correction/Correction.cpp.s
@@ -227,7 +227,7 @@ src/PFrame/Correction/Correction.s: src/PFrame/Correction/Correction.cpp.s
 
 # target to generate assembly for a file
 src/PFrame/Correction/Correction.cpp.s:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/Correction/Correction.cpp.s
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/Correction/Correction.cpp.s
 .PHONY : src/PFrame/Correction/Correction.cpp.s
 
 src/PFrame/Difference/Differences.obj: src/PFrame/Difference/Differences.cpp.obj
@@ -236,7 +236,7 @@ src/PFrame/Difference/Differences.obj: src/PFrame/Difference/Differences.cpp.obj
 
 # target to build an object file
 src/PFrame/Difference/Differences.cpp.obj:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.obj
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/Difference/Differences.cpp.obj
 .PHONY : src/PFrame/Difference/Differences.cpp.obj
 
 src/PFrame/Difference/Differences.i: src/PFrame/Difference/Differences.cpp.i
@@ -245,7 +245,7 @@ src/PFrame/Difference/Differences.i: src/PFrame/Difference/Differences.cpp.i
 
 # target to preprocess a source file
 src/PFrame/Difference/Differences.cpp.i:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.i
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/Difference/Differences.cpp.i
 .PHONY : src/PFrame/Difference/Differences.cpp.i
 
 src/PFrame/Difference/Differences.s: src/PFrame/Difference/Differences.cpp.s
@@ -254,7 +254,7 @@ src/PFrame/Difference/Differences.s: src/PFrame/Difference/Differences.cpp.s
 
 # target to generate assembly for a file
 src/PFrame/Difference/Differences.cpp.s:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/Difference/Differences.cpp.s
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/Difference/Differences.cpp.s
 .PHONY : src/PFrame/Difference/Differences.cpp.s
 
 src/PFrame/PFrame.obj: src/PFrame/PFrame.cpp.obj
@@ -263,7 +263,7 @@ src/PFrame/PFrame.obj: src/PFrame/PFrame.cpp.obj
 
 # target to build an object file
 src/PFrame/PFrame.cpp.obj:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.obj
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/PFrame.cpp.obj
 .PHONY : src/PFrame/PFrame.cpp.obj
 
 src/PFrame/PFrame.i: src/PFrame/PFrame.cpp.i
@@ -272,7 +272,7 @@ src/PFrame/PFrame.i: src/PFrame/PFrame.cpp.i
 
 # target to preprocess a source file
 src/PFrame/PFrame.cpp.i:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.i
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/PFrame.cpp.i
 .PHONY : src/PFrame/PFrame.cpp.i
 
 src/PFrame/PFrame.s: src/PFrame/PFrame.cpp.s
@@ -281,7 +281,7 @@ src/PFrame/PFrame.s: src/PFrame/PFrame.cpp.s
 
 # target to generate assembly for a file
 src/PFrame/PFrame.cpp.s:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/PFrame/PFrame.cpp.s
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/PFrame/PFrame.cpp.s
 .PHONY : src/PFrame/PFrame.cpp.s
 
 src/main.obj: src/main.cpp.obj
@@ -290,7 +290,7 @@ src/main.obj: src/main.cpp.obj
 
 # target to build an object file
 src/main.cpp.obj:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/main.cpp.obj
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/main.cpp.obj
 .PHONY : src/main.cpp.obj
 
 src/main.i: src/main.cpp.i
@@ -299,7 +299,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/main.cpp.i
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -308,7 +308,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/src/main.cpp.s
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 # Help Target
@@ -317,8 +317,8 @@ help:
 	@echo ... all (the default if no target is provided)
 	@echo ... clean
 	@echo ... depend
+	@echo ... dandere2x_cpp
 	@echo ... edit_cache
-	@echo ... dandere2x
 	@echo ... rebuild_cache
 	@echo ... src/Dandere2xUtils/Dandere2xUtils.obj
 	@echo ... src/Dandere2xUtils/Dandere2xUtils.i

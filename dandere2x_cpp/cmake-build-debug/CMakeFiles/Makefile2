@@ -64,39 +64,39 @@ CMAKE_SOURCE_DIR = C:\Users\windwoz\Documents\github_projects\dandere2x_cpp
 CMAKE_BINARY_DIR = C:\Users\windwoz\Documents\github_projects\dandere2x_cpp\cmake-build-debug
 
 #=============================================================================
-# Target rules for target CMakeFiles/dandere2x.dir
+# Target rules for target CMakeFiles/dandere2x_cpp.dir
 
 # All Build rule for target.
-CMakeFiles/dandere2x.dir/all:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/depend
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\windwoz\Documents\github_projects\dandere2x_cpp\cmake-build-debug\CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target dandere2x"
-.PHONY : CMakeFiles/dandere2x.dir/all
+CMakeFiles/dandere2x_cpp.dir/all:
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/depend
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\windwoz\Documents\github_projects\dandere2x_cpp\cmake-build-debug\CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target dandere2x_cpp"
+.PHONY : CMakeFiles/dandere2x_cpp.dir/all
 
 # Include target in all.
-all: CMakeFiles/dandere2x.dir/all
+all: CMakeFiles/dandere2x_cpp.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/dandere2x.dir/rule: cmake_check_build_system
+CMakeFiles/dandere2x_cpp.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\windwoz\Documents\github_projects\dandere2x_cpp\cmake-build-debug\CMakeFiles 8
-	$(MAKE) -f CMakeFiles\Makefile2 CMakeFiles/dandere2x.dir/all
+	$(MAKE) -f CMakeFiles\Makefile2 CMakeFiles/dandere2x_cpp.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\windwoz\Documents\github_projects\dandere2x_cpp\cmake-build-debug\CMakeFiles 0
-.PHONY : CMakeFiles/dandere2x.dir/rule
+.PHONY : CMakeFiles/dandere2x_cpp.dir/rule
 
 # Convenience name for target.
-dandere2x: CMakeFiles/dandere2x.dir/rule
+dandere2x_cpp: CMakeFiles/dandere2x_cpp.dir/rule
 
-.PHONY : dandere2x
-
-# clean rule for target.
-CMakeFiles/dandere2x.dir/clean:
-	$(MAKE) -f CMakeFiles\dandere2x.dir\build.make CMakeFiles/dandere2x.dir/clean
-.PHONY : CMakeFiles/dandere2x.dir/clean
+.PHONY : dandere2x_cpp
 
 # clean rule for target.
-clean: CMakeFiles/dandere2x.dir/clean
+CMakeFiles/dandere2x_cpp.dir/clean:
+	$(MAKE) -f CMakeFiles\dandere2x_cpp.dir\build.make CMakeFiles/dandere2x_cpp.dir/clean
+.PHONY : CMakeFiles/dandere2x_cpp.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/dandere2x_cpp.dir/clean
 
 .PHONY : clean
 

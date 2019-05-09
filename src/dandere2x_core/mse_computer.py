@@ -1,6 +1,5 @@
 from wrappers.frame import Frame
-import time
-from dandere2x_core.context import Context
+from context import Context
 
 def compress_frames(context: Context):
 

@@ -156,7 +156,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=dandere2x
+CMAKE_PROJECT_NAME:STATIC=dandere2x_cpp
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=C:/MinGW/bin/ranlib.exe
@@ -243,6 +243,12 @@ dandere2x_BINARY_DIR:STATIC=C:/Users/windwoz/Documents/github_projects/dandere2x
 
 //Value Computed by CMake
 dandere2x_SOURCE_DIR:STATIC=C:/Users/windwoz/Documents/github_projects/dandere2x_cpp
+
+//Value Computed by CMake
+dandere2x_cpp_BINARY_DIR:STATIC=C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug
+
+//Value Computed by CMake
+dandere2x_cpp_SOURCE_DIR:STATIC=C:/Users/windwoz/Documents/github_projects/dandere2x_cpp
 
 
 ########################

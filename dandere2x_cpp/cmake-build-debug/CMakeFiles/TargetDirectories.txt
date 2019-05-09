@@ -1,3 +1,3 @@
+C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x_cpp.dir
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/dandere2x.dir
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir

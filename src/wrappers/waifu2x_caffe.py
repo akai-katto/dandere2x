@@ -11,7 +11,7 @@ import logging
 import os
 import subprocess
 import threading
-from dandere2x_core.context import Context
+from context import Context
 
 
 # temporary implementation of waifu2x-caffe wrapper

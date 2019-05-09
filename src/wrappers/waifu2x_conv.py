@@ -13,7 +13,7 @@ Furthermore, waifu2x-conv saves files in an annoying way,
 so we need to correct those odd namings.
 """
 
-from dandere2x_core.context import Context
+from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import rename_file
 import logging
