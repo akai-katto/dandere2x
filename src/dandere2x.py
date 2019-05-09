@@ -55,6 +55,7 @@ import math
 
 import sys
 
+# logger doesnt operate out of workspace, but thats ok I guess
 
 def make_logger(path=""):
 
@@ -83,8 +84,8 @@ def make_logger(path=""):
 class Dandere2x:
 
     def __init__(self, config_file: str):
-        self.logger = make_logger()
         self.context = Context(config_file)
+        self.logger = make_logger()
 
     # Order matters here in command calls.
     def pre_setup(self):
@@ -96,7 +97,6 @@ class Dandere2x:
         self.write_frames()
         self.write_merge_commands()
 
-        self.logger = make_logger(self.context.workspace)
 
     # create a series of threads and external processes
     # to run in real time with each other for the dandere2x session.
@@ -118,8 +118,7 @@ class Dandere2x:
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-        compress_frames(self.context)
-
+        compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
         difference_thread = threading.Thread(target=difference_loop, args=(self.context, 1))
@@ -132,7 +131,9 @@ class Dandere2x:
         difference_thread.start()
         dandere2xcpp_thread.start()
         status_thread.start()
+        compress_frames_thread.start()
 
+        compress_frames_thread.join()
         merge_thread.join()
         dandere2xcpp_thread.join()
         difference_thread.join()

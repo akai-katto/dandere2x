@@ -100,21 +100,21 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         shared_ptr<Image> im2_compressed = make_shared<Image>(im2_file_compressed);
 
         //File locations that will be produced
-        string pDataFile =
+        string p_data_file =
                 workspace + separator() + "pframe_data" + separator() + "pframe_" + to_string(x) + ".txt";
 
-        string inversionFile =
+        string inversion_file =
                 workspace + separator() + "inversion_data" + separator() + "inversion_" + to_string(x) + ".txt";
 
-        string correctionFile1 =
+        string correction_file =
                 workspace + separator() + "correction_data" + separator() + "correction_" + to_string(x) + ".txt";
 
         /** Run dandere2xCpp Plugins (this is where all the computation of dandere2xcpp happens) */
 
-        PFrame pframe = PFrame(im1, im2, im2_compressed, block_size, bleed, pDataFile, inversionFile, step_size);
+        PFrame pframe = PFrame(im1, im2, im2_compressed, block_size, bleed, p_data_file, inversion_file, step_size);
         pframe.run();
 
-        Correction correction = Correction(im2, im2_copy, im2_compressed, correctionBlockSize, correctionFile1, step_size);
+        Correction correction = Correction(im2, im2_copy, im2_compressed, correctionBlockSize, correction_file, step_size);
         correction.run();
 
 //        //For Debugging
