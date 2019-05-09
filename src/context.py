@@ -80,7 +80,7 @@ class Context:
         self.quality_low = int(config.get('dandere2x', 'quality_low'))
 
         # todo idunno if theres a better way to figure out how many frames will be used.
-        self.frame_count = get_seconds_from_time(self.duration) * int(float(self.frame_rate))
+        self.frame_count = 0
 
         # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
@@ -107,3 +107,6 @@ class Context:
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
+    def update_frame_count(self):
+        self.frame_count = len([name for name in os.listdir(self.input_frames_dir)
+                                if os.path.isfile(os.path.join(self.input_frames_dir, name))])

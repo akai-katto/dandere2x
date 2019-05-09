@@ -103,6 +103,7 @@ class Dandere2x:
     # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()
+        self.context.update_frame_count()
 
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
@@ -144,8 +145,8 @@ class Dandere2x:
 
     # Resume a Dandere2x Session
     # Consider merging this into one function, but for the time being I prefer it seperate
-    # todo add support for 0.6
     def resume_concurrent(self):
+        self.context.update_frame_count()
 
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
@@ -162,6 +163,7 @@ class Dandere2x:
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
         difference_thread = threading.Thread(target=difference_loop_resume, args=(self.context,))
+        status_thread = threading.Thread(target=print_status, args=(self.context,))
 
         self.context.logger.info("Starting Threaded Processes..")
 
@@ -169,11 +171,13 @@ class Dandere2x:
         merge_thread.start()
         difference_thread.start()
         dandere2xcpp_thread.start()
+        status_thread.start()
 
         merge_thread.join()
         dandere2xcpp_thread.join()
         difference_thread.join()
         waifu2x.join()
+        status_thread.join()
 
         self.context.logger.info("Threaded Processes Finished successfully")
 
