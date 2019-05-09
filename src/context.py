@@ -36,7 +36,6 @@ class Context:
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
         self.file_dir = config.get('dandere2x', 'file_dir')
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
-
         self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
 
@@ -76,11 +75,12 @@ class Context:
         self.width = config.get('dandere2x', 'width')
         self.height = config.get('dandere2x', 'height')
         self.block_size = int(config.get('dandere2x', 'block_size'))
-        self.tolerance = config.get('dandere2x', 'tolerance')
         self.step_size = config.get('dandere2x', 'step_size')
-        self.bleed = config.get('dandere2x', 'bleed')
+        self.bleed = int(config.get('dandere2x', 'bleed'))
         self.quality_low = int(config.get('dandere2x', 'quality_low'))
-        self.quality_high = int(config.get('dandere2x', 'quality_high'))
+
+        # todo idunno if theres a better way to figure out how many frames will be used.
+        self.frame_count = 0
 
         # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
@@ -88,6 +88,7 @@ class Context:
         self.process_type = config.get('dandere2x', 'process_type')
         self.extension_type = config.get('dandere2x', 'extension_type')
         self.audio_type = config.get('dandere2x', 'audio_type')
+        self.gpu_number = config.get('dandere2x', 'gpu_number')
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
@@ -99,13 +100,13 @@ class Context:
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
-        self.frame_count = get_seconds_from_time(self.duration) * int(self.frame_rate)
+        self.compressed_dir = self.workspace + "compressed" + os.path.sep
+
+
 
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-        self.mse_min = 0
-        self.mse_max = 0
-
-        # Bleed has not changed
-        self.bleed = 1
+    def update_frame_count(self):
+        self.frame_count = len([name for name in os.listdir(self.input_frames_dir)
+                                if os.path.isfile(os.path.join(self.input_frames_dir, name))])

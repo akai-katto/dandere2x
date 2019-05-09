@@ -10,7 +10,7 @@ import logging
 import os
 import subprocess
 import threading
-from dandere2x_core.context import Context
+from context import Context
 
 class Dandere2xCppWrapper(threading.Thread):
 
@@ -20,9 +20,6 @@ class Dandere2xCppWrapper(threading.Thread):
         self.dandere2x_cpp_dir = context.dandere2x_cpp_dir
         self.frame_count = context.frame_count
         self.block_size = context.block_size
-        self.tolerance = context.tolerance
-        self.mse_min = context.mse_min
-        self.mse_max = context.mse_max
         self.step_size = context.step_size
         self.extension_type = context.extension_type
 
@@ -44,9 +41,6 @@ class Dandere2xCppWrapper(threading.Thread):
                 self.workspace,
                 str(self.frame_count),
                 str(self.block_size),
-                str(self.tolerance),
-                str(self.mse_max),
-                str(self.mse_min),
                 str(self.step_size),
                 "n",
                 str(1),
@@ -82,9 +76,6 @@ class Dandere2xCppWrapper(threading.Thread):
                 self.workspace,
                 str(self.frame_count),
                 str(self.block_size),
-                str(self.tolerance),
-                str(self.mse_max),
-                str(self.mse_min),
                 str(self.step_size),
                 "r",
                 str(last_found),

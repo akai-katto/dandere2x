@@ -7,10 +7,11 @@
 #include "PFrame.h"
 
 
-PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, unsigned int block_size, int bleed,
-               double tolerance, std::string p_frame_file, std::string difference_file, int step_size, bool debug) {
+PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
+                unsigned int block_size, int bleed, std::string p_frame_file, std::string difference_file, int step_size) {
     this->image1 = image1;
     this->image2 = image2;
+    this->image2_compressed = image2_compressed;
     this->step_size = step_size;
     this->max_checks = 128; //prevent diamond search from going on forever
     this->block_size = block_size;
@@ -20,8 +21,6 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, uns
     this->p_frame_file = p_frame_file;
     this->difference_file = difference_file;
     this->bleed = bleed;
-    this->tolerance = tolerance;
-    this->debug = true;
 
 
     //Sanity Checks
@@ -117,6 +116,15 @@ void PFrame::match_block(int x, int y) {
     disp.x = 0;
     disp.y = 0;
 
+    double min_mse = ImageUtils::mse(
+            *image2,
+            *image2_compressed,
+            x * block_size,
+            y * block_size,
+            x * block_size + disp.x,
+            y * block_size + disp.y,
+            block_size);
+
     double sum = ImageUtils::mse(
             *image1,
             *image2,
@@ -128,7 +136,7 @@ void PFrame::match_block(int x, int y) {
 
     //first we check if the blocks are in identical positions inbetween two frames.
     //if they are, we can skip doing a diamond search
-    if (sum < tolerance) {
+    if (sum < min_mse) {
         blocks.push_back(Block(x * block_size,
                                y * block_size,
                                x * block_size + disp.x,
@@ -149,7 +157,7 @@ void PFrame::match_block(int x, int y) {
                         max_checks);
 
         //if the found block is lower than the required PSNR, we add it. Else, do nothing
-        if (result.sum < tolerance)
+        if (result.sum < min_mse)
             blocks.push_back(result);
     }
 }

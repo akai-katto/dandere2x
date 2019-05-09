@@ -1,13 +1,4 @@
-from wrappers.frame import Frame
-from dandere2x_core.dandere2x_utils import determine_sens
-import random
-from scipy import misc  # pip install Pillow
+import os, os.path
 
-frame1 = misc.imread("C:\\Users\\windwoz\\Pictures\\ynn\\compression\\frame1.jpg").astype(float)
-
-frame2 = misc.imread("C:\\Users\\windwoz\\Pictures\\ynn\\compression\\frame1comp.jpg").astype(float)
-
-out = frame1 - frame2
-
-
-misc.imsave("C:\\Users\\windwoz\\Pictures\\ynn\\compression\\hmm2.png", out)
+DIR = 'C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.7\\demo_folder\\weeb\\inputs\\'
+print(len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))]))

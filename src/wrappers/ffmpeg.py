@@ -9,10 +9,8 @@ Last Modified: April 2, 2019
 Description: temp ffmpeg wrapper, terrible implementation fix later
 """
 import subprocess
-import os
 
-from dandere2x_core.context import Context
-from dandere2x_core.dandere2x_utils import wait_on_file
+from context import Context
 
 
 def extract_frames(context: Context):

@@ -1,4 +1,4 @@
-C:\Users\windwoz\.CLion2019.1\system\cygwin_cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp
+"C:\Program Files\JetBrains\CLion 2019.1.2\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" C:\Users\windwoz\Documents\github_projects\dandere2x_cpp
 -- Configuring done
 -- Generating done
--- Build files have been written to: /cygdrive/c/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug
+-- Build files have been written to: C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/cmake-build-debug

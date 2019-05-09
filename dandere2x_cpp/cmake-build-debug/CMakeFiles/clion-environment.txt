@@ -1,4 +1,4 @@
-ToolSet: 2.11.2 (local)@C:\cygwin64
+ToolSet: 5.2 (local)@C:\MinGW
 Options: 
 
 Options:

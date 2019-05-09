@@ -6,7 +6,7 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
-from dandere2x_core.context import Context
+from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_text
 from wrappers.frame import DisplacementVector
@@ -74,7 +74,7 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
                              vector.x_1 * scale_factor,
                              vector.y_1 * scale_factor)
 
-    out_image = correct_image(context, 4, out_image, list_corrections)
+    out_image = correct_image(context, 5, out_image, list_corrections)
     out_image.save_image(output_location)
 
 

@@ -6,18 +6,18 @@
 
 #include "Correction.h"
 
-Correction::Correction(std::shared_ptr<Image> image1_fake, std::shared_ptr<Image> image1_true, unsigned int block_size,
-                       double tolerance, std::string correction_file, int step_size) {
+Correction::Correction(std::shared_ptr<Image> image1_fake, std::shared_ptr<Image> image1_true, std::shared_ptr<Image> image1_compressed,
+                        unsigned int block_size, std::string correction_file, int step_size) {
 
     this->image1_fake = image1_fake;
     this->image1_true = image1_true;
+    this->image1_compressed = image1_compressed;
     this->step_size = step_size;
-    this->max_checks = 64; //prevent diamond search from going on forever
+    this->max_checks = 8; //prevent diamond search from going on forever
     this->block_size = block_size;
     this->width = image1_fake->width;
     this->height = image1_fake->height;
     this->correction_file = correction_file;
-    this->tolerance = tolerance;
 
     //preform checks to ensure given information is valid
     if (image1_fake->height != image1_true->height || image1_fake->width != image1_true->width)
@@ -59,11 +59,15 @@ void Correction::draw_over() {
 }
 
 void Correction::match_block(int x, int y) {
+
+    double min_mse = ImageUtils::mse(*image1_true, *image1_compressed, x * block_size, y * block_size,
+                                     x * block_size, y * block_size, block_size);
+
     double sum = ImageUtils::mse(*image1_fake, *image1_true, x * block_size, y * block_size,
                                  x * block_size, y * block_size, block_size);
 
 
-    if (sum < tolerance) {
+    if (sum < min_mse*min_mse) {
     } else {
         //std::cout << "Conducting a diamond search" << std::endl;
         //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
@@ -81,7 +85,7 @@ void Correction::match_block(int x, int y) {
         //std::cout << "Tolerance: " << result.sum << std::endl;
 
         //if the found block is lower than the required PSNR, we add it. Else, do nothing
-        if (result.sum < tolerance) {
+        if (result.sum < min_mse) {
             //std::cout << "matched block" << std::endl;
             blocks.push_back(result);
         }

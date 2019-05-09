@@ -11,7 +11,7 @@ import logging
 import os
 import subprocess
 import threading
-from dandere2x_core.context import Context
+from context import Context
 
 
 # temporary implementation of waifu2x-caffe wrapper
@@ -32,6 +32,7 @@ class Waifu2xCaffe(threading.Thread):
         self.scale_factor = context.scale_factor
         self.model_dir = context.model_dir
         self.workspace = context.workspace
+        self.gpu_number = context.gpu_number
 
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
@@ -44,6 +45,7 @@ class Waifu2xCaffe(threading.Thread):
         scale_factor = context.scale_factor
         model_dir = context.model_dir
         waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir
+        gpu_number = context.gpu_number
 
         logger = logging.getLogger(__name__)
 
@@ -52,6 +54,7 @@ class Waifu2xCaffe(threading.Thread):
                 "-p", process_type,
                 "-n", noise_level,
                 "-s", scale_factor,
+                "--gpu", gpu_number,
                 "-o", output_file]
 
         # if the user is using a custom model
@@ -80,6 +83,7 @@ class Waifu2xCaffe(threading.Thread):
                 "-p", self.process_type,
                 "-n", self.noise_level,
                 "-s", self.scale_factor,
+                "--gpu", self.gpu_number,
                 "-o", self.upscaled_dir]
 
         if self.model_dir != "default":
@@ -109,7 +113,7 @@ class Waifu2xCaffe(threading.Thread):
         while names:
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.run(exec)
+            subprocess.run(exec, stdout=open(os.devnull, 'wb'))
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
                     os.remove(self.differences_dir + item)

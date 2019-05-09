@@ -43,8 +43,8 @@ class Correction {
 public:
     Correction(std::shared_ptr<Image> image1_fake,
                std::shared_ptr<Image> image1_true,
+               std::shared_ptr<Image> image1_compressed,
                unsigned int block_size,
-               double tolerance,
                std::string correction_file,
                int step_size);
 
@@ -60,12 +60,12 @@ private:
     unsigned int block_size;
     int width;
     int height;
-    double tolerance;
     std::string correction_file;
 
     std::vector<Block> blocks;
     std::shared_ptr<Image> image1_fake;
     std::shared_ptr<Image> image1_true;
+    std::shared_ptr<Image> image1_compressed;
 
     void draw_over();
 
