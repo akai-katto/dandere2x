@@ -49,11 +49,10 @@ using namespace std;
 const int correctionBlockSize = 5;
 
 
-void driver_difference(string workspace, int resume_count, int frame_count, int block_size,
-                       double tolerance, int step_size, string extension_type) {
+void driver_difference(string workspace, int resume_count, int frame_count,
+                       int block_size,int step_size, string extension_type) {
 
     int bleed = 2; //i dont think bleed is actually used?
-    bool debug = true;
 
     wait_for_file(workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extension_type);
     shared_ptr<Image> im1 = make_shared<Image>(
@@ -89,9 +88,7 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
     for (int x = resume_count; x < frame_count; x++) {
         cout << "\n\n Computing differences for frame" << x << endl;
 
-
         /** Locations of image files */
-
         string im2_file =
                 workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extension_type;
 
@@ -111,7 +108,6 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
 
         string correctionFile1 =
                 workspace + separator() + "correction_data" + separator() + "correction_" + to_string(x) + ".txt";
-
 
         /** Run dandere2xCpp Plugins (this is where all the computation of dandere2xcpp happens) */
 

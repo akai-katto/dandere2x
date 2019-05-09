@@ -20,7 +20,6 @@ class Dandere2xCppWrapper(threading.Thread):
         self.dandere2x_cpp_dir = context.dandere2x_cpp_dir
         self.frame_count = context.frame_count
         self.block_size = context.block_size
-        self.tolerance = context.tolerance
         self.step_size = context.step_size
         self.extension_type = context.extension_type
 
@@ -42,7 +41,6 @@ class Dandere2xCppWrapper(threading.Thread):
                 self.workspace,
                 str(self.frame_count),
                 str(self.block_size),
-                str(self.tolerance),
                 str(self.step_size),
                 "n",
                 str(1),

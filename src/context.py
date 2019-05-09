@@ -75,11 +75,9 @@ class Context:
         self.width = config.get('dandere2x', 'width')
         self.height = config.get('dandere2x', 'height')
         self.block_size = int(config.get('dandere2x', 'block_size'))
-        self.tolerance = config.get('dandere2x', 'tolerance')
         self.step_size = config.get('dandere2x', 'step_size')
-        self.bleed = config.get('dandere2x', 'bleed')
+        self.bleed = int(config.get('dandere2x', 'bleed'))
         self.quality_low = int(config.get('dandere2x', 'quality_low'))
-        self.quality_high = int(config.get('dandere2x', 'quality_high'))
 
         # todo idunno if theres a better way to figure out how many frames will be used.
         self.frame_count = get_seconds_from_time(self.duration) * int(float(self.frame_rate))

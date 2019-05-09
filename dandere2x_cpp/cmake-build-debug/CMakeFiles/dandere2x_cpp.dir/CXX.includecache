@@ -24,10 +24,6 @@ C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 ../Image/ImageUtils.h
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/ImageUtils.h
 
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.cpp
-Dandere2xUtils.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.h
-
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.h
 string
 -
@@ -62,16 +58,6 @@ exception
 stdexcept
 -
 
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/DebugImage/lodepng.cpp
-lodepng.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/DebugImage/lodepng.h
-limits.h
--
-stdio.h
--
-stdlib.h
--
-
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/DebugImage/lodepng.h
 string.h
 -
@@ -85,14 +71,6 @@ iostream
 -
 lodepng.h
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/DebugImage/lodepng.h
-
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.cpp
-Image.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
-stb_image.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/stb_image.h
-../Dandere2xUtils/Dandere2xUtils.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Dandere2xUtils/Dandere2xUtils.h
 
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 iostream
@@ -144,10 +122,6 @@ intrin.h
 arm_neon.h
 -
 
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.cpp
-Correction.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.h
-
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Correction/Correction.h
 memory
 -
@@ -168,12 +142,6 @@ vector
 ../../BlockMatch/Block.h
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/Block.h
 
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.cpp
-Differences.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.h
-DifferenceBlocks.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/DifferenceBlocks.h
-
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/Differences.h
 memory
 -
@@ -189,10 +157,6 @@ C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/Image/Image.h
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/BlockMatch/Block.h
 DifferenceBlocks.h
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/Difference/DifferenceBlocks.h
-
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.cpp
-PFrame.h
-C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.h
 
 C:/Users/windwoz/Documents/github_projects/dandere2x_cpp/src/PFrame/PFrame.h
 memory
