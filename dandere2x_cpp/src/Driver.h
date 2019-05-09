@@ -10,6 +10,7 @@
 #include "PFrame/Correction/Correction.h"
 #include "PFrame/PFrame.h"
 #include "Dandere2xUtils/Dandere2xUtils.h"
+#include "Image/DebugImage/DebugImage.h"
 
 
 
@@ -45,7 +46,7 @@
  */
 using namespace dandere2x;
 using namespace std;
-const int correctionBlockSize = 4;
+const int correctionBlockSize = 5;
 
 
 void driver_difference(string workspace, int resume_count, int frame_count, int block_size,
@@ -93,6 +94,12 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
 
         shared_ptr<Image> im2 = make_shared<Image>(
                 workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extension_type);
+
+        shared_ptr<Image> im2_compressed = make_shared<Image>(
+                workspace + separator() + "compressed" + separator() + "" + to_string(x + 1) + extension_type);
+
+        cout << " workspace + separator() + \"compressed\" + separator() + \"\" + to_string(x + 1) + extension_type " << endl;
+
         shared_ptr<Image> copy = make_shared<Image>(
                 workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) +
                 extension_type); //for psnr
@@ -114,41 +121,47 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
          * If you wish to make a block-matching improvement for dandere2x, the plugin will go here
          *
          */
-        PFrame pframe = PFrame(im1, im2, block_size, bleed, tolerance, pDataFile, inversionFile, step_size, debug);
+        PFrame pframe = PFrame(im1, im2, im2_compressed, block_size, bleed, tolerance, pDataFile, inversionFile, step_size, debug);
         pframe.run();
+
+        double p_mse = ImageUtils::mse_image(*im2, *copy);
+        cout << "p_frame before corrections # " << x << "  mse: " << p_mse << endl;
 
         int correction_factor = sqrt(block_size) / sqrt(correctionBlockSize); // not rly sure why this works tbh
 
-        Correction correction = Correction(im2, copy, correctionBlockSize, tolerance * correction_factor,
+        Correction correction = Correction(im2, copy, im2_compressed, correctionBlockSize, tolerance * correction_factor,
                                            correctionFile1, step_size);
         correction.run();
 
-
+        p_mse = ImageUtils::mse_image(*im2, *copy);
+        cout << "p_frame after corrections # " << x << "  mse: " << p_mse << endl;
         /**
         * Evaluate the final image after being processed by block match and corrections
         */
 
-        double p_mse = ImageUtils::mse_image(*im2, *copy);
+        p_mse = ImageUtils::mse_image(*im2, *copy);
         cout << "p_frame # " << x << "  mse: " << p_mse << endl;
 
-        if (p_mse > mse_max && tolerance > 1) {
-            cout << "mse too high " << p_mse << " > " << mse_max << endl;
-            cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << endl;
-            tolerance--;
-            x--;
-            continue; //redo this current for loop iteration with different settings
-        }
-
-        if (p_mse < mse_min && tolerance < 30 && p_mse != 0) {
-            cout << "mse too too low: " << p_mse << " < " << mse_min << endl;
-            cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << endl;
-            tolerance++;
-        }
+//        if (p_mse > mse_max && tolerance > 1) {
+//            cout << "mse too high " << p_mse << " > " << mse_max << endl;
+//            cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << endl;
+//            tolerance--;
+//            x--;
+//            continue; //redo this current for loop iteration with different settings
+//        }
+//
+//        if (p_mse < mse_min && tolerance < 30 && p_mse != 0) {
+//            cout << "mse too too low: " << p_mse << " < " << mse_min << endl;
+//            cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << endl;
+//            tolerance++;
+//        }
 
 
         /**
          * Save files if whatever plugins we ran through the image passed the quality test
          */
+        DebugImage before = DebugImage::create_debug_from_image(*im2);
+        before.save(workspace  + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
 
         pframe.save();
         correction.save();

@@ -38,6 +38,7 @@ from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
 from dandere2x_core.context import Context
 from dandere2x_core.status import print_status
+from dandere2x_core.mse_computer import compress_frames
 
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
@@ -83,7 +84,7 @@ class Dandere2x:
     def __init__(self, config_file: str):
 
         self.logger = make_logger()
-
+        self.context = Context(config_file)
         self.mse_min = 0
         self.mse_max = 0
 
@@ -98,7 +99,7 @@ class Dandere2x:
         self.write_frames()
         self.write_merge_commands()
 
-        self.logger = make_logger(self.workspace)
+        self.logger = make_logger(self.context.workspace)
 
 
     def set_mse(self):
@@ -141,6 +142,8 @@ class Dandere2x:
             Waifu2xConv.upscale_file(self.context,
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+        compress_frames(self.context)
 
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
@@ -186,6 +189,7 @@ class Dandere2x:
 
         self.context.logger.info("Starting Threaded Processes..")
 
+
         waifu2x.start()
         merge_thread.start()
         difference_thread.start()
@@ -230,7 +234,8 @@ class Dandere2x:
                        self.context.inversion_data_dir,
                        self.context.pframe_data_dir,
                        self.context.debug_dir,
-                       self.context.log_dir}
+                       self.context.log_dir,
+                       self.context.compressed_dir}
 
         # need to create workspace before anything else
         try:

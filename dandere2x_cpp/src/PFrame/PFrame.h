@@ -55,7 +55,7 @@
 class PFrame {
 
 public:
-    PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2,
+    PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
            unsigned int block_size, int bleed, double tolerance,
            std::string p_frame_file, std::string difference_file,
            int step_size = 5, bool debug = true);
@@ -80,6 +80,7 @@ private:
     std::vector<Block> blocks;
     std::shared_ptr<Image> image1;
     std::shared_ptr<Image> image2;
+    std::shared_ptr<Image> image2_compressed;
     std::shared_ptr<Differences> dif;
 
     void force_copy();
