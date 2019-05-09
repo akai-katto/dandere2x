@@ -59,9 +59,8 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
     shared_ptr<Image> im1 = make_shared<Image>(
             workspace + separator() + "inputs" + separator() + "frame" + to_string(1) + extension_type);
 
-    /**
-     * Handle Cases for Resuming Here
-     */
+    /** Handle Cases for Resuming Here*/
+
     if (resume_count != 1) {
         shared_ptr<Image> im2 = make_shared<Image>(
                 workspace + separator() + "inputs" + separator() + "frame" + to_string(resume_count + 1) +
@@ -89,6 +88,9 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
 
     for (int x = resume_count; x < frame_count; x++) {
         cout << "\n\n Computing differences for frame" << x << endl;
+
+
+        /** Locations of image files */
 
         string im2_file =
                 workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extension_type;

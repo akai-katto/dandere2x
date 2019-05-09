@@ -31,12 +31,11 @@ smooth and edges sharp.
 """
 
 from dandere2x_core.dandere2x_utils import determine_sens
-from dandere2x_core.dandere2x_utils import get_seconds_from_time
 from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
 from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
-from dandere2x_core.context import Context
+from context import Context
 from dandere2x_core.status import print_status
 from dandere2x_core.mse_computer import compress_frames
 

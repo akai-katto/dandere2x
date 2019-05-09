@@ -1,4 +1,4 @@
-from dandere2x_core.context import Context
+from context import Context
 import os
 import time
 import sys

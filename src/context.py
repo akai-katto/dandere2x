@@ -36,7 +36,6 @@ class Context:
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
         self.file_dir = config.get('dandere2x', 'file_dir')
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
-
         self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
 
@@ -82,6 +81,9 @@ class Context:
         self.quality_low = int(config.get('dandere2x', 'quality_low'))
         self.quality_high = int(config.get('dandere2x', 'quality_high'))
 
+        # todo idunno if theres a better way to figure out how many frames will be used.
+        self.frame_count = get_seconds_from_time(self.duration) * int(float(self.frame_rate))
+
         # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
         self.scale_factor = config.get('dandere2x', 'scale_factor')
@@ -102,13 +104,8 @@ class Context:
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
 
-        self.frame_count = get_seconds_from_time(self.duration) * int(float(self.frame_rate))
+
 
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-        self.mse_min = 0
-        self.mse_max = 0
-
-        # Bleed has not changed
-        self.bleed = 1
