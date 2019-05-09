@@ -7,19 +7,17 @@
 #include "Correction.h"
 
 Correction::Correction(std::shared_ptr<Image> image1_fake, std::shared_ptr<Image> image1_true, std::shared_ptr<Image> image1_compressed,
-                        unsigned int block_size,
-                       double tolerance, std::string correction_file, int step_size) {
+                        unsigned int block_size, std::string correction_file, int step_size) {
 
     this->image1_fake = image1_fake;
     this->image1_true = image1_true;
     this->image1_compressed = image1_compressed;
     this->step_size = step_size;
-    this->max_checks = 64; //prevent diamond search from going on forever
+    this->max_checks = 8; //prevent diamond search from going on forever
     this->block_size = block_size;
     this->width = image1_fake->width;
     this->height = image1_fake->height;
     this->correction_file = correction_file;
-    this->tolerance = tolerance;
 
     //preform checks to ensure given information is valid
     if (image1_fake->height != image1_true->height || image1_fake->width != image1_true->width)

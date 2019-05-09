@@ -9,11 +9,22 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include "stb_image.h"
+#include "../Dandere2xUtils/Dandere2xUtils.h"
 
+
+/*
+ * Assumptions:
+ *
+ * - Assume file will exist eventually
+ *
+ * - Assume file is readible by stbi_image
+ */
 Image::Image(std::string file_name) {
+    dandere2x::wait_for_file(file_name);
 
     unsigned char *rgb; //the raw pixels
     int width, height, bpp;
+
     //decode
     this->stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
 

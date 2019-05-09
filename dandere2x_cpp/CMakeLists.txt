@@ -1,9 +1,8 @@
-#I build this on cygwin
+#I build this on MignW
 cmake_minimum_required(VERSION 3.14)
 project(dandere2x)
 
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 

@@ -7,6 +7,7 @@ CMakeFiles/dandere2x.dir/src/Dandere2xUtils/Dandere2xUtils.cpp.obj: ../src/Dande
 CMakeFiles/dandere2x.dir/src/Image/DebugImage/lodepng.cpp.obj: ../src/Image/DebugImage/lodepng.cpp
 CMakeFiles/dandere2x.dir/src/Image/DebugImage/lodepng.cpp.obj: ../src/Image/DebugImage/lodepng.h
 
+CMakeFiles/dandere2x.dir/src/Image/Image.cpp.obj: ../src/Dandere2xUtils/Dandere2xUtils.h
 CMakeFiles/dandere2x.dir/src/Image/Image.cpp.obj: ../src/Image/Image.cpp
 CMakeFiles/dandere2x.dir/src/Image/Image.cpp.obj: ../src/Image/Image.h
 CMakeFiles/dandere2x.dir/src/Image/Image.cpp.obj: ../src/Image/stb_image.h

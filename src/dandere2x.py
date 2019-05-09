@@ -127,7 +127,6 @@ class Dandere2x:
     # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()
-        self.set_mse()
 
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
@@ -168,8 +167,8 @@ class Dandere2x:
 
     # Resume a Dandere2x Session
     # Consider merging this into one function, but for the time being I prefer it seperate
+    # todo add support for 0.6
     def resume_concurrent(self):
-        self.set_mse()
 
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
@@ -188,7 +187,6 @@ class Dandere2x:
         difference_thread = threading.Thread(target=difference_loop_resume, args=(self.context,))
 
         self.context.logger.info("Starting Threaded Processes..")
-
 
         waifu2x.start()
         merge_thread.start()
@@ -253,7 +251,6 @@ class Dandere2x:
                 print("Creation of the directory %s failed" % subdirectory)
             else:
                 print("Successfully created the directory %s " % subdirectory)
-
 
     # for linux. Currently deprecated as Linux development has stopped for a bit.
     def create_waifu2x_script(self):

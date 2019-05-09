@@ -50,7 +50,7 @@ const int correctionBlockSize = 5;
 
 
 void driver_difference(string workspace, int resume_count, int frame_count, int block_size,
-                       double tolerance, double mse_max, double mse_min, int step_size, string extension_type) {
+                       double tolerance, int step_size, string extension_type) {
 
     int bleed = 2; //i dont think bleed is actually used?
     bool debug = true;
@@ -67,7 +67,6 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
                 workspace + separator() + "inputs" + separator() + "frame" + to_string(resume_count + 1) +
                 extension_type);
 
-        //File locations that will be produced
         string p_data_file =
                 workspace + separator() + "pframe_data" + separator() + "pframe_" + to_string(resume_count) + ".txt";
 
@@ -88,24 +87,22 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
     }
 
 
-
     for (int x = resume_count; x < frame_count; x++) {
         cout << "\n\n Computing differences for frame" << x << endl;
 
-        shared_ptr<Image> im2 = make_shared<Image>(
-                workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extension_type);
+        string im2_file =
+                workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) + extension_type;
 
-        shared_ptr<Image> im2_compressed = make_shared<Image>(
-                workspace + separator() + "compressed" + separator() + "" + to_string(x + 1) + extension_type);
+        string im2_file_compressed =
+                workspace + separator() + "compressed" + separator() + "" + to_string(x + 1) + extension_type;
 
-        cout << " workspace + separator() + \"compressed\" + separator() + \"\" + to_string(x + 1) + extension_type " << endl;
-
-        shared_ptr<Image> copy = make_shared<Image>(
-                workspace + separator() + "inputs" + separator() + "frame" + to_string(x + 1) +
-                extension_type); //for psnr
+        shared_ptr<Image> im2 = make_shared<Image>(im2_file);
+        shared_ptr<Image> im2_copy = make_shared<Image>(im2_file); //for corrections
+        shared_ptr<Image> im2_compressed = make_shared<Image>(im2_file_compressed);
 
         //File locations that will be produced
-        string pDataFile = workspace + separator() + "pframe_data" + separator() + "pframe_" + to_string(x) + ".txt";
+        string pDataFile =
+                workspace + separator() + "pframe_data" + separator() + "pframe_" + to_string(x) + ".txt";
 
         string inversionFile =
                 workspace + separator() + "inversion_data" + separator() + "inversion_" + to_string(x) + ".txt";
@@ -114,54 +111,19 @@ void driver_difference(string workspace, int resume_count, int frame_count, int 
                 workspace + separator() + "correction_data" + separator() + "correction_" + to_string(x) + ".txt";
 
 
+        /** Run dandere2xCpp Plugins (this is where all the computation of dandere2xcpp happens) */
 
-        /**
-         * Begin Image Prediction Area.
-         *
-         * If you wish to make a block-matching improvement for dandere2x, the plugin will go here
-         *
-         */
-        PFrame pframe = PFrame(im1, im2, im2_compressed, block_size, bleed, tolerance, pDataFile, inversionFile, step_size, debug);
+        PFrame pframe = PFrame(im1, im2, im2_compressed, block_size, bleed, pDataFile, inversionFile, step_size);
         pframe.run();
 
-        double p_mse = ImageUtils::mse_image(*im2, *copy);
-        cout << "p_frame before corrections # " << x << "  mse: " << p_mse << endl;
-
-        int correction_factor = sqrt(block_size) / sqrt(correctionBlockSize); // not rly sure why this works tbh
-
-        Correction correction = Correction(im2, copy, im2_compressed, correctionBlockSize, tolerance * correction_factor,
-                                           correctionFile1, step_size);
+        Correction correction = Correction(im2, im2_copy, im2_compressed, correctionBlockSize, correctionFile1, step_size);
         correction.run();
 
-        p_mse = ImageUtils::mse_image(*im2, *copy);
-        cout << "p_frame after corrections # " << x << "  mse: " << p_mse << endl;
-        /**
-        * Evaluate the final image after being processed by block match and corrections
-        */
+//        //For Debugging
+//        DebugImage before = DebugImage::create_debug_from_image(*im2);
+//        before.save(workspace + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
 
-        p_mse = ImageUtils::mse_image(*im2, *copy);
-        cout << "p_frame # " << x << "  mse: " << p_mse << endl;
-
-//        if (p_mse > mse_max && tolerance > 1) {
-//            cout << "mse too high " << p_mse << " > " << mse_max << endl;
-//            cout << "Changing Tolerance " << tolerance << " -> " << tolerance - 1 << endl;
-//            tolerance--;
-//            x--;
-//            continue; //redo this current for loop iteration with different settings
-//        }
-//
-//        if (p_mse < mse_min && tolerance < 30 && p_mse != 0) {
-//            cout << "mse too too low: " << p_mse << " < " << mse_min << endl;
-//            cout << "Changing Tolerance " << tolerance << " -> " << tolerance + 1 << endl;
-//            tolerance++;
-//        }
-
-
-        /**
-         * Save files if whatever plugins we ran through the image passed the quality test
-         */
-        DebugImage before = DebugImage::create_debug_from_image(*im2);
-        before.save(workspace  + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
+        /** Save files if whatever plugins we ran through the image passed the quality test */
 
         pframe.save();
         correction.save();

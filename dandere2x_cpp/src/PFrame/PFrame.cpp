@@ -8,8 +8,7 @@
 
 
 PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
-                unsigned int block_size, int bleed,
-               double tolerance, std::string p_frame_file, std::string difference_file, int step_size, bool debug) {
+                unsigned int block_size, int bleed, std::string p_frame_file, std::string difference_file, int step_size) {
     this->image1 = image1;
     this->image2 = image2;
     this->image2_compressed = image2_compressed;
@@ -22,8 +21,6 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std
     this->p_frame_file = p_frame_file;
     this->difference_file = difference_file;
     this->bleed = bleed;
-    this->tolerance = tolerance;
-    this->debug = true;
 
 
     //Sanity Checks
