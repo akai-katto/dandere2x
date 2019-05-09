@@ -45,6 +45,8 @@ from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
 from wrappers.frame import Frame
+
+import time
 import logging
 import os
 import threading
@@ -81,12 +83,8 @@ def make_logger(path=""):
 class Dandere2x:
 
     def __init__(self, config_file: str):
-
         self.logger = make_logger()
         self.context = Context(config_file)
-        self.mse_min = 0
-        self.mse_max = 0
-
 
     # Order matters here in command calls.
     def pre_setup(self):
@@ -99,27 +97,6 @@ class Dandere2x:
         self.write_merge_commands()
 
         self.logger = make_logger(self.context.workspace)
-
-
-    def set_mse(self):
-        import time
-        print("calculating mse")
-        list = []
-        for x in range(1, int(math.sqrt(self.context.frame_count))):
-            before = time.time()
-            print(str(x) + " out of " + str(int(math.sqrt(self.context.frame_count))))
-            num = random.randint(1, self.context.frame_count)
-            f1 = Frame()
-            f1.load_from_string(self.context.input_frames_dir + "frame" + str(num) + ".jpg")
-            list.append(determine_sens(self.context.workspace, f1, self.context.quality_low, self.context.quality_high))
-            print(time.time() - before)
-
-        output = [sum(y) / len(y) for y in zip(*list)]
-
-        self.context.mse_max = output[0]
-        self.context.mse_min = output[1]
-        print("mse is ")
-        print(output)
 
     # create a series of threads and external processes
     # to run in real time with each other for the dandere2x session.

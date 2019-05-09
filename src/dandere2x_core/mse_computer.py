@@ -8,7 +8,7 @@ def compress_frames(context: Context):
     compressed_dir = context.compressed_dir
     quality_low = context.quality_low
 
-    for x in range(1, frame_count):
+    for x in range(1, frame_count + 1):
         frame = Frame()
 
         frame.load_from_string(inputs_dir + "frame" + str(x) + ".jpg")
