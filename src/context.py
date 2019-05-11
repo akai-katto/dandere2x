@@ -102,8 +102,6 @@ class Context:
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
 
-
-
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 

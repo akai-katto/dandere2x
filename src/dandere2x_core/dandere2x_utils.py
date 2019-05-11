@@ -10,8 +10,6 @@ import logging
 import os
 import time
 
-
-
 # waits for a text file, then returns the file as a list sperated by lines
 # to do - I've gotton permission errors. Perhaps adding a catch for that.
 def wait_on_text(text_file: str):
@@ -91,26 +89,39 @@ def get_seconds_from_time(time_frame: int):
     return hours_seconds + minutes_seconds + seconds
 
 
-def determine_sens(workspace: str, frame, lower_val: int, higher_val: int):
+# load the first frame, check if the block size is compatible with the resolution
+def verify_user_settings(context):
     from wrappers.frame import Frame
 
-    frame.save_image_quality(workspace + "lower.jpg", lower_val)
-    frame.save_image_quality(workspace + "higher.jpg", higher_val)
+    input_frames_dir = context.input_frames_dir
+    extension_type = context.extension_type
+    block_size = context.block_size
 
-    lower_image = Frame()
-    lower_image.load_from_string(workspace + "lower.jpg")
+    f1 = Frame()
+    f1.load_from_string(input_frames_dir + "frame1" + extension_type)
 
-    higher_image = Frame()
-    higher_image.load_from_string(workspace + "higher.jpg")
+    valid = True
 
-    lower_mse = frame.mean(lower_image)
-    higher_mse = frame.mean(higher_image)
+    if f1.width % block_size != 0 and f1.height % block_size != 0:
+        print("Your block size is incompatible with the resolution you provided. ")
+        print("Valid Block sizes are:")
 
-    os.remove(workspace + "lower.jpg")
-    os.remove(workspace + "higher.jpg")
+        valid_sizes = []
 
-    return lower_mse, higher_mse
+        larger_val = [f1.width, f1.height][f1.height > f1.width]
 
+        print(larger_val)
+        for x in range(1, larger_val):
+            if f1.width % x == 0 and f1.height % x == 0:
+                valid_sizes.append(x)
+
+        print(valid_sizes)
+        new_block_size = int(input("Enter your value (recommended 25 or greater)"))
+
+        while new_block_size not in valid_sizes:
+            new_block_size = int(input("Invalid Choice Enter your value"))
+
+        context.block_size = new_block_size
 
 
 def main():

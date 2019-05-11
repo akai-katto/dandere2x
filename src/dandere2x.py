@@ -30,29 +30,26 @@ number of times without losing any details or quality, keeping lines
 smooth and edges sharp.
 """
 
-from dandere2x_core.dandere2x_utils import determine_sens
+from context import Context
+
 from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
 from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
-from context import Context
 from dandere2x_core.status import print_status
 from dandere2x_core.mse_computer import compress_frames
+
+from dandere2x_core.dandere2x_utils import verify_user_settings
 
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
 from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
-from wrappers.frame import Frame
 
-import time
 import logging
 import os
 import threading
-import random
-import math
-
 import sys
 
 # logger doesnt operate out of workspace, but thats ok I guess
@@ -98,13 +95,16 @@ class Dandere2x:
         self.write_merge_commands()
 
 
+
     # create a series of threads and external processes
     # to run in real time with each other for the dandere2x session.
     # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()
         self.context.update_frame_count()
+        verify_user_settings(self.context)
 
+        # set waifu2x to be whatever handle we're using
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
 
@@ -146,7 +146,8 @@ class Dandere2x:
     # Resume a Dandere2x Session
     # Consider merging this into one function, but for the time being I prefer it seperate
     def resume_concurrent(self):
-        self.context.update_frame_count()
+        self.context.update_frame_count() # we need to count how many outputs there are after ffmpeg extracted stuff
+        verify_user_settings(self.context)
 
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
