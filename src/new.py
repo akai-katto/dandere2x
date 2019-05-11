@@ -8,7 +8,7 @@ d.run_concurrent()
 
 end = time.time()
 
-print("\n duration:" + str(end - start))
+print("\n duration:" + str(time.time() - start))
 
 #d.difference_only()
 
