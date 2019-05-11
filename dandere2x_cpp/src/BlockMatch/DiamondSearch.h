@@ -55,6 +55,13 @@ public:
         return count != size;
     }
 
+
+    /**
+     * This is my really hacky solution to Diamond search, where in I implemented my own techniques.
+     * https://en.wikipedia.org/wiki/Block-matching_algorithm#Diamond_Search
+     *
+     *
+     */
     // Diamond search but a greater jump radius (15 rather than 9)
     static Block diamond_search_iterative_super(Image &image_A, Image &image_B,
                                                 double min_mse,
@@ -88,7 +95,6 @@ public:
                 double sum = ImageUtils::mse(image_A, image_B, initial_x, initial_y, x_origin, y_origin, box_size);
                 return Block(initial_x, initial_y, x_origin, y_origin, sum);
             }
-
 
             //construct the list of "diamond" points to be checked if legal or not
             point_array[0].x = x_origin + step_size;
@@ -163,8 +169,17 @@ public:
             //get the most promising block from the list (the one with the smallest 'sum'
             std::vector<Block>::iterator smallest_block = min_element(blocks.begin(), blocks.end());
 
+
+            /** If the smallest block we found meets the MSE requirements, stop here*/
             if (smallest_block->sum <= min_mse){
                 return *smallest_block;
+            }
+
+
+            /** Testing feature - if the smallest block is garishly larger than the minimum required,
+             stop looking. */
+            if (smallest_block->sum >= min_mse*min_mse*min_mse){
+                return Block(0, 0, 0, 0, 10000);
             }
 
             if ((smallest_block->x_end == x_origin) && smallest_block->y_end == y_origin) {
@@ -178,6 +193,7 @@ public:
             y_origin = smallest_block->y_end;
         }
 
+        //default
         return Block(0, 0, 0, 0, 10000);
     }
 

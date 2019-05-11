@@ -37,7 +37,7 @@ void PFrame::run() {
 
     //if the psnr is really low between two images, don't bother trying to match blocks, as they're
     //probably wont be anyways to match
-    if (psnr < 60) {
+    if (psnr < 50) {
         std::cout << "PSNR is low - not going to match blocks" << std::endl;
         blocks.clear();
     }

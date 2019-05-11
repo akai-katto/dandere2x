@@ -18,7 +18,7 @@
 /**
  * Description:
  *
- * A simple wrapper for the stb_image library for Dandere2x compression.
+ * A simple wrapper for the stb_image library for Dandere2x.
  *
  * The primary use of this class is to make loading an image and preform computations
  * on an image easier, however, it does not have the capabilities for saving images.

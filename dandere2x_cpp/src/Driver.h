@@ -33,15 +33,7 @@
  * - First we check if this is a resume frame, if it is, manually save the files as empty
  *   to create a p_frame at the resume frames position
  *
- * - For every frame, we do the following
- *      0) Load the next frame
- *      a) Conduct a block match with the next frame
- *      b) Preform corrections on the predictive frame
- *      c) Check if the predictive frame is good enough to accept
- *          aa) If it is , save our files
- *          bb) If it not, increase the tolerance and start again
- *
- *
+ *  //5-11-19  - this part is being overhauled - comments are outdated
  *
  */
 using namespace dandere2x;
@@ -117,9 +109,9 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         Correction correction = Correction(im2, im2_copy, im2_compressed, correctionBlockSize, correction_file, step_size);
         correction.run();
 
-//        //For Debugging
-//        DebugImage before = DebugImage::create_debug_from_image(*im2);
-//        before.save(workspace + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
+        //For Debugging
+        DebugImage before = DebugImage::create_debug_from_image(*im2);
+        before.save(workspace + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
 
         /** Save files if whatever plugins we ran through the image passed the quality test */
 
