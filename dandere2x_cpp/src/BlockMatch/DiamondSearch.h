@@ -57,6 +57,7 @@ public:
 
     // Diamond search but a greater jump radius (15 rather than 9)
     static Block diamond_search_iterative_super(Image &image_A, Image &image_B,
+                                                double min_mse,
                                                 int initial_x, int initial_y,
                                                 int x_origin, int y_origin,
                                                 int box_size,
@@ -165,9 +166,12 @@ public:
             if ((smallest_block->x_end == x_origin) && smallest_block->y_end == y_origin) {
                 x_origin = smallest_block->x_end;
                 y_origin = smallest_block->y_end;
-                max_checks--;
                 step_size /= 2;
                 continue;
+            }
+
+            if (smallest_block->sum <= min_mse){
+                return *smallest_block;
             }
 
             x_origin = smallest_block->x_end;

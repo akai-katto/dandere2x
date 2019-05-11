@@ -148,6 +148,7 @@ void PFrame::match_block(int x, int y) {
                 DiamondSearch::diamond_search_iterative_super(
                         *image2,
                         *image1,
+                        min_mse,
                         x * block_size + disp.x,
                         y * block_size,
                         x * block_size + disp.x,
