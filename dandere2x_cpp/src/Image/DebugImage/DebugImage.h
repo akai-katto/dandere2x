@@ -19,6 +19,7 @@
 
 
 //Simple wrapper to save images using PNG's.
+//The biggest benifit is this will work on any system.
 
 class DebugImage {
 public:

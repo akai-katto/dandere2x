@@ -51,6 +51,7 @@ import logging
 import os
 import threading
 import sys
+import time
 
 # logger doesnt operate out of workspace, but thats ok I guess
 
@@ -105,6 +106,7 @@ class Dandere2x:
         self.context.update_frame_count()
         verify_user_settings(self.context)
 
+        start = time.time() # This timer prints out how long it takes to upscale one frame
         # set waifu2x to be whatever handle we're using
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
@@ -119,6 +121,9 @@ class Dandere2x:
             Waifu2xConv.upscale_file(self.context,
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+        print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
+
 
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)

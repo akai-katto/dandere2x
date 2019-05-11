@@ -103,23 +103,24 @@ def verify_user_settings(context):
     valid = True
 
     if f1.width % block_size != 0 and f1.height % block_size != 0:
+        print("----------------------ERROR---------------------------------------")
         print("Your block size is incompatible with the resolution you provided. ")
         print("Valid Block sizes are:")
-
+        print("------------------------------------------------------------------")
         valid_sizes = []
 
         larger_val = [f1.width, f1.height][f1.height > f1.width]
 
-        print(larger_val)
         for x in range(1, larger_val):
             if f1.width % x == 0 and f1.height % x == 0:
                 valid_sizes.append(x)
 
         print(valid_sizes)
-        new_block_size = int(input("Enter your value (recommended 25 or greater)"))
+        print("------------------------------------------------------------------")
+        new_block_size = int(input("Enter your value (recommended 25 or greater): "))
 
         while new_block_size not in valid_sizes:
-            new_block_size = int(input("Invalid Choice Enter your value"))
+            new_block_size = int(input("Invalid Choice! Re-Enter a correct value: "))
 
         context.block_size = new_block_size
 

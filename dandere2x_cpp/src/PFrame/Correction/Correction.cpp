@@ -74,6 +74,7 @@ void Correction::match_block(int x, int y) {
         Block result = DiamondSearch::diamond_search_iterative_super(
                 *image1_true,
                 *image1_fake,
+                min_mse,
                 x * block_size,
                 y * block_size,
                 x * block_size,

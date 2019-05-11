@@ -37,7 +37,7 @@ void PFrame::run() {
 
     //if the psnr is really low between two images, don't bother trying to match blocks, as they're
     //probably wont be anyways to match
-    if (psnr < 60) {
+    if (psnr < 50) {
         std::cout << "PSNR is low - not going to match blocks" << std::endl;
         blocks.clear();
     }
@@ -148,6 +148,7 @@ void PFrame::match_block(int x, int y) {
                 DiamondSearch::diamond_search_iterative_super(
                         *image2,
                         *image1,
+                        min_mse,
                         x * block_size + disp.x,
                         y * block_size,
                         x * block_size + disp.x,

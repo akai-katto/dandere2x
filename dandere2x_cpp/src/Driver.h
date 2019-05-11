@@ -33,15 +33,7 @@
  * - First we check if this is a resume frame, if it is, manually save the files as empty
  *   to create a p_frame at the resume frames position
  *
- * - For every frame, we do the following
- *      0) Load the next frame
- *      a) Conduct a block match with the next frame
- *      b) Preform corrections on the predictive frame
- *      c) Check if the predictive frame is good enough to accept
- *          aa) If it is , save our files
- *          bb) If it not, increase the tolerance and start again
- *
- *
+ *  //5-11-19  - this part is being overhauled - comments are outdated
  *
  */
 using namespace dandere2x;

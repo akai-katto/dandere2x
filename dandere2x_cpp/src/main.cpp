@@ -6,11 +6,8 @@
  * - Debug function for people to test individual features
  */
 
-/**
- * Known Bugs
- */
 
-#include <ctime>
+
 
 
 void benchmark(){
@@ -30,7 +27,7 @@ int main(int argc, char **argv) {
 
     bool debug = false; //debug flag
 
-    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\shelter_mse\\";
+    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\lessthaneq\\";
     int frame_count = 130;
     int block_size = 30;
     int step_size = 4;
