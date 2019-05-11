@@ -78,6 +78,7 @@ def make_logger(path=""):
     logger.addHandler(ph)
     return logger
 
+
 class Dandere2x:
 
     def __init__(self, config_file: str):

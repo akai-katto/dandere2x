@@ -67,7 +67,7 @@ void Correction::match_block(int x, int y) {
                                  x * block_size, y * block_size, block_size);
 
 
-    if (sum < min_mse*min_mse) {
+    if (sum <= min_mse*min_mse) {
     } else {
         //std::cout << "Conducting a diamond search" << std::endl;
         //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
@@ -85,7 +85,7 @@ void Correction::match_block(int x, int y) {
         //std::cout << "Tolerance: " << result.sum << std::endl;
 
         //if the found block is lower than the required PSNR, we add it. Else, do nothing
-        if (result.sum < min_mse) {
+        if (result.sum <= min_mse) {
             //std::cout << "matched block" << std::endl;
             blocks.push_back(result);
         }

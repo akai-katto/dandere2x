@@ -136,7 +136,7 @@ void PFrame::match_block(int x, int y) {
 
     //first we check if the blocks are in identical positions inbetween two frames.
     //if they are, we can skip doing a diamond search
-    if (sum < min_mse) {
+    if (sum <= min_mse ) {
         blocks.push_back(Block(x * block_size,
                                y * block_size,
                                x * block_size + disp.x,
@@ -157,7 +157,7 @@ void PFrame::match_block(int x, int y) {
                         max_checks);
 
         //if the found block is lower than the required PSNR, we add it. Else, do nothing
-        if (result.sum < min_mse)
+        if (result.sum <= min_mse)
             blocks.push_back(result);
     }
 }

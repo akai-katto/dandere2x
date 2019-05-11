@@ -12,7 +12,22 @@
 
 #include <ctime>
 
+
+void benchmark(){
+    #include "Image/Image.h"
+    #include "PFrame/PFrame.h"
+
+    Image f1 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.7\\demo_folder\\weeb\\inputs\\frame339.jpg");
+    Image f2 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.7\\demo_folder\\weeb\\inputs\\frame340.jpg");
+
+    std::cout << ImageUtils::mse(f1, f2, 50,50,50,50,30);
+
+
+}
+
 int main(int argc, char **argv) {
+    //benchmark();
+
     bool debug = false; //debug flag
 
     string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\shelter_mse\\";
