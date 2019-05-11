@@ -1,6 +1,20 @@
 # PyCharm and CLion
 .idea/
-cmake-build-debug/
+
+# Clion
+
+**/cmake-build-debug
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/install_manifest.txt
+**/CMakeFiles/
+**/CTestTestfile.cmake
+**/Makefile
+**/*.cbp
+**/CMakeScripts
+**/compile_commands.json
+
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
