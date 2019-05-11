@@ -163,15 +163,15 @@ public:
             //get the most promising block from the list (the one with the smallest 'sum'
             std::vector<Block>::iterator smallest_block = min_element(blocks.begin(), blocks.end());
 
+            if (smallest_block->sum <= min_mse){
+                return *smallest_block;
+            }
+
             if ((smallest_block->x_end == x_origin) && smallest_block->y_end == y_origin) {
                 x_origin = smallest_block->x_end;
                 y_origin = smallest_block->y_end;
                 step_size /= 2;
                 continue;
-            }
-
-            if (smallest_block->sum <= min_mse){
-                return *smallest_block;
             }
 
             x_origin = smallest_block->x_end;
