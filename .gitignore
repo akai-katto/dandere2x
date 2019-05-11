@@ -1,6 +1,6 @@
 # PyCharm and CLion
 .idea/
-cmake-build-debug
+cmake-build-debug/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
