@@ -38,7 +38,7 @@
  */
 using namespace dandere2x;
 using namespace std;
-const int correctionBlockSize = 5;
+const int correctionBlockSize = 2;
 
 
 void driver_difference(string workspace, int resume_count, int frame_count,
@@ -106,10 +106,10 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         PFrame pframe = PFrame(im1, im2, im2_compressed, block_size, bleed, p_data_file, inversion_file, step_size);
         pframe.run();
 
-        Correction correction = Correction(im2, im2_copy, im2_compressed, correctionBlockSize, correction_file, step_size);
+        Correction correction = Correction(im2, im2_copy, im2_compressed, correctionBlockSize, correction_file, 2);
         correction.run();
 
-//        //For Debugging
+        //For Debugging
 //        DebugImage before = DebugImage::create_debug_from_image(*im2);
 //        before.save(workspace + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
 
