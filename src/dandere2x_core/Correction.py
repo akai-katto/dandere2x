@@ -12,6 +12,8 @@ from wrappers.frame import Frame
 import logging
 
 
+# correction size needs to be added to config file
+
 def correct_image(context, block_size, frame_base: Frame, list_correction: list):
     logger = logging.getLogger(__name__)
 

@@ -69,7 +69,7 @@ void Correction::match_block(int x, int y) {
 
     //this is producing very flickery results.
     //Perhaps resorting to lower res or adding a bias to fix.
-    if (sum <= min_mse*3.5) {
+    if (sum <= min_mse*2) {
         //do nothing
     } else {
         //std::cout << "Conducting a diamond search" << std::endl;
@@ -77,7 +77,7 @@ void Correction::match_block(int x, int y) {
         Block result = DiamondSearch::diamond_search_iterative_super(
                 *image1_true,
                 *image1_fake,
-                min_mse*3.5,
+                min_mse*2,
                 x * block_size,
                 y * block_size,
                 x * block_size,
@@ -88,7 +88,7 @@ void Correction::match_block(int x, int y) {
 
         //std::cout << "Tolerance: " << result.sum << std::endl;
         //if the found block is lower than the required PSNR, we add it. Else, do nothing
-        if (result.sum <=  min_mse*3.5) {
+        if (result.sum <=  min_mse*2) {
             //std::cout << "matched block" << std::endl;
             blocks.push_back(result);
         }

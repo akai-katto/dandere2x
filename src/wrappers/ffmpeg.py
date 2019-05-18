@@ -24,7 +24,7 @@ def extract_frames(context: Context):
     extension_type = context.extension_type
 
     command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir + " -r " + frame_rate + " -qscale:v 2" + \
-        " -t " + duration + " -vf gradfun=radius=32 " + input_frames_dir + "frame%01d" + extension_type
+        " -t " + duration + " -vf noise=c1s=8:c0f=u " + input_frames_dir + "frame%01d" + extension_type
 
     # command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir + " -r " + frame_rate + " -qscale:v 2" + \
     #           " -t " + duration + " " + input_frames_dir + "frame%01d" + extension_type
