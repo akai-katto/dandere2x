@@ -123,7 +123,7 @@ class Dandere2x:
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
-        # start all the threads needed for running 
+        # start all the threads needed for running
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))

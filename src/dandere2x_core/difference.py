@@ -49,15 +49,15 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
         difference_vectors.append(DisplacementVector(int(list_difference[x * 4]), int(list_difference[x * 4 + 1]),
                                                      int(list_difference[x * 4 + 2]), int(list_difference[x * 4 + 3])))
 
-    # size of image is determined based off how many differences there are
+    # size of output image is determined based off how many differences there are
     image_size = int(math.sqrt(len(list_difference) / 4) + 1) * (block_size + bleed * 2)
     out_image = Frame()
     out_image.create_new(image_size, image_size)
 
     # move every block from the complete frame to the differences frame using vectors.
     for vector in difference_vectors:
-        out_image.copy_block(bleed_frame, block_size + bleed * 2, vector.x_1 + buffer - bleed,
-                             vector.y_1 + buffer + - bleed,
+        out_image.copy_block(bleed_frame, block_size + bleed * 2,
+                             vector.x_1 + buffer - bleed, vector.y_1 + buffer + - bleed,
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
     out_image.save_image(out_location)

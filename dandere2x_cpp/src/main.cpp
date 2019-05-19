@@ -1,13 +1,10 @@
-#include "Driver.h"
+#include "Driver.h" //driver_difference
 
 /**
  * Todo
  * - Implement CLI interface into dandere2x python for long -term usability.
- * - Debug function for people to test individual features
+ * - Debug function for people to test individual features.
  */
-
-
-
 
 
 void benchmark(){
@@ -35,8 +32,10 @@ int main(int argc, char **argv) {
     int resume_frame = 23;
     string extension_type = ".jpg";
 
-    cout << "hello world3!" << endl;
+    cout << "Hello Dandere!!" << endl;
 
+
+    //load arguments
     if (!debug) {
         workspace = argv[1];
         frame_count = atoi(argv[2]);
@@ -56,10 +55,10 @@ int main(int argc, char **argv) {
     cout << "ResumeFrame (if valid): " << resume_frame << endl;
     cout << "extension_type: " << extension_type << endl;
 
-    if (run_type == "n") {
+    if (run_type == "n")
         driver_difference(workspace, 1, frame_count, block_size, step_size, extension_type);
-    } else if (run_type == "r") {
+    else if (run_type == "r")
         driver_difference(workspace, resume_frame, frame_count, block_size, step_size, extension_type);
-    }
+
     return 0;
 }

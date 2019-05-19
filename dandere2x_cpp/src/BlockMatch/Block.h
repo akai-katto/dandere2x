@@ -9,8 +9,7 @@
  * Description:
  *
  * A recurring object that needs to be moved around in Dandere2x is something that holds the coordinates
- * of a block in one image, the coordinates of a block in another, and the MSE difference between the true
- * image.
+ * of a block in one image, the coordinates of a block in another, and the MSE loss between the predicted block.
  */
 #ifndef DANDERE2X_BLOCK_H
 #define DANDERE2X_BLOCK_H

@@ -8,7 +8,7 @@
 
 
 PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
-               unsigned int block_size, int bleed, std::string p_frame_file, std::string difference_file,
+               unsigned int block_size, std::string p_frame_file, std::string difference_file,
                int step_size) {
 
     this->image1 = image1;
@@ -22,8 +22,6 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std
     this->dif = nullptr;
     this->p_frame_file = p_frame_file;
     this->difference_file = difference_file;
-    this->bleed = bleed;
-
 
     //Sanity Checks
     if (image1->height != image2->height || image1->width != image2->width)
@@ -78,7 +76,7 @@ void PFrame::save() {
 
 
 void PFrame::create_difference() {
-    dif = std::make_shared<Differences>(blocks, block_size, bleed, image2);
+    dif = std::make_shared<Differences>(blocks, block_size, image2);
     dif->run();
 }
 
