@@ -56,7 +56,7 @@ class PFrame {
 
 public:
     PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
-           unsigned int block_size, int bleed, std::string p_frame_file, std::string difference_file, int step_size = 4);
+           unsigned int block_size, std::string p_frame_file, std::string difference_file, int step_size = 4);
 
     void run();
 
@@ -68,8 +68,6 @@ private:
     unsigned int block_size;
     int width;
     int height;
-    unsigned int bleed;
-
 
     std::string p_frame_file;
     std::string difference_file;

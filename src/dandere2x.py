@@ -96,8 +96,6 @@ class Dandere2x:
         self.write_frames()
         self.write_merge_commands()
 
-
-
     # create a series of threads and external processes
     # to run in real time with each other for the dandere2x session.
     # the code is self documenting here.
@@ -106,8 +104,9 @@ class Dandere2x:
         self.context.update_frame_count()
         verify_user_settings(self.context)
 
-        start = time.time() # This timer prints out how long it takes to upscale one frame
-        # set waifu2x to be whatever handle we're using
+        start = time.time()# This timer prints out how long it takes to upscale one frame
+
+        # set waifu2x to be whatever waifu2x type we are using
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
 
@@ -124,7 +123,7 @@ class Dandere2x:
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
-
+        # start all the threads needed for running
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))

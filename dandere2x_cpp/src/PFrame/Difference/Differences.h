@@ -22,8 +22,8 @@
 /**
  * Description:
  *
- * We know what blocks did get recycled, we need to identify what blocks could not
- * be replicated, in order to re-draw these parts for waifu2x
+ * We know what blocks did get recycled between two frames, but we need to identify what blocks could not
+ * be recycled in order to re-draw these parts for waifu2x
  *
  *
  * Inputs:
@@ -59,12 +59,10 @@
 
 class Differences {
 public:
-    Differences(std::vector<Block> &blocks, int block_size,
-                int bleed, std::shared_ptr<Image> frame2) {
+    Differences(std::vector<Block> &blocks, int block_size, std::shared_ptr<Image> frame2) {
         this->blocks = blocks;
         this->block_size = block_size;
         this->frame2 = frame2;
-        this->bleed = bleed;
         this->height = frame2->height;
         this->width = frame2->width;
     }
@@ -81,10 +79,8 @@ private:
     std::shared_ptr<Image> frame2;
 
     int block_size;
-    int bleed;
     int height;
     int width;
-    int blocks_needed;
     int dimensions;
 
     void flag_pixels();

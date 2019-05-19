@@ -7,8 +7,10 @@
 #include "Differences.h"
 #include "DifferenceBlocks.h"
 
-//public code
+
 void Differences::run() {
+
+    //flag all the pixels that were able to be copied
     flag_pixels();
 
     //once flagPixels is called, count how many pixels didn't get flagged
@@ -28,7 +30,6 @@ void Differences::run() {
 void Differences::write(std::string output_file) {
     //create a temp file
     std::ofstream out(output_file + ".temp");
-
 
     //write vectors to temp file
     for (int x = 0; x < difference_blocks->list.size(); x++) {
@@ -73,9 +74,9 @@ int Differences::count_empty_pixels() {
 }
 
 void Differences::add_missing_blocks_to_differences_blocks() {
-    difference_blocks = std::make_unique<DifferenceBlocks>(dimensions * (block_size + bleed),
-                                                           dimensions * (block_size + bleed),
-                                                           block_size + bleed);
+    difference_blocks = std::make_unique<DifferenceBlocks>(dimensions * (block_size),
+                                                           dimensions * (block_size),
+                                                           block_size);
 
     /**
      * Going into this foor loop, we know every pixel that is missing from frame_2,
@@ -84,6 +85,7 @@ void Differences::add_missing_blocks_to_differences_blocks() {
     for (int x = 0; x < frame2->width; x++) {
         for (int y = 0; y < frame2->height; y++) {
             if (occupied_pixel[x][y] == false) {
+
                 difference_blocks->add(x, y); //if does not exist, add it to the 'differences' image
 
                 //set the pixels to 'draw' so we don't redraw it twice
