@@ -8,7 +8,7 @@
 #define DANDERE2X_DIFFERENCEBLOCKS_H
 
 #include <vector>
-#include "../../BlockMatch/Block.h"
+#include "BlockMatch/Block.h"
 
 class DifferenceBlocks {
 

@@ -14,8 +14,8 @@
 #include <iostream> //writing / reading
 #include <fstream>
 
-#include "../../Image/Image.h"
-#include "../../BlockMatch/Block.h"
+#include "Image/Image.h"
+#include "BlockMatch/Block.h"
 #include "DifferenceBlocks.h"
 
 

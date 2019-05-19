@@ -4,7 +4,7 @@
 //Licensed under the GNU General Public License Version 3 (GNU GPL v3),
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
-#include "PFrame.h"
+#include "Plugins/PFrame/PFrame.h"
 
 
 PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,

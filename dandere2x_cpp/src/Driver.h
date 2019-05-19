@@ -7,8 +7,8 @@
 #ifndef DANDERE2X_DRIVER_H
 #define DANDERE2X_DRIVER_H
 
-#include "PFrame/Correction/Correction.h"
-#include "PFrame/PFrame.h"
+#include "Plugins/Correction/Correction.h"
+#include "Plugins/PFrame/PFrame.h"
 #include "Dandere2xUtils/Dandere2xUtils.h"
 #include "Image/DebugImage/DebugImage.h"
 
