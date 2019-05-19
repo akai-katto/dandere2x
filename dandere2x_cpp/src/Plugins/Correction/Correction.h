@@ -63,7 +63,7 @@ private:
     std::string correction_file;
 
     std::vector<Block> blocks;
-    std::shared_ptr<Image> image1_fake;
+    std::shared_ptr<Image> image1_predicted;
     std::shared_ptr<Image> image1_true;
     std::shared_ptr<Image> image1_compressed;
 
