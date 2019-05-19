@@ -27,15 +27,15 @@ int main(int argc, char **argv) {
 
     bool debug = false; //debug flag
 
-    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\lessthaneq\\";
-    int frame_count = 130;
+    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\shelter_gradfun_higher_sens\\";
+    int frame_count = 500;
     int block_size = 30;
     int step_size = 4;
     string run_type = "n";// 'n' or 'r'
     int resume_frame = 23;
     string extension_type = ".jpg";
 
-    cout << "hello world2!" << endl;
+    cout << "hello world3!" << endl;
 
     if (!debug) {
         workspace = argv[1];
