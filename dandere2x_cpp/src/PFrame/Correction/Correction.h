@@ -41,7 +41,7 @@
 class Correction {
 
 public:
-    Correction(std::shared_ptr<Image> image1_fake,
+    Correction(std::shared_ptr<Image> image1_predicted,
                std::shared_ptr<Image> image1_true,
                std::shared_ptr<Image> image1_compressed,
                unsigned int block_size,

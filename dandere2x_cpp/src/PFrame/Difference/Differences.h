@@ -22,8 +22,8 @@
 /**
  * Description:
  *
- * We know what blocks did get recycled, we need to identify what blocks could not
- * be replicated, in order to re-draw these parts for waifu2x
+ * We know what blocks did get recycled between two frames, but we need to identify what blocks could not
+ * be recycled in order to re-draw these parts for waifu2x
  *
  *
  * Inputs:

@@ -6,21 +6,28 @@
 
 #include "Correction.h"
 
-Correction::Correction(std::shared_ptr<Image> image1_fake, std::shared_ptr<Image> image1_true, std::shared_ptr<Image> image1_compressed,
+
+/**
+ * See 'PFrame' for documentation.
+ * The two behave almost identical, except block matching is done on the original image, rather than
+ * the previous frame.
+ */
+
+Correction::Correction(std::shared_ptr<Image> image1_predicted, std::shared_ptr<Image> image1_true, std::shared_ptr<Image> image1_compressed,
                         unsigned int block_size, std::string correction_file, int step_size) {
 
-    this->image1_fake = image1_fake;
+    this->image1_fake = image1_predicted;
     this->image1_true = image1_true;
     this->image1_compressed = image1_compressed;
     this->step_size = step_size;
-    this->max_checks = 8; //prevent diamond search from going on forever
+    this->max_checks = 8; //prevent diamond search from going on forever. Keep this number low for corrections for speed
     this->block_size = block_size;
-    this->width = image1_fake->width;
-    this->height = image1_fake->height;
+    this->width = image1_predicted->width;
+    this->height = image1_predicted->height;
     this->correction_file = correction_file;
 
     //preform checks to ensure given information is valid
-    if (image1_fake->height != image1_true->height || image1_fake->width != image1_true->width)
+    if (image1_predicted->height != image1_true->height || image1_predicted->width != image1_true->width)
         throw std::invalid_argument("PDifference image resolution does not match!");
 
 }
@@ -58,6 +65,14 @@ void Correction::draw_over() {
     }
 }
 
+void Correction::match_all_blocks() {
+    for (int x = 0; x < width / block_size; x++) {
+        for (int y = 0; y < height / block_size; y++) {
+            match_block(x, y);
+        }
+    }
+}
+
 void Correction::match_block(int x, int y) {
 
     double min_mse = ImageUtils::mse(*image1_true, *image1_compressed, x * block_size, y * block_size,
@@ -69,36 +84,22 @@ void Correction::match_block(int x, int y) {
 
     //this is producing very flickery results.
     //Perhaps resorting to lower res or adding a bias to fix.
-    if (sum <= min_mse*2) {
-        //do nothing
-    } else {
-        //std::cout << "Conducting a diamond search" << std::endl;
+    if (sum >= min_mse*2) {
         //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
-        Block result = DiamondSearch::diamond_search_iterative_super(
-                *image1_true,
-                *image1_fake,
-                min_mse*2,
-                x * block_size,
-                y * block_size,
-                x * block_size,
-                y * block_size,
-                block_size,
-                step_size,
-                max_checks);
-
-        //std::cout << "Tolerance: " << result.sum << std::endl;
-        //if the found block is lower than the required PSNR, we add it. Else, do nothing
-        if (result.sum <=  min_mse*2) {
-            //std::cout << "matched block" << std::endl;
+        Block result = DiamondSearch::diamond_search_iterative_super(*image1_true,
+                                                                     *image1_fake,
+                                                                     min_mse*2,
+                                                                     x * block_size,
+                                                                     y * block_size,
+                                                                     x * block_size,
+                                                                     y * block_size,
+                                                                     block_size,
+                                                                     step_size,
+                                                                     max_checks);
+        if (result.sum <=  min_mse*2)
             blocks.push_back(result);
-        }
+
     }
 }
 
-void Correction::match_all_blocks() {
-    for (int x = 0; x < width / block_size; x++) {
-        for (int y = 0; y < height / block_size; y++) {
-            match_block(x, y);
-        }
-    }
-}
+

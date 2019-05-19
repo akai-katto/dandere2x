@@ -4,6 +4,11 @@
 //Licensed under the GNU General Public License Version 3 (GNU GPL v3),
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
+
+
+/** I wrote this before I realized namespaces exist. This is essentially a namespace
+ *  for functions that show up commonly in various image computations.
+ */
 #ifndef DANDERE2X_IMAGEUTILS_H
 #define DANDERE2X_IMAGEUTILS_H
 
@@ -12,6 +17,14 @@
 class ImageUtils {
 public:
 
+    /*
+     * Notes on this function:
+     *
+     * - This is the inner most call. This is called literally a few million times.
+     *
+     * - I tried to optimize this function by creating a hash / lookup table, but it
+     *   seemed to behave slower.
+     */
     inline static double root_square(const Image::Color &color_A, const Image::Color &color_B) {
 
         int r1 = (int) color_A.r;
@@ -27,7 +40,7 @@ public:
     }
 
 
-    //Calculuates mean squared error of an entire image
+    // Calculuates mean squared error of an entire image
     static double mse_image(Image &image_A,
                             Image &image_B) {
         double sum = 0;
@@ -41,7 +54,7 @@ public:
     }
 
 
-    //todo, is this PSNR function written correctly?
+    // todo, is this PSNR function written correctly?
     static double psnr(Image &imageA,
                        Image &imageB) {
         double sum = 0;
@@ -73,7 +86,7 @@ public:
                     sum += root_square(image_A.get_color(initial_x + x, initial_y + y),
                                        image_B.get_color(variable_x + x, variable_y + y));
         }
-        catch (std::invalid_argument e) {
+        catch (std::invalid_argument e) { //make the MSE really high if it went out of bounds (i.e a bad match)
             return 9999;
         }
 
