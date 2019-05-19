@@ -155,17 +155,10 @@ void PFrame::match_block(int x, int y) {
     else {
         // If the MSE found at the stationary location isn't good enough, conduct a diamond search looking
         // for the blocks match nearby.
-        Block result =
-                DiamondSearch::diamond_search_iterative_super(*image2,
-                                                              *image1,
-                                                              min_mse,
-                                                              x * block_size + disp.x,
-                                                              y * block_size,
-                                                              x * block_size + disp.x,
-                                                              y * block_size + disp.y,
-                                                              block_size,
-                                                              step_size,
-                                                              max_checks);
+        Block result = DiamondSearch::diamond_search_iterative_super(*image2, *image1,
+                                                                     x * block_size, y * block_size,
+                                                                     x * block_size, y * block_size,
+                                                                     min_mse, block_size, step_size, max_checks);
 
         //If the Diamond Searched block is a good enough match, add it to the list of matched blocks.
         if (result.sum <= min_mse)

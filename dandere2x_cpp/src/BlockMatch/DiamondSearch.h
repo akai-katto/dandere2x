@@ -64,12 +64,10 @@ public:
      */
     // Diamond search but a greater jump radius (15 rather than 9)
     static Block diamond_search_iterative_super(Image &image_A, Image &image_B,
-                                                double min_mse,
                                                 int initial_x, int initial_y,
                                                 int x_origin, int y_origin,
-                                                int box_size,
-                                                int step_size,
-                                                int max_checks) {
+                                                double min_mse, int box_size,
+                                                int step_size, int max_checks) {
 
         int x_bounds = image_A.width;
         int y_bounds = image_A.height;
