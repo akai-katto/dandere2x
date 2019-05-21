@@ -4,7 +4,7 @@
 //Licensed under the GNU General Public License Version 3 (GNU GPL v3),
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
-#include "PFrame.h"
+#include "Plugins/PFrame/PFrame.h"
 
 
 PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
@@ -41,7 +41,7 @@ void PFrame::run() {
         std::cout << "PSNR is low - not going to match blocks" << std::endl;
         blocks.clear();
     }
-    //if the PSNR is acceptable, try matching all the blocks.
+        //if the PSNR is acceptable, try matching all the blocks.
     else {
         match_all_blocks();
 
@@ -87,9 +87,7 @@ void PFrame::draw_over() {
             for (int y = 0; y < block_size; y++) {
                 image2->set_color(x + blocks[outer].x_start,
                                   y + blocks[outer].y_start,
-                                  image1->get_color(
-                                          x + blocks[outer].x_end,
-                                          y + blocks[outer].y_end));
+                                  image1->get_color( x + blocks[outer].x_end, y + blocks[outer].y_end));
             }
         }
     }
@@ -120,52 +118,31 @@ void PFrame::match_all_blocks() {
  * @param y The y-coordinate of an image
  */
 void PFrame::match_block(int x, int y) {
-    //initial disp is currently deprecated, but has ambitiouns to be introduced later.
-    DiamondSearch::Point disp;
-    disp.x = 0;
-    disp.y = 0;
-
 
     // Using the compressed image, determine a good measure of the minimum MSE required for the matched to have.
-    double min_mse = ImageUtils::mse(*image2,
-                                     *image2_compressed,
-                                     x * block_size,
-                                     y * block_size,
-                                     x * block_size + disp.x,
-                                     y * block_size + disp.y,
+    double min_mse = ImageUtils::mse(*image2, *image2_compressed,
+                                     x * block_size, y * block_size,
+                                     x * block_size, y * block_size,
                                      block_size);
 
     // Compute the MSE of the block at the same (x,y) location.
-    double stationary_mse = ImageUtils::mse(*image1,
-                                 *image2,
-                                 x * block_size,
-                                 y * block_size,
-                                 x * block_size + disp.x,
-                                 y * block_size + disp.y,
-                                 block_size);
+    double stationary_mse = ImageUtils::mse(*image1, *image2,
+                                            x * block_size, y * block_size,
+                                            x * block_size, y * block_size,
+                                            block_size);
 
     // If the MSE found at the stationary location is good enough, add it to the list of matched blocks.
     if (stationary_mse <= min_mse) {
-        blocks.push_back(Block(x * block_size,
-                               y * block_size,
-                               x * block_size + disp.x,
-                               y * block_size + disp.y,
+        blocks.push_back(Block(x * block_size, y * block_size,
+                               x * block_size, y * block_size,
                                stationary_mse));
-    }
-    else {
+    } else {
         // If the MSE found at the stationary location isn't good enough, conduct a diamond search looking
         // for the blocks match nearby.
-        Block result =
-                DiamondSearch::diamond_search_iterative_super(*image2,
-                                                              *image1,
-                                                              min_mse,
-                                                              x * block_size + disp.x,
-                                                              y * block_size,
-                                                              x * block_size + disp.x,
-                                                              y * block_size + disp.y,
-                                                              block_size,
-                                                              step_size,
-                                                              max_checks);
+        Block result = DiamondSearch::diamond_search_iterative_super(*image2, *image1,
+                                                                     x * block_size, y * block_size,
+                                                                     x * block_size, y * block_size,
+                                                                     min_mse, block_size, step_size, max_checks);
 
         //If the Diamond Searched block is a good enough match, add it to the list of matched blocks.
         if (result.sum <= min_mse)

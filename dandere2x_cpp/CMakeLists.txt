@@ -14,8 +14,8 @@ include_directories(src/Dandere2xUtils)
 include_directories(src/Image)
 include_directories(src/Image/DebugImage)
 include_directories(src/PFrame)
-include_directories(src/PFrame/Correction)
-include_directories(src/PFrame/Difference)
+include_directories(src/Plugins/Correction)
+include_directories(src/Plugins/PFrame/Difference)
 
 add_executable(dandere2x_cpp
         src/BlockMatch/Block.h
@@ -29,13 +29,13 @@ add_executable(dandere2x_cpp
         src/Image/Image.h
         src/Image/ImageUtils.h
         src/Image/stb_image.h
-        src/PFrame/Correction/Correction.cpp
-        src/PFrame/Correction/Correction.h
-        src/PFrame/Difference/DifferenceBlocks.h
-        src/PFrame/Difference/Differences.cpp
-        src/PFrame/Difference/Differences.h
-        src/PFrame/PFrame.cpp
-        src/PFrame/PFrame.h
+        src/Plugins/Correction/Correction.cpp
+        src/Plugins/Correction/Correction.h
+        src/Plugins/PFrame/Difference/DifferenceBlocks.h
+        src/Plugins/PFrame/Difference/Differences.cpp
+        src/Plugins/PFrame/Difference/Differences.h
+        src/Plugins/PFrame/PFrame.cpp
+        src/Plugins/PFrame/PFrame.h
         src/Driver.h
         src/main.cpp
         CMakeLists.txt)

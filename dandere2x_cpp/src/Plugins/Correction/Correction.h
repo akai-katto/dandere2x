@@ -11,9 +11,9 @@
 #include <iostream>
 #include <fstream>
 
-#include "../../Image/Image.h"
-#include "../../BlockMatch/DiamondSearch.h"
-#include "../../Dandere2xUtils/Dandere2xUtils.h"
+#include "Image/Image.h"
+#include "BlockMatch/DiamondSearch.h"
+#include "Dandere2xUtils/Dandere2xUtils.h"
 
 /**
  * This can be seen as a second order approximation given the restrictions
@@ -63,7 +63,7 @@ private:
     std::string correction_file;
 
     std::vector<Block> blocks;
-    std::shared_ptr<Image> image1_fake;
+    std::shared_ptr<Image> image1_predicted;
     std::shared_ptr<Image> image1_true;
     std::shared_ptr<Image> image1_compressed;
 

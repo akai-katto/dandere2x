@@ -11,9 +11,9 @@
 #include <iostream>
 #include <fstream>
 
-#include "../BlockMatch/DiamondSearch.h"
-#include "../Image/Image.h"
-#include "../Dandere2xUtils/Dandere2xUtils.h"
+#include "BlockMatch/DiamondSearch.h"
+#include "Image/Image.h"
+#include "Dandere2xUtils/Dandere2xUtils.h"
 #include "Difference/Differences.h"
 
 

@@ -9,7 +9,7 @@
 
 void benchmark(){
     #include "Image/Image.h"
-    #include "PFrame/PFrame.h"
+    #include "Plugins/PFrame/PFrame.h"
 
     Image f1 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.7\\demo_folder\\weeb\\inputs\\frame339.jpg");
     Image f2 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.7\\demo_folder\\weeb\\inputs\\frame340.jpg");
