@@ -47,8 +47,13 @@ class Dandere2xCppWrapper(threading.Thread):
                 self.extension_type]
 
         logger.info(exec)
-        subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        logger.info("finished correctly")
+
+        return_val = subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE).returncode
+
+        if return_val == 0:
+            logger.info("d2xcpp finished correctly")
+        else:
+            logger.info("d2xcpp ended unexpectedly")
 
     # Count how many p_frame_data files exist, then start at that minus 1.
     # Consider including counting how many inversion_data files exist also, but
@@ -82,5 +87,9 @@ class Dandere2xCppWrapper(threading.Thread):
                 self.extension_type]
 
         logger.info(exec)
-        subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        logger.info("finished correctly")
+        return_val = subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE).returncode
+
+        if return_val == 0:
+            logger.info("d2xcpp finished correctly")
+        else:
+            logger.info("d2xcpp ended unexpectedly")
