@@ -4,7 +4,7 @@
 Name: Dandere2X Frame
 Author: CardinalPanda
 Date Created: March 22, 2019
-Last Modified: April 2, 2019
+Last Modified: 6-3-19
 
 Description: Simplify the Dandere2x by not having to interact with numpy itself.
              All operations on images ideally should be done through the functions here.
@@ -123,6 +123,7 @@ class Frame:
             rename_file(out_location + "temp" + extension, out_location)
 
     #save the picture given a specific quality setting
+
     def save_image_quality(self, out_location, quality_per):
         extension = os.path.splitext(os.path.basename(out_location))[1]
 
@@ -148,29 +149,58 @@ class Frame:
 
     # this uses the 'copy_from' function I found on stackoverflow.
     # We have to use this function because using ' for x in range(...) ' is too
-    # slow for python, so we have to use specialized functions to copy
-    # blocks en masse.
+    # slow for python, so we have to use specialized functions to copy blocks en masse.
 
     # This function exists as a wrapper mostly to give detailed errors if something goes wrong,
     # as copy_from won't give any meaningful errors.
 
     def copy_block(self, frame_other, block_size, other_x, other_y, this_x, this_y):
+
+        # Check if inputs are valid before calling numpy copy_from
+        self.check_if_valid(frame_other, block_size, other_x, other_y, this_x, this_y)
+
+        copy_from(frame_other.frame, self.frame,
+                  (other_y, other_x), (this_y, this_x),
+                  (this_y + block_size - 1, this_x + block_size - 1))
+
+    # For the sake of code maintance, do the error checking to ensure numpy copy will work here.
+    # Numpy won't give detailed errors, so this is my custom errors for debugging!
+
+    def check_if_valid(self, frame_other, block_size, other_x, other_y, this_x, this_y):
+
         if this_x + block_size - 1 > self.width or this_y + block_size - 1 > self.height:
-            raise ValueError('Input dimensions invalid for copy block self this too big')
+            self.logger.error('Input Dimensions Invalid for Copy Block Function, printing variables. Send Tyler this!')
+
+            # Print Out Degenerate Values
+            self.logger.error('this_x + block_size - 1 > self.width')
+            self.logger.error(str(this_x + block_size - 1) + '?>' + str(self.width))
+
+            self.logger.error('this_y + block_size - 1 > self.height')
+            self.logger.error(str(this_y + block_size - 1) + '?>' + str(self.height))
+
+            raise ValueError('Invalid Dimensions for Dandere2x Image, See Log. ')
 
         if other_x + block_size - 1 > frame_other.width or other_y + block_size - 1 > frame_other.height:
-            print(int(other_x + block_size - 1), "greater than ", frame_other.width)
-            print(int(other_y + block_size - 1), "greater than ", frame_other.height)
-            raise ValueError('Input dimensions invalid for copy block other is too big')
+            self.logger.error('Input Dimensions Invalid for Copy Block Function, printing variables. Send Tyler this!')
+
+            # Print Out Degenerate Values
+            self.logger.error('other_x + block_size - 1 > frame_other.width')
+            self.logger.error(str(other_x + block_size - 1) + '?>' + str(frame_other.width))
+
+            self.logger.error('other_y + block_size - 1 > frame_other.height')
+            self.logger.error(str(other_y + block_size - 1) + '?>' + str(frame_other.height))
+
+            raise ValueError('Invalid Dimensions for Dandere2x Image, See Log. ')
 
         if this_x < 0 or this_y < 0:
+            self.logger.error('Negative Input for \"this\" image')
+            self.logger.error('x' + this_x)
+            self.logger.error('y' + this_y)
+
             raise ValueError('Input dimensions invalid for copy block')
 
         if other_x < 0 or other_y < 0:
             raise ValueError('Input dimensions invalid for copy block')
-
-        copy_from(frame_other.frame, self.frame, (other_y, other_x), (this_y, this_x),
-                  (this_y + block_size - 1, this_x + block_size - 1))
 
     # Sometimes we need to copy a block + some bleed as a result of Waifu2x Bleeding. (see documentation).
     # Sometimes this bleed may or may not actually exist, in which case just put a color like black or something.
