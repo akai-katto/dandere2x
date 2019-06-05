@@ -10,6 +10,7 @@ import logging
 import os
 import time
 
+
 # returns a list given a text file (representing a string)
 def get_list_from_file(text_file: str):
     logger = logging.getLogger(__name__)
