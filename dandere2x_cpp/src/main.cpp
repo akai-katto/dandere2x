@@ -24,7 +24,7 @@ void benchmark(){
 
     Fade f = Fade(f1, f2, compressed, 30, "C:\\Users\\windwoz\\Desktop\\gradient\\output.txt");
 
-    f.fade_all_blocks();
+    f.run();
 
     cout << "Predicted whole" << std::endl;
     cout << ImageUtils::mse_image(*f1, *f2) << endl;

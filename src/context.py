@@ -98,12 +98,10 @@ class Context:
         self.merged_dir = self.workspace + "merged" + os.path.sep
         self.inversion_data_dir = self.workspace + "inversion_data" + os.path.sep
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
-        self.fade_data_dir = self.workspace + "fade_data_dir" + os.path.sep
+        self.fade_data_dir = self.workspace + "fade_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
-
-
 
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
