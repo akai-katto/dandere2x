@@ -90,7 +90,6 @@ private:
 
     void write(std::string output_file);
 
-
 };
 
 

@@ -220,7 +220,8 @@ class Dandere2x:
                        self.context.pframe_data_dir,
                        self.context.debug_dir,
                        self.context.log_dir,
-                       self.context.compressed_dir}
+                       self.context.compressed_dir,
+                       self.context.fade_data_dir}
 
         # need to create workspace before anything else
         try:

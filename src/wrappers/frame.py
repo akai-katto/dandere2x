@@ -46,6 +46,22 @@ def copy_from(A, B, A_start, B_start, B_end):
         logging.info("fatal error copying block")
         raise ValueError
 
+def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
+    """
+    A_start is the index with respect to A of the upper left corner of the overlap
+    B_start is the index with respect to B of the upper left corner of the overlap
+    B_end is the index of with respect to B of the lower right corner of the overlap
+    """
+    try:
+        A_start, B_start, B_end = map(np.asarray, [A_start, B_start, B_end])
+        shape = B_end - B_start
+        B_slices = tuple(map(slice, B_start, B_end + 1))
+        A_slices = tuple(map(slice, A_start, A_start + shape + 1))
+        B[B_slices] = A[A_slices] + scalar
+
+    except ValueError:
+        logging.info("fatal error copying block")
+        raise ValueError
 
 # A vector class
 @dataclass
@@ -162,6 +178,13 @@ class Frame:
         copy_from(frame_other.frame, self.frame,
                   (other_y, other_x), (this_y, this_x),
                   (this_y + block_size - 1, this_x + block_size - 1))
+
+    def fade_block(self, this_x, this_y, block_size, scalar):
+
+        copy_from_fade(self.frame, self.frame,
+                  (this_y, this_x), (this_y, this_x),
+                  (this_y + block_size - 1, this_x + block_size - 1), scalar)
+
 
     # For the sake of code maintance, do the error checking to ensure numpy copy will work here.
     # Numpy won't give detailed errors, so this is my custom errors for debugging!

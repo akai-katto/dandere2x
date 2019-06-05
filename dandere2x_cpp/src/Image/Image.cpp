@@ -27,7 +27,6 @@ Image::Image(std::string file_name) {
 
     //decode
     this->stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
-
     this->stb_image = stb_image;
     this->height = height;
     this->width = width;
@@ -43,9 +42,8 @@ Image::Color Image::get_color(int x, int y) {
     if (x > width - 1 || y > height - 1 || x < 0 || y < 0)
         throw std::invalid_argument("invalid dimensions");
 
-
     Image::Color color;
-    color.r = stb_image[x * 3 + 3 * y * width];
+    color.r = stb_image[x * 3 + 3 * y * width + 0];
     color.g = stb_image[x * 3 + 3 * y * width + 1];
     color.b = stb_image[x * 3 + 3 * y * width + 2];
 
@@ -57,7 +55,7 @@ void Image::set_color(int x, int y, Image::Color color) {
     if (x > width - 1 || y > height - 1 || x < 0 || y < 0)
         throw std::invalid_argument("set color has invalid dimensions");
 
-    stb_image[x * 3 + 3 * y * width] = color.r;
+    stb_image[x * 3 + 3 * y * width + 0] = color.r;
     stb_image[x * 3 + 3 * y * width + 1] = color.g;
     stb_image[x * 3 + 3 * y * width + 2] = color.b;
 }

@@ -15,9 +15,11 @@ from dandere2x_core.correction import correct_image
 import logging
 import os
 
+from dandere2x_core.fade import fade_image
+
 
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
-                     list_predictive: list, list_differences: list, list_corrections: list,
+                     list_predictive: list, list_differences: list, list_corrections: list, list_fade : list,
                      output_location: str):
 
     # Load context
@@ -32,6 +34,7 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
     scale_factor = int(scale_factor)
+
 
     if not list_predictive and not list_differences:
         logger.info("list_predictive and not list_differences: true")
@@ -74,7 +77,10 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
                              vector.x_1 * scale_factor,
                              vector.y_1 * scale_factor)
 
+    out_image = fade_image(context, block_size, out_image, list_fade)
     out_image = correct_image(context, 2, out_image, list_corrections)
+
+
     out_image.save_image(output_location)
 
 
@@ -87,6 +93,7 @@ def merge_loop(context: Context, start_frame: int):
     inversion_data_dir = context.inversion_data_dir
     pframe_data_dir = context.pframe_data_dir
     correction_data_dir = context.correction_data_dir
+    fade_data_dir = context.fade_data_dir
     frame_count = context.frame_count
     extension_type = context.extension_type
     logger = logging.getLogger(__name__)
@@ -105,10 +112,12 @@ def merge_loop(context: Context, start_frame: int):
         difference_data = wait_on_text(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
         correction_data = wait_on_text(correction_data_dir + "correction_" + str(x) + ".txt")
+        fade_data = wait_on_text(fade_data_dir + "fade_" + str(x) + ".txt")
+
         output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
 
         make_merge_image(context, f1, base, prediction_data,
-                         difference_data, correction_data, output_file)
+                         difference_data, correction_data, fade_data, output_file)
 
 
 # find the last photo to be merged, then start the loop from there
