@@ -3,15 +3,13 @@ from wrappers.frame import Frame
 import logging
 from dataclasses import dataclass
 
-# A vector class
+# A simple struct to hold the data to produce a fade.
 @dataclass
 class FadeData:
     x: int
     y: int
     scalar: int
 
-
-# putting a fork on this..
 
 def fade_image(context, block_size, frame_base: Frame, list_correction: list):
     logger = logging.getLogger(__name__)
