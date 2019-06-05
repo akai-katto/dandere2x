@@ -54,7 +54,7 @@ void Fade::run() {
                 current_fade.y = y * block_size;
 
                 fade_blocks.push_back(current_fade);
-                add_scalar_to_block(x * block_size, y * block_size, scalar);
+                draw_over(x * block_size, y * block_size, scalar);
             }
         }
     }
@@ -110,7 +110,7 @@ double Fade::get_scalar_for_block(int x, int y) {
 }
 
 
-void Fade::add_scalar_to_block(int x, int y, int scalar) {
+void Fade::draw_over(int x, int y, int scalar) {
 
     for (int i = x; i < x + block_size; i++) {
         for (int j = y; j < y + block_size; j++) {
@@ -119,8 +119,6 @@ void Fade::add_scalar_to_block(int x, int y, int scalar) {
     }
 
 }
-
-
 
 int Fade::bound_integer(int min, int max, int val) {
     if (val < min)
@@ -131,7 +129,7 @@ int Fade::bound_integer(int min, int max, int val) {
     return val;
 }
 
-
+// Prevent a color from leaving 8 Bit RGB space
 Image::Color Fade::add_scalar_to_color(Image::Color input_color, int scalar) {
     Image::Color return_color;
 

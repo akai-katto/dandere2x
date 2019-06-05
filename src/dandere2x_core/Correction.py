@@ -6,7 +6,7 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
-from dandere2x_core.dandere2x_utils import wait_on_text
+from dandere2x_core.dandere2x_utils import get_list_from_file
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
 import logging
@@ -48,7 +48,7 @@ def main():
 
     frame_base = Frame()
     frame_base.load_from_string("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\merged2x.jpg")
-    list_predictive = wait_on_text("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\correction.txt")
+    list_predictive = get_list_from_file("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\correction.txt")
     out_location = ("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\new_correction.jpg")
 
     correct_image(block_size,scale_factor,frame_base,list_predictive,out_location)

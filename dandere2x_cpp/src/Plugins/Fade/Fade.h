@@ -58,7 +58,7 @@ private:
 
     double get_scalar_for_block(int x, int y);
 
-    void add_scalar_to_block(int x, int y, int scalar);
+    void draw_over(int x, int y, int scalar);
 
     int bound_integer(int min, int max, int val);
 

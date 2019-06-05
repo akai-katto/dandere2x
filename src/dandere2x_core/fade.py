@@ -1,4 +1,4 @@
-from dandere2x_core.dandere2x_utils import wait_on_text
+from dandere2x_core.dandere2x_utils import get_list_from_file
 from wrappers.frame import Frame
 import logging
 from dataclasses import dataclass
