@@ -1,7 +1,8 @@
-from dandere2x_core.dandere2x_utils import get_list_from_file
-from wrappers.frame import Frame
 import logging
 from dataclasses import dataclass
+
+from wrappers.frame import Frame
+
 
 # A simple struct to hold the data to produce a fade.
 @dataclass
@@ -23,7 +24,7 @@ def fade_image(context, block_size, frame_base: Frame, list_correction: list):
     out_image.copy_image(frame_base)
     scale_factor = int(scale_factor)
 
-    for x in range(int(len(list_correction) / 3)):
+    for x in range(int(len(list_correction) / 3)):  # /3 because each fade_data has 3 values associated to it
         fade_list.append(FadeData(int(list_correction[x * 3]),
                                   int(list_correction[x * 3 + 1]),
                                   int(list_correction[x * 3 + 2])))

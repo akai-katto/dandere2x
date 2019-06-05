@@ -6,14 +6,16 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
+import logging
+import os
+
+import math
+
 from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import get_list_from_file
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
-import logging
-import math
-import os
 
 
 def make_difference_image(context: Context, raw_frame, list_difference, list_predictive, out_location):
@@ -65,7 +67,6 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
 
 # for printing out what Dandere2x predictive frames are doing
 def debug(block_size, frame_base, list_predictive, list_differences, output_location):
-
     logger = logging.getLogger(__name__)
 
     predictive_vectors = []
@@ -104,7 +105,6 @@ def debug(block_size, frame_base, list_predictive, list_differences, output_loca
 
 
 def difference_loop(context, start_frame):
-
     # load variables from context
     workspace = context.workspace
     differences_dir = context.differences_dir

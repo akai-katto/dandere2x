@@ -12,9 +12,8 @@ rather than passing like 8-9 variables
 """
 
 import configparser
-import os
-from dandere2x_core.dandere2x_utils import get_seconds_from_time
 import logging
+import os
 
 
 # init is pretty messy at the moment. I'll look into

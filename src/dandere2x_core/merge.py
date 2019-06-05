@@ -17,6 +17,7 @@ from dandere2x_core.fade import fade_image
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
 
+
 # todo - clean this function up into a few smaller functions.
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
                      list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,

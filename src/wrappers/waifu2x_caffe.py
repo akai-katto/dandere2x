@@ -6,12 +6,13 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
-from dandere2x_core.dandere2x_utils import get_lexicon_value
 import logging
 import os
 import subprocess
 import threading
+
 from context import Context
+from dandere2x_core.dandere2x_utils import get_lexicon_value
 
 
 # temporary implementation of waifu2x-caffe wrapper
@@ -38,7 +39,7 @@ class Waifu2xCaffe(threading.Thread):
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
     @staticmethod
-    def upscale_file(context: Context, input_file : str, output_file: str):
+    def upscale_file(context: Context, input_file: str, output_file: str):
         # load variables from context
         process_type = context.process_type
         noise_level = context.noise_level
