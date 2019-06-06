@@ -139,6 +139,7 @@ class Frame:
             jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=100)
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
+
         else:
             misc.imsave(out_location + "temp" + extension, self.frame)
             wait_on_file(out_location + "temp" + extension)
@@ -183,6 +184,9 @@ class Frame:
         copy_from(frame_other.frame, self.frame,
                   (other_y, other_x), (this_y, this_x),
                   (this_y + block_size - 1, this_x + block_size - 1))
+
+    # Similar to copy_block, fade_block applies some scalar value to every
+    # pixel within a block range.
 
     def fade_block(self, this_x, this_y, block_size, scalar):
 
