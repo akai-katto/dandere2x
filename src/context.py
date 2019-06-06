@@ -12,9 +12,8 @@ rather than passing like 8-9 variables
 """
 
 import configparser
-import os
-from dandere2x_core.dandere2x_utils import get_seconds_from_time
 import logging
+import os
 
 
 # init is pretty messy at the moment. I'll look into
@@ -98,6 +97,7 @@ class Context:
         self.merged_dir = self.workspace + "merged" + os.path.sep
         self.inversion_data_dir = self.workspace + "inversion_data" + os.path.sep
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
+        self.fade_data_dir = self.workspace + "fade_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.compressed_dir = self.workspace + "compressed" + os.path.sep

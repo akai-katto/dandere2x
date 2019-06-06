@@ -38,4 +38,4 @@ add_executable(dandere2x_cpp
         src/Plugins/PFrame/PFrame.h
         src/Driver.h
         src/main.cpp
-        CMakeLists.txt)
+        CMakeLists.txt src/Plugins/Fade/Fade.h src/Plugins/Fade/Fade.cpp)

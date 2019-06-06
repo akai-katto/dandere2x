@@ -10,7 +10,9 @@ import logging
 import os
 import subprocess
 import threading
+
 from context import Context
+
 
 class Dandere2xCppWrapper(threading.Thread):
 

@@ -10,9 +10,9 @@ import logging
 import os
 import time
 
-# waits for a text file, then returns the file as a list sperated by lines
-# to do - I've gotton permission errors. Perhaps adding a catch for that.
-def wait_on_text(text_file: str):
+
+# returns a list given a text file (representing a string)
+def get_list_from_file(text_file: str):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
@@ -126,7 +126,7 @@ def verify_user_settings(context):
 
 
 def main():
-    text = wait_on_text("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
+    text = get_list_from_file("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
 
 
 if __name__ == "__main__":

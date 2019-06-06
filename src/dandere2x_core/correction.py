@@ -6,10 +6,11 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
-from dandere2x_core.dandere2x_utils import wait_on_text
+import logging
+
+from dandere2x_core.dandere2x_utils import get_list_from_file
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
-import logging
 
 
 # correction size needs to be added to config file
@@ -26,8 +27,8 @@ def correct_image(context, block_size, frame_base: Frame, list_correction: list)
     out_image.copy_image(frame_base)
     scale_factor = int(scale_factor)
 
-    for x in range(int(len(list_correction) / 4)):
-        predictive_vectors.append(DisplacementVector(int(list_correction[x * 4]),
+    for x in range(int(len(list_correction) / 4)):  # / 4 because each there's 4 data points per block
+        predictive_vectors.append(DisplacementVector(int(list_correction[x * 4 + 0]),
                                                      int(list_correction[x * 4 + 1]),
                                                      int(list_correction[x * 4 + 2]),
                                                      int(list_correction[x * 4 + 3])))
@@ -48,10 +49,10 @@ def main():
 
     frame_base = Frame()
     frame_base.load_from_string("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\merged2x.jpg")
-    list_predictive = wait_on_text("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\correction.txt")
+    list_predictive = get_list_from_file("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\correction.txt")
     out_location = ("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\new_correction.jpg")
 
-    correct_image(block_size,scale_factor,frame_base,list_predictive,out_location)
+    correct_image(block_size, scale_factor, frame_base, list_predictive, out_location)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
-from dandere2x import Dandere2x
 import time
+
+from dandere2x import Dandere2x
 
 start = time.time()
 
@@ -10,8 +11,8 @@ end = time.time()
 
 print("\n duration:" + str(time.time() - start))
 
-#d.difference_only()
+# d.difference_only()
 
-#d.merge_only()
+# d.merge_only()
 
 # running corrections before a frame and after?

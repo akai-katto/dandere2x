@@ -6,20 +6,22 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
-from context import Context
-from dandere2x_core.dandere2x_utils import get_lexicon_value
-from dandere2x_core.dandere2x_utils import wait_on_text
-from wrappers.frame import DisplacementVector
-from wrappers.frame import Frame
-from dandere2x_core.correction import correct_image
 import logging
 import os
 
+from context import Context
+from dandere2x_core.correction import correct_image
+from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import get_list_from_file
+from dandere2x_core.fade import fade_image
+from wrappers.frame import DisplacementVector
+from wrappers.frame import Frame
 
+
+# todo - clean this function up into a few smaller functions.
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
-                     list_predictive: list, list_differences: list, list_corrections: list,
+                     list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,
                      output_location: str):
-
     # Load context
     block_size = context.block_size
     scale_factor = context.scale_factor
@@ -49,12 +51,12 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
 
     # load list into vector displacements
     for x in range(int(len(list_differences) / 4)):
-        difference_vectors.append(DisplacementVector(int(list_differences[x * 4]),
+        difference_vectors.append(DisplacementVector(int(list_differences[x * 4 + 0]),
                                                      int(list_differences[x * 4 + 1]),
                                                      int(list_differences[x * 4 + 2]),
                                                      int(list_differences[x * 4 + 3])))
     for x in range(int(len(list_predictive) / 4)):
-        predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4]),
+        predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
                                                      int(list_predictive[x * 4 + 1]),
                                                      int(list_predictive[x * 4 + 2]),
                                                      int(list_predictive[x * 4 + 3])))
@@ -74,12 +76,13 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
                              vector.x_1 * scale_factor,
                              vector.y_1 * scale_factor)
 
+    out_image = fade_image(context, block_size, out_image, list_fade)
     out_image = correct_image(context, 2, out_image, list_corrections)
+
     out_image.save_image(output_location)
 
 
 def merge_loop(context: Context, start_frame: int):
-
     # load variables from context
     workspace = context.workspace
     upscaled_dir = context.upscaled_dir
@@ -87,6 +90,7 @@ def merge_loop(context: Context, start_frame: int):
     inversion_data_dir = context.inversion_data_dir
     pframe_data_dir = context.pframe_data_dir
     correction_data_dir = context.correction_data_dir
+    fade_data_dir = context.fade_data_dir
     frame_count = context.frame_count
     extension_type = context.extension_type
     logger = logging.getLogger(__name__)
@@ -102,18 +106,19 @@ def merge_loop(context: Context, start_frame: int):
         base.load_from_string_wait(merged_dir + "merged_" + str(x) + extension_type)
 
         # load vectors needed to piece image back together
-        difference_data = wait_on_text(inversion_data_dir + "inversion_" + str(x) + ".txt")
-        prediction_data = wait_on_text(pframe_data_dir + "pframe_" + str(x) + ".txt")
-        correction_data = wait_on_text(correction_data_dir + "correction_" + str(x) + ".txt")
+        prediction_data_list = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
+        difference_data_list = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")
+        correction_data_list = get_list_from_file(correction_data_dir + "correction_" + str(x) + ".txt")
+        fade_data_list = get_list_from_file(fade_data_dir + "fade_" + str(x) + ".txt")
+
         output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
 
-        make_merge_image(context, f1, base, prediction_data,
-                         difference_data, correction_data, output_file)
+        make_merge_image(context, f1, base, prediction_data_list,
+                         difference_data_list, correction_data_list, fade_data_list, output_file)
 
 
 # find the last photo to be merged, then start the loop from there
 def merge_loop_resume(context: Context):
-
     workspace = context.workspace
     frame_count = context.frame_count
 
@@ -133,6 +138,7 @@ def merge_loop_resume(context: Context):
 
     logger.info("resume info: last found: " + str(last_found))
     merge_loop(context, start_frame=last_found)
+
 
 def main():
     # merge_loop("/home/linux/Videos/testrun/testrun2/", 120)

@@ -1,4 +1,6 @@
 #include "Driver.h" //driver_difference
+#include "Plugins/Fade/Fade.h"
+#include "Image/DebugImage/DebugImage.h"
 
 /**
  * Todo
@@ -7,29 +9,46 @@
  */
 
 
+
 void benchmark(){
     #include "Image/Image.h"
     #include "Plugins/PFrame/PFrame.h"
 
-    Image f1 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.7\\demo_folder\\weeb\\inputs\\frame339.jpg");
-    Image f2 = Image("C:\\Users\\windwoz\\Desktop\\pythonreleases\\0.7\\demo_folder\\weeb\\inputs\\frame340.jpg");
+    shared_ptr<Image> f1 = make_shared<Image>("C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\inputs\\frame30.jpg");
+//    Image fake = Image("C:\\Users\\windwoz\\Desktop\\gradient\\fake.png");
+    shared_ptr<Image> f2 = make_shared<Image>("C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\inputs\\frame31.jpg");
+    shared_ptr<Image> compressed = make_shared<Image>("C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\compressed\\31.jpg");
 
-    std::cout << ImageUtils::mse(f1, f2, 50,50,50,50,30);
 
+    cout << ImageUtils::mse_image(*f1, *f2) << endl;
+
+    Fade f = Fade(f1, f2, compressed, 30, "C:\\Users\\windwoz\\Desktop\\gradient\\output.txt");
+
+    f.run();
+
+    cout << "Predicted whole" << std::endl;
+    cout << ImageUtils::mse_image(*f1, *f2) << endl;
+
+    cout << "compressed whole" << std::endl;
+    cout << ImageUtils::mse_image(*compressed, *f2) << endl;
+
+
+    DebugImage debug = DebugImage::create_debug_from_image(*f1);
+    debug.save("C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\31_fake_predict.png");
 
 }
 
 int main(int argc, char **argv) {
     //benchmark();
-
+//
     bool debug = false; //debug flag
 
-    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\shelter_gradfun_higher_sens\\";
-    int frame_count = 500;
+    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\";
+    int frame_count = 120;
     int block_size = 30;
     int step_size = 4;
     string run_type = "n";// 'n' or 'r'
-    int resume_frame = 23;
+    int resume_frame = 71;
     string extension_type = ".jpg";
 
     cout << "Hello Dandere!!" << endl;

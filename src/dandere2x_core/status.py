@@ -1,7 +1,9 @@
-from context import Context
 import os
-import time
 import sys
+import time
+
+from context import Context
+
 
 def print_status(context: Context):
     workspace = context.workspace
@@ -10,8 +12,8 @@ def print_status(context: Context):
 
     last_10 = [0]
 
-    for x in range(1,frame_count):
-        percent = int((x / frame_count)*100)
+    for x in range(1, frame_count):
+        percent = int((x / frame_count) * 100)
 
         average = 0
         for time_count in last_10:
@@ -21,8 +23,6 @@ def print_status(context: Context):
 
         sys.stdout.write('\r')
         sys.stdout.write("Frame: [%s] %i%%    Average of Last 10 Frames: %s sec / frame" % (x, percent, average))
-
-
 
         file_dir = workspace + "merged/merged_" + str(x + 1) + extension_type
         if len(last_10) == 10:
@@ -41,6 +41,4 @@ def print_status(context: Context):
 
         # variables
 
-
         time.sleep(0.25)
-

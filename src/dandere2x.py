@@ -30,33 +30,30 @@ number of times without losing any details or quality, keeping lines
 smooth and edges sharp.
 """
 
-from context import Context
+import logging
+import os
+import sys
+import threading
+import time
 
+from context import Context
+from dandere2x_core.dandere2x_utils import verify_user_settings
 from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
 from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
-from dandere2x_core.status import print_status
 from dandere2x_core.mse_computer import compress_frames
-
-from dandere2x_core.dandere2x_utils import verify_user_settings
-
+from dandere2x_core.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
 from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
 
-import logging
-import os
-import threading
-import sys
-import time
 
 # logger doesnt operate out of workspace, but thats ok I guess
 
 def make_logger(path=""):
-
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
 
@@ -104,7 +101,7 @@ class Dandere2x:
         self.context.update_frame_count()
         verify_user_settings(self.context)
 
-        start = time.time()# This timer prints out how long it takes to upscale one frame
+        start = time.time()  # This timer prints out how long it takes to upscale one frame
 
         # set waifu2x to be whatever waifu2x type we are using
         if self.context.waifu2x_type == "caffe":
@@ -151,7 +148,7 @@ class Dandere2x:
     # Resume a Dandere2x Session
     # Consider merging this into one function, but for the time being I prefer it seperate
     def resume_concurrent(self):
-        self.context.update_frame_count() # we need to count how many outputs there are after ffmpeg extracted stuff
+        self.context.update_frame_count()  # we need to count how many outputs there are after ffmpeg extracted stuff
         verify_user_settings(self.context)
 
         if self.context.waifu2x_type == "caffe":
@@ -220,7 +217,8 @@ class Dandere2x:
                        self.context.pframe_data_dir,
                        self.context.debug_dir,
                        self.context.log_dir,
-                       self.context.compressed_dir}
+                       self.context.compressed_dir,
+                       self.context.fade_data_dir}
 
         # need to create workspace before anything else
         try:

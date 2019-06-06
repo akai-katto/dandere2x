@@ -8,18 +8,19 @@ Last Modified: April 2, 2019
 
 Description: # A pretty hacky wrapper for Waifu2x-Conveter-Cpp.
 Behaves pretty similar to waifu2x-caffe, except directory must be
-set  (for subprocess call) and arguments are slightly different.
+set  (for subprocess call, waifu2x_conv_dir_dir keeps this variable) and arguments are slightly different.
 Furthermore, waifu2x-conv saves files in an annoying way,
 so we need to correct those odd namings.
 """
 
-from context import Context
-from dandere2x_core.dandere2x_utils import get_lexicon_value
-from dandere2x_core.dandere2x_utils import rename_file
 import logging
 import os
 import subprocess
 import threading
+
+from context import Context
+from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import rename_file
 
 
 # this is pretty ugly

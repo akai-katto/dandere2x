@@ -16,16 +16,19 @@ Description: Simplify the Dandere2x by not having to interact with numpy itself.
              - Copy Image
              - Saving (can overwrite)
 """
-from dandere2x_core.dandere2x_utils import rename_file
-from dandere2x_core.dandere2x_utils import wait_on_file
-from dataclasses import dataclass
-from scipy import misc  # pip install Pillow
 import logging
-import numpy as np
 import os
 import time
+from dataclasses import dataclass
+
 import numpy
+import numpy as np
 from PIL import Image
+from scipy import misc  # pip install Pillow
+
+from dandere2x_core.dandere2x_utils import rename_file
+from dandere2x_core.dandere2x_utils import wait_on_file
+
 
 # fuck this function, lmao. Credits to
 # https://stackoverflow.com/questions/52702809/copy-array-into-part-of-another-array-in-numpy
@@ -47,6 +50,24 @@ def copy_from(A, B, A_start, B_start, B_end):
         raise ValueError
 
 
+def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
+    """
+    A_start is the index with respect to A of the upper left corner of the overlap
+    B_start is the index with respect to B of the upper left corner of the overlap
+    B_end is the index of with respect to B of the lower right corner of the overlap
+    """
+    try:
+        A_start, B_start, B_end = map(np.asarray, [A_start, B_start, B_end])
+        shape = B_end - B_start
+        B_slices = tuple(map(slice, B_start, B_end + 1))
+        A_slices = tuple(map(slice, A_start, A_start + shape + 1))
+        B[B_slices] = A[A_slices] + scalar
+
+    except ValueError:
+        logging.info("fatal error copying block")
+        raise ValueError
+
+
 # A vector class
 @dataclass
 class DisplacementVector:
@@ -54,6 +75,7 @@ class DisplacementVector:
     y_1: int
     x_2: int
     y_2: int
+
 
 # usage:
 # frame = Frame()
@@ -117,12 +139,13 @@ class Frame:
             jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=100)
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
+
         else:
             misc.imsave(out_location + "temp" + extension, self.frame)
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
-    #save the picture given a specific quality setting
+    # save the picture given a specific quality setting
 
     def save_image_quality(self, out_location, quality_per):
         extension = os.path.splitext(os.path.basename(out_location))[1]
@@ -136,7 +159,6 @@ class Frame:
             misc.imsave(out_location + "temp" + extension, self.frame)
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
-
 
     # This function exists because the act of numpy processing an image
     # changes the overall look of an image. (I guess?). In the case
@@ -162,6 +184,15 @@ class Frame:
         copy_from(frame_other.frame, self.frame,
                   (other_y, other_x), (this_y, this_x),
                   (this_y + block_size - 1, this_x + block_size - 1))
+
+    # Similar to copy_block, fade_block applies some scalar value to every
+    # pixel within a block range.
+
+    def fade_block(self, this_x, this_y, block_size, scalar):
+
+        copy_from_fade(self.frame, self.frame,
+                       (this_y, this_x), (this_y, this_x),
+                       (this_y + block_size - 1, this_x + block_size - 1), scalar)
 
     # For the sake of code maintance, do the error checking to ensure numpy copy will work here.
     # Numpy won't give detailed errors, so this is my custom errors for debugging!
@@ -222,5 +253,4 @@ class Frame:
         return im_out
 
     def mean(self, other):
-        return numpy.mean( (self.frame - other.frame) ** 2 )
-
+        return numpy.mean((self.frame - other.frame) ** 2)

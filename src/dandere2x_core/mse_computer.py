@@ -1,8 +1,8 @@
-from wrappers.frame import Frame
 from context import Context
+from wrappers.frame import Frame
+
 
 def compress_frames(context: Context):
-
     inputs_dir = context.input_frames_dir
     frame_count = context.frame_count
     compressed_dir = context.compressed_dir
@@ -13,4 +13,3 @@ def compress_frames(context: Context):
 
         frame.load_from_string(inputs_dir + "frame" + str(x) + ".jpg")
         frame.save_image_quality(compressed_dir + str(x) + ".jpg", quality_low)
-
