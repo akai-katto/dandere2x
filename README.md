@@ -4,6 +4,13 @@
 
 Dandere2x makes upscaling videos with waifu2x much faster by applying compression techniques. Although the process itself is lossy, dandere2x provides a dramatic speedup in the time needed to upscale a video using waifu2x.
 
+## Tutorial
+
+## Demo Video
+
+I made a brief video on how to use dandere2x. Dandere2x is constantly changing, so this video may be outdated.
+
+[![Demo Video](https://img.youtube.com/vi/V5_vnYPlQB4/0.jpg)](https://www.youtube.com/watch?v=V5_vnYPlQB4)
 
 ## Development Status
 
