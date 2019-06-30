@@ -9,9 +9,8 @@ Dandere2x makes upscaling videos with waifu2x much faster by applying compressio
 ## Demo Video
 
 I made a brief video on how to use dandere2x. Dandere2x is constantly changing, so this video may be outdated.
-<p align="center">
+
 [![Demo Video](https://img.youtube.com/vi/V5_vnYPlQB4/0.jpg)](https://www.youtube.com/watch?v=V5_vnYPlQB4)
-</p>
 
 ## Development Status
 
