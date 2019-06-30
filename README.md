@@ -4,9 +4,16 @@
 
 Dandere2x makes upscaling videos with waifu2x much faster by applying compression techniques. Although the process itself is lossy, dandere2x provides a dramatic speedup in the time needed to upscale a video using waifu2x.
 
-## Tutorial
+## Current Features
 
-## Demo Video
+- Block Matching Video Compression
+- Interpolated Frame Video Compression
+- Minimum / maximum quality loss (By JPEG standards)
+- Custom block sizes
+- Custom scaling sizes (1x, 2x, 3x).
+- Color fading (fade to black) 
+
+## Tutorial
 
 I made a brief video on how to use dandere2x. Dandere2x is constantly changing, so this video may be outdated.
 
