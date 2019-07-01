@@ -46,7 +46,6 @@ const int correction_block_size = 2;
 void driver_difference(string workspace, int resume_count, int frame_count,
                        int block_size, int step_size, string extension_type)  {
 
-
     // Prefixes for all the plugins. Makes the code more readible and less error prone to
     // just refer to them here.
     string image_prefix = workspace + separator() + "inputs" + separator() + "frame";
@@ -55,7 +54,6 @@ void driver_difference(string workspace, int resume_count, int frame_count,
     string correction_prefix = workspace + separator() + "correction_data" + separator() + "correction_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
     string compressed_prefix = workspace + separator() + "compressed" + separator() + "compressed_";
-
 
     /**
      * this is where d2x_cpp starts **/
@@ -86,13 +84,12 @@ void driver_difference(string workspace, int resume_count, int frame_count,
 
     //Run our plugins for every frame in the video, starting at resume_count.
     for (int x = resume_count; x < frame_count; x++) {
+
         cout << "\n\n Computing differences for frame" << x << endl;
 
         // create strings for files for this iteration, and wait for files.
         string im2_file = image_prefix + to_string(x + 1) + extension_type;
         string im2_file_compressed = compressed_prefix + to_string(x + 1) + extension_type;
-
-
 
         // load actual images themselves
         shared_ptr<Image> im2 = make_shared<Image>(im2_file);
