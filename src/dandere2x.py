@@ -42,7 +42,7 @@ from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
 from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
-from dandere2x_core.mse_computer import compress_frames
+from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
