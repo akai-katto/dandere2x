@@ -166,6 +166,12 @@ class Frame:
     # Dandere2x needs to copy the image using numpy to maintain visual aesthetic.
 
     def copy_image(self, frame_other):
+        if self.height != frame_other.height or self.width != frame_other.width:
+            self.logger.error('copy images are not equal')
+            self.logger.error(str(self.width) + ' !=? ' + str(frame_other.width))
+            self.logger.error(str(self.height) + ' !=? ' + str(frame_other.height))
+            raise ValueError('invalid copy image')
+
         copy_from(frame_other.frame, self.frame, (0, 0), (0, 0),
                   (frame_other.frame.shape[1], frame_other.frame[1].shape[0]))
 
