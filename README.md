@@ -2,13 +2,13 @@
 
 ## What is Dandere2x
 
-Dandere2x makes upscaling videos with waifu2x much faster by applying compression techniques. Although the process itself is lossy, dandere2x provides a dramatic speedup in the time needed to upscale a video using waifu2x.
+Dandere2x makes upscaling videos with waifu2x much faster by applying compression techniques. By applying conventional compression techniques, dandere2x provides a dramatic speedup in the time needed to upscale a video using waifu2x.
 
 ## Current Features
 
 - Block Matching Video Compression
 - Interpolated Frame Video Compression
-- Minimum / maximum quality loss (By JPEG standards)
+- Minimum / maximum quality loss (set by JPEG standards)
 - Custom block sizes
 - Custom scaling sizes (1x, 2x, 3x).
 - Color fading (fade to black) 
@@ -33,6 +33,10 @@ https://www.reddit.com/r/Dandere2x/
 
 https://twitter.com/aka_katto
 
+## Can I help with Dandere2x?
+
+Please do! If you don't understand any parts of my code, I would be happy to explain/re-organize my code for you. Furthermore, if you can't code, I can give you a list of tasks you can do to help further dandere2x development!
+
 ## FAQ
 
 Q: What is the difference between Dandere2x and Video2x?
@@ -42,7 +46,7 @@ A: Video2x aims for quality over speed. If you're looking for the best-possible 
 
 Q: How does Dandere2x work?
 
-A: Dandere2x works by trying to recycle redundant information between frames. In anime (or cartoons in general), scenes tend to be very static, and as a result, not every part of a frame needs to be redrawn. Dandere2x identifies these blocks and reuses them to avoid unnecessary computation. 
+A: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works
 
 ## Related Resources
 
