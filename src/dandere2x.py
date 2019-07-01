@@ -167,6 +167,7 @@ class Dandere2x:
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
         difference_thread = threading.Thread(target=difference_loop_resume, args=(self.context,))
         status_thread = threading.Thread(target=print_status, args=(self.context,))
+        compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
 
         self.context.logger.info("Starting Threaded Processes..")
 
@@ -175,7 +176,9 @@ class Dandere2x:
         difference_thread.start()
         dandere2xcpp_thread.start()
         status_thread.start()
+        compress_frames_thread.start()
 
+        compress_frames_thread.join()
         merge_thread.join()
         dandere2xcpp_thread.join()
         difference_thread.join()
