@@ -151,9 +151,15 @@ def difference_loop_resume(context):
     logger = logging.getLogger(__name__)
 
     last_found = frame_count
+
     while last_found > 1:
-        exists = os.path.isfile(
-            upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
+        exists = os.path.isfile(upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
+
+        # if the difference_image exists but the upscaled_image doesn't on resume, we need
+        # to delete the difference_image, because it should be a different file due to resuming the run.
+
+        if not exists and os.path.isfile(differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png"):
+            os.remove(differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
         if not exists:
             last_found -= 1
