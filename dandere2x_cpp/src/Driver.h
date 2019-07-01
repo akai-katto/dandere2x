@@ -56,9 +56,10 @@ void driver_difference(string workspace, int resume_count, int frame_count,
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
     string compressed_prefix = workspace + separator() + "compressed" + separator() + "compressed_";
 
-    // this is where d2x_cpp starts
 
-    wait_for_file(image_prefix + to_string(1) + extension_type); //ensure the first file exists before starting d2x_cpp
+    /**
+     * this is where d2x_cpp starts **/
+
     shared_ptr<Image> im1 = make_shared<Image>(image_prefix + to_string(1) + extension_type);
 
     // If the driver call is a resume case, handle it here.
@@ -84,13 +85,13 @@ void driver_difference(string workspace, int resume_count, int frame_count,
 
 
     //Run our plugins for every frame in the video, starting at resume_count.
-    
     for (int x = resume_count; x < frame_count; x++) {
         cout << "\n\n Computing differences for frame" << x << endl;
 
-        // Load files needed for this for loop iteration
+        // create strings for files for this iteration, and wait for files.
         string im2_file = image_prefix + to_string(x + 1) + extension_type;
         string im2_file_compressed = compressed_prefix + to_string(x + 1) + extension_type;
+
 
 
         // load actual images themselves
