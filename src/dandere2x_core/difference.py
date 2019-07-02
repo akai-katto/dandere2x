@@ -119,6 +119,7 @@ def difference_loop(context, start_frame):
     logger = logging.getLogger(__name__)
     logger.info((workspace, start_frame, frame_count, block_size))
 
+    # for every frame in the video, create a difference_frame given the text files.
     for x in range(start_frame, frame_count):
         f1 = Frame()
         f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
@@ -135,6 +136,9 @@ def difference_loop(context, start_frame):
 
         debug(block_size, f1, prediction_data, difference_data, output_file)
 
+
+# I'm planning on changing how this function is carried out. I'm not a fan of it's current implementation
+# as I find it sort of janky to work with.
 
 def difference_loop_resume(context):
     # load variables from context
@@ -153,18 +157,22 @@ def difference_loop_resume(context):
     last_found = frame_count
 
     while last_found > 1:
-        exists = os.path.isfile(upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
+        upscaled_exists = os.path.isfile(upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
+        difference_exists = os.path.isfile(differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
-        # if the difference_image exists but the upscaled_image doesn't on resume, we need
-        # to delete the difference_image, because it should be a different file due to resuming the run.
+        # if the difference image exists but the upscaled does not, delete the image.
+        # We need to do this because during resuming, dandere2x will create a key frame.
+        # Although the text files might assert that a frame is a key frame, the previous run
+        # may of produced a difference image that isn't reflective of the text file.
+        # there *needs* to be a better way to do this.
 
-        if not exists and os.path.isfile(differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png"):
+        if not upscaled_exists and difference_exists:
             os.remove(differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
-        if not exists:
+        if not upscaled_exists:
             last_found -= 1
 
-        elif exists:
+        elif upscaled_exists:
             break
 
     last_found -= 1

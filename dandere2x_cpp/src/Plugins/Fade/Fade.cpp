@@ -112,14 +112,16 @@ double Fade::get_scalar_for_block(int x, int y) {
 
 void Fade::draw_over(int x, int y, int scalar) {
 
-    for (int i = x; i < x + block_size; i++) {
-        for (int j = y; j < y + block_size; j++) {
+    for (int i = x; i < x + block_size; i++)
+        for (int j = y; j < y + block_size; j++)
             image1->set_color(i, j, add_scalar_to_color(image1->get_color(i, j), scalar));
-        }
-    }
+
 
 }
 
+
+// Prevent an integer from going above RGB limits to avoid problems in code.
+// i.e 266 -> 255
 int Fade::bound_integer(int min, int max, int val) {
     if (val < min)
         return min;
@@ -129,7 +131,7 @@ int Fade::bound_integer(int min, int max, int val) {
     return val;
 }
 
-// Prevent a color from leaving 8 Bit RGB space
+// Prevent a color from leaving 8 Bit RGB space by calling bound integer for all colors.
 Image::Color Fade::add_scalar_to_color(Image::Color input_color, int scalar) {
     Image::Color return_color;
 
