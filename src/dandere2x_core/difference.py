@@ -137,8 +137,7 @@ def difference_loop(context, start_frame):
         debug(block_size, f1, prediction_data, difference_data, output_file)
 
 
-# I'm planning on changing how this function is carried out. I'm not a fan of it's current implementation
-# as I find it sort of janky to work with.
+# find the last difference_frame, and start from there.
 
 def difference_loop_resume(context):
     # load variables from context
