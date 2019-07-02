@@ -10,6 +10,7 @@ import logging
 import os
 import subprocess
 import threading
+from dandere2x_core.dandere2x_utils import get_lexicon_value
 
 from context import Context
 
@@ -24,6 +25,7 @@ class Dandere2xCppWrapper(threading.Thread):
         self.block_size = context.block_size
         self.step_size = context.step_size
         self.extension_type = context.extension_type
+        self.differences_dir = context.differences_dir
 
         self.resume = resume
         threading.Thread.__init__(self)
@@ -74,9 +76,14 @@ class Dandere2xCppWrapper(threading.Thread):
             elif exists:
                 break
 
-        # start one lower to overwrite / prevent weirdness
+        # start one lower because we deleted the file
         last_found = last_found - 1
         logger.info("last found is " + str(last_found))
+
+        # Delete the relevent files to prevent it from being used
+        os.remove(self.workspace + os.path.sep + "pframe_data" + os.path.sep + "pframe_" + str(last_found) + ".txt")
+        os.remove(self.workspace + os.path.sep + "inversion_data" + os.path.sep + "inversion_" + str(last_found) + ".txt")
+        os.remove(self.differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
         exec = [self.dandere2x_cpp_dir,
                 self.workspace,

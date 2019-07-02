@@ -158,16 +158,6 @@ def difference_loop_resume(context):
 
     while last_found > 1:
         upscaled_exists = os.path.isfile(upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
-        difference_exists = os.path.isfile(differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
-
-        # if the difference image exists but the upscaled does not, delete the image.
-        # We need to do this because during resuming, dandere2x will create a key frame.
-        # Although the text files might assert that a frame is a key frame, the previous run
-        # may of produced a difference image that isn't reflective of the text file.
-        # there *needs* to be a better way to do this.
-
-        if not upscaled_exists and difference_exists:
-            os.remove(differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
         if not upscaled_exists:
             last_found -= 1
