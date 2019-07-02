@@ -11,8 +11,8 @@ class FadeData:
     y: int
     scalar: int
 
-# comments: I'm not sure if we need to create a new frame, it's not causing
-# preformance issues so far, but it's easier for me to debug knowing that it creates
+# comments: I'm not sure if we need to create a new frame, but it's not causing
+# preformance issues so far, and this solution is easier for me to debug knowing that it creates
 # a copy than reassigns. Perhaps someone can test if we can just edit the input rather than
 # change the fade.
 

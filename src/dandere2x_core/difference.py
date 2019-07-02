@@ -119,6 +119,7 @@ def difference_loop(context, start_frame):
     logger = logging.getLogger(__name__)
     logger.info((workspace, start_frame, frame_count, block_size))
 
+    # for every frame in the video, create a difference_frame given the text files.
     for x in range(start_frame, frame_count):
         f1 = Frame()
         f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
@@ -136,6 +137,9 @@ def difference_loop(context, start_frame):
         debug(block_size, f1, prediction_data, difference_data, output_file)
 
 
+# I'm planning on changing how this function is carried out. I'm not a fan of it's current implementation
+# as I find it sort of janky to work with.
+
 def difference_loop_resume(context):
     # load variables from context
     workspace = context.workspace
@@ -151,14 +155,14 @@ def difference_loop_resume(context):
     logger = logging.getLogger(__name__)
 
     last_found = frame_count
-    while last_found > 1:
-        exists = os.path.isfile(
-            upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
-        if not exists:
+    while last_found > 1:
+        upscaled_exists = os.path.isfile(upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
+
+        if not upscaled_exists:
             last_found -= 1
 
-        elif exists:
+        elif upscaled_exists:
             break
 
     last_found -= 1

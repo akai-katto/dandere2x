@@ -42,7 +42,7 @@ from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
 from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
-from dandere2x_core.mse_computer import compress_frames
+from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
@@ -167,6 +167,7 @@ class Dandere2x:
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
         difference_thread = threading.Thread(target=difference_loop_resume, args=(self.context,))
         status_thread = threading.Thread(target=print_status, args=(self.context,))
+        compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
 
         self.context.logger.info("Starting Threaded Processes..")
 
@@ -175,7 +176,9 @@ class Dandere2x:
         difference_thread.start()
         dandere2xcpp_thread.start()
         status_thread.start()
+        compress_frames_thread.start()
 
+        compress_frames_thread.join()
         merge_thread.join()
         dandere2xcpp_thread.join()
         difference_thread.join()

@@ -10,6 +10,7 @@ import logging
 import os
 import subprocess
 import threading
+from dandere2x_core.dandere2x_utils import get_lexicon_value
 
 from context import Context
 
@@ -24,6 +25,7 @@ class Dandere2xCppWrapper(threading.Thread):
         self.block_size = context.block_size
         self.step_size = context.step_size
         self.extension_type = context.extension_type
+        self.differences_dir = context.differences_dir
 
         self.resume = resume
         threading.Thread.__init__(self)
@@ -58,8 +60,9 @@ class Dandere2xCppWrapper(threading.Thread):
             logger.info("d2xcpp ended unexpectedly")
 
     # Count how many p_frame_data files exist, then start at that minus 1.
-    # Consider including counting how many inversion_data files exist also, but
-    # Doesn't seem necessary.
+    # Consider including counting how many inversion_data files exist also, but doesn't seem necessary.
+
+    # What we're trying to do is essentially force d2x to create a new key frame at the last found p_frame.
     def resume_run(self):
         logger = logging.getLogger(__name__)
         last_found = int(self.frame_count)
@@ -75,9 +78,25 @@ class Dandere2xCppWrapper(threading.Thread):
             elif exists:
                 break
 
-        # start one lower to overwrite / prevent weirdness
+        # Delete the most recent files produced. Not all 3 files may exist (we only know the pframe_data exists)
+        # so we do a try. There's cases where inversion data or difference_image didn't save.
+        try:
+            os.remove(self.workspace + os.path.sep + "pframe_data" + os.path.sep + "pframe_" + str(last_found) + ".txt")
+            os.remove(self.workspace + os.path.sep + "inversion_data" + os.path.sep + "inversion_" + str(last_found) + ".txt")
+            os.remove(self.differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
+
+        except FileNotFoundError:
+            pass
+
+        # start one lower because we deleted the file(s)
         last_found = last_found - 1
-        logger.info("last found is " + str(last_found))
+        logger.info("Resuming at p_frame # " + str(last_found))
+
+        # Delete the current files, and resume work from there. We know all 3 of these files exist
+        # because we started one lower.
+        os.remove(self.workspace + os.path.sep + "pframe_data" + os.path.sep + "pframe_" + str(last_found) + ".txt")
+        os.remove(self.workspace + os.path.sep + "inversion_data" + os.path.sep + "inversion_" + str(last_found) + ".txt")
+        os.remove(self.differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
         exec = [self.dandere2x_cpp_dir,
                 self.workspace,
