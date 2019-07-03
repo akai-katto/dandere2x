@@ -200,6 +200,10 @@ class Frame:
                        (this_y, this_x), (this_y, this_x),
                        (this_y + block_size - 1, this_x + block_size - 1), scalar)
 
+        self.frame = np.clip(self.frame, 0, 254)
+
+
+
     # For the sake of code maintance, do the error checking to ensure numpy copy will work here.
     # Numpy won't give detailed errors, so this is my custom errors for debugging!
 
