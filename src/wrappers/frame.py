@@ -50,6 +50,11 @@ def copy_from(A, B, A_start, B_start, B_end):
         raise ValueError
 
 
+# Problems with uint8 and copy_fade.
+# Essentially we need values > 255 to be caught in np.clip to be defaulted back to 255,
+# But if we uint8 the array prior when the scalar is added to a uint8 array, it overflows
+# and goes back to 0. That's why images arent loaded as uint8 anymore.
+
 def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
     """
     A_start is the index with respect to A of the upper left corner of the overlap
@@ -61,7 +66,7 @@ def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
         shape = B_end - B_start
         B_slices = tuple(map(slice, B_start, B_end + 1))
         A_slices = tuple(map(slice, A_start, A_start + shape + 1))
-        B[B_slices] = A[A_slices] + scalar
+        B[B_slices] = np.clip(A[A_slices] + scalar, 0, 255)
 
     except ValueError:
         logging.info("fatal error copying block")
@@ -94,7 +99,7 @@ class Frame:
         self.logger = logging.getLogger(__name__)
 
     def create_new(self, width, height):
-        self.frame = np.zeros([height, width, 3], dtype=np.uint8)
+        self.frame = np.zeros([height, width, 3], dtype=int)
         self.width = width
         self.height = height
         self.string_name = ''
@@ -200,7 +205,7 @@ class Frame:
                        (this_y, this_x), (this_y, this_x),
                        (this_y + block_size - 1, this_x + block_size - 1), scalar)
 
-        self.frame = np.clip(self.frame, 0, 254)
+
 
 
 
@@ -252,7 +257,7 @@ class Frame:
         shape = self.frame.shape
         x = shape[0] + bleed + bleed
         y = shape[1] + bleed + bleed
-        out_image = np.zeros([x, y, 3], dtype=np.uint8)
+        out_image = np.zeros([x, y, 3], dtype=int)
         copy_from(self.frame, out_image, (0, 0), (bleed, bleed), (shape[0] + bleed - 1, shape[1] + bleed - 1))
 
         im_out = Frame()
