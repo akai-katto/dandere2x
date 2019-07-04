@@ -50,6 +50,10 @@ def copy_from(A, B, A_start, B_start, B_end):
         raise ValueError
 
 
+# we need to parse the new input into a non uint8 format so it doesnt overflow,
+# then parse it back to an integer using np.clip to make it fit within [0,255]
+# If we don't do this,  numpy will overflow it for us and give us bad results.
+
 def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
     """
     A_start is the index with respect to A of the upper left corner of the overlap
@@ -61,7 +65,9 @@ def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
         shape = B_end - B_start
         B_slices = tuple(map(slice, B_start, B_end + 1))
         A_slices = tuple(map(slice, A_start, A_start + shape + 1))
-        B[B_slices] = A[A_slices] + scalar
+
+        copy = numpy.copy(A[A_slices]).astype(int)
+        B[B_slices] = numpy.clip(copy + scalar, 0, 255).astype(np.uint8)
 
     except ValueError:
         logging.info("fatal error copying block")
@@ -100,7 +106,7 @@ class Frame:
         self.string_name = ''
 
     def load_from_string(self, input_string):
-        self.frame = misc.imread(input_string).astype(float)
+        self.frame = misc.imread(input_string).astype(np.uint8)
         self.height = self.frame.shape[0]
         self.width = self.frame.shape[1]
         self.string_name = input_string
@@ -196,9 +202,17 @@ class Frame:
 
     def fade_block(self, this_x, this_y, block_size, scalar):
 
+        #temp = numpy.copy(self.frame).astype(int)
+
         copy_from_fade(self.frame, self.frame,
                        (this_y, this_x), (this_y, this_x),
                        (this_y + block_size - 1, this_x + block_size - 1), scalar)
+
+        # temp = np.clip(temp, 0, 255).astype(np.uint8)
+        #
+        # self.frame = temp
+
+
 
     # For the sake of code maintance, do the error checking to ensure numpy copy will work here.
     # Numpy won't give detailed errors, so this is my custom errors for debugging!

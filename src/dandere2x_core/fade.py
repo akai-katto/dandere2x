@@ -1,6 +1,7 @@
 import logging
-from dataclasses import dataclass
+import numpy as np
 
+from dataclasses import dataclass
 from wrappers.frame import Frame
 
 
@@ -40,5 +41,7 @@ def fade_image(context, block_size, frame_base: Frame, list_correction: list):
                              vector.y * scale_factor,
                              block_size * scale_factor,
                              vector.scalar)
+
+    #out_image.frame = np.clip(out_image.frame, 0, 255)
 
     return out_image
