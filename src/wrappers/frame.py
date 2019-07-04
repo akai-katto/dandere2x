@@ -66,8 +66,8 @@ def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
         B_slices = tuple(map(slice, B_start, B_end + 1))
         A_slices = tuple(map(slice, A_start, A_start + shape + 1))
 
-        copy = numpy.copy(A[A_slices]).astype(int)
-        B[B_slices] = numpy.clip(copy + scalar, 0, 255).astype(np.uint8)
+        int_copy = numpy.copy(A[A_slices]).astype(int) # use 'int_copy' instead of raw array to prevent overflow
+        B[B_slices] = numpy.clip(int_copy + scalar, 0, 255).astype(np.uint8)
 
     except ValueError:
         logging.info("fatal error copying block")
@@ -202,15 +202,11 @@ class Frame:
 
     def fade_block(self, this_x, this_y, block_size, scalar):
 
-        #temp = numpy.copy(self.frame).astype(int)
-
         copy_from_fade(self.frame, self.frame,
                        (this_y, this_x), (this_y, this_x),
                        (this_y + block_size - 1, this_x + block_size - 1), scalar)
 
-        # temp = np.clip(temp, 0, 255).astype(np.uint8)
-        #
-        # self.frame = temp
+
 
 
 
