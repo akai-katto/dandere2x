@@ -50,10 +50,9 @@ def copy_from(A, B, A_start, B_start, B_end):
         raise ValueError
 
 
-# Problems with uint8 and copy_fade.
-# Essentially we need values > 255 to be caught in np.clip to be defaulted back to 255,
-# But if we uint8 the array prior when the scalar is added to a uint8 array, it overflows
-# and goes back to 0. That's why images arent loaded as uint8 anymore.
+# we need to parse the new input into a non uint8 format so it doesnt overflow,
+# then parse it back to an integer using np.clip to make it fit within [0,255]
+# If we don't do this,  numpy will overflow it for us and give us bad results.
 
 def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
     """
@@ -66,7 +65,9 @@ def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
         shape = B_end - B_start
         B_slices = tuple(map(slice, B_start, B_end + 1))
         A_slices = tuple(map(slice, A_start, A_start + shape + 1))
-        B[B_slices] = np.clip(A[A_slices] + scalar, 0, 255)
+
+        copy = numpy.copy(A[A_slices]).astype(int)
+        B[B_slices] = numpy.clip(copy + scalar, 0, 255).astype(np.uint8)
 
     except ValueError:
         logging.info("fatal error copying block")
@@ -99,13 +100,13 @@ class Frame:
         self.logger = logging.getLogger(__name__)
 
     def create_new(self, width, height):
-        self.frame = np.zeros([height, width, 3], dtype=int)
+        self.frame = np.zeros([height, width, 3], dtype=np.uint8)
         self.width = width
         self.height = height
         self.string_name = ''
 
     def load_from_string(self, input_string):
-        self.frame = misc.imread(input_string).astype(float)
+        self.frame = misc.imread(input_string).astype(np.uint8)
         self.height = self.frame.shape[0]
         self.width = self.frame.shape[1]
         self.string_name = input_string
@@ -201,11 +202,15 @@ class Frame:
 
     def fade_block(self, this_x, this_y, block_size, scalar):
 
+        #temp = numpy.copy(self.frame).astype(int)
+
         copy_from_fade(self.frame, self.frame,
                        (this_y, this_x), (this_y, this_x),
                        (this_y + block_size - 1, this_x + block_size - 1), scalar)
 
-
+        # temp = np.clip(temp, 0, 255).astype(np.uint8)
+        #
+        # self.frame = temp
 
 
 
@@ -257,7 +262,7 @@ class Frame:
         shape = self.frame.shape
         x = shape[0] + bleed + bleed
         y = shape[1] + bleed + bleed
-        out_image = np.zeros([x, y, 3], dtype=int)
+        out_image = np.zeros([x, y, 3], dtype=np.uint8)
         copy_from(self.frame, out_image, (0, 0), (bleed, bleed), (shape[0] + bleed - 1, shape[1] + bleed - 1))
 
         im_out = Frame()

@@ -123,9 +123,9 @@ void Fade::draw_over(int x, int y, int scalar) {
 // Prevent an integer from going above RGB limits to avoid problems in code.
 // i.e 266 -> 255
 int Fade::bound_integer(int min, int max, int val) {
-    if (val < min)
+    if (val <= min)
         return min;
-    if (val > max)
+    if (val >= max)
         return max;
 
     return val;
