@@ -11,7 +11,7 @@ Dandere2x makes upscaling videos with waifu2x much faster by applying compressio
 - Minimum / maximum quality loss (set by JPEG standards)
 - Color fading (fade to black) 
 - Custom block sizes
-- Custom scaling sizes (1x, 2x, 3x).
+- Custom scaling sizes (1x, 2x, 3x)
 
 
 ## How does Dandere2x work?
