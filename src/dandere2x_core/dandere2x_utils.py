@@ -48,7 +48,7 @@ def get_list_from_file(text_file: str):
 # wait if it does not.
 def wait_on_file(file_string: str):
     logger = logging.getLogger(__name__)
-    exists = exists = os.path.isfile(file_string)
+    exists = os.path.isfile(file_string)
     count = 0
     while not exists:
         if count % 1000000 == 0:
@@ -56,6 +56,12 @@ def wait_on_file(file_string: str):
         exists = os.path.isfile(file_string)
         count += 1
         time.sleep(.001)
+
+# many times a file may not exist yet, so just have this function
+# wait if it does not.
+def file_exists(file_string: str):
+    logger = logging.getLogger(__name__)
+    return os.path.isfile(file_string)
 
 
 # custom function to rename file if it already exists

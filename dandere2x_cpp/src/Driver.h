@@ -89,7 +89,7 @@ void driver_difference(string workspace, int resume_count, int frame_count,
 
         // create strings for files for this iteration, and wait for files.
         string im2_file = image_prefix + to_string(x + 1) + extension_type;
-        string im2_file_compressed = compressed_prefix + to_string(x + 1) + extension_type;
+        string im2_file_compressed = compressed_prefix + to_string(x + 1) + ".jpg";
 
         // load actual images themselves
         shared_ptr<Image> im2 = make_shared<Image>(im2_file);
