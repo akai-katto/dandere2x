@@ -30,7 +30,7 @@ def create_video_from_specific_frames(context: Context, file_prefix, output, fpv
             output]
 
     print(exec)
-    subprocess.run(exec)
+    subprocess.run(exec, stdout=open(os.devnull, 'wb'))
 
 
 # massive headache having to include + 1.
@@ -53,7 +53,7 @@ def merge_audio(context: Context,  video: str, audio: str, output: str):
             "copy",
             output]
 
-    subprocess.run(exec)
+    subprocess.run(exec, stdout=open(os.devnull, 'wb'))
 
 
 # we create about 'n' amount of videos during runtime, and we need to re-encode those videos into
@@ -75,7 +75,7 @@ def merge_encoded_vids(context: Context,  output_file: str):
             'libx264',
             output_file]
 
-    subprocess.run(exec)
+    subprocess.run(exec, stdout=open(os.devnull, 'wb'))
 
 
 def run_realtime_encoding(context: Context, output_file: str):
