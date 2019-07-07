@@ -77,6 +77,8 @@ class Context:
         self.step_size = config.get('dandere2x', 'step_size')
         self.bleed = int(config.get('dandere2x', 'bleed'))
         self.quality_low = int(config.get('dandere2x', 'quality_low'))
+        self.realtime_encoding = int(config.get('dandere2x', 'realtime_encoding'))
+        self.realtime_encoding_delete_files = int(config.get('dandere2x', 'realtime_encoding_delete_files'))
 
         # todo idunno if theres a better way to figure out how many frames will be used.
         self.frame_count = 0
@@ -101,6 +103,7 @@ class Context:
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
+        self.encoded_dir = self.workspace + "encoded" + os.path.sep
 
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)

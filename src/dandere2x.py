@@ -51,6 +51,9 @@ from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
 
 
+from wrappers.realtime_encoding import run_realtime_encoding
+
+
 # logger doesnt operate out of workspace, but thats ok I guess
 
 def make_logger(path=""):
@@ -118,7 +121,11 @@ class Dandere2x:
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
+
+
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
+
+        output_file = self.context.workspace + 'output.mkv'
 
         # start all the threads needed for running
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
@@ -126,6 +133,7 @@ class Dandere2x:
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
         difference_thread = threading.Thread(target=difference_loop, args=(self.context, 1))
         status_thread = threading.Thread(target=print_status, args=(self.context,))
+        realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
 
         self.context.logger.info("Starting Threaded Processes..")
 
@@ -136,12 +144,18 @@ class Dandere2x:
         status_thread.start()
         compress_frames_thread.start()
 
+        if self.context.realtime_encoding == 1:
+            realtime_encode_thread.start()
+
         compress_frames_thread.join()
         merge_thread.join()
         dandere2xcpp_thread.join()
         difference_thread.join()
         waifu2x.join()
         status_thread.join()
+
+        if self.context.realtime_encoding == 1:
+            realtime_encode_thread.join()
 
         self.context.logger.info("Threaded Processes Finished succcesfully")
 
@@ -169,6 +183,9 @@ class Dandere2x:
         status_thread = threading.Thread(target=print_status, args=(self.context,))
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
 
+        output_file = self.context.workspace + 'output.mkv'
+        realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
+
         self.context.logger.info("Starting Threaded Processes..")
 
         waifu2x.start()
@@ -178,12 +195,20 @@ class Dandere2x:
         status_thread.start()
         compress_frames_thread.start()
 
+        # these can obviously be combined  but leaving them separate for readiability
+        if self.context.realtime_encoding == 1:
+            realtime_encode_thread.start()
+
+        if self.context.realtime_encoding == 1:
+            realtime_encode_thread.join()
+
         compress_frames_thread.join()
         merge_thread.join()
         dandere2xcpp_thread.join()
         difference_thread.join()
         waifu2x.join()
         status_thread.join()
+
 
         self.context.logger.info("Threaded Processes Finished successfully")
 
@@ -221,7 +246,8 @@ class Dandere2x:
                        self.context.debug_dir,
                        self.context.log_dir,
                        self.context.compressed_dir,
-                       self.context.fade_data_dir}
+                       self.context.fade_data_dir,
+                       self.context.encoded_dir}
 
         # need to create workspace before anything else
         try:
