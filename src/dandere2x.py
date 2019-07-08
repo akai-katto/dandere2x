@@ -209,7 +209,6 @@ class Dandere2x:
         waifu2x.join()
         status_thread.join()
 
-
         self.context.logger.info("Threaded Processes Finished successfully")
 
     # only calculate the differences. To be implemented in video2x / converter-cpp

@@ -105,8 +105,13 @@ class Context:
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
 
+        # Developer Settings #
+        self.debug = int(config.get('dandere2x', 'debug'))
+
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+
+
 
     def update_frame_count(self):
         self.frame_count = len([name for name in os.listdir(self.input_frames_dir)

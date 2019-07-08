@@ -66,7 +66,7 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
 
 
 # for printing out what Dandere2x predictive frames are doing
-def debug(block_size, frame_base, list_predictive, list_differences, output_location):
+def debug_image(block_size, frame_base, list_predictive, list_differences, output_location):
     logger = logging.getLogger(__name__)
 
     predictive_vectors = []
@@ -101,7 +101,7 @@ def debug(block_size, frame_base, list_predictive, list_differences, output_loca
                              vector.x_2, vector.y_2,
                              vector.x_1, vector.y_1)
 
-    out_image.save_image(output_location)
+    out_image.save_image_quality(output_location, 25)
 
 
 def difference_loop(context, start_frame):
@@ -115,6 +115,7 @@ def difference_loop(context, start_frame):
     block_size = context.block_size
     extension_type = context.extension_type
     bleed = context.bleed
+    debug = context.debug
 
     logger = logging.getLogger(__name__)
     logger.info((workspace, start_frame, frame_count, block_size))
@@ -134,7 +135,8 @@ def difference_loop(context, start_frame):
 
         output_file = workspace + "debug/debug" + str(x + 1) + extension_type
 
-        debug(block_size, f1, prediction_data, difference_data, output_file)
+        if debug == 1:
+            debug_image(block_size, f1, prediction_data, difference_data, output_file)
 
 
 # find the last difference_frame, and start from there.
