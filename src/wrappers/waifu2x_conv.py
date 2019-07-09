@@ -70,8 +70,9 @@ class Waifu2xConv(threading.Thread):
     # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
     # this function just renames the files so Dandere2x can interpret them correctly.
     def fix_names(self):
-        list = os.listdir(self.upscaled_dir)
-        for name in list:
+
+        list_of_names = os.listdir(self.upscaled_dir)
+        for name in list_of_names:
             if '[NS-L3][x' + self.scale_factor + '.000000]' in name:
                 rename_file(self.upscaled_dir + name,
                             self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
