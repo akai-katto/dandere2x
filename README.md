@@ -1,5 +1,10 @@
 # Dandere2x - Fast Waifu2x Video Upscaling
 
+Telegram Server:
+
+https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
+
+
 ## What is Dandere2x
 
 Dandere2x makes upscaling videos with waifu2x much faster by applying compression techniques. In other words, Dandere2x uses techniques used from video streaming (such as Youtube or Netflix) to decrease the time needed to upscale a video using Waifu2x. 
