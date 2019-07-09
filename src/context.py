@@ -14,7 +14,7 @@ rather than passing like 8-9 variables
 import configparser
 import logging
 import os
-from wrappers.videosettings import VideoSettings
+from wrappers.ff_wrappers.videosettings import VideoSettings
 
 # init is pretty messy at the moment. I'll look into
 # cleaning this up in the future ;-;

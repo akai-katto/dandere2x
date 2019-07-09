@@ -1,6 +1,6 @@
-from wrappers.ffprobe import get_video_info
+from wrappers.ff_wrappers.ffprobe import get_video_info
 from fractions import Fraction
-import datetime
+
 
 # my function to just have a callable object to have the video information we need
 

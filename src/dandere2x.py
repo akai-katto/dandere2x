@@ -45,13 +45,13 @@ from dandere2x_core.merge import merge_loop_resume
 from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
-from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
+from wrappers.ff_wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
+from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
 
 
-from wrappers.realtime_encoding import run_realtime_encoding
+from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
 
 
 # logger doesnt operate out of workspace, but thats ok I guess
