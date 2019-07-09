@@ -76,10 +76,23 @@ class Context:
         self.dandere_dir = config.get('dandere2x', 'dandere_dir')
 
         # User Settings
-        self.time_frame = config.get('dandere2x', 'time_frame')
-        self.duration = config.get('dandere2x', 'duration')
+
+        self.full_video = int(config.get('dandere2x', 'full_video'))
+
+        # We have the option for 'full video' since in development/ others may not want to
+        # upscale an entire video.
+
+        if self.full_video == 1:
+            self.duration = self.video_settings.duration
+            self.time_frame = "00:00:00"
+
+        else:
+            self.time_frame = config.get('dandere2x', 'time_frame')
+            self.duration = config.get('dandere2x', 'duration')
+
         self.audio_layer = config.get('dandere2x', 'audio_layer')
 
+        # D2x Settings
 
         self.block_size = int(config.get('dandere2x', 'block_size'))
         self.step_size = config.get('dandere2x', 'step_size')

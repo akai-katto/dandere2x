@@ -37,7 +37,7 @@ def get_video_info(ffprobe_dir, input_video):
 
 ffprobe = "C:\\Users\\windwoz\\AppData\\Local\\video2x\\ffmpeg-latest-win64-static\\bin\\ffprobe.exe"
 
-test = get_video_info(ffprobe, "C:\\Users\\windwoz\\Desktop\\plz\\custom_videos\\redditvid.mkv")
+test = get_video_info(ffprobe, "C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\0.9\\demo_folder\\video.mkv")
 
 print(test)
 

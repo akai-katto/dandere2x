@@ -15,6 +15,6 @@ class VideoSettings:
 
         self.height = self.settings_json['streams'][0]['height']
         self.width = self.settings_json['streams'][0]['width']
-        self.duration = str(datetime.timedelta(self.settings_json['streams'][0]['duration_ts']))
+        self.duration = self.settings_json['streams'][0]['tags']['DURATION'] #str(datetime.timedelta(self.settings_json['streams'][0]['tags']['DURATION']))
         self.frame_rate = float(Fraction(self.settings_json['streams'][0]['r_frame_rate']))
 
