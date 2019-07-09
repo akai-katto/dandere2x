@@ -294,7 +294,7 @@ class Dandere2x:
     def write_merge_commands(self):
         with open(self.context.workspace + os.path.sep + 'commands.txt', 'w') as f:
             f.write(
-                self.context.ffmpeg_dir + " -f image2 -framerate " + self.context.frame_rate + " -i " + self.context.merged_dir + "merged_%d.jpg -r " + self.context.frame_rate + " -vf deband " + self.context.workspace + "nosound.mp4\n\n")
+                self.context.ffmpeg_dir + " -f image2 -framerate " + str(self.context.frame_rate) + " -i " + self.context.merged_dir + "merged_%d.jpg -r " + str(self.context.frame_rate) + " -vf deband " + self.context.workspace + "nosound.mp4\n\n")
             f.write(
                 self.context.ffmpeg_dir + " -i " + self.context.workspace + "nosound.mp4" + " -i " + self.context.workspace + "audio" + self.context.audio_type + " -c copy " +
                 self.context.workspace + "sound.mp4\n\n")

@@ -14,7 +14,7 @@ rather than passing like 8-9 variables
 import configparser
 import logging
 import os
-
+from wrappers.videosettings import VideoSettings
 
 # init is pretty messy at the moment. I'll look into
 # cleaning this up in the future ;-;
@@ -33,10 +33,17 @@ class Context:
         self.workspace = config.get('dandere2x', 'workspace')
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
+        self.ffprobe_dir = config.get('dandere2x', 'ffprobe_dir')
         self.file_dir = config.get('dandere2x', 'file_dir')
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
         self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
+
+        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
+
+        self.frame_rate = self.video_settings.frame_rate
+        self.width = self.video_settings.width
+        self.height = self.video_settings.height
 
         if '[this]' in self.waifu2x_conv_dir:
             self.waifu2x_conv_dir = self.waifu2x_conv_dir.replace('[this]', self.this_folder)
@@ -63,6 +70,8 @@ class Context:
 
         if '[this]' in self.model_dir:
             self.model_dir = self.model_dir.replace('[this]', self.this_folder)
+
+
         # linux
         self.dandere_dir = config.get('dandere2x', 'dandere_dir')
 
@@ -70,9 +79,8 @@ class Context:
         self.time_frame = config.get('dandere2x', 'time_frame')
         self.duration = config.get('dandere2x', 'duration')
         self.audio_layer = config.get('dandere2x', 'audio_layer')
-        self.frame_rate = config.get('dandere2x', 'frame_rate')
-        self.width = config.get('dandere2x', 'width')
-        self.height = config.get('dandere2x', 'height')
+
+
         self.block_size = int(config.get('dandere2x', 'block_size'))
         self.step_size = config.get('dandere2x', 'step_size')
         self.bleed = int(config.get('dandere2x', 'bleed'))

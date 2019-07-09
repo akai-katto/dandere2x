@@ -16,7 +16,6 @@ def get_video_info(ffprobe_dir, input_video):
         dictionary -- JSON text of input video information
     """
 
-
     # this execution command needs to be hard-coded
     # since video2x only strictly recignizes this one format
     execute = [
@@ -34,18 +33,3 @@ def get_video_info(ffprobe_dir, input_video):
     json_str = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
 
     return json.loads(json_str.decode('utf-8'))
-
-ffprobe = "C:\\Users\\windwoz\\AppData\\Local\\video2x\\ffmpeg-latest-win64-static\\bin\\ffprobe.exe"
-
-test = get_video_info(ffprobe, "C:\\Users\\windwoz\\Desktop\\plz\\custom_videos\\redditvid.mkv")
-
-print(test)
-
-print(test['streams'][0]['height'])
-
-print(test['streams'][0]['tags']['DURATION'])
-
-print(test['streams'][0]['r_frame_rate'])
-
-
-print(float(Fraction(test['streams'][0]['r_frame_rate'])))

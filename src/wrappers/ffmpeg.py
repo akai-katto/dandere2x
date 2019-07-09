@@ -22,13 +22,23 @@ def extract_frames(context: Context):
     input_frames_dir = context.input_frames_dir
     extension_type = context.extension_type
 
-    command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir + " -r " + frame_rate + " -qscale:v 2" + \
-              " -t " + duration + " -vf noise=c1s=8:c0f=u " + input_frames_dir + "frame%01d" + extension_type
 
-    # command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir + " -r " + frame_rate + " -qscale:v 2" + \
-    #           " -t " + duration + " " + input_frames_dir + "frame%01d" + extension_type
+    exec = [ffmpeg_dir,
+               "-ss",
+               time_frame,
+               "-i",
+               file_dir,
+               "-r",
+               str(frame_rate),
+               "-qscale:v",
+               str(2),
+               "-t",
+               str(duration),
+               "-vf",
+               "noise=c1s=8:c0f=u",
+               input_frames_dir + "frame%01d" + extension_type]
 
-    exec = command.split(" ")
+
     print(exec)
     subprocess.run(exec)
 
