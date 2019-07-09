@@ -16,10 +16,15 @@ def create_video_from_specific_frames(context: Context, file_prefix, output, fpv
 
     ffmpeg_dir = context.ffmpeg_dir
     extension_type = context.extension_type
+    vf_encode = context.vf_encode
+    frame_rate = context.frame_rate
 
     exec = [ffmpeg_dir,
+            '-loglevel',
+            str(0),
+            '-nostats',
             '-framerate',
-            str(24),
+            str(frame_rate),
             '-start_number',
             str(fpv),
             '-i',
@@ -27,10 +32,9 @@ def create_video_from_specific_frames(context: Context, file_prefix, output, fpv
             '-vframes',
             str(end),
             '-vf',
-            'deband',
+            vf_encode,
             output]
 
-    print(exec)
     subprocess.run(exec, stdout=open(os.devnull, 'wb'))
 
 
@@ -64,6 +68,8 @@ def merge_encoded_vids(context: Context,  output_file: str):
 
     text_file = context.workspace + "encoded\\list.txt"
     ffmpeg_dir = context.ffmpeg_dir
+    encode_codec = context.encode_codec
+    encode_crf = context.encode_crf
 
     exec = [ffmpeg_dir,
             '-f',
@@ -73,7 +79,9 @@ def merge_encoded_vids(context: Context,  output_file: str):
             '-i',
             text_file,
             '-c:v',
-            'libx264',
+            encode_codec,
+            '-crf',
+            encode_crf,
             output_file]
 
     subprocess.run(exec, stdout=open(os.devnull, 'wb'))

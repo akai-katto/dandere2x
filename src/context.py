@@ -83,7 +83,7 @@ class Context:
         # upscale an entire video.
 
         if self.full_video == 1:
-            self.duration = self.video_settings.duration
+            self.duration = None
             self.time_frame = "00:00:00"
 
         else:
@@ -128,6 +128,13 @@ class Context:
 
         # Developer Settings #
         self.debug = int(config.get('dandere2x', 'debug'))
+
+        # FFMPEG Options #
+
+        self.vf_extract = config.get('dandere2x', 'vf_extract')
+        self.vf_encode = config.get('dandere2x', 'vf_encode')
+        self.encode_codec = config.get('dandere2x', 'encode_codec')
+        self.encode_crf = config.get('dandere2x', 'encode_crf')
 
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
