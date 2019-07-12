@@ -35,22 +35,20 @@ def extract_frames(context: Context):
 
 def extract_audio(context: Context):
     ffmpeg_dir = context.ffmpeg_dir
-    time_frame = context.time_frame
     file_dir = context.file_dir
     workspace = context.workspace
-    duration = context.duration
     audio_layer = context.audio_layer
     audio_type = context.audio_type
-    full_video = context.full_video
 
+    output_file = workspace + "audio" + audio_type
 
-    if full_video == 0:
-        command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir + \
-                  " -t " + duration + " -map " + audio_layer + " " + workspace + "audio" + audio_type
-    else:
-        command = ffmpeg_dir + " -ss " + time_frame + " -i " + file_dir \
-                  + " -map " + audio_layer + " " + workspace + "audio" + audio_type
+    extract_audio_command = context.extract_audio_command
 
-    exec = command.split(" ")
+    extract_audio_command = extract_audio_command.replace("[ffmpeg_dir]", ffmpeg_dir)
+    extract_audio_command = extract_audio_command.replace("[file_dir]", file_dir)
+    extract_audio_command = extract_audio_command.replace("[audio_layer]", audio_layer)
+    extract_audio_command = extract_audio_command.replace("[audio_type]", audio_type)
+    extract_audio_command = extract_audio_command.replace("[output_file]", output_file)
+    exec = extract_audio_command.split(" ")
     print(exec)
     subprocess.run(exec)

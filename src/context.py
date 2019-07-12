@@ -71,25 +71,8 @@ class Context:
         if '[this]' in self.model_dir:
             self.model_dir = self.model_dir.replace('[this]', self.this_folder)
 
-
         # linux
         self.dandere_dir = config.get('dandere2x', 'dandere_dir')
-
-        # User Settings
-
-        self.full_video = int(config.get('dandere2x', 'full_video'))
-
-        # We have the option for 'full video' since in development/ others may not want to
-        # upscale an entire video.
-
-        if self.full_video == 1:
-            self.duration = None
-            self.time_frame = "00:00:00"
-
-        else:
-            self.time_frame = config.get('dandere2x', 'time_frame')
-            self.duration = config.get('dandere2x', 'duration')
-
         self.audio_layer = config.get('dandere2x', 'audio_layer')
 
         # D2x Settings
@@ -131,6 +114,7 @@ class Context:
 
         # FFMPEG Options #
 
+        self.extract_audio_command = config.get('dandere2x', 'extract_audio_command')
         self.extract_frames_command = config.get('dandere2x', 'extract_frames_command')
         self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
         self.merge_video_command = config.get('dandere2x', 'merge_video_command')
