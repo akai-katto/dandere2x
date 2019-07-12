@@ -133,6 +133,7 @@ class Context:
 
         self.extract_frames_command = config.get('dandere2x', 'extract_frames_command')
         self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
+        self.merge_video_command = config.get('dandere2x', 'merge_video_command')
 
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)

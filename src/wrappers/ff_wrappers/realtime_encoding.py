@@ -62,23 +62,18 @@ def merge_encoded_vids(context: Context,  output_file: str):
 
     text_file = context.workspace + "encoded\\list.txt"
     ffmpeg_dir = context.ffmpeg_dir
-    encode_codec = context.encode_codec
-    encode_crf = context.encode_crf
 
-    exec = [ffmpeg_dir,
-            '-f',
-            'concat',
-            '-safe',
-            str(0),
-            '-i',
-            text_file,
-            '-c:v',
-            encode_codec,
-            '-crf',
-            encode_crf,
-            output_file]
+    merge_video_command = context.merge_video_command
 
-    subprocess.run(exec, stdout=open(os.devnull, 'wb'))
+    merge_video_command = merge_video_command.replace("[ffmpeg_dir]", ffmpeg_dir)
+    merge_video_command = merge_video_command.replace("[text_file]", text_file)
+    merge_video_command = merge_video_command.replace("[output_file]", output_file)
+
+    exec = merge_video_command.split(" ")
+
+    print(merge_video_command)
+    print(exec)
+    subprocess.run(exec)
 
 
 def run_realtime_encoding(context: Context, output_file: str):
