@@ -131,10 +131,8 @@ class Context:
 
         # FFMPEG Options #
 
-        self.vf_extract = config.get('dandere2x', 'vf_extract')
-        self.vf_encode = config.get('dandere2x', 'vf_encode')
-        self.encode_codec = config.get('dandere2x', 'encode_codec')
-        self.encode_crf = config.get('dandere2x', 'encode_crf')
+        self.extract_frames_command = config.get('dandere2x', 'extract_frames_command')
+        self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
 
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)

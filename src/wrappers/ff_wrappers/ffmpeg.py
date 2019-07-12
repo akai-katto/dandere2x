@@ -13,49 +13,23 @@ import subprocess
 from context import Context
 
 
+# example extract_frames_command:
+# [ffmpeg] -i [file_name] -r [frame_rate] -qscale:v 2 -vf noise=c1s=8:c0f=u [output_file]
 def extract_frames(context: Context):
+
+    extract_frames_command = context.extract_frames_command
     ffmpeg_dir = context.ffmpeg_dir
-    time_frame = context.time_frame
     file_dir = context.file_dir
-    frame_rate = context.frame_rate
-    duration = context.duration
     input_frames_dir = context.input_frames_dir
     extension_type = context.extension_type
-    vf_extract = context.vf_extract
+    output_file = input_frames_dir + "frame%01d" + extension_type
 
-    full_video = context.full_video
+    extract_frames_command = extract_frames_command.replace("[ffmpeg_dir]", ffmpeg_dir)
+    extract_frames_command = extract_frames_command.replace("[file_name]", file_dir)
+    extract_frames_command = extract_frames_command.replace("[output_file]", output_file)
 
-    if full_video == 0:
-        exec = [ffmpeg_dir,
-                   "-ss",
-                   time_frame,
-                   "-i",
-                   file_dir,
-                   "-r",
-                   str(frame_rate),
-                   "-qscale:v",
-                   str(2),
-                   "-t",
-                   str(duration),
-                   "-vf",
-                   vf_extract,
-                   input_frames_dir + "frame%01d" + extension_type]
-    else:
-        if full_video == 1:
-            exec = [ffmpeg_dir,
-                    "-ss",
-                    time_frame,
-                    "-i",
-                    file_dir,
-                    "-r",
-                    str(frame_rate),
-                    "-qscale:v",
-                    str(2),
-                    "-vf",
-                    vf_extract,
-                    input_frames_dir + "frame%01d" + extension_type]
+    exec = extract_frames_command.split(" ")
 
-    print(exec)
     subprocess.run(exec)
 
 

@@ -12,30 +12,24 @@ from context import Context
 
 # Given the file prefixes, the starting frame, and how many frames should fit in a video
 # Create a short video using those values.
-def create_video_from_specific_frames(context: Context, file_prefix, output, fpv, end):
+def create_video_from_specific_frames(context: Context, file_prefix, output_file, fpv, end_number):
 
     ffmpeg_dir = context.ffmpeg_dir
     extension_type = context.extension_type
-    vf_encode = context.vf_encode
     frame_rate = context.frame_rate
+    input_files = file_prefix + "%d" + extension_type
+    video_from_frames_command = context.video_from_frames_command
 
-    exec = [ffmpeg_dir,
-            '-loglevel',
-            str(0),
-            '-nostats',
-            '-framerate',
-            str(frame_rate),
-            '-start_number',
-            str(fpv),
-            '-i',
-            file_prefix + "%d" + extension_type,
-            '-vframes',
-            str(end),
-            '-vf',
-            vf_encode,
-            output]
+    video_from_frames_command = video_from_frames_command.replace("[ffmpeg_dir]", ffmpeg_dir)
+    video_from_frames_command = video_from_frames_command.replace("[frame_rate]", str(frame_rate))
+    video_from_frames_command = video_from_frames_command.replace("[start_number]", str(fpv))
+    video_from_frames_command = video_from_frames_command.replace("[input_frames]", input_files)
+    video_from_frames_command = video_from_frames_command.replace("[end_number]", str(end_number))
+    video_from_frames_command = video_from_frames_command.replace("[output_file]", output_file)
 
-    subprocess.run(exec, stdout=open(os.devnull, 'wb'))
+    exec = video_from_frames_command.split(" ")
+
+    subprocess.run(exec)
 
 
 # massive headache having to include + 1.
