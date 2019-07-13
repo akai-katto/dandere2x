@@ -44,17 +44,17 @@ class Context:
         self.waifu2x_vulkan_dir = config.get('dandere2x', 'waifu2x_vulkan_dir')
         self.waifu2x_vulkan_dir_dir = config.get('dandere2x', 'waifu2x_vulkan_dir_dir')
 
-        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
-
-        self.frame_rate = self.video_settings.frame_rate
-        self.width = self.video_settings.width
-        self.height = self.video_settings.height
-
         if '[this]' in self.waifu2x_conv_dir:
             self.waifu2x_conv_dir = self.waifu2x_conv_dir.replace('[this]', self.this_folder)
 
         if '[this]' in self.waifu2x_conv_dir_dir:
             self.waifu2x_conv_dir_dir = self.waifu2x_conv_dir_dir.replace('[this]', self.this_folder)
+
+        if '[this]' in self.waifu2x_vulkan_dir:
+            self.waifu2x_vulkan_dir = self.waifu2x_vulkan_dir.replace('[this]', self.this_folder)
+
+        if '[this]' in self.waifu2x_vulkan_dir_dir:
+            self.waifu2x_vulkan_dir_dir = self.waifu2x_vulkan_dir_dir.replace('[this]', self.this_folder)
 
         # parse [this] for release versions (removing this feature in the future, just for early testing.
 
@@ -78,6 +78,14 @@ class Context:
 
         if '[this]' in self.model_dir:
             self.model_dir = self.model_dir.replace('[this]', self.this_folder)
+
+
+        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
+
+        self.frame_rate = self.video_settings.frame_rate
+        self.width = self.video_settings.width
+        self.height = self.video_settings.height
+
 
         # linux
         self.dandere_dir = config.get('dandere2x', 'dandere_dir')
