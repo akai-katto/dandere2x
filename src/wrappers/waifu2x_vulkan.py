@@ -132,7 +132,7 @@ class Waifu2xVulkan(threading.Thread):
         while names:
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.call(exec, stdout=open(os.devnull, 'w'))# stderr=subprocess.STDOUT) # We're supressing A LOT of errors btw.
+            subprocess.call(exec, stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT) # We're supressing A LOT of errors btw.
             self.fix_names()
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
