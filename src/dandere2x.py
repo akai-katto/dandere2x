@@ -45,13 +45,13 @@ from dandere2x_core.merge import merge_loop_resume
 from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
-from wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
+from wrappers.ff_wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
+from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
+from wrappers.waifu2x_vulkan import Waifu2xVulkan
 
-
-from wrappers.realtime_encoding import run_realtime_encoding
+from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
 
 
 # logger doesnt operate out of workspace, but thats ok I guess
@@ -121,7 +121,11 @@ class Dandere2x:
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-
+        elif self.context.waifu2x_type == "vulkan":
+            waifu2x = Waifu2xVulkan(self.context)
+            Waifu2xVulkan.upscale_file(self.context,
+                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
@@ -177,6 +181,12 @@ class Dandere2x:
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
+        elif self.context.waifu2x_type == "vulkan":
+            waifu2x = Waifu2xVulkan(self.context)
+            Waifu2xVulkan.upscale_file(self.context,
+                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
         difference_thread = threading.Thread(target=difference_loop_resume, args=(self.context,))
@@ -208,7 +218,6 @@ class Dandere2x:
         difference_thread.join()
         waifu2x.join()
         status_thread.join()
-
 
         self.context.logger.info("Threaded Processes Finished successfully")
 
@@ -295,7 +304,7 @@ class Dandere2x:
     def write_merge_commands(self):
         with open(self.context.workspace + os.path.sep + 'commands.txt', 'w') as f:
             f.write(
-                self.context.ffmpeg_dir + " -f image2 -framerate " + self.context.frame_rate + " -i " + self.context.merged_dir + "merged_%d.jpg -r " + self.context.frame_rate + " -vf deband " + self.context.workspace + "nosound.mp4\n\n")
+                self.context.ffmpeg_dir + " -f image2 -framerate " + str(self.context.frame_rate) + " -i " + self.context.merged_dir + "merged_%d.jpg -r " + str(self.context.frame_rate) + " -vf deband " + self.context.workspace + "nosound.mp4\n\n")
             f.write(
                 self.context.ffmpeg_dir + " -i " + self.context.workspace + "nosound.mp4" + " -i " + self.context.workspace + "audio" + self.context.audio_type + " -c copy " +
                 self.context.workspace + "sound.mp4\n\n")

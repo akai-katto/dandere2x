@@ -14,7 +14,7 @@ rather than passing like 8-9 variables
 import configparser
 import logging
 import os
-
+from wrappers.ff_wrappers.videosettings import VideoSettings
 
 # init is pretty messy at the moment. I'll look into
 # cleaning this up in the future ;-;
@@ -33,16 +33,28 @@ class Context:
         self.workspace = config.get('dandere2x', 'workspace')
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
+        self.ffprobe_dir = config.get('dandere2x', 'ffprobe_dir')
         self.file_dir = config.get('dandere2x', 'file_dir')
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
+
         self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
+
+
+        self.waifu2x_vulkan_dir = config.get('dandere2x', 'waifu2x_vulkan_dir')
+        self.waifu2x_vulkan_dir_dir = config.get('dandere2x', 'waifu2x_vulkan_dir_dir')
 
         if '[this]' in self.waifu2x_conv_dir:
             self.waifu2x_conv_dir = self.waifu2x_conv_dir.replace('[this]', self.this_folder)
 
         if '[this]' in self.waifu2x_conv_dir_dir:
             self.waifu2x_conv_dir_dir = self.waifu2x_conv_dir_dir.replace('[this]', self.this_folder)
+
+        if '[this]' in self.waifu2x_vulkan_dir:
+            self.waifu2x_vulkan_dir = self.waifu2x_vulkan_dir.replace('[this]', self.this_folder)
+
+        if '[this]' in self.waifu2x_vulkan_dir_dir:
+            self.waifu2x_vulkan_dir_dir = self.waifu2x_vulkan_dir_dir.replace('[this]', self.this_folder)
 
         # parse [this] for release versions (removing this feature in the future, just for early testing.
 
@@ -58,21 +70,29 @@ class Context:
         if '[this]' in self.ffmpeg_dir:
             self.ffmpeg_dir = self.ffmpeg_dir.replace('[this]', self.this_folder)
 
+        if '[this]' in self.ffprobe_dir:
+            self.ffprobe_dir = self.ffprobe_dir.replace('[this]', self.this_folder)
+
         if '[this]' in self.file_dir:
             self.file_dir = self.file_dir.replace('[this]', self.this_folder)
 
         if '[this]' in self.model_dir:
             self.model_dir = self.model_dir.replace('[this]', self.this_folder)
+
+
+        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
+
+        self.frame_rate = self.video_settings.frame_rate
+        self.width = self.video_settings.width
+        self.height = self.video_settings.height
+
+
         # linux
         self.dandere_dir = config.get('dandere2x', 'dandere_dir')
-
-        # User Settings
-        self.time_frame = config.get('dandere2x', 'time_frame')
-        self.duration = config.get('dandere2x', 'duration')
         self.audio_layer = config.get('dandere2x', 'audio_layer')
-        self.frame_rate = config.get('dandere2x', 'frame_rate')
-        self.width = config.get('dandere2x', 'width')
-        self.height = config.get('dandere2x', 'height')
+
+        # D2x Settings
+
         self.block_size = int(config.get('dandere2x', 'block_size'))
         self.step_size = config.get('dandere2x', 'step_size')
         self.bleed = int(config.get('dandere2x', 'bleed'))
@@ -105,8 +125,23 @@ class Context:
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
 
+        # Developer Settings #
+        self.debug = int(config.get('dandere2x', 'debug'))
+
+        # Waifu2x- Commands
+        self.waifu2x_vulkan_upscale_frame = config.get('dandere2x', 'waifu2x_vulkan_upscale_frame')
+
+        # FFMPEG Options #
+
+        self.extract_audio_command = config.get('dandere2x', 'extract_audio_command')
+        self.extract_frames_command = config.get('dandere2x', 'extract_frames_command')
+        self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
+        self.merge_video_command = config.get('dandere2x', 'merge_video_command')
+
         logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+
+
 
     def update_frame_count(self):
         self.frame_count = len([name for name in os.listdir(self.input_frames_dir)
