@@ -70,6 +70,9 @@ class Context:
         if '[this]' in self.ffmpeg_dir:
             self.ffmpeg_dir = self.ffmpeg_dir.replace('[this]', self.this_folder)
 
+        if '[this]' in self.ffprobe_dir:
+            self.ffprobe_dir = self.ffprobe_dir.replace('[this]', self.this_folder)
+
         if '[this]' in self.file_dir:
             self.file_dir = self.file_dir.replace('[this]', self.this_folder)
 
