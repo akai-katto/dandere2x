@@ -49,7 +49,7 @@ from wrappers.ff_wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
 from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_conv import Waifu2xConv
-
+from wrappers.waifu2x_vulkan import Waifu2xVulkan
 
 from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
 
@@ -121,7 +121,11 @@ class Dandere2x:
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-
+        elif self.context.waifu2x_type == "vulkan":
+            waifu2x = Waifu2xVulkan(self.context)
+            Waifu2xVulkan.upscale_file(self.context,
+                                     input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                     output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
@@ -174,6 +178,12 @@ class Dandere2x:
         elif self.context.waifu2x_type == "conv":
             waifu2x = Waifu2xConv(self.context)
             Waifu2xConv.upscale_file(self.context,
+                                     input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                     output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+        elif self.context.waifu2x_type == "vulkan":
+            waifu2x = Waifu2xVulkan(self.context)
+            Waifu2xVulkan.upscale_file(self.context,
                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 

@@ -36,8 +36,13 @@ class Context:
         self.ffprobe_dir = config.get('dandere2x', 'ffprobe_dir')
         self.file_dir = config.get('dandere2x', 'file_dir')
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
+
         self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
+
+
+        self.waifu2x_vulkan_dir = config.get('dandere2x', 'waifu2x_vulkan_dir')
+        self.waifu2x_vulkan_dir_dir = config.get('dandere2x', 'waifu2x_vulkan_dir_dir')
 
         self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
 
@@ -111,6 +116,9 @@ class Context:
 
         # Developer Settings #
         self.debug = int(config.get('dandere2x', 'debug'))
+
+        # Waifu2x- Commands
+        self.waifu2x_vulkan_upscale_frame = config.get('dandere2x', 'waifu2x_vulkan_upscale_frame')
 
         # FFMPEG Options #
 
