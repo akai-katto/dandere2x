@@ -80,7 +80,7 @@ def merge_encoded_vids(context: Context,  output_file: str):
 
 def run_realtime_encoding(context: Context, output_file: str):
     workspace = context.workspace
-    frame_rate = float(context.frame_rate)
+    frame_rate = int(context.frame_rate)
     frame_count = int(context.frame_count)
     realtime_encoding_delete_files = context.realtime_encoding_delete_files
     audio_type = context.audio_type
