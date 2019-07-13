@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Name: Dandere2X waifu2x-conv (abbreviated waifu2x-cpp-conveter)
+Name: Dandere2X waifu2x-vulkan)
 Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 
-Description: # A pretty hacky wrapper for Waifu2x-Conveter-Cpp.
+Description: # A pretty hacky wrapper for Waifu2x-Vulkan
 Behaves pretty similar to waifu2x-caffe, except directory must be
 set  (for subprocess call, waifu2x_vulkan_dir_dir keeps this variable) and arguments are slightly different.
-Furthermore, waifu2x-conv saves files in an annoying way,
+Furthermore, waifu2x-vulkan saves files in an annoying way, i.e it becomes image.png.png when saving in batches.
 so we need to correct those odd namings.
 """
 
@@ -56,6 +56,7 @@ class Waifu2xVulkan(threading.Thread):
         waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[input_file]", input_file)
         waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[output_file]", output_file)
         waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[scale_factor]", scale_factor)
+        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[noise_level]", noise_level)
 
         logger = logging.getLogger(__name__)
 
@@ -100,15 +101,15 @@ class Waifu2xVulkan(threading.Thread):
         waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[output_file]", self.upscaled_dir)
         waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[scale_factor]", self.scale_factor)
 
-
         exec = waifu2x_vulkan_upscale_frame.split(" ")
+
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
 
-        # we need to os.chdir or else waifu2x-conveter won't work.
+        # we need to os.chdir to set the directory or else waifu2x-vulkan won't work.
         os.chdir(self.waifu2x_vulkan_dir_dir)
 
-        logger.info("waifu2xconv session")
+        logger.info("waifu2x_vulkan session")
         logger.info(exec)
 
         # make a list of names that will eventually (past or future) be upscaled

@@ -124,8 +124,8 @@ class Dandere2x:
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
             Waifu2xVulkan.upscale_file(self.context,
-                                     input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                     output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
@@ -184,8 +184,8 @@ class Dandere2x:
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
             Waifu2xVulkan.upscale_file(self.context,
-                                     input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                     output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
