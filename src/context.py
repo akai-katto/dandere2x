@@ -134,6 +134,7 @@ class Context:
 
         # FFMPEG Options #
 
+        self.migrate_tracks_command = config.get('dandere2x', 'migrate_tracks_command')
         self.extract_audio_command = config.get('dandere2x', 'extract_audio_command')
         self.extract_frames_command = config.get('dandere2x', 'extract_frames_command')
         self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
