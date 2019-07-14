@@ -31,15 +31,17 @@ class Context:
         self.model_dir = config.get('dandere2x', 'model_dir')
 
         self.workspace = config.get('dandere2x', 'workspace')
+        self.file_dir = config.get('dandere2x', 'file_dir')
+
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
+
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
         self.ffprobe_dir = config.get('dandere2x', 'ffprobe_dir')
-        self.file_dir = config.get('dandere2x', 'file_dir')
+
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
 
         self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
-
 
         self.waifu2x_vulkan_dir = config.get('dandere2x', 'waifu2x_vulkan_dir')
         self.waifu2x_vulkan_dir_dir = config.get('dandere2x', 'waifu2x_vulkan_dir_dir')
@@ -79,7 +81,6 @@ class Context:
         if '[this]' in self.model_dir:
             self.model_dir = self.model_dir.replace('[this]', self.this_folder)
 
-
         self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
 
         self.frame_rate = self.video_settings.frame_rate
@@ -106,10 +107,9 @@ class Context:
         # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
         self.scale_factor = config.get('dandere2x', 'scale_factor')
-        self.process_type = config.get('dandere2x', 'process_type')
         self.extension_type = config.get('dandere2x', 'extension_type')
         self.audio_type = config.get('dandere2x', 'audio_type')
-        self.gpu_number = config.get('dandere2x', 'gpu_number')
+
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
@@ -128,8 +128,9 @@ class Context:
         # Developer Settings #
         self.debug = int(config.get('dandere2x', 'debug'))
 
-        # Waifu2x- Commands
+        # Waifu2x-wrappers Commands
         self.waifu2x_vulkan_upscale_frame = config.get('dandere2x', 'waifu2x_vulkan_upscale_frame')
+        self.waifu2x_caffe_upscale_frame = config.get('dandere2x', 'waifu2x_caffe_upscale_frame')
 
         # FFMPEG Options #
 

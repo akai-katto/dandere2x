@@ -122,6 +122,7 @@ class Dandere2x:
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "vulkan":
+
             waifu2x = Waifu2xVulkan(self.context)
             Waifu2xVulkan.upscale_file(self.context,
                                        input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,

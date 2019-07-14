@@ -28,43 +28,30 @@ class Waifu2xCaffe(threading.Thread):
         self.waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
-        self.process_type = context.process_type
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
         self.model_dir = context.model_dir
         self.workspace = context.workspace
-        self.gpu_number = context.gpu_number
+        self.context = context
 
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
     @staticmethod
     def upscale_file(context: Context, input_file: str, output_file: str):
-        # load variables from context
-        process_type = context.process_type
-        noise_level = context.noise_level
-        scale_factor = context.scale_factor
-        model_dir = context.model_dir
-        waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir
-        gpu_number = context.gpu_number
 
-        logger = logging.getLogger(__name__)
+        waifu2x_caffe_upscale_frame = context.waifu2x_caffe_upscale_frame
 
-        exec = [waifu2x_caffe_cui_dir,
-                "-i", input_file,
-                "-p", process_type,
-                "-n", noise_level,
-                "-s", scale_factor,
-                "--gpu", gpu_number,
-                "-o", output_file]
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[waifu2x_caffe_cui_dir]",
+                                                                          context.waifu2x_caffe_cui_dir)
 
-        # if the user is using a custom model
-        if model_dir != "default":
-            exec.append("--model_dir")
-            exec.append(model_dir)
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[input_file]", input_file)
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[noise_level]", context.noise_level)
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[scale_factor]", context.scale_factor)
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[output_file]", output_file)
 
-        logger.info("manually upscaling file")
-        logger.info(exec)
+        exec = waifu2x_caffe_upscale_frame.split(" ")
+
         subprocess.run(exec)
 
     # The current Dandere2x implementation requires files to be removed from the folder
@@ -79,17 +66,17 @@ class Waifu2xCaffe(threading.Thread):
     def run(self):
         logger = logging.getLogger(__name__)
 
-        exec = [self.waifu2x_caffe_cui_dir,
-                "-i", self.differences_dir,
-                "-p", self.process_type,
-                "-n", self.noise_level,
-                "-s", self.scale_factor,
-                "--gpu", self.gpu_number,
-                "-o", self.upscaled_dir]
+        waifu2x_caffe_upscale_frame = self.context.waifu2x_caffe_upscale_frame
 
-        if self.model_dir != "default":
-            exec.append("--model_dir")
-            exec.append(self.model_dir)
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[waifu2x_caffe_cui_dir]",
+                                                                          self.waifu2x_caffe_cui_dir)
+
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[input_file]", self.differences_dir)
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[noise_level]", self.noise_level)
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[scale_factor]", self.scale_factor)
+        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[output_file]", self.upscaled_dir)
+
+        exec = waifu2x_caffe_upscale_frame.split(" ")
 
         logger.info("waifu2xcaffe session")
         logger.info(exec)
