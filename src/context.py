@@ -14,7 +14,7 @@ rather than passing like 8-9 variables
 import configparser
 import logging
 import os
-from wrappers.ff_wrappers.videosettings import VideoSettings
+from wrappers.videosettings import VideoSettings
 
 # init is pretty messy at the moment. I'll look into
 # cleaning this up in the future ;-;
@@ -28,7 +28,6 @@ class Context:
 
         # directories
         self.waifu2x_caffe_cui_dir = config.get('dandere2x', 'waifu2x_caffe_cui_dir')
-        self.model_dir = config.get('dandere2x', 'model_dir')
 
         self.workspace = config.get('dandere2x', 'workspace')
         self.file_dir = config.get('dandere2x', 'file_dir')
@@ -106,7 +105,6 @@ class Context:
         self.noise_level = config.get('dandere2x', 'noise_level')
         self.scale_factor = config.get('dandere2x', 'scale_factor')
         self.extension_type = config.get('dandere2x', 'extension_type')
-
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
