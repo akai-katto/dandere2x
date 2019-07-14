@@ -87,10 +87,8 @@ class Context:
         self.width = self.video_settings.width
         self.height = self.video_settings.height
 
-
         # linux
         self.dandere_dir = config.get('dandere2x', 'dandere_dir')
-        self.audio_layer = config.get('dandere2x', 'audio_layer')
 
         # D2x Settings
 
@@ -108,7 +106,6 @@ class Context:
         self.noise_level = config.get('dandere2x', 'noise_level')
         self.scale_factor = config.get('dandere2x', 'scale_factor')
         self.extension_type = config.get('dandere2x', 'extension_type')
-        self.audio_type = config.get('dandere2x', 'audio_type')
 
 
         # setup directories
@@ -135,7 +132,6 @@ class Context:
         # FFMPEG Options #
 
         self.migrate_tracks_command = config.get('dandere2x', 'migrate_tracks_command')
-        self.extract_audio_command = config.get('dandere2x', 'extract_audio_command')
         self.extract_frames_command = config.get('dandere2x', 'extract_frames_command')
         self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
         self.merge_video_command = config.get('dandere2x', 'merge_video_command')

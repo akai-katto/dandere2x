@@ -82,7 +82,6 @@ def run_realtime_encoding(context: Context, output_file: str):
     frame_rate = int(context.frame_rate)
     frame_count = int(context.frame_count)
     realtime_encoding_delete_files = context.realtime_encoding_delete_files
-    audio_type = context.audio_type
     extension_type = context.extension_type
     file_dir = context.file_dir
 

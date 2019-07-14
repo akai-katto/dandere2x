@@ -32,23 +32,3 @@ def extract_frames(context: Context):
 
     subprocess.run(exec)
 
-
-def extract_audio(context: Context):
-    ffmpeg_dir = context.ffmpeg_dir
-    file_dir = context.file_dir
-    workspace = context.workspace
-    audio_layer = context.audio_layer
-    audio_type = context.audio_type
-
-    output_file = workspace + "audio" + audio_type
-
-    extract_audio_command = context.extract_audio_command
-
-    extract_audio_command = extract_audio_command.replace("[ffmpeg_dir]", ffmpeg_dir)
-    extract_audio_command = extract_audio_command.replace("[file_dir]", file_dir)
-    extract_audio_command = extract_audio_command.replace("[audio_layer]", audio_layer)
-    extract_audio_command = extract_audio_command.replace("[audio_type]", audio_type)
-    extract_audio_command = extract_audio_command.replace("[output_file]", output_file)
-    exec = extract_audio_command.split(" ")
-    print(exec)
-    subprocess.run(exec)
