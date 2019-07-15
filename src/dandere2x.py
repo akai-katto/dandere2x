@@ -55,10 +55,7 @@ import configparser
 
 class Dandere2x:
 
-    def __init__(self, config_file: str):
-        config = configparser.ConfigParser()
-        config.read(config_file)
-
+    def __init__(self, config: configparser.ConfigParser):
         self.context = Context(config)
 
     # Order matters here in command calls.

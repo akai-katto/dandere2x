@@ -32,10 +32,8 @@ class Waifu2xConv(threading.Thread):
         self.waifu2x_conv_dir_dir = context.waifu2x_conv_dir_dir
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
-        self.process_type = context.process_type
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
-        self.model_dir = context.model_dir
         self.workspace = context.workspace
 
         threading.Thread.__init__(self)

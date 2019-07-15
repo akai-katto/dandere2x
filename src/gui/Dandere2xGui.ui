@@ -256,6 +256,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="upscale_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>490</x>
@@ -314,7 +317,7 @@
    <widget class="QLabel" name="video_label">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>30</x>
       <y>260</y>
       <width>171</width>
       <height>21</height>
@@ -422,11 +425,14 @@
     <property name="text">
      <string>No video selected</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="workspace_label">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>260</x>
       <y>260</y>
       <width>171</width>
       <height>21</height>
@@ -533,6 +539,9 @@
     </property>
     <property name="text">
      <string>No workspace selected</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QWidget" name="widget_2" native="true">
@@ -692,7 +701,7 @@
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
-    <widget class="QRadioButton" name="noise_0">
+    <widget class="QRadioButton" name="noise_0_radio_button">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -748,7 +757,7 @@
       <string>Level 0</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_5">
+    <widget class="QRadioButton" name="noise_1_radio_button">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -804,7 +813,7 @@
       <string>Level 1</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_6">
+    <widget class="QRadioButton" name="noise_3_radio_button">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -863,7 +872,7 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QRadioButton" name="noise_1">
+    <widget class="QRadioButton" name="noise_2_radio_button">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -1032,7 +1041,7 @@
      <string>Noise Level</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="waifu2x_type_combo_box">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -1540,7 +1549,7 @@
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
-    <widget class="QRadioButton" name="noise_2">
+    <widget class="QRadioButton" name="scale_1_radio_button">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -1596,7 +1605,7 @@
       <string>1 x</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_7">
+    <widget class="QRadioButton" name="scale_2_radio_button">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -1655,7 +1664,7 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_8">
+    <widget class="QRadioButton" name="scale_4_radio_button">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -1714,7 +1723,7 @@
       <bool>false</bool>
      </property>
     </widget>
-    <widget class="QRadioButton" name="noise_3">
+    <widget class="QRadioButton" name="scale_3_radio_button">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -1771,7 +1780,7 @@
      </property>
     </widget>
    </widget>
-   <widget class="QComboBox" name="comboBox_2">
+   <widget class="QComboBox" name="image_quality_box">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -2622,13 +2631,13 @@
      <string>?</string>
     </property>
    </widget>
-   <widget class="QLabel" name="upscale_status">
+   <widget class="QLabel" name="upscale_status_label">
     <property name="geometry">
      <rect>
-      <x>500</x>
-      <y>260</y>
+      <x>490</x>
+      <y>250</y>
       <width>171</width>
-      <height>21</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="palette">
@@ -2730,8 +2739,14 @@
       <bold>false</bold>
      </font>
     </property>
+    <property name="whatsThis">
+     <string>Yo u need to select a video and select a workspace to proceed</string>
+    </property>
     <property name="text">
-     <string>No upscale in progress</string>
+     <string>No files selected</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>

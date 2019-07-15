@@ -22,11 +22,15 @@ from dandere2x import Dandere2x
 
 start = time.time()
 
-d = Dandere2x('config.ini')
-
 config = configparser.ConfigParser()
 config.read("config.ini")
-d.context.init_from_config_file(config)
+
+config.set("dandere2x","workspace","C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\1.1\\demo_folder\\new_dir2\\")
+
+
+d = Dandere2x(config)
+
+
 
 d.run_concurrent()
 
