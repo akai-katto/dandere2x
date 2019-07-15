@@ -178,6 +178,9 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         self.workspace_label.setFont(font)
         self.workspace_label.setObjectName("workspace_label")
+        self.video_icon = QtWidgets.QLabel(self.centralwidget)
+        self.video_icon.setGeometry(QtCore.QRect(80, 50, 131, 121))
+        self.video_icon.setObjectName("video_icon")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 739, 21))
@@ -198,4 +201,5 @@ class Ui_MainWindow(object):
         self.upscale_button.setText(_translate("MainWindow", "Upscale!"))
         self.video_label.setText(_translate("MainWindow", "No video selected"))
         self.workspace_label.setText(_translate("MainWindow", "No workspace selected"))
+        self.video_icon.setText(_translate("MainWindow", "TextLabel"))
 

@@ -16,6 +16,8 @@ class AppWindow(QMainWindow):
         self.file_dir = ''
         self.workspace_dir = ''
 
+        self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\etcher.png"))
+
         self.config_buttons()
         self.show()
 
