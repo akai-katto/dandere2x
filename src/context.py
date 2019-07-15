@@ -20,9 +20,7 @@ from wrappers.videosettings import VideoSettings
 # cleaning this up in the future ;-;
 class Context:
 
-    def __init__(self, config_file: str):
-        config = configparser.ConfigParser()
-        config.read(config_file)
+    def __init__(self, config: configparser.ConfigParser):
 
         self.this_folder = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
 
@@ -132,10 +130,13 @@ class Context:
         self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
         self.merge_video_command = config.get('dandere2x', 'merge_video_command')
 
-        os.mkdir(self.workspace)
+        try:
+            os.mkdir(self.workspace)
+        except:
+            pass
+
         logging.basicConfig(filename= self.workspace + 'dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
-
 
 
     def update_frame_count(self):

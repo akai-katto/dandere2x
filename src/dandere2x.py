@@ -51,12 +51,15 @@ from wrappers.waifu2x_wrappers.waifu2x_conv import Waifu2xConv
 from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
 
 from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
-
+import configparser
 
 class Dandere2x:
 
     def __init__(self, config_file: str):
-        self.context = Context(config_file)
+        config = configparser.ConfigParser()
+        config.read(config_file)
+
+        self.context = Context(config)
 
     # Order matters here in command calls.
     def pre_setup(self):
