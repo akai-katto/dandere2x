@@ -30,7 +30,6 @@ class Waifu2xCaffe(threading.Thread):
         self.upscaled_dir = context.upscaled_dir
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
-        self.model_dir = context.model_dir
         self.workspace = context.workspace
         self.context = context
 

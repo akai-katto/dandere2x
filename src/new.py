@@ -11,8 +11,4 @@ end = time.time()
 
 print("\n duration: " + str(time.time() - start))
 
-# d.difference_only()
 
-# d.merge_only()
-
-# running corrections before a frame and after?

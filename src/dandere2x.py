@@ -83,12 +83,13 @@ class Dandere2x:
 
     def __init__(self, config_file: str):
         self.context = Context(config_file)
-        self.logger = make_logger()
 
     # Order matters here in command calls.
     def pre_setup(self):
-        self.context.logger.info("Starting new dandere2x session")
         self.create_dirs()
+        logging = make_logger(self.context.workspace)
+        logging.info("Starting new dandere2x session")
+
         ffmpeg_extract_frames(self.context)
         self.create_waifu2x_script()
         self.write_frames()
@@ -120,7 +121,6 @@ class Dandere2x:
                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "vulkan":
-
             waifu2x = Waifu2xVulkan(self.context)
             Waifu2xVulkan.upscale_file(self.context,
                                        input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
@@ -138,7 +138,7 @@ class Dandere2x:
         status_thread = threading.Thread(target=print_status, args=(self.context,))
         realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
 
-        self.context.logger.info("Starting Threaded Processes..")
+        logging.info("starting new d2x process")
 
         waifu2x.start()
         merge_thread.start()

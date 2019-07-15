@@ -77,8 +77,6 @@ class Context:
         if '[this]' in self.file_dir:
             self.file_dir = self.file_dir.replace('[this]', self.this_folder)
 
-        if '[this]' in self.model_dir:
-            self.model_dir = self.model_dir.replace('[this]', self.this_folder)
 
         self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
 
@@ -134,8 +132,8 @@ class Context:
         self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
         self.merge_video_command = config.get('dandere2x', 'merge_video_command')
 
-        logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
+        # logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
+        # self.logger = logging.getLogger(__name__)
 
 
 
