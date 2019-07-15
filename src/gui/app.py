@@ -2,21 +2,26 @@ import sys
 import os
 
 from dandere2x import Dandere2x
+from dandere2x_core.dandere2x_utils import get_valid_block_sizes
+from wrappers.videosettings import VideoSettings
+import subprocess
 
 from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QWidget, QFileDialog
-from MainWindow import Ui_MainWindow
+from Dandere2xGUI import Ui_Dandere2xGUI
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+
 
 class AppWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.ui = Ui_MainWindow()
+        self.ui = Ui_Dandere2xGUI()
         self.ui.setupUi(self)
 
         self.file_dir = ''
         self.workspace_dir = ''
 
-        self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\etcher.png"))
+        #self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\aka.png"))
 
         self.config_buttons()
         self.show()
@@ -39,7 +44,7 @@ class AppWindow(QMainWindow):
 
         # d.context.file_dir = self.file_dir
         # d.context.workspace = self.workspace_dir
-
+        self.ui.upscale_status.setText("Upscaling in Progress")
         d.run_concurrent()
 
     def press_select_video_button(self):
@@ -50,6 +55,11 @@ class AppWindow(QMainWindow):
 
         self.ui.video_label.setText(name)
         self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+
+        valid_list = get_valid_block_sizes(1920,1080)
+        self.ui.block_size_combo_box.addItems(valid_list)
+        self.ui.block_size_combo_box.setEnabled(True)
+
 
     def press_select_workspace_button(self):
 

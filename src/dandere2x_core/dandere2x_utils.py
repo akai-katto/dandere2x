@@ -94,6 +94,16 @@ def get_seconds_from_time(time_frame: int):
 
     return hours_seconds + minutes_seconds + seconds
 
+def get_valid_block_sizes(width: int, height: int):
+    valid_sizes = []
+
+    larger_val = [width, height][height > width]
+
+    for x in range(1, larger_val):
+        if width % x == 0 and height % x == 0:
+            valid_sizes.append(str(x))
+
+    return valid_sizes
 
 # load the first frame, check if the block size is compatible with the resolution
 def verify_user_settings(context):
