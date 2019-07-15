@@ -53,32 +53,6 @@ from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
 from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
 
 
-# logger doesnt operate out of workspace, but thats ok I guess
-
-def make_logger(path=""):
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-
-    # create a file handler
-    fh = logging.FileHandler(f'{path}dandere2x.log')
-    fh.setLevel(logging.INFO)
-
-    # create a print(stdout) handler
-    ph = logging.StreamHandler(sys.stdout)
-    ph.setLevel(logging.INFO)
-
-    # create a logging format
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-    ph.setFormatter(formatter)
-
-    # add the handlers to the logger
-    logger.addHandler(fh)
-    logger.addHandler(ph)
-    return logger
-
-
 class Dandere2x:
 
     def __init__(self, config_file: str):
@@ -87,9 +61,6 @@ class Dandere2x:
     # Order matters here in command calls.
     def pre_setup(self):
         self.create_dirs()
-        logging = make_logger(self.context.workspace)
-        logging.info("Starting new dandere2x session")
-
         ffmpeg_extract_frames(self.context)
         self.create_waifu2x_script()
         self.write_frames()
