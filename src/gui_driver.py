@@ -38,6 +38,7 @@ class AppWindow(QMainWindow):
         #self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\aka.png"))
 
         self.config_buttons()
+        self.refresh_scale_factor()
         self.show()
 
 
@@ -46,6 +47,18 @@ class AppWindow(QMainWindow):
         self.ui.select_video_button.clicked.connect(self.press_select_video_button)
         self.ui.select_workspace_button.clicked.connect(self.press_select_workspace_button)
         self.ui.upscale_button.clicked.connect(self.press_upscale_button)
+        self.ui.waifu2x_type_combo_box.currentIndexChanged.connect(self.refresh_scale_factor)
+
+
+    # if vulkan is enabled, we cant do scale factor 3 or 4
+
+    def refresh_scale_factor(self):
+        if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
+            self.ui.scale_3_radio_button.setEnabled(False)
+            self.ui.scale_4_radio_button.setEnabled(False)
+        else:
+            self.ui.scale_3_radio_button.setEnabled(True)
+            self.ui.scale_4_radio_button.setEnabled(True)
 
     def press_upscale_button(self):
         
@@ -128,6 +141,9 @@ class AppWindow(QMainWindow):
 
         self.file_dir = self.load_file()[0]
 
+        if self.file_dir == '':
+            return
+
         path, name = os.path.split(self.file_dir)
 
         self.ui.video_label.setText(name)
@@ -154,6 +170,9 @@ class AppWindow(QMainWindow):
     def press_select_workspace_button(self):
 
         self.workspace_dir = self.load_dir()
+
+        if self.workspace_dir == '':
+            return 
 
         start_val = len(self.workspace_dir) - 20
         if(start_val < 0):
