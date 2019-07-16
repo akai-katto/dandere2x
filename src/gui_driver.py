@@ -172,7 +172,7 @@ class AppWindow(QMainWindow):
         self.workspace_dir = self.load_dir()
 
         if self.workspace_dir == '':
-            return 
+            return
 
         start_val = len(self.workspace_dir) - 20
         if(start_val < 0):

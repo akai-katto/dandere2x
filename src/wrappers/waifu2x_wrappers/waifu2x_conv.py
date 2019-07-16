@@ -90,6 +90,9 @@ class Waifu2xConv(threading.Thread):
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
 
+        fix_names_thread = threading.Thread(target=self.fix_names, args=())
+        fix_names_thread.start()
+
         # we need to os.chdir or else waifu2x-conveter won't work.
         os.chdir(self.waifu2x_conv_dir_dir)
 
