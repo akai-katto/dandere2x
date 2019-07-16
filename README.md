@@ -17,6 +17,7 @@ Dandere2x makes upscaling videos with waifu2x much faster by applying compressio
 - Color fading (fade to black) 
 - Custom block sizes
 - Custom scaling sizes (1x, 2x, 3x)
+- Interactive GUI
 
 
 ## How does Dandere2x work?
@@ -24,6 +25,11 @@ Dandere2x makes upscaling videos with waifu2x much faster by applying compressio
 I wrote a quick wiki-entry to answer the question. I hope it's accessible to most.
 
 https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works
+
+## GUI Preview
+
+![Image of the GUI](https://i.imgur.com/3SmNotr.png)
+
 
 ## Tutorial
 
