@@ -9,10 +9,11 @@ from wrappers.videosettings import VideoSettings
 import subprocess
 
 from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QWidget, QFileDialog
-from Dandere2xGUI import Ui_Dandere2xGUI
+from gui.Dandere2xGUI import Ui_Dandere2xGUI
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import time
+from context import Context
 
 
 class AppWindow(QMainWindow):
@@ -21,7 +22,7 @@ class AppWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_Dandere2xGUI()
         self.ui.setupUi(self)
-
+        self.this_folder = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
         self.file_dir = ''
         self.workspace_dir = ''
         self.scale_factor = ''
@@ -59,6 +60,7 @@ class AppWindow(QMainWindow):
         config.set("dandere2x", "block_size", self.block_size)
         config.set("dandere2x", "quality_low", self.image_quality)
         config.set("dandere2x", "waifu2x_type", self.waifu2x_type)
+        config.set("dandere2x", "scale_factor", self.scale_factor)
 
         print("workspace = " + self.workspace_dir)
         print("file_dir = " + self.file_dir)
@@ -123,8 +125,6 @@ class AppWindow(QMainWindow):
 
     def press_select_video_button(self):
 
-        print(self.ui.image_quality_box.currentText())
-
         self.file_dir = self.load_file()[0]
 
         path, name = os.path.split(self.file_dir)
@@ -132,7 +132,15 @@ class AppWindow(QMainWindow):
         self.ui.video_label.setText(name)
         self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
 
-        valid_list = get_valid_block_sizes(1920,1080)
+        config = configparser.ConfigParser()
+        config.read('gui_config.ini')
+        context = Context(config)
+
+        videosettings = VideoSettings(context.ffprobe_dir, self.file_dir)
+
+        valid_list = get_valid_block_sizes(videosettings.height, videosettings.width)
+
+        self.ui.block_size_combo_box.clear()
         self.ui.block_size_combo_box.addItems(valid_list)
         self.ui.block_size_combo_box.setEnabled(True)
         self.ui.block_size_combo_box.setCurrentIndex(len(valid_list) / 1.5) #put the middle most to avoid confusion
@@ -163,7 +171,7 @@ class AppWindow(QMainWindow):
 
         # Set window size.
         self.ui.w.resize(320, 240)
-        filename = QFileDialog.getExistingDirectory(w, 'Open Directory', 'C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\1.1\\demo_folder\\')
+        filename = QFileDialog.getExistingDirectory(w, 'Open Directory', self.this_folder)
         return filename
 
     def load_file(self):
@@ -171,7 +179,7 @@ class AppWindow(QMainWindow):
 
         # Set window size.
         self.ui.w.resize(320, 240)
-        filename = QFileDialog.getOpenFileName(w, 'Open File', 'C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\1.1\\demo_folder\\')
+        filename = QFileDialog.getOpenFileName(w, 'Open File', self.this_folder)
         return filename
 
 app = QApplication(sys.argv)
