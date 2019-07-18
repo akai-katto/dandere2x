@@ -68,7 +68,7 @@ class AppWindow(QMainWindow):
         self.parse_gui_inputs()
 
         config = configparser.ConfigParser()
-        config.read('C:\\Users\\windwoz\\Documents\\github_projects\\src\\config.ini')
+        config.read('gui_config.ini')
         config.set("dandere2x", "workspace", self.workspace_dir)
         config.set("dandere2x", "file_dir", self.file_dir)
         config.set("dandere2x", "block_size", self.block_size)
@@ -89,7 +89,7 @@ class AppWindow(QMainWindow):
             d.run_concurrent()
         except:
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
-            self.ui.upscale_status_label.setText("Upscale Failed")
+            self.ui.upscale_status_label.setText("Upscale Failed. See log")
 
 
 
@@ -100,6 +100,8 @@ class AppWindow(QMainWindow):
 
         self.workspace_dir = self.workspace_dir.replace("/", "\\") + "\\"
         self.file_dir = self.file_dir.replace("/", "\\")
+
+        # Scale Factors
 
         if self.ui.scale_1_radio_button.isChecked():
             self.scale_factor = '1'
@@ -113,6 +115,8 @@ class AppWindow(QMainWindow):
         if self.ui.scale_4_radio_button.isChecked():
             self.scale_factor = '4'
 
+        # Noise factors
+
         if self.ui.noise_0_radio_button.isChecked():
             self.noise_level = '0'
 
@@ -125,9 +129,12 @@ class AppWindow(QMainWindow):
         if self.ui.noise_3_radio_button.isChecked():
             self.noise_level = '3'
 
+        # Dandere2x Settings
         self.image_quality = self.ui.image_quality_box.currentText()
         self.block_size = self.ui.block_size_combo_box.currentText()
 
+
+        # Waifu2x Type
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Caffe':
             self.waifu2x_type = 'caffe'
 
@@ -201,6 +208,7 @@ class AppWindow(QMainWindow):
         self.ui.w.resize(320, 240)
         filename = QFileDialog.getOpenFileName(w, 'Open File', self.this_folder)
         return filename
+
 
 app = QApplication(sys.argv)
 w = AppWindow()
