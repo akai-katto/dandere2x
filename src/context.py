@@ -14,6 +14,7 @@ rather than passing like 8-9 variables
 import configparser
 import logging
 import os
+import sys
 from wrappers.videosettings import VideoSettings
 
 # init is pretty messy at the moment. I'll look into
@@ -21,8 +22,12 @@ from wrappers.videosettings import VideoSettings
 class Context:
 
     def __init__(self, config: configparser.ConfigParser):
+        self.this_folder = ''
 
-        self.this_folder = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
+        if getattr(sys, 'frozen', False):
+            self.this_folder = os.path.dirname(sys.executable) + os.path.sep
+        elif __file__:
+            self.this_folder = os.path.dirname(__file__) + os.path.sep
 
         # directories
         self.waifu2x_caffe_cui_dir = config.get('dandere2x', 'waifu2x_caffe_cui_dir')
