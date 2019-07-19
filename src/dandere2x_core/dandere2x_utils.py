@@ -60,7 +60,6 @@ def wait_on_file(file_string: str):
 # for renaming function, break when either file exists
 def wait_on_either_file(file_1: str, file_2: str):
 
-    print("waiting for either: " + file_1 + " or " + file_2 )
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)

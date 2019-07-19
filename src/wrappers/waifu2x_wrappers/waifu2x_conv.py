@@ -75,31 +75,40 @@ class Waifu2xConv(threading.Thread):
                 rename_file(self.upscaled_dir + name,
                             self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
 
+    # This function is tricky. Essentially we do multiple things in one function
+    # Because of 'gotchas'
+
+    # First, we make a list of prefixes. Both the desired file name and the produced file name
+    # Will start with the same prefix (i.e all the stuff in file_names).
+
+    # Then, we have to specify what the dirty name will end in. in Conv's it'll have a
+    # '_[NS-L' + self.noise_level + '][x' + self.scale_factor + '.000000]' in the name we dont want
+    # We then have to do a try / except to try to rename it back to it's clean name, since it may still be
+    # being written / used by another program and not safe to edit yet.
 
     def fix_names_all(self):
 
-        names = []
+        file_names = []
         for x in range(1, self.frame_count):
-            names.append("output_" + get_lexicon_value(6, x)+ "_")
+            file_names.append("output_" + get_lexicon_value(6, x))
 
+        for file in file_names:
+            dirty_name = self.upscaled_dir + file + '_[NS-L' + self.noise_level + '][x' + self.scale_factor + '.000000]' + ".png"
+            clean_name = self.upscaled_dir + file + ".png"
 
-        for name in names:
-            wait_on_either_file(self.upscaled_dir + name, self.upscaled_dir + name + '[NS-L3][x' + self.scale_factor + '.000000]' + ".png")
+            wait_on_either_file(clean_name, dirty_name)
 
-            ugly_name = self.upscaled_dir + name + '[NS-L3][x' + self.scale_factor + '.000000]' + ".png"
-
-            if(file_exists(self.upscaled_dir + name)):
+            if file_exists(clean_name):
                 pass
 
-            elif (file_exists(ugly_name)):
-                while(file_exists(self.upscaled_dir + name + ".png")):
+            elif file_exists(dirty_name):
+                while file_exists(dirty_name):
                     try:
-                        rename_file(self.upscaled_dir + name,
-                                    self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
+                        rename_file(dirty_name, clean_name)
                     except PermissionError:
                         pass
 
-                    print("removed it!")
+
 
 
 

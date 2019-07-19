@@ -79,28 +79,37 @@ class Waifu2xVulkan(threading.Thread):
                 rename_file(self.upscaled_dir + name,
                             self.upscaled_dir + name.replace('.png.png', '.png'))
 
-    # This solution is tricky
+    # This function is tricky. Essentially we do multiple things in one function
+    # Because of 'gotchas'
+
+    # First, we make a list of prefixes. Both the desired file name and the produced file name
+    # Will start with the same prefix (i.e all the stuff in file_names).
+
+    # Then, we have to specify what the dirty name will end in. in Vulkan's case, it'll have a ".png.png"
+    # We then have to do a try / except to try to rename it back to it's clean name, since it may still be
+    # being written / used by another program and not safe to edit yet.
     def fix_names_all(self):
 
-        names = []
+        file_names = []
         for x in range(1, self.frame_count):
-            names.append("output_" + get_lexicon_value(6, x) + ".png")
+            file_names.append("output_" + get_lexicon_value(6, x))
 
+        for file in file_names:
+            dirty_name = self.upscaled_dir + file + ".png.png"
+            clean_name = self.upscaled_dir + file + ".png"
 
-        for name in names:
-            wait_on_either_file(self.upscaled_dir + name, self.upscaled_dir + name + ".png")
+            wait_on_either_file(clean_name, dirty_name)
 
-            if(file_exists(self.upscaled_dir + name)):
+            if file_exists(clean_name):
                 pass
 
-            elif (file_exists(self.upscaled_dir + name + ".png")):
-                while(file_exists(self.upscaled_dir + name + ".png")):
+            elif file_exists(dirty_name):
+                while file_exists(dirty_name):
                     try:
-                        rename_file(self.upscaled_dir + name + ".png", self.upscaled_dir + name.replace('.png.png', '.png'))
+                        rename_file(dirty_name, clean_name)
                     except PermissionError:
                         pass
 
-                    print("renamed!")
 
 
     # (description from waifu2x_caffe)
