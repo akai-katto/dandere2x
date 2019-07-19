@@ -19,7 +19,7 @@ import subprocess
 import threading
 
 from context import Context
-from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists
 from dandere2x_core.dandere2x_utils import rename_file
 
 
@@ -75,6 +75,36 @@ class Waifu2xConv(threading.Thread):
                 rename_file(self.upscaled_dir + name,
                             self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
 
+
+    def fix_names_all(self):
+
+        names = []
+        for x in range(1, self.frame_count):
+            names.append("output_" + get_lexicon_value(6, x)+ "_")
+
+
+        for name in names:
+            wait_on_either_file(self.upscaled_dir + name, self.upscaled_dir + name + '[NS-L3][x' + self.scale_factor + '.000000]' + ".png")
+
+            ugly_name = self.upscaled_dir + name + '[NS-L3][x' + self.scale_factor + '.000000]' + ".png"
+
+            if(file_exists(self.upscaled_dir + name)):
+                pass
+
+            elif (file_exists(ugly_name)):
+                while(file_exists(self.upscaled_dir + name + ".png")):
+                    try:
+                        rename_file(self.upscaled_dir + name,
+                                    self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
+                    except PermissionError:
+                        pass
+
+                    print("removed it!")
+
+
+
+
+
     # (description from waifu2x_caffe)
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -90,8 +120,8 @@ class Waifu2xConv(threading.Thread):
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
 
-        fix_names_thread = threading.Thread(target=self.fix_names, args=())
-        fix_names_thread.start()
+        fix_names_forever_thread = threading.Thread(target=self.fix_names_all)
+        fix_names_forever_thread.start()
 
         # we need to os.chdir or else waifu2x-conveter won't work.
         os.chdir(self.waifu2x_conv_dir_dir)
@@ -130,7 +160,7 @@ class Waifu2xConv(threading.Thread):
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
             subprocess.run(exec, stdout=open(os.devnull, 'wb'))
-            self.fix_names()
+            #self.fix_names()
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
                     os.remove(self.differences_dir + item)

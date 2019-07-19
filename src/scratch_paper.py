@@ -18,20 +18,8 @@
 import configparser
 import time
 
-from dandere2x import Dandere2x
+from dandere2x_core.dandere2x_utils import wait_on_either_file
 
-start = time.time()
+wait_on_either_file("C:\\Users\\windwoz\\Documents\\debugs\\new\\file1.txt", "C:\\Users\\windwoz\\Documents\\debugs\\new\\file2.txt")
 
-config = configparser.ConfigParser()
-config.read("config.ini")
-
-config.set("dandere2x","workspace","C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\1.1\\demo_folder\\new_dir2\\")
-
-
-d = Dandere2x(config)
-
-
-
-d.run_concurrent()
-
-end = time.time()
+print("Either exists!")

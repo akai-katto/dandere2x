@@ -21,6 +21,8 @@ import threading
 from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import rename_file
+from dandere2x_core.dandere2x_utils import wait_on_either_file
+from dandere2x_core.dandere2x_utils import file_exists
 
 
 # this is pretty ugly
@@ -77,6 +79,30 @@ class Waifu2xVulkan(threading.Thread):
                 rename_file(self.upscaled_dir + name,
                             self.upscaled_dir + name.replace('.png.png', '.png'))
 
+    # This solution is tricky
+    def fix_names_all(self):
+
+        names = []
+        for x in range(1, self.frame_count):
+            names.append("output_" + get_lexicon_value(6, x) + ".png")
+
+
+        for name in names:
+            wait_on_either_file(self.upscaled_dir + name, self.upscaled_dir + name + ".png")
+
+            if(file_exists(self.upscaled_dir + name)):
+                pass
+
+            elif (file_exists(self.upscaled_dir + name + ".png")):
+                while(file_exists(self.upscaled_dir + name + ".png")):
+                    try:
+                        rename_file(self.upscaled_dir + name + ".png", self.upscaled_dir + name.replace('.png.png', '.png'))
+                    except PermissionError:
+                        pass
+
+                    print("renamed!")
+
+
     # (description from waifu2x_caffe)
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -89,9 +115,6 @@ class Waifu2xVulkan(threading.Thread):
     #          4) Repeat this process until all the names are removed.
     def run(self):
         logger = logging.getLogger(__name__)
-
-        fix_names_thread = threading.Thread(target=self.fix_names, args=())
-        fix_names_thread.start()
 
         waifu2x_vulkan_upscale_frame = self.context.waifu2x_vulkan_upscale_frame
         waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[waifu2x_vulkan_dir]", self.waifu2x_vulkan_dir)
@@ -115,12 +138,15 @@ class Waifu2xVulkan(threading.Thread):
         for x in range(1, self.frame_count):
             names.append("output_" + get_lexicon_value(6, x) + ".png")
 
+        fix_names_forever_thread = threading.Thread(target=self.fix_names_all)
+        fix_names_forever_thread.start()
+
         count_removed = 0
 
         # remove from the list images that have already been upscaled
-        for item in names[::-1]:
-            if os.path.isfile(self.upscaled_dir + item):
-                names.remove(item)
+        for name in names[::-1]:
+            if os.path.isfile(self.upscaled_dir + name):
+                names.remove(name)
                 count_removed += 1
 
         if count_removed:
@@ -128,12 +154,14 @@ class Waifu2xVulkan(threading.Thread):
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
         while names:
+
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
             subprocess.call(exec, stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT) # We're supressing A LOT of errors btw.
-            self.fix_names()
-            for item in names[::-1]:
-                if os.path.isfile(self.upscaled_dir + item):
-                    os.remove(self.differences_dir + item)
-                    names.remove(item)
+            #self.fix_names()
+
+            for name in names[::-1]:
+                if os.path.isfile(self.upscaled_dir + name):
+                    os.remove(self.differences_dir + name)
+                    names.remove(name)
 
