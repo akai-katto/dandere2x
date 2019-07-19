@@ -57,6 +57,22 @@ def wait_on_file(file_string: str):
         count += 1
         time.sleep(.001)
 
+# for renaming function, break when either file exists
+def wait_on_either_file(file_1: str, file_2: str):
+
+    logger = logging.getLogger(__name__)
+    exists_1 = os.path.isfile(file_1)
+    exists_2 = os.path.isfile(file_2)
+    count = 0
+    while not (exists_1 or exists_2):
+        if count % 1000000 == 0:
+            logger.info(file_1 + "dne, waiting")
+        exists_1 = os.path.isfile(file_1)
+        exists_2 = os.path.isfile(file_2)
+
+        count += 1
+        time.sleep(.001)
+
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
 def file_exists(file_string: str):

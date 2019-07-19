@@ -22,8 +22,9 @@ from wrappers.videosettings import VideoSettings
 class Context:
 
     def __init__(self, config: configparser.ConfigParser):
-        self.this_folder = ''
 
+        # load 'this folder' in a pyinstaller friendly way
+        self.this_folder = ''
         if getattr(sys, 'frozen', False):
             self.this_folder = os.path.dirname(sys.executable) + os.path.sep
         elif __file__:

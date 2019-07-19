@@ -22,7 +22,15 @@ class AppWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_Dandere2xGUI()
         self.ui.setupUi(self)
-        self.this_folder = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
+
+
+        # load 'this folder' in a pyinstaller friendly way
+        self.this_folder = ''
+        if getattr(sys, 'frozen', False):
+            self.this_folder = os.path.dirname(sys.executable) + os.path.sep
+        elif __file__:
+            self.this_folder = os.path.dirname(__file__) + os.path.sep
+
         self.file_dir = ''
         self.workspace_dir = ''
         self.scale_factor = ''
@@ -88,6 +96,7 @@ class AppWindow(QMainWindow):
         try:
             d.run_concurrent()
         except:
+            print("Oops!", sys.exc_info()[0], "occured.")
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Upscale Failed. See log")
 
@@ -153,34 +162,47 @@ class AppWindow(QMainWindow):
 
         path, name = os.path.split(self.file_dir)
 
+        # set the video label to the selected file name
         self.ui.video_label.setText(name)
         self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
 
+
+        # read the gui so we can get ffprobe directory
         config = configparser.ConfigParser()
         config.read('gui_config.ini')
         context = Context(config)
 
+
+        # load the needed video settings for the GUI
         videosettings = VideoSettings(context.ffprobe_dir, self.file_dir)
 
-        valid_list = get_valid_block_sizes(videosettings.height, videosettings.width)
+        # Get a list of valid list block sizes knowing the width and height
+        valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width)
 
         self.ui.block_size_combo_box.clear()
-        self.ui.block_size_combo_box.addItems(valid_list)
+        self.ui.block_size_combo_box.addItems(valid_list_blocksize)
         self.ui.block_size_combo_box.setEnabled(True)
-        self.ui.block_size_combo_box.setCurrentIndex(len(valid_list) / 1.5) #put the middle most to avoid confusion
+        self.ui.block_size_combo_box.setCurrentIndex(len(valid_list_blocksize) / 1.5) # Put the blocksize to be in the middleish
+                                                                            # to avoid users leaving it as '1'
 
+        # allow user to upscale if two conditions are met
         if self.file_dir != '' and self.workspace_dir != '':
             self.ui.upscale_button.setEnabled(True)
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Ready to upscale!")
 
+
+
     def press_select_workspace_button(self):
 
         self.workspace_dir = self.load_dir()
 
+        # If the user didn't select anything, don't continue or it'll break
+        # Everything
         if self.workspace_dir == '':
             return
 
+        # set the label to only display the last 20 elements of the selected workspace
         start_val = len(self.workspace_dir) - 20
         if(start_val < 0):
             start_val = 0
@@ -188,6 +210,7 @@ class AppWindow(QMainWindow):
         self.ui.workspace_label.setText(".." + self.workspace_dir[start_val :  len(self.workspace_dir)])
         self.ui.workspace_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
 
+        # allow user to upscale if two conditions are met
         if self.file_dir != '' and self.workspace_dir != '':
             self.ui.upscale_button.setEnabled(True)
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
@@ -196,7 +219,6 @@ class AppWindow(QMainWindow):
     def load_dir(self):
         self.ui.w = QWidget()
 
-        # Set window size.
         self.ui.w.resize(320, 240)
         filename = QFileDialog.getExistingDirectory(w, 'Open Directory', self.this_folder)
         return filename
@@ -204,7 +226,6 @@ class AppWindow(QMainWindow):
     def load_file(self):
         self.ui.w = QWidget()
 
-        # Set window size.
         self.ui.w.resize(320, 240)
         filename = QFileDialog.getOpenFileName(w, 'Open File', self.this_folder)
         return filename

@@ -19,7 +19,7 @@ import subprocess
 import threading
 
 from context import Context
-from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists
 from dandere2x_core.dandere2x_utils import rename_file
 
 
@@ -75,6 +75,45 @@ class Waifu2xConv(threading.Thread):
                 rename_file(self.upscaled_dir + name,
                             self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
 
+    # This function is tricky. Essentially we do multiple things in one function
+    # Because of 'gotchas'
+
+    # First, we make a list of prefixes. Both the desired file name and the produced file name
+    # Will start with the same prefix (i.e all the stuff in file_names).
+
+    # Then, we have to specify what the dirty name will end in. in Conv's it'll have a
+    # '_[NS-L' + self.noise_level + '][x' + self.scale_factor + '.000000]' in the name we dont want
+    # We then have to do a try / except to try to rename it back to it's clean name, since it may still be
+    # being written / used by another program and not safe to edit yet.
+
+    def fix_names_all(self):
+
+        file_names = []
+        for x in range(1, self.frame_count):
+            file_names.append("output_" + get_lexicon_value(6, x))
+
+        for file in file_names:
+            dirty_name = self.upscaled_dir + file + '_[NS-L' + self.noise_level + '][x' + self.scale_factor + '.000000]' + ".png"
+            clean_name = self.upscaled_dir + file + ".png"
+
+            wait_on_either_file(clean_name, dirty_name)
+
+            if file_exists(clean_name):
+                pass
+
+            elif file_exists(dirty_name):
+                while file_exists(dirty_name):
+                    try:
+                        rename_file(dirty_name, clean_name)
+                    except PermissionError:
+                        pass
+
+
+
+
+
+
+
     # (description from waifu2x_caffe)
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -90,8 +129,8 @@ class Waifu2xConv(threading.Thread):
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
 
-        fix_names_thread = threading.Thread(target=self.fix_names, args=())
-        fix_names_thread.start()
+        fix_names_forever_thread = threading.Thread(target=self.fix_names_all)
+        fix_names_forever_thread.start()
 
         # we need to os.chdir or else waifu2x-conveter won't work.
         os.chdir(self.waifu2x_conv_dir_dir)
@@ -130,7 +169,7 @@ class Waifu2xConv(threading.Thread):
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
             subprocess.run(exec, stdout=open(os.devnull, 'wb'))
-            self.fix_names()
+            #self.fix_names()
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
                     os.remove(self.differences_dir + item)
