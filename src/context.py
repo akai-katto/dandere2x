@@ -14,32 +14,36 @@ rather than passing like 8-9 variables
 import configparser
 import logging
 import os
-from wrappers.ff_wrappers.videosettings import VideoSettings
+import sys
+from wrappers.videosettings import VideoSettings
 
 # init is pretty messy at the moment. I'll look into
 # cleaning this up in the future ;-;
 class Context:
 
-    def __init__(self, config_file: str):
-        config = configparser.ConfigParser()
-        config.read(config_file)
+    def __init__(self, config: configparser.ConfigParser):
+        self.this_folder = ''
 
-        self.this_folder = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
+        if getattr(sys, 'frozen', False):
+            self.this_folder = os.path.dirname(sys.executable) + os.path.sep
+        elif __file__:
+            self.this_folder = os.path.dirname(__file__) + os.path.sep
 
         # directories
         self.waifu2x_caffe_cui_dir = config.get('dandere2x', 'waifu2x_caffe_cui_dir')
-        self.model_dir = config.get('dandere2x', 'model_dir')
 
         self.workspace = config.get('dandere2x', 'workspace')
+        self.file_dir = config.get('dandere2x', 'file_dir')
+
         self.dandere2x_cpp_dir = config.get('dandere2x', 'dandere2x_cpp_dir')
+
         self.ffmpeg_dir = config.get('dandere2x', 'ffmpeg_dir')
         self.ffprobe_dir = config.get('dandere2x', 'ffprobe_dir')
-        self.file_dir = config.get('dandere2x', 'file_dir')
+
         self.waifu2x_type = config.get('dandere2x', 'waifu2x_type')
 
         self.waifu2x_conv_dir = config.get('dandere2x', 'waifu2x_conv_dir')
         self.waifu2x_conv_dir_dir = config.get('dandere2x', 'waifu2x_conv_dir_dir')
-
 
         self.waifu2x_vulkan_dir = config.get('dandere2x', 'waifu2x_vulkan_dir')
         self.waifu2x_vulkan_dir_dir = config.get('dandere2x', 'waifu2x_vulkan_dir_dir')
@@ -76,9 +80,6 @@ class Context:
         if '[this]' in self.file_dir:
             self.file_dir = self.file_dir.replace('[this]', self.this_folder)
 
-        if '[this]' in self.model_dir:
-            self.model_dir = self.model_dir.replace('[this]', self.this_folder)
-
 
         self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
 
@@ -86,10 +87,8 @@ class Context:
         self.width = self.video_settings.width
         self.height = self.video_settings.height
 
-
         # linux
         self.dandere_dir = config.get('dandere2x', 'dandere_dir')
-        self.audio_layer = config.get('dandere2x', 'audio_layer')
 
         # D2x Settings
 
@@ -106,10 +105,7 @@ class Context:
         # waifu2x settings
         self.noise_level = config.get('dandere2x', 'noise_level')
         self.scale_factor = config.get('dandere2x', 'scale_factor')
-        self.process_type = config.get('dandere2x', 'process_type')
         self.extension_type = config.get('dandere2x', 'extension_type')
-        self.audio_type = config.get('dandere2x', 'audio_type')
-        self.gpu_number = config.get('dandere2x', 'gpu_number')
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
@@ -128,19 +124,24 @@ class Context:
         # Developer Settings #
         self.debug = int(config.get('dandere2x', 'debug'))
 
-        # Waifu2x- Commands
+        # Waifu2x-wrappers Commands
         self.waifu2x_vulkan_upscale_frame = config.get('dandere2x', 'waifu2x_vulkan_upscale_frame')
+        self.waifu2x_caffe_upscale_frame = config.get('dandere2x', 'waifu2x_caffe_upscale_frame')
 
         # FFMPEG Options #
 
-        self.extract_audio_command = config.get('dandere2x', 'extract_audio_command')
+        self.migrate_tracks_command = config.get('dandere2x', 'migrate_tracks_command')
         self.extract_frames_command = config.get('dandere2x', 'extract_frames_command')
         self.video_from_frames_command = config.get('dandere2x', 'video_from_frames_command')
         self.merge_video_command = config.get('dandere2x', 'merge_video_command')
 
-        logging.basicConfig(filename='dandere2x.log', level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
+        try:
+            os.mkdir(self.workspace)
+        except:
+            pass
 
+        logging.basicConfig(filename= self.workspace + 'dandere2x.log', level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
 
 
     def update_frame_count(self):

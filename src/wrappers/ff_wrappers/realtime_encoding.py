@@ -40,17 +40,18 @@ def delete_specific_merged(file_prefix, extension, lexiconic_digits, start, end)
         os.remove(file_prefix + str(get_lexicon_value(lexiconic_digits, x)) + extension)
 
 
-def merge_audio(context: Context,  video: str, audio: str, output: str):
-    ffmpeg_dir = context.ffmpeg_dir
+# 'file_dir' refers to the file in the config file, aka the 'input_video'.
 
-    exec = [ffmpeg_dir,
-            "-i",
-            video,
-            "-i",
-            audio,
-            "-c",
-            "copy",
-            output]
+def merge_tracks(context: Context, no_audio: str, file_dir: str, output_file: str):
+    migrate_tracks_command = context.migrate_tracks_command
+
+    migrate_tracks_command = migrate_tracks_command.replace("[ffmpeg_dir]", context.ffmpeg_dir)
+    migrate_tracks_command = migrate_tracks_command.replace("[no_audio]", no_audio)
+    migrate_tracks_command = migrate_tracks_command.replace("[file_dir]", file_dir)
+    migrate_tracks_command = migrate_tracks_command.replace("[output_file]", output_file)
+
+    exec = migrate_tracks_command.split(" ")
+    print(exec)
 
     subprocess.run(exec, stdout=open(os.devnull, 'wb'))
 
@@ -81,8 +82,8 @@ def run_realtime_encoding(context: Context, output_file: str):
     frame_rate = int(context.frame_rate)
     frame_count = int(context.frame_count)
     realtime_encoding_delete_files = context.realtime_encoding_delete_files
-    audio_type = context.audio_type
     extension_type = context.extension_type
+    file_dir = context.file_dir
 
     # directories
     merged_files_prefix = context.merged_dir + "merged_"
@@ -127,5 +128,5 @@ def run_realtime_encoding(context: Context, output_file: str):
     text_file.close()
 
     merge_encoded_vids(context, output_file)
-    merge_audio(context, output_file, workspace + "audio" + audio_type, workspace + "finished.mkv")
+    merge_tracks(context, output_file, file_dir, workspace + "finished.mkv")
 

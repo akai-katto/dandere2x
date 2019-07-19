@@ -45,52 +45,22 @@ from dandere2x_core.merge import merge_loop_resume
 from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ff_wrappers.ffmpeg import extract_audio as ffmpeg_extract_audio
 from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
-from wrappers.waifu2x_caffe import Waifu2xCaffe
-from wrappers.waifu2x_conv import Waifu2xConv
-from wrappers.waifu2x_vulkan import Waifu2xVulkan
+from wrappers.waifu2x_wrappers.waifu2x_caffe import Waifu2xCaffe
+from wrappers.waifu2x_wrappers.waifu2x_conv import Waifu2xConv
+from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
 
 from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
-
-
-# logger doesnt operate out of workspace, but thats ok I guess
-
-def make_logger(path=""):
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-
-    # create a file handler
-    fh = logging.FileHandler(f'{path}dandere2x.log')
-    fh.setLevel(logging.INFO)
-
-    # create a print(stdout) handler
-    ph = logging.StreamHandler(sys.stdout)
-    ph.setLevel(logging.INFO)
-
-    # create a logging format
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-    ph.setFormatter(formatter)
-
-    # add the handlers to the logger
-    logger.addHandler(fh)
-    logger.addHandler(ph)
-    return logger
-
+import configparser
 
 class Dandere2x:
 
-    def __init__(self, config_file: str):
-        self.context = Context(config_file)
-        self.logger = make_logger()
+    def __init__(self, config: configparser.ConfigParser):
+        self.context = Context(config)
 
     # Order matters here in command calls.
     def pre_setup(self):
-        self.context.logger.info("Starting new dandere2x session")
         self.create_dirs()
-        ffmpeg_extract_audio(self.context)
         ffmpeg_extract_frames(self.context)
         self.create_waifu2x_script()
         self.write_frames()
@@ -139,7 +109,7 @@ class Dandere2x:
         status_thread = threading.Thread(target=print_status, args=(self.context,))
         realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
 
-        self.context.logger.info("Starting Threaded Processes..")
+        logging.info("starting new d2x process")
 
         waifu2x.start()
         merge_thread.start()
@@ -302,9 +272,29 @@ class Dandere2x:
 
     # for re-merging the files after runtime is done
     def write_merge_commands(self):
+
+        no_audio_video = self.context.workspace + "nosound.mkv"
+        finished_video = self.context.workspace + "finished.mkv"
+
+        merged_frames = self.context.merged_dir + "merged_%d.jpg"
+
+        migrate_tracks_command = self.context.migrate_tracks_command
+
+        migrate_tracks_command = migrate_tracks_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
+        migrate_tracks_command = migrate_tracks_command.replace("[no_audio]", no_audio_video)
+        migrate_tracks_command = migrate_tracks_command.replace("[file_dir]", self.context.file_dir)
+        migrate_tracks_command = migrate_tracks_command.replace("[output_file]", finished_video)
+
+        video_from_frames_command = self.context.video_from_frames_command
+
+        video_from_frames_command = video_from_frames_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
+        video_from_frames_command = video_from_frames_command.replace("[frame_rate]", str(self.context.frame_rate))
+        video_from_frames_command = video_from_frames_command.replace("[start_number]", str(0))
+        video_from_frames_command = video_from_frames_command.replace("[input_frames]", merged_frames)
+        video_from_frames_command = video_from_frames_command.replace("[end_number]", "")
+        video_from_frames_command = video_from_frames_command.replace("-vframes", "")
+        video_from_frames_command = video_from_frames_command.replace("[output_file]", no_audio_video)
+
         with open(self.context.workspace + os.path.sep + 'commands.txt', 'w') as f:
-            f.write(
-                self.context.ffmpeg_dir + " -f image2 -framerate " + str(self.context.frame_rate) + " -i " + self.context.merged_dir + "merged_%d.jpg -r " + str(self.context.frame_rate) + " -vf deband " + self.context.workspace + "nosound.mp4\n\n")
-            f.write(
-                self.context.ffmpeg_dir + " -i " + self.context.workspace + "nosound.mp4" + " -i " + self.context.workspace + "audio" + self.context.audio_type + " -c copy " +
-                self.context.workspace + "sound.mp4\n\n")
+            f.write(video_from_frames_command + "\n")
+            f.write(migrate_tracks_command + "\n")
