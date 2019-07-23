@@ -33,6 +33,8 @@ class Context:
         elif __file__:
             self.this_folder = os.path.dirname(__file__) + os.path.sep
 
+        self.config_json = config_json
+
         # directories
         self.waifu2x_caffe_cui_dir = config_json['waifu2x_caffe']['waifu2x_caffe_path']
 
@@ -123,9 +125,9 @@ class Context:
 
         # Create Caffe Command
         self.waifu2x_caffe_upscale_frame = [self.waifu2x_caffe_cui_dir,
-                                             "-i", "[input_file]",
-                                             "-n", str(self.noise_level),
-                                             "-s", str(self.scale_factor)]
+                                            "-i", "[input_file]",
+                                            "-n", str(self.noise_level),
+                                            "-s", str(self.scale_factor)]
 
         waifu2x_caffe_options = get_options_from_section(config_json["waifu2x_caffe"]["output_options"])
 
@@ -134,16 +136,17 @@ class Context:
 
         self.waifu2x_caffe_upscale_frame.extend(["-o", "[output_file]"])
 
-        ## FFMPEG Options ##
+        # FFMPEG Options #
 
-        self.trim_video_command = [self.ffmpeg_dir, "-i", "[input_file]"]
+        self.trim_video_command = [self.ffmpeg_dir,
+                                   "-i", "[input_file]"]
 
         trim_video_time = get_options_from_section(config_json["ffmpeg"]["trim_video"]["time"])
 
         for element in trim_video_time:
             self.trim_video_command.append(element)
 
-        trim_video_options =  get_options_from_section(config_json["ffmpeg"]["trim_video"]["output_options"])
+        trim_video_options = get_options_from_section(config_json["ffmpeg"]["trim_video"]["output_options"])
 
         for element in trim_video_options:
             self.trim_video_command.append(element)
@@ -153,10 +156,8 @@ class Context:
         print("Trim video command")
         print(self.trim_video_command)
 
-
-        # Create extract frames command
+        # EXTRACT FRAMES COMMAND
         self.extract_frames_command = [self.ffmpeg_dir, "-i", "[input_file]"]
-
 
         extract_frames_options = get_options_from_section(config_json["ffmpeg"]["video_to_frames"]['output_options'])
         for element in extract_frames_options:
@@ -164,6 +165,7 @@ class Context:
 
         self.extract_frames_command.extend(["[output_file]"])
 
+        # VIDEO FROM FRAMES COMMAND
         self.video_from_frames_command = [self.ffmpeg_dir,
                                           "-start_number", "[start_number]",
                                           "-i", "[input_file]",
@@ -178,8 +180,6 @@ class Context:
         self.video_from_frames_command.extend(["[output_file]"])
 
         # MIGRATE TRACKS
-        # comment - this is hard coded at the moment, I couldn't figure out how video2x was able to get
-        # multiple key / dict pairs
         self.migrate_tracks_command = [self.ffmpeg_dir,
                                        "-i", "[no_audio]",
                                        "-i", "[video_sound]",
@@ -195,7 +195,18 @@ class Context:
 
         self.migrate_tracks_command.extend(["[output_file]"])
 
-        self.merge_video_command = "[ffmpeg_dir] -f concat -safe 0 -i [text_file] -c:v libx264 -crf 17 [output_file]"
+
+        self.concat_videos_command = [self.ffmpeg_dir,
+                                      "-f", "concat",
+                                      "-safe", "0",
+                                      "-i", "[text_file]"]
+
+        concat_videos_option = get_options_from_section(config_json["ffmpeg"]["concat_videos"]['output_options'])
+
+        for element in concat_videos_option:
+            self.concat_videos_command.append(element)
+
+        self.concat_videos_command.extend(["[output_file]"])
 
         try:
             os.mkdir(self.workspace)

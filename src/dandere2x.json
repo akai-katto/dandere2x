@@ -60,7 +60,7 @@
     "trim_video": {
       "time": {
         "-ss": "00:00:00",
-        "-to": "00:00:01"
+        "-to": "00:00:02"
       },
       "output_options": {
         "-map": 0
@@ -82,6 +82,15 @@
         "-b:v": null,
         "-pix_fmt": null,
         "-vf": "deband=blur=false:range=22"
+      },
+      "-y": true
+    },
+    "concat_videos": {
+      "output_options": {
+        "-vcodec": "libx264",
+        "-crf": 17,
+        "-b:v": null,
+        "-pix_fmt": null
       },
       "-y": true
     },
