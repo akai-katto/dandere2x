@@ -6,7 +6,7 @@ from wrappers.ff_wrappers.ffmpeg import create_video_from_specific_frames, conca
 from dandere2x_core.dandere2x_utils import file_exists
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_file
-from dandere_context import Context
+from context import Context
 
 
 # Questions

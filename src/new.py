@@ -1,16 +1,19 @@
 import time
 
 from dandere2x import Dandere2x
+import json
 import configparser
+from context import Context
 
 start = time.time()
+with open("dandere2x.json", "r") as read_file:
+    config_json = json.load(read_file)
 
-# Load Config File
-config = configparser.ConfigParser()
-config.read('config.ini')
+context = Context(config_json)
 
-# Start Dandere2x with config file
-d = Dandere2x(config)
+print("got here")
+
+d = Dandere2x(context)
 d.run_concurrent()
 
 end = time.time()
