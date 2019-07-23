@@ -57,9 +57,14 @@
   },
   "ffmpeg": {
     "ffmpeg_path": "C:\\Users\\windwoz\\Desktop\\1.2.1.2\\1.2.1.2\\externals\\",
-    "time_options": {
-      "-ss": "00:00:00",
-      "-to": "00:00:15"
+    "trim_video": {
+      "time": {
+        "-ss": "00:00:00",
+        "-to": "00:00:01"
+      },
+      "output_options": {
+        "-map": 0
+      }
     },
     "video_to_frames": {
       "output_options": {

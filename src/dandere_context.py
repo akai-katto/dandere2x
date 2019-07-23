@@ -60,6 +60,14 @@ class Context:
         self.width = self.video_settings.width
         self.height = self.video_settings.height
 
+        # find out if the user trimmed a video by checking the time part of the json. IF theres nothing there,
+        # then the user didn't trim anything
+        self.user_trim_video = False
+        find_out_if_trim = get_options_from_section(config_json["ffmpeg"]["trim_video"]['time'])
+
+        if find_out_if_trim:
+            self.user_trim_video = True
+
         # linux
         self.dandere_dir = 'lol what linux'
 
@@ -128,13 +136,22 @@ class Context:
 
         ## FFMPEG Options ##
 
-        self.trim_video = [self.ffmpeg_dir, "-i", "[input_file]"]
+        self.trim_video_command = [self.ffmpeg_dir, "-i", "[input_file]"]
 
-        self.time_options = get_options_from_section(config_json["ffmpeg"]["time_options"])
-        for element in self.time_options:
-            self.trim_video.append(element)
+        trim_video_time = get_options_from_section(config_json["ffmpeg"]["trim_video"]["time"])
 
-        self.trim_video.append("[output_file]")
+        for element in trim_video_time:
+            self.trim_video_command.append(element)
+
+        trim_video_options =  get_options_from_section(config_json["ffmpeg"]["trim_video"]["output_options"])
+
+        for element in trim_video_options:
+            self.trim_video_command.append(element)
+
+        self.trim_video_command.append("[output_file]")
+
+        print("Trim video command")
+        print(self.trim_video_command)
 
 
         # Create extract frames command

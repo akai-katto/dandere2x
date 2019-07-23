@@ -21,7 +21,7 @@ def get_options_from_section(section: json):
     execute = []
 
     for item in section:
-        if section[item]:
+        if section[item] != None:
             if section[item] != True:
                 execute.append(str(item))
                 execute.append(str(section[item]))

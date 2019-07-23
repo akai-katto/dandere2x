@@ -66,7 +66,8 @@ class Dandere2x:
     def pre_setup(self):
         self.create_dirs()
 
-        if self.context.time_options != []:
+        if self.context.user_trim_video:
+            print("user trim dat video")
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
             self.context.file_dir = trimed_video

@@ -15,7 +15,7 @@ from context import Context
 def trim_video(context: Context, output_file: str):
 
     file_dir = context.file_dir
-    exec = copy.copy(context.trim_video)
+    exec = copy.copy(context.trim_video_command)
     # replace the exec command withthe files we're concerned with
     for x in range(len(exec)):
         if exec[x] == "[input_file]":
@@ -24,6 +24,7 @@ def trim_video(context: Context, output_file: str):
         if exec[x] == "[output_file]":
             exec[x] = output_file
 
+    print("EXEC FOR TRIM")
     print(exec)
 
     subprocess.run(exec)
