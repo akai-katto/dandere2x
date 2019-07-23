@@ -17,10 +17,11 @@ import logging
 import os
 import subprocess
 import threading
+import copy
 
 from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists
-from dandere2x_core.dandere2x_utils import rename_file
+from dandere2x_core.dandere2x_utils import rename_file, get_options_from_section
 
 
 # this is pretty ugly
@@ -35,29 +36,40 @@ class Waifu2xConv(threading.Thread):
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
+        self.context = context
+
+        self.waifu2x_conv_upscale_frame = [self.waifu2x_conv_dir,
+                                             "-i", "[input_file]",
+                                             "--noise-level", str(self.noise_level),
+                                             "--scale-ratio", str(self.scale_factor)]
+
+        waifu2x_conv_options = get_options_from_section(self.context.config_json["waifu2x_converter"]["output_options"])
+
+        # add custom options to waifu2x_vulkan
+        for element in waifu2x_conv_options:
+            self.waifu2x_conv_upscale_frame.append(element)
+
+        self.waifu2x_conv_upscale_frame.extend(["-o", "[output_file]"])
 
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
-    # manually upscale a single file
-    @staticmethod
-    def upscale_file(context: Context, input_file: str, output_file: str):
-        # load context
-        waifu2x_conv_dir = context.waifu2x_conv_dir
-        waifu2x_conv_dir_dir = context.waifu2x_conv_dir_dir
-        noise_level = context.noise_level
-        scale_factor = context.scale_factor
 
+    def upscale_file(self, input_file: str, output_file: str):
+        # load context
+
+        waifu2x_conv_dir_dir = self.context.waifu2x_conv_dir_dir
         logger = logging.getLogger(__name__)
 
-        exec = [waifu2x_conv_dir,
-                "-i", input_file,
-                "-o", output_file,
-                "--model-dir", waifu2x_conv_dir_dir + "models_rgb",
-                "--force-OpenCL",
-                "-s",
-                "--noise-level", noise_level,
-                "--scale-ratio", scale_factor]
+        exec = copy.copy(self.waifu2x_conv_upscale_frame)
+
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = input_file
+
+            if exec[x] == "[output_file]":
+                exec[x] = output_file
 
         os.chdir(waifu2x_conv_dir_dir)
 
@@ -93,7 +105,7 @@ class Waifu2xConv(threading.Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.upscaled_dir + file + '_[NS-L' + self.noise_level + '][x' + self.scale_factor + '.000000]' + ".png"
+            dirty_name = self.upscaled_dir + file + '_[NS-L' + str(self.noise_level) + '][x' + str(self.scale_factor) + '.000000]' + ".png"
             clean_name = self.upscaled_dir + file + ".png"
 
             wait_on_either_file(clean_name, dirty_name)
@@ -107,12 +119,6 @@ class Waifu2xConv(threading.Thread):
                         rename_file(dirty_name, clean_name)
                     except PermissionError:
                         pass
-
-
-
-
-
-
 
     # (description from waifu2x_caffe)
     # The current Dandere2x implementation requires files to be removed from the folder
@@ -135,15 +141,15 @@ class Waifu2xConv(threading.Thread):
         # we need to os.chdir or else waifu2x-conveter won't work.
         os.chdir(self.waifu2x_conv_dir_dir)
 
-        # calling waifu2x-conv command
-        exec = [self.waifu2x_conv_dir,
-                "-i", self.differences_dir,
-                "-o", self.upscaled_dir,
-                "--model-dir", self.waifu2x_conv_dir_dir + "models_rgb",
-                "--force-OpenCL",
-                "-s",
-                "--noise-level", self.noise_level,
-                "--scale-ratio", self.scale_factor]
+        exec = copy.copy(self.waifu2x_conv_upscale_frame)
+
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = self.differences_dir
+
+            if exec[x] == "[output_file]":
+                exec[x] = self.upscaled_dir
 
         logger.info("waifu2xconv session")
         logger.info(exec)
@@ -169,7 +175,6 @@ class Waifu2xConv(threading.Thread):
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
             subprocess.run(exec, stdout=open(os.devnull, 'wb'))
-            #self.fix_names()
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
                     os.remove(self.differences_dir + item)

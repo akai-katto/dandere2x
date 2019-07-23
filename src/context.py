@@ -41,6 +41,7 @@ class Context:
 
         self.workspace = config_json['dandere2x']['workspace']
         self.file_dir = config_json['dandere2x']['file_dir']
+        self.output_file = config_json['dandere2x']['output_file']
 
         self.dandere2x_cpp_dir = config_json['dandere2x']['dandere2x_cpp_dir']
 
@@ -49,8 +50,8 @@ class Context:
 
         self.waifu2x_type = config_json['dandere2x']['waifu2x_type']
 
-        self.waifu2x_conv_dir = config_json['waifu2x_converter']['waifu2x_converter_path']
-        self.waifu2x_conv_dir_dir = config_json['waifu2x_converter']['waifu2x_converter_path'] + "missing.exe"
+        self.waifu2x_conv_dir = os.path.join(config_json['waifu2x_converter']['waifu2x_converter_path'], "waifu2x-converter-cpp.exe")
+        self.waifu2x_conv_dir_dir = config_json['waifu2x_converter']['waifu2x_converter_path']
 
         self.waifu2x_vulkan_dir = os.path.join(config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path'],
                                                "waifu2x-ncnn-vulkan.exe")
@@ -75,7 +76,6 @@ class Context:
         self.dandere_dir = 'lol what linux'
 
         # D2x Settings
-
         self.block_size = config_json['dandere2x']['block_size']
         self.step_size = config_json['dandere2x']['step_size']
         self.bleed = config_json['dandere2x']['bleed']
@@ -108,11 +108,8 @@ class Context:
         # Developer Settings #
         self.debug = config_json['dandere2x']['debug']
 
-        try:
-            os.mkdir(self.workspace)
-        except:
-            pass
-
+    # the workspace folder needs to exist before creating the log file, hence the method
+    def set_logger(self):
         logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 

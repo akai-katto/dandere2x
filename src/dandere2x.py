@@ -32,28 +32,24 @@ smooth and edges sharp.
 
 import logging
 import os
-import sys
 import threading
 import time
 
-from wrappers.ff_wrappers.ffmpeg import trim_video
-
-from context import Context
 from dandere2x_core.dandere2x_utils import verify_user_settings
 from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
+from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
-from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
+from wrappers.ff_wrappers.ffmpeg import trim_video
+from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
 from wrappers.waifu2x_wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_wrappers.waifu2x_conv import Waifu2xConv
 from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
 
-from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
-import configparser
 
 class Dandere2x:
 
@@ -65,15 +61,17 @@ class Dandere2x:
     # no computation is really done here
     def pre_setup(self):
         self.create_dirs()
+        self.context.set_logger()
 
+        # if the user selected to trim the video, create a new video that matches
+        # their trim settings, then re-assign the video to work with to be the trimmed video
         if self.context.user_trim_video:
-            print("user trim dat video")
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
             self.context.file_dir = trimed_video
 
         ffmpeg_extract_frames(self.context)
-        self.context.update_frame_count() # after we've extracted all the frames, count how many frames are being used
+        self.context.update_frame_count()  # after we've extracted all the frames, count how many frames are being used
 
         self.write_merge_commands()
 
@@ -96,9 +94,8 @@ class Dandere2x:
         elif self.context.waifu2x_type == "conv":
             waifu2x = Waifu2xConv(self.context)
 
-            Waifu2xConv.upscale_file(self.context,
-                                     input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                     output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
@@ -108,7 +105,7 @@ class Dandere2x:
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
-        output_file = self.context.workspace + 'output.mkv'
+        output_file = self.context.output_file
 
         # start all the threads needed for running
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
@@ -162,8 +159,9 @@ class Dandere2x:
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
-            Waifu2xVulkan.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+            Waifu2xVulkan.upscale_file(
+                input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))

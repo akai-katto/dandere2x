@@ -1,24 +1,24 @@
 {
   "dandere2x": {
-    "workspace": "C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\1.1\\demo_folder\\fix_names_forever\\",
-    "file_dir": "C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\1.2\\demo_folder\\evenshorter.mkv",
+    "workspace": "C:\\Video\\yn\\conv_test\\",
+    "file_dir": "C:\\Video\\yn\\yn.mkv",
+    "output_file": "C:\\Video\\yn\\outputfile.mkv",
     "dandere2x_cpp_dir": "C:\\Users\\windwoz\\Documents\\github_projects\\dandere2x_cpp\\cmake-build-debug\\dandere2x_cpp.exe",
     "block_size": 20,
     "step_size": 4,
     "bleed": 1,
-    "quality_low": 85,
+    "quality_low": 75,
     "extension_type": ".jpg",
     "debug": true,
     "realtime_encoding": true,
-    "realtime_encoding_delete_files": true,
-    "waifu2x_type": "vulkan",
+    "realtime_encoding_delete_files": false,
+    "waifu2x_type": "conv",
     "noise_level": 3,
     "scale_factor": 1
   },
   "waifu2x_caffe": {
-    "waifu2x_caffe_path": "C:\\Users\\K4YT3X\\AppData\\Local\\video2x\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
+    "waifu2x_caffe_path": "C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\0.8 - Copy\\externals\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
     "output_options": {
-      "-mode": "noise_scale",
       "-process": "gpu",
       "-crop_size": 128,
       "-output_quality": -1,
@@ -30,20 +30,20 @@
     }
   },
   "waifu2x_converter": {
-    "waifu2x_converter_path": "C:\\Users\\K4YT3X\\AppData\\Local\\video2x\\waifu2x-converter-cpp",
-    "output-format": null,
-    "png-compression": null,
-    "image-quality": null,
-    "block-size": null,
-    "disable-gpu": null,
-    "force-OpenCL": null,
-    "processor": null,
-    "jobs": null,
-    "model-dir": null,
-    "mode": "noise-scale",
-    "silent": true,
-    "output": null,
-    "input": null
+    "waifu2x_converter_path": "C:\\Users\\windwoz\\Desktop\\converter",
+    "output_options": {
+      "--output-format": null,
+      "--png-compression": null,
+      "--image-quality": null,
+      "--block-size": null,
+      "--disable-gpu": null,
+      "--force-OpenCL": true,
+      "--processor": null,
+      "--jobs": null,
+      "--model-dir": null,
+      "--mode": null,
+      "--silent": true
+    }
   },
   "waifu2x_ncnn_vulkan": {
     "waifu2x_ncnn_vulkan_path": "C:\\Users\\windwoz\\Desktop\\1.2.1.2\\1.2.1.2\\externals\\waifu2x-vulkan",
@@ -59,11 +59,12 @@
     "ffmpeg_path": "C:\\Users\\windwoz\\Desktop\\1.2.1.2\\1.2.1.2\\externals\\",
     "trim_video": {
       "time": {
-        "-ss": "00:00:00",
-        "-to": "00:00:02"
+        "-ss": "00:28:42",
+        "-to": "00:28:46"
       },
       "output_options": {
-        "-map": 0
+        "-map": 0,
+        "-c": "copy"
       }
     },
     "video_to_frames": {
