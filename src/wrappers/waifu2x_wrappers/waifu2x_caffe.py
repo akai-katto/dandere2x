@@ -14,7 +14,7 @@ import threading
 
 from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
-
+from dandere2x_core.dandere2x_utils import get_options_from_section
 
 # temporary implementation of waifu2x-caffe wrapper
 # note to self - add listener to delete files in real time(maybe?) for resume.
@@ -34,13 +34,26 @@ class Waifu2xCaffe(threading.Thread):
         self.workspace = context.workspace
         self.context = context
 
+        # Create Caffe Command
+        self.waifu2x_caffe_upscale_frame = [self.waifu2x_caffe_cui_dir,
+                                            "-i", "[input_file]",
+                                            "-n", str(self.noise_level),
+                                            "-s", str(self.scale_factor)]
+
+        waifu2x_caffe_options = get_options_from_section(context.config_json["waifu2x_caffe"]["output_options"])
+
+        for element in waifu2x_caffe_options:
+            self.waifu2x_caffe_upscale_frame.append(element)
+
+        self.waifu2x_caffe_upscale_frame.extend(["-o", "[output_file]"])
+
+
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
-    @staticmethod
-    def upscale_file(context: Context, input_file: str, output_file: str):
+    def upscale_file(self, input_file: str, output_file: str):
 
-        exec = copy.copy(context.waifu2x_caffe_upscale_frame)
+        exec = copy.copy(self.waifu2x_caffe_upscale_frame)
 
         # replace the exec command withthe files we're concerned with
         for x in range(len(exec)):
@@ -66,7 +79,7 @@ class Waifu2xCaffe(threading.Thread):
 
         differences_dir = self.context.differences_dir
         upscaled_dir = self.context.upscaled_dir
-        exec = copy.copy(self.context.waifu2x_caffe_upscale_frame)
+        exec = copy.copy(self.waifu2x_caffe_upscale_frame)
 
         # replace the exec command withthe files we're concerned with
         for x in range(len(exec)):

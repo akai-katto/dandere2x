@@ -2,7 +2,7 @@ import copy
 import os
 import subprocess
 
-from wrappers.ff_wrappers.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, merge_tracks
+from wrappers.ff_wrappers.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, migrate_tracks
 from dandere2x_core.dandere2x_utils import file_exists
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import wait_on_file
@@ -77,4 +77,4 @@ def run_realtime_encoding(context: Context, output_file: str):
     text_file.close()
 
     concat_encoded_vids(context, workspace + "nosound.mkv")
-    merge_tracks(context, workspace + "nosound.mkv", file_dir, output_file)
+    migrate_tracks(context, workspace + "nosound.mkv", file_dir, output_file)

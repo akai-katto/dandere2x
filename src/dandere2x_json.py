@@ -90,9 +90,8 @@ class Dandere2x:
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
 
-            Waifu2xCaffe.upscale_file(self.context,
-                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "conv":
             waifu2x = Waifu2xConv(self.context)
@@ -103,9 +102,9 @@ class Dandere2x:
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
-            Waifu2xVulkan.upscale_file(self.context,
-                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
@@ -163,8 +162,7 @@ class Dandere2x:
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
-            Waifu2xVulkan.upscale_file(self.context,
-                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+            Waifu2xVulkan.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                        output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)

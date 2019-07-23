@@ -24,6 +24,7 @@ from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import rename_file
 from dandere2x_core.dandere2x_utils import wait_on_either_file
 from dandere2x_core.dandere2x_utils import file_exists
+from dandere2x_core.dandere2x_utils import get_options_from_section
 
 
 # this is pretty ugly
@@ -40,18 +41,27 @@ class Waifu2xVulkan(threading.Thread):
         self.workspace = context.workspace
         self.context = context
 
+        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_vulkan_dir,
+                                             "-i", "[input_file]",
+                                             "-n", str(self.noise_level),
+                                             "-s", str(self.scale_factor)]
+
+        waifu2x_vulkan_options = get_options_from_section(self.context.config_json["waifu2x_ncnn_vulkan"]["output_options"])
+
+        # add custom options to waifu2x_vulkan
+        for element in waifu2x_vulkan_options:
+            self.waifu2x_vulkan_upscale_frame.append(element)
+
+        self.waifu2x_vulkan_upscale_frame.extend(["-o", "[output_file]"])
+
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
     # manually upscale a single file
-    @staticmethod
-    def upscale_file(context: Context, input_file: str, output_file: str):
+    def upscale_file(self, input_file: str, output_file: str):
         # load context
-        waifu2x_vulkan_dir = context.waifu2x_vulkan_dir
-        waifu2x_vulkan_dir_dir = context.waifu2x_vulkan_dir_dir
-        noise_level = context.noise_level
-        scale_factor = context.scale_factor
-        exec = copy.copy(context.waifu2x_vulkan_upscale_frame)
+        waifu2x_vulkan_dir_dir = self.context.waifu2x_vulkan_dir_dir
+        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
         # replace the exec command withthe files we're concerned with
         for x in range(len(exec)):
@@ -134,7 +144,7 @@ class Waifu2xVulkan(threading.Thread):
         differences_dir = self.context.differences_dir
         upscaled_dir = self.context.upscaled_dir
 
-        exec = copy.copy(self.context.waifu2x_vulkan_upscale_frame)
+        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
         # replace the exec command with the files we're concerned with
         for x in range(len(exec)):
             if exec[x] == "[input_file]":

@@ -28,6 +28,7 @@ class Context:
 
         # load 'this folder' in a pyinstaller friendly way
         self.this_folder = ''
+
         if getattr(sys, 'frozen', False):
             self.this_folder = os.path.dirname(sys.executable) + os.path.sep
         elif __file__:
@@ -106,107 +107,6 @@ class Context:
 
         # Developer Settings #
         self.debug = config_json['dandere2x']['debug']
-
-        # Waifu2x-wrappers Commands
-
-        # Create Vulkan Command
-        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_vulkan_dir,
-                                             "-i", "[input_file]",
-                                             "-n", str(self.noise_level),
-                                             "-s", str(self.scale_factor)]
-
-        waifu2x_vulkan_options = get_options_from_section(config_json["waifu2x_ncnn_vulkan"]["output_options"])
-
-        # add custom options to waifu2x_vulkan
-        for element in waifu2x_vulkan_options:
-            self.waifu2x_vulkan_upscale_frame.append(element)
-
-        self.waifu2x_vulkan_upscale_frame.extend(["-o", "[output_file]"])
-
-        # Create Caffe Command
-        self.waifu2x_caffe_upscale_frame = [self.waifu2x_caffe_cui_dir,
-                                            "-i", "[input_file]",
-                                            "-n", str(self.noise_level),
-                                            "-s", str(self.scale_factor)]
-
-        waifu2x_caffe_options = get_options_from_section(config_json["waifu2x_caffe"]["output_options"])
-
-        for element in waifu2x_caffe_options:
-            self.waifu2x_caffe_upscale_frame.append(element)
-
-        self.waifu2x_caffe_upscale_frame.extend(["-o", "[output_file]"])
-
-        # FFMPEG Options #
-
-        self.trim_video_command = [self.ffmpeg_dir,
-                                   "-i", "[input_file]"]
-
-        trim_video_time = get_options_from_section(config_json["ffmpeg"]["trim_video"]["time"])
-
-        for element in trim_video_time:
-            self.trim_video_command.append(element)
-
-        trim_video_options = get_options_from_section(config_json["ffmpeg"]["trim_video"]["output_options"])
-
-        for element in trim_video_options:
-            self.trim_video_command.append(element)
-
-        self.trim_video_command.append("[output_file]")
-
-        print("Trim video command")
-        print(self.trim_video_command)
-
-        # EXTRACT FRAMES COMMAND
-        self.extract_frames_command = [self.ffmpeg_dir, "-i", "[input_file]"]
-
-        extract_frames_options = get_options_from_section(config_json["ffmpeg"]["video_to_frames"]['output_options'])
-        for element in extract_frames_options:
-            self.extract_frames_command.append(element)
-
-        self.extract_frames_command.extend(["[output_file]"])
-
-        # VIDEO FROM FRAMES COMMAND
-        self.video_from_frames_command = [self.ffmpeg_dir,
-                                          "-start_number", "[start_number]",
-                                          "-i", "[input_file]",
-                                          "-vframes", "[frames_per_video]",
-                                          "-r", str(self.frame_rate)]
-
-        frame_to_video_option = get_options_from_section(config_json["ffmpeg"]["frames_to_video"]['output_options'])
-
-        for element in frame_to_video_option:
-            self.video_from_frames_command.append(element)
-
-        self.video_from_frames_command.extend(["[output_file]"])
-
-        # MIGRATE TRACKS
-        self.migrate_tracks_command = [self.ffmpeg_dir,
-                                       "-i", "[no_audio]",
-                                       "-i", "[video_sound]",
-                                       "-map", "0:v:0?",
-                                       "-map", "1?",
-                                       "-c", "copy",
-                                       "-map", "-1:v?"]
-
-        migrate_tracks_options = get_options_from_section(config_json["ffmpeg"]["migrating_tracks"]['output_options'])
-
-        for element in migrate_tracks_options:
-            self.migrate_tracks_command.append(element)
-
-        self.migrate_tracks_command.extend(["[output_file]"])
-
-
-        self.concat_videos_command = [self.ffmpeg_dir,
-                                      "-f", "concat",
-                                      "-safe", "0",
-                                      "-i", "[text_file]"]
-
-        concat_videos_option = get_options_from_section(config_json["ffmpeg"]["concat_videos"]['output_options'])
-
-        for element in concat_videos_option:
-            self.concat_videos_command.append(element)
-
-        self.concat_videos_command.extend(["[output_file]"])
 
         try:
             os.mkdir(self.workspace)
