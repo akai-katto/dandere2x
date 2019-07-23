@@ -12,9 +12,10 @@ from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QWidget, QFileDi
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 import time
 from context import Context
-
+import json
 
 class AppWindow(QMainWindow):
 
@@ -33,9 +34,9 @@ class AppWindow(QMainWindow):
 
         self.file_dir = ''
         self.workspace_dir = ''
-        self.scale_factor = ''
-        self.noise_level = ''
-        self.image_quality = ''
+        self.scale_factor = None
+        self.noise_level = None
+        self.image_quality = None
         self.block_size = ''
         self.waifu2x_type = ''
 
@@ -75,22 +76,28 @@ class AppWindow(QMainWindow):
 
         self.parse_gui_inputs()
 
-        config = configparser.ConfigParser()
-        config.read('gui_config.ini')
-        config.set("dandere2x", "workspace", self.workspace_dir)
-        config.set("dandere2x", "file_dir", self.file_dir)
-        config.set("dandere2x", "block_size", self.block_size)
-        config.set("dandere2x", "quality_low", self.image_quality)
-        config.set("dandere2x", "waifu2x_type", self.waifu2x_type)
-        config.set("dandere2x", "scale_factor", self.scale_factor)
+        with open("dandere2x.json", "r") as read_file:
+            config_json = json.load(read_file)
+
+        config_json['dandere2x']['workspace'] = self.workspace_dir
+        config_json['dandere2x']['file_dir'] = self.file_dir
+        config_json['dandere2x']['block_size'] = self.block_size
+        config_json['dandere2x']['quality_low'] = self.image_quality
+        config_json['dandere2x']['waifu2x_type'] = self.waifu2x_type
+        config_json['dandere2x']['scale_factor'] = self.scale_factor
+
+        with open('jsondump.json', 'w') as outfile:
+            json.dump(config_json, outfile)
+
 
         print("workspace = " + self.workspace_dir)
         print("file_dir = " + self.file_dir)
-        print("block_size = " + self.block_size)
-        print("quality_low = " + self.image_quality)
+        print("block_size = " + str(self.block_size))
+        print("quality_low = " + str(self.image_quality))
         print("waifu2x_type = " + self.waifu2x_type)
 
-        d = Dandere2x(config)
+        context = Context(config_json)
+        d = Dandere2x(context)
      #   d.run_concurrent()
 
         try:
@@ -113,34 +120,34 @@ class AppWindow(QMainWindow):
         # Scale Factors
 
         if self.ui.scale_1_radio_button.isChecked():
-            self.scale_factor = '1'
+            self.scale_factor = 1
 
         if self.ui.scale_2_radio_button.isChecked():
-            self.scale_factor = '2'
+            self.scale_factor = 2
 
         if self.ui.scale_3_radio_button.isChecked():
-            self.scale_factor = '3'
+            self.scale_factor = 3
 
         if self.ui.scale_4_radio_button.isChecked():
-            self.scale_factor = '4'
+            self.scale_factor = 4
 
         # Noise factors
 
         if self.ui.noise_0_radio_button.isChecked():
-            self.noise_level = '0'
+            self.noise_level = 0
 
         if self.ui.noise_1_radio_button.isChecked():
-            self.noise_level = '1'
+            self.noise_level = 1
 
         if self.ui.noise_2_radio_button.isChecked():
-            self.noise_level = '2'
+            self.noise_level = 2
 
         if self.ui.noise_3_radio_button.isChecked():
-            self.noise_level = '3'
+            self.noise_level = 3
 
         # Dandere2x Settings
-        self.image_quality = self.ui.image_quality_box.currentText()
-        self.block_size = self.ui.block_size_combo_box.currentText()
+        self.image_quality = int(self.ui.image_quality_box.currentText())
+        self.block_size = int(self.ui.block_size_combo_box.currentText())
 
 
         # Waifu2x Type
@@ -167,14 +174,12 @@ class AppWindow(QMainWindow):
         self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
 
 
-        # read the gui so we can get ffprobe directory
-        config = configparser.ConfigParser()
-        config.read('gui_config.ini')
-        context = Context(config)
+        with open("dandere2x.json", "r") as read_file:
+            config_json = json.load(read_file)
 
-
+        ffprobe_path = os.path.join(config_json['ffmpeg']['ffmpeg_path'], "ffprobe.exe")
         # load the needed video settings for the GUI
-        videosettings = VideoSettings(context.ffprobe_dir, self.file_dir)
+        videosettings = VideoSettings(ffprobe_path, self.file_dir)
 
         # Get a list of valid list block sizes knowing the width and height
         valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width)

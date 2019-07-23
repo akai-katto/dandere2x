@@ -1,8 +1,8 @@
 {
   "dandere2x": {
-    "workspace": "C:\\Video\\yn\\conv_test\\",
-    "file_dir": "C:\\Video\\yn\\yn.mkv",
-    "output_file": "C:\\Video\\yn\\outputfile.mkv",
+    "workspace": "C:\\Users\\windwoz\\Desktop\\1.2.12_github\\1.2.1.2\\demo_folder\\workspace\\",
+    "file_dir": "C:\\Users\\windwoz\\Desktop\\1.2.12_github\\1.2.1.2\\demo_folder\\evenshorter.mkv",
+    "output_file": "C:\\Users\\windwoz\\Desktop\\1.2.12_github\\1.2.1.2\\demo_folder\\outputfile.mkv",
     "dandere2x_cpp_dir": "C:\\Users\\windwoz\\Documents\\github_projects\\dandere2x_cpp\\cmake-build-debug\\dandere2x_cpp.exe",
     "block_size": 20,
     "step_size": 4,
@@ -12,7 +12,7 @@
     "debug": true,
     "realtime_encoding": true,
     "realtime_encoding_delete_files": false,
-    "waifu2x_type": "conv",
+    "waifu2x_type": "vulkan",
     "noise_level": 3,
     "scale_factor": 1
   },
@@ -59,8 +59,8 @@
     "ffmpeg_path": "C:\\Users\\windwoz\\Desktop\\1.2.1.2\\1.2.1.2\\externals\\",
     "trim_video": {
       "time": {
-        "-ss": "00:28:42",
-        "-to": "00:28:46"
+        "-ss": null,
+        "-to": null
       },
       "output_options": {
         "-map": 0,
