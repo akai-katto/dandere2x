@@ -1,7 +1,6 @@
 import logging
-import numpy as np
-
 from dataclasses import dataclass
+
 from wrappers.frame import Frame
 
 
@@ -11,6 +10,7 @@ class FadeData:
     x: int
     y: int
     scalar: int
+
 
 # comments: I'm not sure if we need to create a new frame, but it's not causing
 # preformance issues so far, and this solution is easier for me to debug knowing that it creates
@@ -42,6 +42,6 @@ def fade_image(context, block_size, frame_base: Frame, list_correction: list):
                              block_size * scale_factor,
                              vector.scalar)
 
-    #out_image.frame = np.clip(out_image.frame, 0, 255)
+    # out_image.frame = np.clip(out_image.frame, 0, 255)
 
     return out_image

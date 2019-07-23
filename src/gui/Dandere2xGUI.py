@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_Dandere2xGUI(object):
     def setupUi(self, Dandere2xGUI):
         Dandere2xGUI.setObjectName("Dandere2xGUI")
@@ -960,13 +961,16 @@ class Ui_Dandere2xGUI(object):
         self.image_quality_box.setItemText(9, _translate("Dandere2xGUI", "55"))
         self.image_quality_box.setItemText(10, _translate("Dandere2xGUI", "50"))
         self.video_label_5.setText(_translate("Dandere2xGUI", "Image Quality"))
-        self.video_label_6.setToolTip(_translate("Dandere2xGUI", "Block size Dandere2x will use to compute blocks. You NEED to select a video first before selecting this.,"))
+        self.video_label_6.setToolTip(_translate("Dandere2xGUI",
+                                                 "Block size Dandere2x will use to compute blocks. You NEED to select a video first before selecting this.,"))
         self.video_label_6.setText(_translate("Dandere2xGUI", "Block Size"))
         self.video_label_7.setText(_translate("Dandere2xGUI", "Dandere2x Settings"))
-        self.block_help.setToolTip(_translate("Dandere2xGUI", "Block size Dandere2x will use to compute blocks. You NEED to select a video first before selecting this.,"))
+        self.block_help.setToolTip(_translate("Dandere2xGUI",
+                                              "Block size Dandere2x will use to compute blocks. You NEED to select a video first before selecting this.,"))
         self.block_help.setText(_translate("Dandere2xGUI", "?"))
-        self.quality_help.setToolTip(_translate("Dandere2xGUI", "The acceptable quality loss in an frame depicted by JPEG\'s standards."))
+        self.quality_help.setToolTip(
+            _translate("Dandere2xGUI", "The acceptable quality loss in an frame depicted by JPEG\'s standards."))
         self.quality_help.setText(_translate("Dandere2xGUI", "?"))
-        self.upscale_status_label.setWhatsThis(_translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
+        self.upscale_status_label.setWhatsThis(
+            _translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
         self.upscale_status_label.setText(_translate("Dandere2xGUI", "No files selected"))
-

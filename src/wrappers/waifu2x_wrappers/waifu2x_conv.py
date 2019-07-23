@@ -13,11 +13,11 @@ Furthermore, waifu2x-conv saves files in an annoying way,
 so we need to correct those odd namings.
 """
 
+import copy
 import logging
 import os
 import subprocess
 import threading
-import copy
 
 from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists
@@ -39,9 +39,9 @@ class Waifu2xConv(threading.Thread):
         self.context = context
 
         self.waifu2x_conv_upscale_frame = [self.waifu2x_conv_dir,
-                                             "-i", "[input_file]",
-                                             "--noise-level", str(self.noise_level),
-                                             "--scale-ratio", str(self.scale_factor)]
+                                           "-i", "[input_file]",
+                                           "--noise-level", str(self.noise_level),
+                                           "--scale-ratio", str(self.scale_factor)]
 
         waifu2x_conv_options = get_options_from_section(self.context.config_json["waifu2x_converter"]["output_options"])
 
@@ -53,7 +53,6 @@ class Waifu2xConv(threading.Thread):
 
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
-
 
     def upscale_file(self, input_file: str, output_file: str):
         # load context
@@ -105,7 +104,8 @@ class Waifu2xConv(threading.Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.upscaled_dir + file + '_[NS-L' + str(self.noise_level) + '][x' + str(self.scale_factor) + '.000000]' + ".png"
+            dirty_name = self.upscaled_dir + file + '_[NS-L' + str(self.noise_level) + '][x' + str(
+                self.scale_factor) + '.000000]' + ".png"
             clean_name = self.upscaled_dir + file + ".png"
 
             wait_on_either_file(clean_name, dirty_name)

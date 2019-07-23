@@ -13,18 +13,18 @@ Furthermore, waifu2x-vulkan saves files in an annoying way, i.e it becomes image
 so we need to correct those odd namings.
 """
 
+import copy
 import logging
 import os
 import subprocess
 import threading
-import copy
 
 from context import Context
+from dandere2x_core.dandere2x_utils import file_exists
 from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import get_options_from_section
 from dandere2x_core.dandere2x_utils import rename_file
 from dandere2x_core.dandere2x_utils import wait_on_either_file
-from dandere2x_core.dandere2x_utils import file_exists
-from dandere2x_core.dandere2x_utils import get_options_from_section
 
 
 # this is pretty ugly
@@ -46,7 +46,8 @@ class Waifu2xVulkan(threading.Thread):
                                              "-n", str(self.noise_level),
                                              "-s", str(self.scale_factor)]
 
-        waifu2x_vulkan_options = get_options_from_section(self.context.config_json["waifu2x_ncnn_vulkan"]["output_options"])
+        waifu2x_vulkan_options = get_options_from_section(
+            self.context.config_json["waifu2x_ncnn_vulkan"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_vulkan_options:
@@ -71,10 +72,8 @@ class Waifu2xVulkan(threading.Thread):
             if exec[x] == "[output_file]":
                 exec[x] = output_file
 
-
         print("exec!")
         print(exec)
-
 
         logger = logging.getLogger(__name__)
 
@@ -126,8 +125,6 @@ class Waifu2xVulkan(threading.Thread):
                     except PermissionError:
                         pass
 
-
-
     # (description from waifu2x_caffe)
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -155,7 +152,6 @@ class Waifu2xVulkan(threading.Thread):
 
         print("exec2!")
         print(exec)
-
 
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
@@ -190,11 +186,11 @@ class Waifu2xVulkan(threading.Thread):
 
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.call(exec, stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT) # We're supressing A LOT of errors btw.
-            #self.fix_names()
+            subprocess.call(exec, stdout=open(os.devnull, 'w'),
+                            stderr=subprocess.STDOUT)  # We're supressing A LOT of errors btw.
+            # self.fix_names()
 
             for name in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
                     os.remove(self.differences_dir + name)
                     names.remove(name)
-

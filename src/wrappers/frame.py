@@ -66,7 +66,7 @@ def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
         B_slices = tuple(map(slice, B_start, B_end + 1))
         A_slices = tuple(map(slice, A_start, A_start + shape + 1))
 
-        int_copy = numpy.copy(A[A_slices]).astype(int) # use 'int_copy' instead of raw array to prevent overflow
+        int_copy = numpy.copy(A[A_slices]).astype(int)  # use 'int_copy' instead of raw array to prevent overflow
         B[B_slices] = numpy.clip(int_copy + scalar, 0, 255).astype(np.uint8)
 
     except ValueError:
@@ -205,10 +205,6 @@ class Frame:
         copy_from_fade(self.frame, self.frame,
                        (this_y, this_x), (this_y, this_x),
                        (this_y + block_size - 1, this_x + block_size - 1), scalar)
-
-
-
-
 
     # For the sake of code maintance, do the error checking to ensure numpy copy will work here.
     # Numpy won't give detailed errors, so this is my custom errors for debugging!

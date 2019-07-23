@@ -16,6 +16,7 @@ from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
 from dandere2x_core.dandere2x_utils import get_options_from_section
 
+
 # temporary implementation of waifu2x-caffe wrapper
 # note to self - add listener to delete files in real time(maybe?) for resume.
 # Not sure if Video2x wants that as a feature, though.
@@ -46,7 +47,6 @@ class Waifu2xCaffe(threading.Thread):
             self.waifu2x_caffe_upscale_frame.append(element)
 
         self.waifu2x_caffe_upscale_frame.extend(["-o", "[output_file]"])
-
 
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
@@ -88,7 +88,6 @@ class Waifu2xCaffe(threading.Thread):
 
             if exec[x] == "[output_file]":
                 exec[x] = upscaled_dir
-
 
         # make a list of names that will eventually (past or future) be upscaled
         names = []
