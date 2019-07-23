@@ -15,6 +15,8 @@ import copy
 
 # if the value in the key value pair exists, add it.
 # if the key is just 'true', only add the key
+
+# THis doesnt work with multiple keys and
 def get_options_from_section(section: json):
     execute = []
 
@@ -25,6 +27,7 @@ def get_options_from_section(section: json):
                 execute.append(str(section[item]))
             else:
                 execute.append(str(item))
+
 
     return execute
 

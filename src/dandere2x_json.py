@@ -245,31 +245,6 @@ class Dandere2x:
             else:
                 print("Successfully created the directory %s " % subdirectory)
 
-    # for linux. Currently deprecated as Linux development has stopped for a bit.
-    def create_waifu2x_script(self):
-        input_list = []
-        input_list.append("cd /home/linux/Documents/waifu2x/")
-
-        input_list.append(
-            "th " + self.context.dandere_dir + " -m noise_scale -noise_level 3 -i " +
-            self.context.input_frames_dir + "frame1" + self.context.extension_type +
-            " -o " + self.context.merged_dir + "merged_1" + self.context.extension_type + "\n")
-
-        input_list.append("th " + self.context.dandere_dir + " -m noise_scale -noise_level 3 -resume 1 -l " +
-                          self.context.workspace + "frames.txt -o " + self.context.upscaled_dir + "output_%d.png")
-
-        with open(self.context.workspace + os.path.sep + 'waifu2x_script.sh', 'w') as f:
-            for item in input_list:
-                f.write("%s\n" % item)
-
-        os.chmod(self.context.workspace + os.path.sep + 'waifu2x_script.sh', 0o777)
-
-    # for linux
-    def write_frames(self):
-        with open(self.context.workspace + os.path.sep + 'frames.txt', 'w') as f:
-            for x in range(1, self.context.frame_count):
-                f.write(self.context.differences_dir + "output_" + str(x) + ".png\n")
-
     # for re-merging the files after runtime is done
     def write_merge_commands(self):
         pass

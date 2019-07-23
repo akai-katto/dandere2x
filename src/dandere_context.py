@@ -126,16 +126,10 @@ class Context:
 
         self.waifu2x_caffe_upscale_frame.extend(["-o", "[output_file]"])
 
-
-
-        # self.waifu2x_caffe_upscale_frame = "[waifu2x_caffe_cui_dir] -i [input_file] -p cudnn -n [noise_level] -s [scale_factor] --gpu 0 -o [output_file]"
-
         # FFMPEG Options #
-        #self.extract_frames_command = "[ffmpeg_dir] -i [file_name] -qscale:v 2 -t 00:00:02 -vf noise=c1s=8:c0f=u [output_file]"
 
         # Create extract frames command
-        self.extract_frames_command = [self.ffmpeg_dir,
-                                            "-i", "[input_file]"]
+        self.extract_frames_command = [self.ffmpeg_dir, "-i", "[input_file]"]
 
         self.time_options = get_options_from_section(config_json["ffmpeg"]["time_options"])
         for element in self.time_options:
@@ -146,11 +140,6 @@ class Context:
             self.extract_frames_command.append(element)
 
         self.extract_frames_command.extend(["[output_file]"])
-
-
-        # self.video_from_frames_command = "[ffmpeg_dir] -loglevel 0 -nostats -framerate [frame_rate]
-        # -start_number [start_number] -i [input_frames] -vframes [end_number] -vf deband=blur=false:range=22 [output_file]"
-        # Create video_from_frames_command frames command
 
         self.video_from_frames_command = [self.ffmpeg_dir,
                                           "-start_number", "[start_number]",
@@ -182,10 +171,14 @@ class Context:
         self.audio_from_video_command.append("[output_file]")
 
         # MIGRATE TRACKS
-
+        # comment - this is hard coded at the moment
         self.migrate_tracks_command = [self.ffmpeg_dir,
                                        "-i", "[no_audio]",
-                                       "-i", "[video_sound]"]
+                                       "-i", "[video_sound]",
+                                       "-map", "0:v:0?",
+                                       "-map", "1?",
+                                       "-c", "copy",
+                                       "-map", "-1:v?"]
 
         migrate_tracks_options = get_options_from_section(config_json["ffmpeg"]["migrating_tracks"]['output_options'])
 
