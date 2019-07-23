@@ -99,7 +99,6 @@ class Context:
 
         # Waifu2x-wrappers Commands
 
-
         # Create Vulkan Command
         self.waifu2x_vulkan_upscale_frame = [self.waifu2x_vulkan_dir,
                                              "-i", "[input_file]",
@@ -111,6 +110,7 @@ class Context:
         # add custom options to waifu2x_vulkan
         for element in waifu2x_vulkan_options:
             self.waifu2x_vulkan_upscale_frame.append(element)
+
         self.waifu2x_vulkan_upscale_frame.extend(["-o", "[output_file]"])
 
         # Create Caffe Command
@@ -126,14 +126,20 @@ class Context:
 
         self.waifu2x_caffe_upscale_frame.extend(["-o", "[output_file]"])
 
-        # FFMPEG Options #
+        ## FFMPEG Options ##
+
+        self.trim_video = [self.ffmpeg_dir, "-i", "[input_file]"]
+
+        self.time_options = get_options_from_section(config_json["ffmpeg"]["time_options"])
+        for element in self.time_options:
+            self.trim_video.append(element)
+
+        self.trim_video.append("[output_file]")
+
 
         # Create extract frames command
         self.extract_frames_command = [self.ffmpeg_dir, "-i", "[input_file]"]
 
-        self.time_options = get_options_from_section(config_json["ffmpeg"]["time_options"])
-        for element in self.time_options:
-            self.extract_frames_command.append(element)
 
         extract_frames_options = get_options_from_section(config_json["ffmpeg"]["video_to_frames"]['output_options'])
         for element in extract_frames_options:
@@ -154,24 +160,9 @@ class Context:
 
         self.video_from_frames_command.extend(["[output_file]"])
 
-        # AUDIO FROM VIDEO
-
-        self.audio_from_video_command = [self.ffmpeg_dir,
-                                          "-i", "[input_file]"]
-
-        time_options = get_options_from_section(config_json["ffmpeg"]["time_options"])
-        for element in time_options:
-            self.audio_from_video_command.append(element)
-
-        audio_from_video_options = get_options_from_section(config_json["ffmpeg"]['extract_streams_only']['output_options'])
-
-        for element in audio_from_video_options:
-            self.audio_from_video_command.append(element)
-
-        self.audio_from_video_command.append("[output_file]")
-
         # MIGRATE TRACKS
-        # comment - this is hard coded at the moment
+        # comment - this is hard coded at the moment, I couldn't figure out how video2x was able to get
+        # multiple key / dict pairs
         self.migrate_tracks_command = [self.ffmpeg_dir,
                                        "-i", "[no_audio]",
                                        "-i", "[video_sound]",

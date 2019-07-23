@@ -36,6 +36,8 @@ import sys
 import threading
 import time
 
+from wrappers.ff_wrappers.ffmpeg import trim_video
+
 from dandere_context import Context
 from dandere2x_core.dandere2x_utils import verify_user_settings
 from dandere2x_core.difference import difference_loop
@@ -58,12 +60,20 @@ class Dandere2x:
     def __init__(self, config):
         self.context = config
 
-    # Order matters here in command calls.
+    # pre-setup is doing really basic book keeping, such as creating the directories needed
+    # during runtime, extracting the frames out of ffmpeg, etc. I denote this 'pre-setup', as
+    # no computation is really done here
     def pre_setup(self):
         self.create_dirs()
+
+        if self.context.time_options != []:
+            trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
+            trim_video(self.context, trimed_video)
+            self.context.file_dir = trimed_video
+
         ffmpeg_extract_frames(self.context)
-        self.create_waifu2x_script()
-        self.write_frames()
+        self.context.update_frame_count() # after we've extracted all the frames, count how many frames are being used
+
         self.write_merge_commands()
 
     # create a series of threads and external processes
@@ -71,7 +81,6 @@ class Dandere2x:
     # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()
-        self.context.update_frame_count()
         verify_user_settings(self.context)
 
         start = time.time()  # This timer prints out how long it takes to upscale one frame

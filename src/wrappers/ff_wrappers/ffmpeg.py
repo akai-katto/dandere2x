@@ -12,10 +12,23 @@ import subprocess
 import copy
 from context import Context
 
+def trim_video(context: Context, output_file: str):
+
+    file_dir = context.file_dir
+    exec = copy.copy(context.trim_video)
+    # replace the exec command withthe files we're concerned with
+    for x in range(len(exec)):
+        if exec[x] == "[input_file]":
+            exec[x] = file_dir
+
+        if exec[x] == "[output_file]":
+            exec[x] = output_file
+
+    print(exec)
+
+    subprocess.run(exec)
 
 
-# example extract_frames_command:
-# [ffmpeg] -i [file_name] -r [frame_rate] -qscale:v 2 -vf noise=c1s=8:c0f=u [output_file]
 def extract_frames(context: Context):
 
     extract_frames_command = context.extract_frames_command

@@ -55,23 +55,6 @@ def delete_specific_merged(file_prefix, extension, lexiconic_digits, start, end)
 def merge_tracks(context: Context, no_audio: str, file_dir: str, output_file: str):
     exec = copy.copy(context.migrate_tracks_command)
 
-    time_options = context.time_options
-
-    if time_options != []:
-        new_file_dir = os.path.join(context.workspace, "audio_only.mkv")
-
-        audio_exec = copy.copy(context.audio_from_video_command)
-
-        for x in range(len(audio_exec)):
-            if audio_exec[x] == "[input_file]":
-                audio_exec[x] = file_dir
-
-            if audio_exec[x] == "[output_file]":
-                audio_exec[x] = new_file_dir
-
-        subprocess.run(audio_exec, stdout=open(os.devnull, 'wb'))
-        file_dir = new_file_dir
-
     for x in range(len(exec)):
         if exec[x] == "[no_audio]":
             exec[x] = no_audio

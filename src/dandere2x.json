@@ -85,14 +85,6 @@
         "-pix_fmt": null
       },
       "-y": true
-    },
-    "extract_streams_only": {
-      "output_options": {
-        "-map": "0:?",
-        "-c": "copy",
-        "-vn": true
-      },
-      "-y": true
     }
   }
 }
