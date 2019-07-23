@@ -6,6 +6,7 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
+import copy
 import logging
 import os
 import subprocess
@@ -39,17 +40,15 @@ class Waifu2xCaffe(threading.Thread):
     @staticmethod
     def upscale_file(context: Context, input_file: str, output_file: str):
 
-        waifu2x_caffe_upscale_frame = context.waifu2x_caffe_upscale_frame
+        exec = copy.copy(context.waifu2x_caffe_upscale_frame)
 
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[waifu2x_caffe_cui_dir]",
-                                                                          context.waifu2x_caffe_cui_dir)
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = input_file
 
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[input_file]", input_file)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[noise_level]", context.noise_level)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[scale_factor]", context.scale_factor)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[output_file]", output_file)
-
-        exec = waifu2x_caffe_upscale_frame.split(" ")
+            if exec[x] == "[output_file]":
+                exec[x] = output_file
 
         subprocess.run(exec)
 
@@ -65,20 +64,18 @@ class Waifu2xCaffe(threading.Thread):
     def run(self):
         logger = logging.getLogger(__name__)
 
-        waifu2x_caffe_upscale_frame = self.context.waifu2x_caffe_upscale_frame
+        differences_dir = self.context.differences_dir
+        upscaled_dir = self.context.upscaled_dir
+        exec = copy.copy(self.context.waifu2x_caffe_upscale_frame)
 
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[waifu2x_caffe_cui_dir]",
-                                                                          self.waifu2x_caffe_cui_dir)
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = differences_dir
 
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[input_file]", self.differences_dir)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[noise_level]", self.noise_level)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[scale_factor]", self.scale_factor)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[output_file]", self.upscaled_dir)
+            if exec[x] == "[output_file]":
+                exec[x] = upscaled_dir
 
-        exec = waifu2x_caffe_upscale_frame.split(" ")
-
-        logger.info("waifu2xcaffe session")
-        logger.info(exec)
 
         # make a list of names that will eventually (past or future) be upscaled
         names = []

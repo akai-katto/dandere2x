@@ -3,8 +3,11 @@ import subprocess
 from dandere2x_core.dandere2x_utils import wait_on_file
 from dandere2x_core.dandere2x_utils import file_exists
 from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import get_options_from_section
 from wrappers.frame import Frame
-from context import Context
+from dandere_context import Context
+
+import copy
 
 
 # Questions
@@ -12,22 +15,29 @@ from context import Context
 
 # Given the file prefixes, the starting frame, and how many frames should fit in a video
 # Create a short video using those values.
-def create_video_from_specific_frames(context: Context, file_prefix, output_file, fpv, end_number):
+def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
 
     ffmpeg_dir = context.ffmpeg_dir
     extension_type = context.extension_type
     frame_rate = context.frame_rate
     input_files = file_prefix + "%d" + extension_type
-    video_from_frames_command = context.video_from_frames_command
+    exec = copy.copy(context.video_from_frames_command)
 
-    video_from_frames_command = video_from_frames_command.replace("[ffmpeg_dir]", ffmpeg_dir)
-    video_from_frames_command = video_from_frames_command.replace("[frame_rate]", str(frame_rate))
-    video_from_frames_command = video_from_frames_command.replace("[start_number]", str(fpv))
-    video_from_frames_command = video_from_frames_command.replace("[input_frames]", input_files)
-    video_from_frames_command = video_from_frames_command.replace("[end_number]", str(end_number))
-    video_from_frames_command = video_from_frames_command.replace("[output_file]", output_file)
+    # replace the exec command with the files we're concerned with
+    for x in range(len(exec)):
+        if exec[x] == "[input_file]":
+            exec[x] = input_files
 
-    exec = video_from_frames_command.split(" ")
+        if exec[x] == "[output_file]":
+            exec[x] = output_file
+
+        if exec[x] == "[start_number]":
+            exec[x] = str(start_number)
+
+        if exec[x] == "[frames_per_video]":
+            exec[x] = str(frames_per_video)
+
+    print(exec)
 
     subprocess.run(exec)
 
@@ -43,14 +53,35 @@ def delete_specific_merged(file_prefix, extension, lexiconic_digits, start, end)
 # 'file_dir' refers to the file in the config file, aka the 'input_video'.
 
 def merge_tracks(context: Context, no_audio: str, file_dir: str, output_file: str):
-    migrate_tracks_command = context.migrate_tracks_command
+    exec = copy.copy(context.migrate_tracks_command)
 
-    migrate_tracks_command = migrate_tracks_command.replace("[ffmpeg_dir]", context.ffmpeg_dir)
-    migrate_tracks_command = migrate_tracks_command.replace("[no_audio]", no_audio)
-    migrate_tracks_command = migrate_tracks_command.replace("[file_dir]", file_dir)
-    migrate_tracks_command = migrate_tracks_command.replace("[output_file]", output_file)
+    time_options = context.time_options
 
-    exec = migrate_tracks_command.split(" ")
+    if time_options != []:
+        new_file_dir = os.path.join(context.workspace, "audio_only.mkv")
+
+        audio_exec = copy.copy(context.audio_from_video_command)
+
+        for x in range(len(audio_exec)):
+            if audio_exec[x] == "[input_file]":
+                audio_exec[x] = file_dir
+
+            if audio_exec[x] == "[output_file]":
+                audio_exec[x] = new_file_dir
+
+        subprocess.run(audio_exec, stdout=open(os.devnull, 'wb'))
+        file_dir = new_file_dir
+
+    for x in range(len(exec)):
+        if exec[x] == "[no_audio]":
+            exec[x] = no_audio
+
+        if exec[x] == "[video_sound]":
+            exec[x] = file_dir
+
+        if exec[x] == "[output_file]":
+            exec[x] = str(output_file)
+
     print(exec)
 
     subprocess.run(exec, stdout=open(os.devnull, 'wb'))

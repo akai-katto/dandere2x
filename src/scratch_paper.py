@@ -1,25 +1,28 @@
-# from wrappers.videosettings import VideoSettings
-# import configparser
-#
-# ffprobe_dir = "C:\\Users\\windwoz\\AppData\\Local\\video2x\\ffmpeg-latest-win64-static\\bin\\ffprobe.exe"
-# file_dir = "C:\\Users\\windwoz\\Desktop\\plz\\customvideos\\violetep8.mkv"
-#
-# video_settings = VideoSettings(ffprobe_dir, file_dir)
-#
-# config = configparser.ConfigParser()
-# config.read("config.ini")
-#
-# print(config.get('dandere2x', 'workspace'))
-#
-# config.set('dandere2x','workspace', 'memes')
-#
-# print(config.get('dandere2x', 'workspace'))
+import json
 
-import configparser
-import time
+# if the value in the key value pair exists, add it.
+# if the key is just 'true', only add the key
+def get_options_from_section(section: json):
+    execute = []
 
-from dandere2x_core.dandere2x_utils import wait_on_either_file
+    for item in section:
+        if section[item]:
+            if section[item] != True:
+                execute.append(str(item))
+                execute.append(str(section[item]))
+            else:
+                execute.append(str(item))
 
-wait_on_either_file("C:\\Users\\windwoz\\Documents\\debugs\\new\\file1.txt", "C:\\Users\\windwoz\\Documents\\debugs\\new\\file2.txt")
+    return execute
 
-print("Either exists!")
+
+with open("dandere2x.json", "r") as read_file:
+    config = json.load(read_file)
+
+
+print(get_options_from_section(config['ffmpeg']['time_options']))
+
+
+list_thing = get_options_from_section(config['ffmpeg']['time_options'])
+
+print(list_thing == None)

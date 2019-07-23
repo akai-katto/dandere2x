@@ -17,6 +17,7 @@ import logging
 import os
 import subprocess
 import threading
+import copy
 
 from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
@@ -50,17 +51,22 @@ class Waifu2xVulkan(threading.Thread):
         waifu2x_vulkan_dir_dir = context.waifu2x_vulkan_dir_dir
         noise_level = context.noise_level
         scale_factor = context.scale_factor
+        exec = copy.copy(context.waifu2x_vulkan_upscale_frame)
 
-        waifu2x_vulkan_upscale_frame = context.waifu2x_vulkan_upscale_frame
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[waifu2x_vulkan_dir]", waifu2x_vulkan_dir)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[input_file]", input_file)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[output_file]", output_file)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[scale_factor]", scale_factor)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[noise_level]", noise_level)
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = input_file
+
+            if exec[x] == "[output_file]":
+                exec[x] = output_file
+
+
+        print("exec!")
+        print(exec)
+
 
         logger = logging.getLogger(__name__)
-
-        exec = waifu2x_vulkan_upscale_frame.split(" ")
 
         os.chdir(waifu2x_vulkan_dir_dir)
 
@@ -125,13 +131,21 @@ class Waifu2xVulkan(threading.Thread):
     def run(self):
         logger = logging.getLogger(__name__)
 
-        waifu2x_vulkan_upscale_frame = self.context.waifu2x_vulkan_upscale_frame
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[waifu2x_vulkan_dir]", self.waifu2x_vulkan_dir)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[input_file]", self.differences_dir)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[output_file]", self.upscaled_dir)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[scale_factor]", self.scale_factor)
+        differences_dir = self.context.differences_dir
+        upscaled_dir = self.context.upscaled_dir
 
-        exec = waifu2x_vulkan_upscale_frame.split(" ")
+        exec = copy.copy(self.context.waifu2x_vulkan_upscale_frame)
+        # replace the exec command with the files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = differences_dir
+
+            if exec[x] == "[output_file]":
+                exec[x] = upscaled_dir
+
+        print("exec2!")
+        print(exec)
+
 
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
