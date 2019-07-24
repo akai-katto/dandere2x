@@ -34,7 +34,39 @@ class Context:
         elif __file__:
             self.this_folder = os.path.dirname(__file__) + os.path.sep
 
+        json_folder = ''
+
+        if getattr(sys, 'frozen', False):
+            json_folder = os.path.dirname(sys.executable)
+        elif __file__:
+            json_folder = os.path.dirname(__file__)
+
+        json_folder = json_folder.replace("\\", "\\\\")
+
+        print(json_folder)
+
+        strtest = str(config_json)
+
+        strtest = strtest.replace("\'", "\"")
+
+        strtest = strtest.replace("True", "true")
+
+        strtest = strtest.replace("False", "true")
+
+        strtest = strtest.replace("None", "null")
+
+        strtest = strtest.replace("..", json_folder)
+
+        f = open("dump.json", "w+")
+
+        f.write(strtest)
+
+        config_json = json.loads(strtest)
+
         self.config_json = config_json
+
+
+        print(self.config_json["ffmpeg"]["ffmpeg_path"])
 
         # directories
         self.waifu2x_caffe_cui_dir = config_json['waifu2x_caffe']['waifu2x_caffe_path']
@@ -52,6 +84,7 @@ class Context:
 
         self.waifu2x_conv_dir = os.path.join(config_json['waifu2x_converter']['waifu2x_converter_path'],
                                              "waifu2x-converter-cpp.exe")
+
         self.waifu2x_conv_dir_dir = config_json['waifu2x_converter']['waifu2x_converter_path']
 
         self.waifu2x_vulkan_dir = os.path.join(config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path'],
@@ -106,8 +139,13 @@ class Context:
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
 
+
+        # Absoluteify Some stuff
+
         # Developer Settings #
         self.debug = config_json['dandere2x']['debug']
+
+
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):

@@ -98,7 +98,6 @@ class AppWindow(QMainWindow):
 
         context = Context(config_json)
         d = Dandere2x(context)
-     #   d.run_concurrent()
 
         try:
             d.run_concurrent()
@@ -106,7 +105,6 @@ class AppWindow(QMainWindow):
             print("Oops!", sys.exc_info()[0], "occured.")
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Upscale Failed. See log")
-
 
 
     # Parse everything we need from the GUI into a dandere2x friendly format

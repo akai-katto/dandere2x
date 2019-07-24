@@ -17,7 +17,7 @@
     "scale_factor": 1
   },
   "waifu2x_caffe": {
-    "waifu2x_caffe_path": "C:\\Users\\windwoz\\Desktop\\plz\\pythonreleases\\0.8 - Copy\\externals\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
+    "waifu2x_caffe_path": "..\\externals\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
     "output_options": {
       "-process": "gpu",
       "-crop_size": 128,
@@ -30,7 +30,7 @@
     }
   },
   "waifu2x_converter": {
-    "waifu2x_converter_path": "C:\\Users\\windwoz\\Desktop\\converter",
+    "waifu2x_converter_path": "..\\externals\\waifu2x-cpp-conv",
     "output_options": {
       "--output-format": null,
       "--png-compression": null,
@@ -46,17 +46,17 @@
     }
   },
   "waifu2x_ncnn_vulkan": {
-    "waifu2x_ncnn_vulkan_path": "C:\\Users\\windwoz\\Desktop\\1.2.1.2\\1.2.1.2\\externals\\waifu2x-vulkan",
+    "waifu2x_ncnn_vulkan_path": "..\\externals\\waifu2x-vulkan",
     "output_options": {
       "-tile-size": 200,
-      "-model-path": null,
+      "-model-path": "..\\externals\\waifu2x-vulkan\\models-cunet",
       "-gpu": 0,
       "-load-proc-save_threads": null,
       "-verbose": null
     }
   },
   "ffmpeg": {
-    "ffmpeg_path": "C:\\Users\\windwoz\\Desktop\\1.2.1.2\\1.2.1.2\\externals\\",
+    "ffmpeg_path": "..\\externals\\",
     "trim_video": {
       "time": {
         "-ss": null,

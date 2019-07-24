@@ -77,6 +77,10 @@ class Waifu2xVulkan(threading.Thread):
 
         logger = logging.getLogger(__name__)
 
+
+        print("Changing Dir's")
+        print(waifu2x_vulkan_dir_dir)
+
         os.chdir(waifu2x_vulkan_dir_dir)
 
         logger.info("manually upscaling file")
