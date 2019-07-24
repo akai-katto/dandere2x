@@ -1,9 +1,9 @@
 {
   "dandere2x": {
-    "workspace": "..\\workspace\\",
-    "file_dir": "..\\workspace\\",
-    "output_file": "C:\\Users\\windwoz\\Desktop\\1.2.12_github\\1.2.1.2\\demo_folder\\outputfile.mkv",
-    "dandere2x_cpp_dir": "C:\\Users\\windwoz\\Documents\\github_projects\\dandere2x_cpp\\cmake-build-debug\\dandere2x_cpp.exe",
+    "workspace": "..\\workspace\\workspace1\\",
+    "file_dir": "..\\workspace\\evenshorter.mkv",
+    "output_file": "..\\workspace\\upscaled.mkv",
+    "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe",
     "block_size": 20,
     "step_size": 4,
     "bleed": 1,
