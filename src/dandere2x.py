@@ -47,7 +47,7 @@ from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.ff_wrappers.ffmpeg import trim_video
 from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
 from wrappers.waifu2x_wrappers.waifu2x_caffe import Waifu2xCaffe
-from wrappers.waifu2x_wrappers.waifu2x_conv import Waifu2xConv
+from wrappers.waifu2x_wrappers.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
 
 
@@ -91,8 +91,8 @@ class Dandere2x:
             waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                  output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-        elif self.context.waifu2x_type == "conv":
-            waifu2x = Waifu2xConv(self.context)
+        elif self.context.waifu2x_type == "converter_cpp":
+            waifu2x = Waifu2xConverterCpp(self.context)
 
             waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                                  output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
@@ -152,10 +152,10 @@ class Dandere2x:
                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "conv":
-            waifu2x = Waifu2xConv(self.context)
-            Waifu2xConv.upscale_file(self.context,
-                                     input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                     output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+            waifu2x = Waifu2xConverterCpp(self.context)
+            Waifu2xConverterCpp.upscale_file(self.context,
+                                             input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                             output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)

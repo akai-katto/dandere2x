@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Name: Dandere2X waifu2x-conv (abbreviated waifu2x-cpp-conveter)
+Name: Dandere2X waifu2x-converter-cpp
 Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 
 Description: # A pretty hacky wrapper for Waifu2x-Conveter-Cpp.
 Behaves pretty similar to waifu2x-caffe, except directory must be
-set  (for subprocess call, waifu2x_conv_dir_dir keeps this variable) and arguments are slightly different.
-Furthermore, waifu2x-conv saves files in an annoying way,
+set  (for subprocess call, waifu2x-converter-cpp keeps this variable) and arguments are slightly different.
+Furthermore, waifu2x-converter-cpp saves files in an annoying way,
 so we need to correct those odd namings.
 """
 
@@ -25,12 +25,12 @@ from dandere2x_core.dandere2x_utils import rename_file, get_options_from_section
 
 
 # this is pretty ugly
-class Waifu2xConv(threading.Thread):
+class Waifu2xConverterCpp(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_conv_dir = context.waifu2x_conv_dir
-        self.waifu2x_conv_dir_dir = context.waifu2x_conv_dir_dir
+        self.waifu2x_converter_cpp_dir = context.waifu2x_converter_cpp_dir
+        self.waifu2x_converter_cpp_dir_dir = context.waifu2x_converter_cpp_dir_dir
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
         self.noise_level = context.noise_level
@@ -38,7 +38,7 @@ class Waifu2xConv(threading.Thread):
         self.workspace = context.workspace
         self.context = context
 
-        self.waifu2x_conv_upscale_frame = [self.waifu2x_conv_dir,
+        self.waifu2x_conv_upscale_frame = [self.waifu2x_converter_cpp_dir,
                                            "-i", "[input_file]",
                                            "--noise-level", str(self.noise_level),
                                            "--scale-ratio", str(self.scale_factor)]
@@ -57,7 +57,7 @@ class Waifu2xConv(threading.Thread):
     def upscale_file(self, input_file: str, output_file: str):
         # load context
 
-        waifu2x_conv_dir_dir = self.context.waifu2x_conv_dir_dir
+        waifu2x_conv_dir_dir = self.context.waifu2x_converter_cpp_dir_dir
         logger = logging.getLogger(__name__)
 
         exec = copy.copy(self.waifu2x_conv_upscale_frame)
@@ -139,7 +139,7 @@ class Waifu2xConv(threading.Thread):
         fix_names_forever_thread.start()
 
         # we need to os.chdir or else waifu2x-conveter won't work.
-        os.chdir(self.waifu2x_conv_dir_dir)
+        os.chdir(self.waifu2x_converter_cpp_dir_dir)
 
         exec = copy.copy(self.waifu2x_conv_upscale_frame)
 

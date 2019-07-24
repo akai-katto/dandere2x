@@ -12,7 +12,7 @@
     "debug": true,
     "realtime_encoding": true,
     "realtime_encoding_delete_files": false,
-    "waifu2x_type": "vulkan",
+    "waifu2x_type": "converter_cpp",
     "noise_level": 3,
     "scale_factor": 2
   },
@@ -30,7 +30,7 @@
     }
   },
   "waifu2x_converter": {
-    "waifu2x_converter_path": "..\\externals\\waifu2x-cpp-conv",
+    "waifu2x_converter_path": "..\\externals\\waifu2x-converter-cpp",
     "output_options": {
       "--output-format": null,
       "--png-compression": null,

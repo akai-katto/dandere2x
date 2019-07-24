@@ -77,10 +77,10 @@ class Context:
 
         self.waifu2x_type = config_json['dandere2x']['waifu2x_type']
 
-        self.waifu2x_conv_dir = os.path.join(config_json['waifu2x_converter']['waifu2x_converter_path'],
+        self.waifu2x_converter_cpp_dir = os.path.join(config_json['waifu2x_converter']['waifu2x_converter_path'],
                                              "waifu2x-converter-cpp.exe")
 
-        self.waifu2x_conv_dir_dir = config_json['waifu2x_converter']['waifu2x_converter_path']
+        self.waifu2x_converter_cpp_dir_dir = config_json['waifu2x_converter']['waifu2x_converter_path']
 
         self.waifu2x_vulkan_dir = os.path.join(config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path'],
                                                "waifu2x-ncnn-vulkan.exe")

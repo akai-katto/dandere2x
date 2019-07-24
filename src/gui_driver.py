@@ -156,7 +156,7 @@ class AppWindow(QMainWindow):
             self.waifu2x_type = 'vulkan'
 
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Converter-Cpp':
-            self.waifu2x_type = 'conv'
+            self.waifu2x_type = 'converter_cpp'
 
     def press_select_video_button(self):
 
