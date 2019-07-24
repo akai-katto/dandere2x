@@ -39,7 +39,10 @@ parts/
 sdist/
 var/
 wheels/
+
+#custom dandere2x stuff
 externals/
+workspace/
 *.egg-info/
 .installed.cfg
 *.egg

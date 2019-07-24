@@ -86,7 +86,8 @@ class Waifu2xVulkan(threading.Thread):
         logger.info("manually upscaling file")
         logger.info(exec)
 
-        subprocess.call(exec, stdout=open(os.devnull, 'wb'), stderr=subprocess.STDOUT)
+        subprocess.call(exec)
+        #subprocess.call(exec, stdout=open(os.devnull, 'wb'), stderr=subprocess.STDOUT)
 
     # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
     # this function just renames the files so Dandere2x can interpret them correctly.
@@ -190,8 +191,9 @@ class Waifu2xVulkan(threading.Thread):
 
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.call(exec, stdout=open(os.devnull, 'w'),
-                            stderr=subprocess.STDOUT)  # We're supressing A LOT of errors btw.
+            subprocess.call(exec)
+            #subprocess.call(exec, stdout=open(os.devnull, 'w'),
+            #                stderr=subprocess.STDOUT)  # We're supressing A LOT of errors btw.
             # self.fix_names()
 
             for name in names[::-1]:

@@ -1,7 +1,7 @@
 {
   "dandere2x": {
-    "workspace": "C:\\Users\\windwoz\\Desktop\\1.2.12_github\\1.2.1.2\\demo_folder\\workspace\\",
-    "file_dir": "C:\\Users\\windwoz\\Desktop\\1.2.12_github\\1.2.1.2\\demo_folder\\evenshorter.mkv",
+    "workspace": "..\\workspace\\",
+    "file_dir": "..\\workspace\\",
     "output_file": "C:\\Users\\windwoz\\Desktop\\1.2.12_github\\1.2.1.2\\demo_folder\\outputfile.mkv",
     "dandere2x_cpp_dir": "C:\\Users\\windwoz\\Documents\\github_projects\\dandere2x_cpp\\cmake-build-debug\\dandere2x_cpp.exe",
     "block_size": 20,
@@ -14,7 +14,7 @@
     "realtime_encoding_delete_files": false,
     "waifu2x_type": "vulkan",
     "noise_level": 3,
-    "scale_factor": 1
+    "scale_factor": 2
   },
   "waifu2x_caffe": {
     "waifu2x_caffe_path": "..\\externals\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
@@ -46,11 +46,11 @@
     }
   },
   "waifu2x_ncnn_vulkan": {
-    "waifu2x_ncnn_vulkan_path": "..\\externals\\waifu2x-vulkan",
+    "waifu2x_ncnn_vulkan_path": "..\\externals\\waifu2x-ncnn-vulkan",
     "output_options": {
       "-tile-size": 200,
-      "-model-path": "..\\externals\\waifu2x-vulkan\\models-cunet",
-      "-gpu": 0,
+      "-model-path": "..\\externals\\waifu2x-ncnn-vulkan\\models-upconv_7_anime_style_art_rgb",
+      "-gpu": null,
       "-load-proc-save_threads": null,
       "-verbose": null
     }

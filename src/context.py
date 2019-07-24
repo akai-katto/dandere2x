@@ -57,10 +57,6 @@ class Context:
 
         strtest = strtest.replace("..", json_folder)
 
-        f = open("dump.json", "w+")
-
-        f.write(strtest)
-
         config_json = json.loads(strtest)
 
         self.config_json = config_json
