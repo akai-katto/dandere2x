@@ -34,35 +34,34 @@ class Context:
         elif __file__:
             self.this_folder = os.path.dirname(__file__) + os.path.sep
 
-        json_folder = ''
+        # in this section right here, we need to absolutify the
+        # json paths in the json file. Meaning, ../ -> C:\stuff\
+        # We do this by creating a string representation of the json, changing the hard codings,
+        # then renaming the variables from python styled json to normal json, then
+        # parsing it back.
+
+        current_folder_json = ''
 
         if getattr(sys, 'frozen', False):
-            json_folder = os.path.dirname(sys.executable)
+            current_folder_json = os.path.dirname(sys.executable)
         elif __file__:
-            json_folder = os.path.dirname(__file__)
+            current_folder_json = os.path.dirname(__file__)
 
-        json_folder = json_folder.replace("\\", "\\\\")
+        current_folder_json = current_folder_json.replace("\\", "\\\\")
 
-        print(json_folder)
+        config_json_string = str(config_json)
 
-        strtest = str(config_json)
+        # turn python's string'd json into a normal json
+        config_json_string = config_json_string.replace("\'", "\"")
+        config_json_string = config_json_string.replace("True", "true")
+        config_json_string = config_json_string.replace("False", "true")
+        config_json_string = config_json_string.replace("None", "null")
+        config_json_string = config_json_string.replace("..", current_folder_json)
 
-        strtest = strtest.replace("\'", "\"")
-
-        strtest = strtest.replace("True", "true")
-
-        strtest = strtest.replace("False", "true")
-
-        strtest = strtest.replace("None", "null")
-
-        strtest = strtest.replace("..", json_folder)
-
-        config_json = json.loads(strtest)
-
+        #load the json back into the config
+        config_json = json.loads(config_json_string)
         self.config_json = config_json
 
-
-        print(self.config_json["ffmpeg"]["ffmpeg_path"])
 
         # directories
         self.waifu2x_caffe_cui_dir = config_json['waifu2x_caffe']['waifu2x_caffe_path']
