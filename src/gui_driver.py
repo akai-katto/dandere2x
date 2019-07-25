@@ -1,21 +1,16 @@
-import configparser
 import sys
+import json
 import os
-import threading
+import sys
 
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
+
+from context import Context
 from dandere2x import Dandere2x
 from dandere2x_core.dandere2x_utils import get_valid_block_sizes
-from wrappers.videosettings import VideoSettings
-import subprocess
-
-from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QWidget, QFileDialog
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
-from PyQt5 import QtCore, QtGui, QtWidgets
-
-
-import time
-from context import Context
-import json
+from wrappers.videosettings import VideoSettings
 
 
 class QtDandere2xThread(QtCore.QThread):
@@ -31,6 +26,7 @@ class QtDandere2xThread(QtCore.QThread):
         d.run_concurrent()
 
         self.finished.emit()
+
 
 class AppWindow(QMainWindow):
 
@@ -56,9 +52,9 @@ class AppWindow(QMainWindow):
 
         # theres a bug with qt designer and '80' for default quality needs to be set elsewhere
         _translate = QtCore.QCoreApplication.translate
-        self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "70"))
+        self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "75"))
         self.ui.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Vulkan"))
-        #self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\aka.png"))
+        # self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\aka.png"))
 
         self.config_buttons()
         self.refresh_scale_factor()
@@ -90,7 +86,7 @@ class AppWindow(QMainWindow):
             self.ui.scale_4_radio_button.setEnabled(True)
 
     def press_upscale_button(self):
-        
+
         self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
         self.ui.upscale_status_label.setText("Upscaling in Progress")
 
@@ -180,7 +176,6 @@ class AppWindow(QMainWindow):
         self.image_quality = int(self.ui.image_quality_box.currentText())
         self.block_size = int(self.ui.block_size_combo_box.currentText())
 
-
         # Waifu2x Type
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Caffe':
             self.waifu2x_type = 'caffe'
@@ -218,9 +213,24 @@ class AppWindow(QMainWindow):
         self.ui.block_size_combo_box.clear()
         self.ui.block_size_combo_box.addItems(valid_list_blocksize)
         self.ui.block_size_combo_box.setEnabled(True)
-        self.ui.block_size_combo_box.setCurrentIndex(len(valid_list_blocksize) / 1.5) # Put the blocksize to be in the middleish
-                                                                                      # to avoid users leaving it as '1'
 
+        # to avoid users leaving it as '1'
+        self.ui.block_size_combo_box.setCurrentIndex(len(valid_list_blocksize) / 1.5)
+
+        name_only = name.split(".")[0]
+
+        # parse inputs so we can access variables
+        self.parse_gui_inputs()
+
+        # make a default name
+        self.output_file = os.path.join(path, (name_only + "_"
+                                               + "[" + str(self.waifu2x_type) + "]"
+                                               + "[s" + str(self.scale_factor) + "]"
+                                               + "[n" + str(self.noise_level) + "]"
+                                               + "[b" + str(self.block_size) + "]"
+                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
+
+        self.set_output_file_name()
         self.refresh_buttons()
 
     def press_select_output_button(self):
@@ -232,15 +242,19 @@ class AppWindow(QMainWindow):
         if self.output_file == '':
             return
 
-        # set the label to only display the last 20 elements of the selected workspace
-        start_val = len(self.output_file) - 20
-        if(start_val < 0):
-            start_val = 0
-
-        self.ui.workspace_label.setText(".." + self.output_file[start_val :  len(self.output_file)])
-        self.ui.workspace_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+        self.set_output_file_name()
 
         self.refresh_buttons()
+
+    def set_output_file_name(self):
+
+        # set the label to only display the last 20 elements of the selected workspace
+        start_val = len(self.output_file) - 28
+        if start_val < 0:
+            start_val = 0
+
+        self.ui.workspace_label.setText(".." + self.output_file[start_val:  len(self.output_file)])
+        self.ui.workspace_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 8, QtGui.QFont.Bold))
 
     def load_dir(self):
         self.ui.w = QWidget()
@@ -253,7 +267,12 @@ class AppWindow(QMainWindow):
         self.ui.w = QWidget()
         filter = "Images (*.mkv *.mp4)"
         self.ui.w.resize(320, 240)
-        filename = QFileDialog.getSaveFileName(w, 'Save File', self.this_folder, filter)
+
+        default_name = self.output_file
+        if self.output_file == '':
+            default_name = self.this_folder
+
+        filename = QFileDialog.getSaveFileName(w, 'Save File', default_name, filter)
         return filename[0]
 
     def load_file(self):
@@ -261,7 +280,6 @@ class AppWindow(QMainWindow):
 
         self.ui.w.resize(320, 240)
         filename = QFileDialog.getOpenFileName(w, 'Open File', self.this_folder)
-        print(filename)
         return filename
 
 
