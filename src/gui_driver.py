@@ -97,6 +97,9 @@ class AppWindow(QMainWindow):
         print("quality_low = " + str(self.image_quality))
         print("waifu2x_type = " + self.waifu2x_type)
 
+        with open("json_dump.json", "w") as write_file:
+            json.dump(config_json, write_file)
+
         context = Context(config_json)
         d = Dandere2x(context)
 

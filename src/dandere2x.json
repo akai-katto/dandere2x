@@ -2,7 +2,7 @@
   "dandere2x": {
     "workspace": "..\\workspace\\workspace1\\",
     "file_dir": "..\\workspace\\evenshorter.mkv",
-    "output_file": "..\\workspace\\upscaled.mkv",
+    "output_file": "..\\workspace\\wontcrash.mkv",
     "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe",
     "block_size": 20,
     "step_size": 4,

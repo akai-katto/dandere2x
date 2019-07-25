@@ -128,7 +128,9 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
         if migrate_tracks_command[x] == "[output_file]":
             migrate_tracks_command[x] = str(output_file)
 
-    subprocess.run(migrate_tracks_command, stdout=open(os.devnull, 'wb'))
+    print(migrate_tracks_command)
+
+    subprocess.run(migrate_tracks_command)
 
 
 # Given the file prefixes, the starting frame, and how many frames should fit in a video
