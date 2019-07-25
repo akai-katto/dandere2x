@@ -8,7 +8,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_Dandere2xGUI(object):
     def setupUi(self, Dandere2xGUI):
         Dandere2xGUI.setObjectName("Dandere2xGUI")
@@ -76,8 +75,8 @@ class Ui_Dandere2xGUI(object):
         self.select_video_button.setFont(font)
         self.select_video_button.setStyleSheet("border-color: rgb(17, 236, 255);")
         self.select_video_button.setObjectName("select_video_button")
-        self.select_workspace_button = QtWidgets.QPushButton(self.centralwidget)
-        self.select_workspace_button.setGeometry(QtCore.QRect(260, 210, 171, 41))
+        self.select_output_button = QtWidgets.QPushButton(self.centralwidget)
+        self.select_output_button.setGeometry(QtCore.QRect(260, 210, 171, 41))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(4, 79, 160))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -88,12 +87,12 @@ class Ui_Dandere2xGUI(object):
         brush = QtGui.QBrush(QtGui.QColor(4, 79, 160))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Mid, brush)
-        self.select_workspace_button.setPalette(palette)
+        self.select_output_button.setPalette(palette)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei Light")
         font.setPointSize(14)
-        self.select_workspace_button.setFont(font)
-        self.select_workspace_button.setObjectName("select_workspace_button")
+        self.select_output_button.setFont(font)
+        self.select_output_button.setObjectName("select_output_button")
         self.upscale_button = QtWidgets.QPushButton(self.centralwidget)
         self.upscale_button.setEnabled(False)
         self.upscale_button.setGeometry(QtCore.QRect(490, 210, 171, 41))
@@ -929,16 +928,16 @@ class Ui_Dandere2xGUI(object):
         _translate = QtCore.QCoreApplication.translate
         Dandere2xGUI.setWindowTitle(_translate("Dandere2xGUI", "Dandere2x GUI"))
         self.select_video_button.setText(_translate("Dandere2xGUI", "Select Video"))
-        self.select_workspace_button.setText(_translate("Dandere2xGUI", "Select Workspace"))
+        self.select_output_button.setText(_translate("Dandere2xGUI", "Select Output"))
         self.upscale_button.setText(_translate("Dandere2xGUI", "Upscale!"))
         self.video_label.setText(_translate("Dandere2xGUI", "No video selected"))
-        self.workspace_label.setText(_translate("Dandere2xGUI", "No workspace selected"))
+        self.workspace_label.setText(_translate("Dandere2xGUI", "No output selected"))
         self.noise_0_radio_button.setText(_translate("Dandere2xGUI", "Level 0"))
         self.noise_1_radio_button.setText(_translate("Dandere2xGUI", "Level 1"))
         self.noise_3_radio_button.setText(_translate("Dandere2xGUI", "Level 3"))
         self.noise_2_radio_button.setText(_translate("Dandere2xGUI", "Level 2"))
         self.video_label_2.setText(_translate("Dandere2xGUI", "Noise Level"))
-        self.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Vulkan"))
+        self.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Caffe"))
         self.waifu2x_type_combo_box.setItemText(0, _translate("Dandere2xGUI", "Waifu2x-Caffe"))
         self.waifu2x_type_combo_box.setItemText(1, _translate("Dandere2xGUI", "Waifu2x-Vulkan"))
         self.waifu2x_type_combo_box.setItemText(2, _translate("Dandere2xGUI", "Waifu2x-Converter-Cpp"))
@@ -948,7 +947,7 @@ class Ui_Dandere2xGUI(object):
         self.scale_2_radio_button.setText(_translate("Dandere2xGUI", "2 x"))
         self.scale_4_radio_button.setText(_translate("Dandere2xGUI", "4 x"))
         self.scale_3_radio_button.setText(_translate("Dandere2xGUI", "3 x"))
-        self.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "85"))
+        self.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "100"))
         self.image_quality_box.setItemText(0, _translate("Dandere2xGUI", "100"))
         self.image_quality_box.setItemText(1, _translate("Dandere2xGUI", "95"))
         self.image_quality_box.setItemText(2, _translate("Dandere2xGUI", "90"))
@@ -961,16 +960,17 @@ class Ui_Dandere2xGUI(object):
         self.image_quality_box.setItemText(9, _translate("Dandere2xGUI", "55"))
         self.image_quality_box.setItemText(10, _translate("Dandere2xGUI", "50"))
         self.video_label_5.setText(_translate("Dandere2xGUI", "Image Quality"))
-        self.video_label_6.setToolTip(_translate("Dandere2xGUI",
-                                                 "Block size Dandere2x will use to compute blocks. You NEED to select a video first before selecting this.,"))
+        self.video_label_6.setToolTip(_translate("Dandere2xGUI", "Block size Dandere2x will use to compute blocks. You NEED to select a video first before\n"
+"                        selecting this.,\n"
+"                    "))
         self.video_label_6.setText(_translate("Dandere2xGUI", "Block Size"))
         self.video_label_7.setText(_translate("Dandere2xGUI", "Dandere2x Settings"))
-        self.block_help.setToolTip(_translate("Dandere2xGUI",
-                                              "Block size Dandere2x will use to compute blocks. You NEED to select a video first before selecting this.,"))
+        self.block_help.setToolTip(_translate("Dandere2xGUI", "Block size Dandere2x will use to compute blocks. You NEED to select a video first before\n"
+"                        selecting this.,\n"
+"                    "))
         self.block_help.setText(_translate("Dandere2xGUI", "?"))
-        self.quality_help.setToolTip(
-            _translate("Dandere2xGUI", "The acceptable quality loss in an frame depicted by JPEG\'s standards."))
+        self.quality_help.setToolTip(_translate("Dandere2xGUI", "The acceptable quality loss in an frame depicted by JPEG\'s standards."))
         self.quality_help.setText(_translate("Dandere2xGUI", "?"))
-        self.upscale_status_label.setWhatsThis(
-            _translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
+        self.upscale_status_label.setWhatsThis(_translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
         self.upscale_status_label.setText(_translate("Dandere2xGUI", "No files selected"))
+

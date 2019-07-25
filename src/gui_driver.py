@@ -24,7 +24,6 @@ class AppWindow(QMainWindow):
         self.ui = Ui_Dandere2xGUI()
         self.ui.setupUi(self)
 
-
         # load 'this folder' in a pyinstaller friendly way
         self.this_folder = ''
         if getattr(sys, 'frozen', False):
@@ -33,7 +32,7 @@ class AppWindow(QMainWindow):
             self.this_folder = os.path.dirname(__file__) + os.path.sep
 
         self.file_dir = ''
-        self.workspace_dir = ''
+        self.output_file = ''
         self.scale_factor = None
         self.noise_level = None
         self.image_quality = None
@@ -50,16 +49,22 @@ class AppWindow(QMainWindow):
         self.refresh_scale_factor()
         self.show()
 
-
     # Setup connections for each button
     def config_buttons(self):
         self.ui.select_video_button.clicked.connect(self.press_select_video_button)
-        self.ui.select_workspace_button.clicked.connect(self.press_select_workspace_button)
+        self.ui.select_output_button.clicked.connect(self.press_select_output_button)
         self.ui.upscale_button.clicked.connect(self.press_upscale_button)
         self.ui.waifu2x_type_combo_box.currentIndexChanged.connect(self.refresh_scale_factor)
 
-
     # if vulkan is enabled, we cant do scale factor 3 or 4
+
+    # refresh the buttons to see if upscale can be called
+    def refresh_buttons(self):
+        # allow user to upscale if two output_file are met
+        if self.file_dir != '' and self.output_file != '':
+            self.ui.upscale_button.setEnabled(True)
+            self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+            self.ui.upscale_status_label.setText("Ready to upscale!")
 
     def refresh_scale_factor(self):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
@@ -79,7 +84,7 @@ class AppWindow(QMainWindow):
         with open("dandere2x.json", "r") as read_file:
             config_json = json.load(read_file)
 
-        config_json['dandere2x']['workspace'] = self.workspace_dir
+        config_json['dandere2x']['output_file'] = self.output_file
         config_json['dandere2x']['file_dir'] = self.file_dir
         config_json['dandere2x']['block_size'] = self.block_size
         config_json['dandere2x']['quality_low'] = self.image_quality
@@ -90,7 +95,7 @@ class AppWindow(QMainWindow):
             json.dump(config_json, outfile)
 
 
-        print("workspace = " + self.workspace_dir)
+        print("output_file = " + self.output_file)
         print("file_dir = " + self.file_dir)
         print("block_size = " + str(self.block_size))
         print("quality_low = " + str(self.image_quality))
@@ -106,13 +111,11 @@ class AppWindow(QMainWindow):
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Upscale Failed. See log")
 
-
     # Parse everything we need from the GUI into a dandere2x friendly format
     # Leave everything as STR's since config files are just strings
     def parse_gui_inputs(self):
 
-
-        self.workspace_dir = self.workspace_dir.replace("/", "\\") + "\\"
+        self.output_file = self.output_file.replace("/", "\\")
         self.file_dir = self.file_dir.replace("/", "\\")
 
         # Scale Factors
@@ -156,7 +159,7 @@ class AppWindow(QMainWindow):
             self.waifu2x_type = 'vulkan'
 
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Converter-Cpp':
-            self.waifu2x_type = 'converter_cpp'
+            self.waifu2x_type = "converter_cpp"
 
     def press_select_video_button(self):
 
@@ -171,13 +174,13 @@ class AppWindow(QMainWindow):
         self.ui.video_label.setText(name)
         self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
 
-
         with open("dandere2x.json", "r") as read_file:
             config_json = json.load(read_file)
 
-        ffprobe_path = os.path.join(config_json['ffmpeg']['ffmpeg_path'], "ffprobe.exe")
+        context = Context(config_json)
+
         # load the needed video settings for the GUI
-        videosettings = VideoSettings(ffprobe_path, self.file_dir)
+        videosettings = VideoSettings(context.ffprobe_dir, self.file_dir)
 
         # Get a list of valid list block sizes knowing the width and height
         valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width)
@@ -186,38 +189,28 @@ class AppWindow(QMainWindow):
         self.ui.block_size_combo_box.addItems(valid_list_blocksize)
         self.ui.block_size_combo_box.setEnabled(True)
         self.ui.block_size_combo_box.setCurrentIndex(len(valid_list_blocksize) / 1.5) # Put the blocksize to be in the middleish
-                                                                            # to avoid users leaving it as '1'
+                                                                                      # to avoid users leaving it as '1'
 
-        # allow user to upscale if two conditions are met
-        if self.file_dir != '' and self.workspace_dir != '':
-            self.ui.upscale_button.setEnabled(True)
-            self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
-            self.ui.upscale_status_label.setText("Ready to upscale!")
+        self.refresh_buttons()
 
+    def press_select_output_button(self):
 
-
-    def press_select_workspace_button(self):
-
-        self.workspace_dir = self.load_dir()
+        self.output_file = self.save_file_name()
 
         # If the user didn't select anything, don't continue or it'll break
         # Everything
-        if self.workspace_dir == '':
+        if self.output_file == '':
             return
 
         # set the label to only display the last 20 elements of the selected workspace
-        start_val = len(self.workspace_dir) - 20
+        start_val = len(self.output_file) - 20
         if(start_val < 0):
             start_val = 0
 
-        self.ui.workspace_label.setText(".." + self.workspace_dir[start_val :  len(self.workspace_dir)])
+        self.ui.workspace_label.setText(".." + self.output_file[start_val :  len(self.output_file)])
         self.ui.workspace_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
 
-        # allow user to upscale if two conditions are met
-        if self.file_dir != '' and self.workspace_dir != '':
-            self.ui.upscale_button.setEnabled(True)
-            self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
-            self.ui.upscale_status_label.setText("Ready to upscale!")
+        self.refresh_buttons()
 
     def load_dir(self):
         self.ui.w = QWidget()
@@ -226,11 +219,19 @@ class AppWindow(QMainWindow):
         filename = QFileDialog.getExistingDirectory(w, 'Open Directory', self.this_folder)
         return filename
 
+    def save_file_name(self):
+        self.ui.w = QWidget()
+        filter = "Images (*.mkv *.mp4)"
+        self.ui.w.resize(320, 240)
+        filename = QFileDialog.getSaveFileName(w, 'Save File', self.this_folder, filter)
+        return filename[0]
+
     def load_file(self):
         self.ui.w = QWidget()
 
         self.ui.w.resize(320, 240)
         filename = QFileDialog.getOpenFileName(w, 'Open File', self.this_folder)
+        print(filename)
         return filename
 
 
