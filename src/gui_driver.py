@@ -91,10 +91,6 @@ class AppWindow(QMainWindow):
         config_json['dandere2x']['waifu2x_type'] = self.waifu2x_type
         config_json['dandere2x']['scale_factor'] = self.scale_factor
 
-        with open('jsondump.json', 'w') as outfile:
-            json.dump(config_json, outfile)
-
-
         print("output_file = " + self.output_file)
         print("file_dir = " + self.file_dir)
         print("block_size = " + str(self.block_size))
