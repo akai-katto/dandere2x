@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from context import Context
 from dandere2x import Dandere2x
+from dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
 from dandere2x_core.dandere2x_utils import get_valid_block_sizes
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 from wrappers.videosettings import VideoSettings
@@ -21,9 +22,8 @@ class QtDandere2xThread(QtCore.QThread):
         self.config_json = config_json
 
     def run(self):
-        context = Context(self.config_json)
-        d = Dandere2x(context)
-        d.run_concurrent()
+        d = Dandere2x_Gui_Wrapper(self.config_json)
+        d.start()
 
         self.finished.emit()
 
@@ -36,7 +36,8 @@ class AppWindow(QMainWindow):
         self.ui.setupUi(self)
 
         # load 'this folder' in a pyinstaller friendly way
-        self.this_folder = ''
+        self.this_folder = os.getcwd()
+
         if getattr(sys, 'frozen', False):
             self.this_folder = os.path.dirname(sys.executable) + os.path.sep
         elif __file__:

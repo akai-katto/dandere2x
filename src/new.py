@@ -6,7 +6,7 @@ from context import Context
 
 start = time.time()
 
-with open("json_dump.json", "r") as read_file:
+with open("dandere2x.json", "r") as read_file:
     config_json = json.load(read_file)
 
 context = Context(config_json)

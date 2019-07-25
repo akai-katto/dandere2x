@@ -99,6 +99,9 @@ def file_exists(file_string: str):
     logger = logging.getLogger(__name__)
     return os.path.isfile(file_string)
 
+def dir_exists(file_string: str):
+    logger = logging.getLogger(__name__)
+    return os.path.isdir(file_string)
 
 # custom function to rename file if it already exists
 def rename_file(file1, file2):

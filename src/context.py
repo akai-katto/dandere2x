@@ -62,7 +62,6 @@ class Context:
         config_json = json.loads(config_json_string)
         self.config_json = config_json
 
-
         # directories
         self.waifu2x_caffe_cui_dir = config_json['waifu2x_caffe']['waifu2x_caffe_path']
 
@@ -134,18 +133,21 @@ class Context:
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
 
-
         # Absoluteify Some stuff
 
         # Developer Settings #
         self.debug = config_json['dandere2x']['debug']
 
-
-
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
         logging.basicConfig(filename=self.workspace + 'dandere2x.log', level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+
+    def close_logger(self):
+        handlers = self.logger.handlers[:]
+        for handler in handlers:
+            handler.close()
+            self.logger.removeHandler(handler)
 
     def update_frame_count(self):
         self.frame_count = len([name for name in os.listdir(self.input_frames_dir)

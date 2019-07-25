@@ -53,8 +53,8 @@ from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
 
 class Dandere2x:
 
-    def __init__(self, config):
-        self.context = config
+    def __init__(self, context):
+        self.context = context
 
     # pre-setup is doing really basic book keeping, such as creating the directories needed
     # during runtime, extracting the frames out of ffmpeg, etc. I denote this 'pre-setup', as
