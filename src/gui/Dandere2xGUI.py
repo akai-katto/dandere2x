@@ -315,7 +315,7 @@ class Ui_Dandere2xGUI(object):
         self.noise_2_radio_button.setFont(font)
         self.noise_2_radio_button.setObjectName("noise_2_radio_button")
         self.video_label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.video_label_2.setGeometry(QtCore.QRect(30, 90, 81, 21))
+        self.video_label_2.setGeometry(QtCore.QRect(30, 90, 141, 21))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -936,7 +936,7 @@ class Ui_Dandere2xGUI(object):
         self.noise_1_radio_button.setText(_translate("Dandere2xGUI", "Level 1"))
         self.noise_3_radio_button.setText(_translate("Dandere2xGUI", "Level 3"))
         self.noise_2_radio_button.setText(_translate("Dandere2xGUI", "Level 2"))
-        self.video_label_2.setText(_translate("Dandere2xGUI", "Noise Level"))
+        self.video_label_2.setText(_translate("Dandere2xGUI", "Denoise Level"))
         self.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Caffe"))
         self.waifu2x_type_combo_box.setItemText(0, _translate("Dandere2xGUI", "Waifu2x-Caffe"))
         self.waifu2x_type_combo_box.setItemText(1, _translate("Dandere2xGUI", "Waifu2x-Vulkan"))
@@ -964,12 +964,12 @@ class Ui_Dandere2xGUI(object):
 "                        selecting this.,\n"
 "                    "))
         self.video_label_6.setText(_translate("Dandere2xGUI", "Block Size"))
-        self.video_label_7.setText(_translate("Dandere2xGUI", "Dandere2x Settings"))
+        self.video_label_7.setText(_translate("Dandere2xGUI", "Settings"))
         self.block_help.setToolTip(_translate("Dandere2xGUI", "Block size Dandere2x will use to compute blocks. You NEED to select a video first before\n"
-"                        selecting this.,\n"
-"                    "))
+" selecting this.,               "))
         self.block_help.setText(_translate("Dandere2xGUI", "?"))
-        self.quality_help.setToolTip(_translate("Dandere2xGUI", "The acceptable quality loss in an frame depicted by JPEG\'s standards."))
+        self.quality_help.setToolTip(_translate("Dandere2xGUI", "The acceptable quality loss in an frame depicted by JPEG\'s standards. \n"
+" The developer highly recommends a value between 70-80"))
         self.quality_help.setText(_translate("Dandere2xGUI", "?"))
         self.upscale_status_label.setWhatsThis(_translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
         self.upscale_status_label.setText(_translate("Dandere2xGUI", "No files selected"))

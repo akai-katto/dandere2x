@@ -96,7 +96,9 @@ class AppWindow(QMainWindow):
 
         self.parse_gui_inputs()
 
-        with open("dandere2x.json", "r") as read_file:
+        print(os.getcwd())
+
+        with open(os.path.join(self.this_folder, "dandere2x.json"), "r") as read_file:
             config_json = json.load(read_file)
 
         config_json['dandere2x']['output_file'] = self.output_file
@@ -135,8 +137,10 @@ class AppWindow(QMainWindow):
         self.ui.select_video_button.setEnabled(True)
 
     def update(self):
-        print("it is finished")
+        self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+        self.ui.upscale_status_label.setText("Upscale Complete!")
         self.enable_buttons()
+
     # Parse everything we need from the GUI into a dandere2x friendly format
     # Leave everything as STR's since config files are just strings
     def parse_gui_inputs(self):
@@ -200,7 +204,7 @@ class AppWindow(QMainWindow):
         self.ui.video_label.setText(name)
         self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
 
-        with open("dandere2x.json", "r") as read_file:
+        with open(os.path.join(self.this_folder, "dandere2x.json"), "r") as read_file:
             config_json = json.load(read_file)
 
         context = Context(config_json)

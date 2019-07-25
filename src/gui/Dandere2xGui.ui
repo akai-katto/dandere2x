@@ -934,7 +934,7 @@
      <rect>
       <x>30</x>
       <y>90</y>
-      <width>81</width>
+      <width>141</width>
       <height>21</height>
      </rect>
     </property>
@@ -1038,7 +1038,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Noise Level</string>
+     <string>Denoise Level</string>
     </property>
    </widget>
    <widget class="QComboBox" name="waifu2x_type_combo_box">
@@ -2400,7 +2400,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Dandere2x Settings</string>
+     <string>Settings</string>
     </property>
    </widget>
    <widget class="QLabel" name="block_help">
@@ -2513,8 +2513,7 @@
     </property>
     <property name="toolTip">
      <string>Block size Dandere2x will use to compute blocks. You NEED to select a video first before
-                        selecting this.,
-                    </string>
+ selecting this.,               </string>
     </property>
     <property name="text">
      <string>?</string>
@@ -2629,7 +2628,8 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>The acceptable quality loss in an frame depicted by JPEG's standards.</string>
+     <string>The acceptable quality loss in an frame depicted by JPEG's standards. 
+ The developer highly recommends a value between 70-80</string>
     </property>
     <property name="text">
      <string>?</string>
