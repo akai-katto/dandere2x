@@ -17,6 +17,21 @@ import time
 from context import Context
 import json
 
+
+class QtDandere2xThread(QtCore.QThread):
+    finished = QtCore.pyqtSignal()
+
+    def __init__(self, parent, config_json):
+        super(QtDandere2xThread, self).__init__(parent)
+        self.config_json = config_json
+
+    def run(self):
+        context = Context(self.config_json)
+        d = Dandere2x(context)
+        d.run_concurrent()
+
+        self.finished.emit()
+
 class AppWindow(QMainWindow):
 
     def __init__(self):
@@ -97,19 +112,31 @@ class AppWindow(QMainWindow):
         print("quality_low = " + str(self.image_quality))
         print("waifu2x_type = " + self.waifu2x_type)
 
-        with open("json_dump.json", "w") as write_file:
-            json.dump(config_json, write_file)
+        self.thread = QtDandere2xThread(self, config_json)
+        self.thread.finished.connect(self.update)
 
-        context = Context(config_json)
-        d = Dandere2x(context)
+        self.disable_buttons()
 
         try:
-            d.run_concurrent()
+            self.thread.start()
         except:
             print("Oops!", sys.exc_info()[0], "occured.")
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Upscale Failed. See log")
 
+    def disable_buttons(self):
+        self.ui.upscale_button.setEnabled(False)
+        self.ui.select_output_button.setEnabled(False)
+        self.ui.select_video_button.setEnabled(False)
+
+    def enable_buttons(self):
+        self.ui.upscale_button.setEnabled(True)
+        self.ui.select_output_button.setEnabled(True)
+        self.ui.select_video_button.setEnabled(True)
+
+    def update(self):
+        print("it is finished")
+        self.enable_buttons()
     # Parse everything we need from the GUI into a dandere2x friendly format
     # Leave everything as STR's since config files are just strings
     def parse_gui_inputs(self):
