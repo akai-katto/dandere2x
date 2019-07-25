@@ -223,12 +223,16 @@ class AppWindow(QMainWindow):
         self.parse_gui_inputs()
 
         # make a default name
-        self.output_file = os.path.join(path, (name_only + "_"
-                                               + "[" + str(self.waifu2x_type) + "]"
-                                               + "[s" + str(self.scale_factor) + "]"
-                                               + "[n" + str(self.noise_level) + "]"
-                                               + "[b" + str(self.block_size) + "]"
-                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
+
+        self.output_file = os.path.join(path, (name_only + "_upscaled" + ".mkv"))
+
+        ## temp disabled for time being
+        # self.output_file = os.path.join(path, (name_only + "_"
+        #                                        + "[" + str(self.waifu2x_type) + "]"
+        #                                        + "[s" + str(self.scale_factor) + "]"
+        #                                        + "[n" + str(self.noise_level) + "]"
+        #                                        + "[b" + str(self.block_size) + "]"
+        #                                        + "[q" + str(self.image_quality) + "]" + ".mkv"))
 
         self.set_output_file_name()
         self.refresh_buttons()
