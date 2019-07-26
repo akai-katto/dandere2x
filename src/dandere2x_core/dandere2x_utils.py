@@ -6,9 +6,28 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
+import json
 import logging
 import os
 import time
+
+
+# if the value in the key value pair exists, add it.
+# if the key is just 'true', only add the key
+
+# THis doesnt work with multiple keys and
+def get_options_from_section(section: json):
+    execute = []
+
+    for item in section:
+        if section[item] != None:
+            if section[item] != True:
+                execute.append(str(item))
+                execute.append(str(section[item]))
+            else:
+                execute.append(str(item))
+
+    return execute
 
 
 # returns a list given a text file (representing a string)
@@ -57,9 +76,9 @@ def wait_on_file(file_string: str):
         count += 1
         time.sleep(.001)
 
+
 # for renaming function, break when either file exists
 def wait_on_either_file(file_1: str, file_2: str):
-
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)
@@ -73,12 +92,16 @@ def wait_on_either_file(file_1: str, file_2: str):
         count += 1
         time.sleep(.001)
 
+
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
 def file_exists(file_string: str):
     logger = logging.getLogger(__name__)
     return os.path.isfile(file_string)
 
+def dir_exists(file_string: str):
+    logger = logging.getLogger(__name__)
+    return os.path.isdir(file_string)
 
 # custom function to rename file if it already exists
 def rename_file(file1, file2):
@@ -110,6 +133,7 @@ def get_seconds_from_time(time_frame: int):
 
     return hours_seconds + minutes_seconds + seconds
 
+
 def get_valid_block_sizes(width: int, height: int):
     valid_sizes = []
 
@@ -120,6 +144,7 @@ def get_valid_block_sizes(width: int, height: int):
             valid_sizes.append(str(x))
 
     return valid_sizes
+
 
 # load the first frame, check if the block size is compatible with the resolution
 def verify_user_settings(context):

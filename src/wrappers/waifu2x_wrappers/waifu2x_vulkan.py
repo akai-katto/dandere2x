@@ -13,16 +13,18 @@ Furthermore, waifu2x-vulkan saves files in an annoying way, i.e it becomes image
 so we need to correct those odd namings.
 """
 
+import copy
 import logging
 import os
 import subprocess
 import threading
 
 from context import Context
+from dandere2x_core.dandere2x_utils import file_exists
 from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import get_options_from_section
 from dandere2x_core.dandere2x_utils import rename_file
 from dandere2x_core.dandere2x_utils import wait_on_either_file
-from dandere2x_core.dandere2x_utils import file_exists
 
 
 # this is pretty ugly
@@ -39,35 +41,53 @@ class Waifu2xVulkan(threading.Thread):
         self.workspace = context.workspace
         self.context = context
 
+        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_vulkan_dir,
+                                             "-i", "[input_file]",
+                                             "-n", str(self.noise_level),
+                                             "-s", str(self.scale_factor)]
+
+        waifu2x_vulkan_options = get_options_from_section(
+            self.context.config_json["waifu2x_ncnn_vulkan"]["output_options"])
+
+        # add custom options to waifu2x_vulkan
+        for element in waifu2x_vulkan_options:
+            self.waifu2x_vulkan_upscale_frame.append(element)
+
+        self.waifu2x_vulkan_upscale_frame.extend(["-o", "[output_file]"])
+
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
     # manually upscale a single file
-    @staticmethod
-    def upscale_file(context: Context, input_file: str, output_file: str):
+    def upscale_file(self, input_file: str, output_file: str):
         # load context
-        waifu2x_vulkan_dir = context.waifu2x_vulkan_dir
-        waifu2x_vulkan_dir_dir = context.waifu2x_vulkan_dir_dir
-        noise_level = context.noise_level
-        scale_factor = context.scale_factor
+        waifu2x_vulkan_dir_dir = self.context.waifu2x_vulkan_dir_dir
+        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
-        waifu2x_vulkan_upscale_frame = context.waifu2x_vulkan_upscale_frame
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[waifu2x_vulkan_dir]", waifu2x_vulkan_dir)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[input_file]", input_file)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[output_file]", output_file)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[scale_factor]", scale_factor)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[noise_level]", noise_level)
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = input_file
+
+            if exec[x] == "[output_file]":
+                exec[x] = output_file
+
+        print("exec!")
+        print(exec)
 
         logger = logging.getLogger(__name__)
 
-        exec = waifu2x_vulkan_upscale_frame.split(" ")
+
+        print("Changing Dir's")
+        print(waifu2x_vulkan_dir_dir)
 
         os.chdir(waifu2x_vulkan_dir_dir)
 
         logger.info("manually upscaling file")
         logger.info(exec)
 
-        subprocess.call(exec, stdout=open(os.devnull, 'wb'), stderr=subprocess.STDOUT)
+        subprocess.call(exec)
+        #subprocess.call(exec, stdout=open(os.devnull, 'wb'), stderr=subprocess.STDOUT)
 
     # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
     # this function just renames the files so Dandere2x can interpret them correctly.
@@ -110,8 +130,6 @@ class Waifu2xVulkan(threading.Thread):
                     except PermissionError:
                         pass
 
-
-
     # (description from waifu2x_caffe)
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -125,13 +143,20 @@ class Waifu2xVulkan(threading.Thread):
     def run(self):
         logger = logging.getLogger(__name__)
 
-        waifu2x_vulkan_upscale_frame = self.context.waifu2x_vulkan_upscale_frame
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[waifu2x_vulkan_dir]", self.waifu2x_vulkan_dir)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[input_file]", self.differences_dir)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[output_file]", self.upscaled_dir)
-        waifu2x_vulkan_upscale_frame = waifu2x_vulkan_upscale_frame.replace("[scale_factor]", self.scale_factor)
+        differences_dir = self.context.differences_dir
+        upscaled_dir = self.context.upscaled_dir
 
-        exec = waifu2x_vulkan_upscale_frame.split(" ")
+        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        # replace the exec command with the files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = differences_dir
+
+            if exec[x] == "[output_file]":
+                exec[x] = upscaled_dir
+
+        print("exec2!")
+        print(exec)
 
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
@@ -166,11 +191,12 @@ class Waifu2xVulkan(threading.Thread):
 
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.call(exec, stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT) # We're supressing A LOT of errors btw.
-            #self.fix_names()
+            subprocess.call(exec)
+            #subprocess.call(exec, stdout=open(os.devnull, 'w'),
+            #                stderr=subprocess.STDOUT)  # We're supressing A LOT of errors btw.
+            # self.fix_names()
 
             for name in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
                     os.remove(self.differences_dir + name)
                     names.remove(name)
-

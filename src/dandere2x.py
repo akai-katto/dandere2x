@@ -32,38 +32,48 @@ smooth and edges sharp.
 
 import logging
 import os
-import sys
 import threading
 import time
+import shutil
 
-from context import Context
 from dandere2x_core.dandere2x_utils import verify_user_settings
 from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
+from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.merge import merge_loop
 from dandere2x_core.merge import merge_loop_resume
-from dandere2x_core.frame_compressor import compress_frames
 from dandere2x_core.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
+from wrappers.ff_wrappers.ffmpeg import trim_video
+from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
 from wrappers.waifu2x_wrappers.waifu2x_caffe import Waifu2xCaffe
-from wrappers.waifu2x_wrappers.waifu2x_conv import Waifu2xConv
+from wrappers.waifu2x_wrappers.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
 
-from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
-import configparser
 
 class Dandere2x:
 
-    def __init__(self, config: configparser.ConfigParser):
-        self.context = Context(config)
+    def __init__(self, context):
+        self.context = context
 
-    # Order matters here in command calls.
+    # pre-setup is doing really basic book keeping, such as creating the directories needed
+    # during runtime, extracting the frames out of ffmpeg, etc. I denote this 'pre-setup', as
+    # no computation is really done here
     def pre_setup(self):
         self.create_dirs()
+        self.context.set_logger()
+
+        # if the user selected to trim the video, create a new video that matches
+        # their trim settings, then re-assign the video to work with to be the trimmed video
+        if self.context.user_trim_video:
+            trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
+            trim_video(self.context, trimed_video)
+            self.context.file_dir = trimed_video
+
         ffmpeg_extract_frames(self.context)
-        self.create_waifu2x_script()
-        self.write_frames()
+        self.context.update_frame_count()  # after we've extracted all the frames, count how many frames are being used
+
         self.write_merge_commands()
 
     # create a series of threads and external processes
@@ -71,7 +81,6 @@ class Dandere2x:
     # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()
-        self.context.update_frame_count()
         verify_user_settings(self.context)
 
         start = time.time()  # This timer prints out how long it takes to upscale one frame
@@ -80,26 +89,24 @@ class Dandere2x:
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
 
-            Waifu2xCaffe.upscale_file(self.context,
-                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-        elif self.context.waifu2x_type == "conv":
-            waifu2x = Waifu2xConv(self.context)
+        elif self.context.waifu2x_type == "converter_cpp":
+            waifu2x = Waifu2xConverterCpp(self.context)
 
-            Waifu2xConv.upscale_file(self.context,
-                                     input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                     output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
-            Waifu2xVulkan.upscale_file(self.context,
-                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
-        output_file = self.context.workspace + 'output.mkv'
+        output_file = self.context.output_file
 
         # start all the threads needed for running
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
@@ -118,7 +125,7 @@ class Dandere2x:
         status_thread.start()
         compress_frames_thread.start()
 
-        if self.context.realtime_encoding == 1:
+        if self.context.realtime_encoding:
             realtime_encode_thread.start()
 
         compress_frames_thread.join()
@@ -128,7 +135,7 @@ class Dandere2x:
         waifu2x.join()
         status_thread.join()
 
-        if self.context.realtime_encoding == 1:
+        if self.context.realtime_encoding:
             realtime_encode_thread.join()
 
         self.context.logger.info("Threaded Processes Finished succcesfully")
@@ -146,16 +153,16 @@ class Dandere2x:
                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "conv":
-            waifu2x = Waifu2xConv(self.context)
-            Waifu2xConv.upscale_file(self.context,
-                                     input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                     output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+            waifu2x = Waifu2xConverterCpp(self.context)
+            Waifu2xConverterCpp.upscale_file(self.context,
+                                             input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                             output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
-            Waifu2xVulkan.upscale_file(self.context,
-                                       input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                       output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+            Waifu2xVulkan.upscale_file(
+                input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
@@ -211,9 +218,34 @@ class Dandere2x:
         merge_thread.start()
         merge_thread.join()
 
+    # delete every folder except the log file in the workspace
+    # This because the log file doesn't want to get deleted + having the log
+    # stay alive even after everything finishes is useful to know
+    def delete_workspace_files(self):
+        # create each directory
+        for subdirectory in self.directories:
+            try:
+                shutil.rmtree(subdirectory)
+            except OSError:
+                print("Deletion of the directory %s failed" % subdirectory)
+            else:
+                print("Successfully deleted the directory %s " % subdirectory)
+
+        no_sound = os.path.join(self.context.workspace, "nosound.mkv")
+
+        try:
+            os.remove(no_sound)
+
+        except OSError:
+            print("Deletion of the file %s failed" % no_sound)
+            print(OSError.strerror)
+        else:
+            print("Successfully deleted the file %s " % no_sound)
+
+
     def create_dirs(self):
         # create a list of directories we need to create
-        directories = {self.context.input_frames_dir,
+        self.directories = {self.context.input_frames_dir,
                        self.context.correction_data_dir,
                        self.context.differences_dir,
                        self.context.upscaled_dir,
@@ -237,7 +269,7 @@ class Dandere2x:
             print("Successfully created the directory %s " % self.context.workspace)
 
         # create each directory
-        for subdirectory in directories:
+        for subdirectory in self.directories:
             try:
                 os.mkdir(subdirectory)
             except OSError:
@@ -245,56 +277,31 @@ class Dandere2x:
             else:
                 print("Successfully created the directory %s " % subdirectory)
 
-    # for linux. Currently deprecated as Linux development has stopped for a bit.
-    def create_waifu2x_script(self):
-        input_list = []
-        input_list.append("cd /home/linux/Documents/waifu2x/")
-
-        input_list.append(
-            "th " + self.context.dandere_dir + " -m noise_scale -noise_level 3 -i " +
-            self.context.input_frames_dir + "frame1" + self.context.extension_type +
-            " -o " + self.context.merged_dir + "merged_1" + self.context.extension_type + "\n")
-
-        input_list.append("th " + self.context.dandere_dir + " -m noise_scale -noise_level 3 -resume 1 -l " +
-                          self.context.workspace + "frames.txt -o " + self.context.upscaled_dir + "output_%d.png")
-
-        with open(self.context.workspace + os.path.sep + 'waifu2x_script.sh', 'w') as f:
-            for item in input_list:
-                f.write("%s\n" % item)
-
-        os.chmod(self.context.workspace + os.path.sep + 'waifu2x_script.sh', 0o777)
-
-    # for linux
-    def write_frames(self):
-        with open(self.context.workspace + os.path.sep + 'frames.txt', 'w') as f:
-            for x in range(1, self.context.frame_count):
-                f.write(self.context.differences_dir + "output_" + str(x) + ".png\n")
-
     # for re-merging the files after runtime is done
     def write_merge_commands(self):
-
-        no_audio_video = self.context.workspace + "nosound.mkv"
-        finished_video = self.context.workspace + "finished.mkv"
-
-        merged_frames = self.context.merged_dir + "merged_%d.jpg"
-
-        migrate_tracks_command = self.context.migrate_tracks_command
-
-        migrate_tracks_command = migrate_tracks_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
-        migrate_tracks_command = migrate_tracks_command.replace("[no_audio]", no_audio_video)
-        migrate_tracks_command = migrate_tracks_command.replace("[file_dir]", self.context.file_dir)
-        migrate_tracks_command = migrate_tracks_command.replace("[output_file]", finished_video)
-
-        video_from_frames_command = self.context.video_from_frames_command
-
-        video_from_frames_command = video_from_frames_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
-        video_from_frames_command = video_from_frames_command.replace("[frame_rate]", str(self.context.frame_rate))
-        video_from_frames_command = video_from_frames_command.replace("[start_number]", str(0))
-        video_from_frames_command = video_from_frames_command.replace("[input_frames]", merged_frames)
-        video_from_frames_command = video_from_frames_command.replace("[end_number]", "")
-        video_from_frames_command = video_from_frames_command.replace("-vframes", "")
-        video_from_frames_command = video_from_frames_command.replace("[output_file]", no_audio_video)
-
-        with open(self.context.workspace + os.path.sep + 'commands.txt', 'w') as f:
-            f.write(video_from_frames_command + "\n")
-            f.write(migrate_tracks_command + "\n")
+        pass
+        # no_audio_video = self.context.workspace + "nosound.mkv"
+        # finished_video = self.context.workspace + "finished.mkv"
+        #
+        # merged_frames = self.context.merged_dir + "merged_%d.jpg"
+        #
+        # migrate_tracks_command = self.context.migrate_tracks_command
+        #
+        # migrate_tracks_command = migrate_tracks_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
+        # migrate_tracks_command = migrate_tracks_command.replace("[no_audio]", no_audio_video)
+        # migrate_tracks_command = migrate_tracks_command.replace("[file_dir]", self.context.file_dir)
+        # migrate_tracks_command = migrate_tracks_command.replace("[output_file]", finished_video)
+        #
+        # video_from_frames_command = self.context.video_from_frames_command
+        #
+        # video_from_frames_command = video_from_frames_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
+        # video_from_frames_command = video_from_frames_command.replace("[frame_rate]", str(self.context.frame_rate))
+        # video_from_frames_command = video_from_frames_command.replace("[start_number]", str(0))
+        # video_from_frames_command = video_from_frames_command.replace("[input_frames]", merged_frames)
+        # video_from_frames_command = video_from_frames_command.replace("[end_number]", "")
+        # video_from_frames_command = video_from_frames_command.replace("-vframes", "")
+        # video_from_frames_command = video_from_frames_command.replace("[output_file]", no_audio_video)
+        #
+        # with open(self.context.workspace + os.path.sep + 'commands.txt', 'w') as f:
+        #     f.write(video_from_frames_command + "\n")
+        #     f.write(migrate_tracks_command + "\n")

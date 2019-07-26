@@ -199,7 +199,7 @@
      <string>Select Video</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="select_workspace_button">
+   <widget class="QPushButton" name="select_output_button">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -252,7 +252,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Select Workspace</string>
+     <string>Select Output</string>
     </property>
    </widget>
    <widget class="QPushButton" name="upscale_button">
@@ -538,7 +538,7 @@
      </font>
     </property>
     <property name="text">
-     <string>No workspace selected</string>
+     <string>No output selected</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -934,7 +934,7 @@
      <rect>
       <x>30</x>
       <y>90</y>
-      <width>81</width>
+      <width>141</width>
       <height>21</height>
      </rect>
     </property>
@@ -1038,7 +1038,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Noise Level</string>
+     <string>Denoise Level</string>
     </property>
    </widget>
    <widget class="QComboBox" name="waifu2x_type_combo_box">
@@ -1150,7 +1150,7 @@
      </font>
     </property>
     <property name="currentText">
-     <string>Waifu2x-Vulkan</string>
+     <string>Waifu2x-Caffe</string>
     </property>
     <item>
      <property name="text">
@@ -1889,7 +1889,7 @@
      </font>
     </property>
     <property name="currentText">
-     <string>85</string>
+     <string>100</string>
     </property>
     <item>
      <property name="text">
@@ -2168,7 +2168,9 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>Block size Dandere2x will use to compute blocks. You NEED to select a video first before selecting this.,</string>
+     <string>Block size Dandere2x will use to compute blocks. You NEED to select a video first before
+                        selecting this.,
+                    </string>
     </property>
     <property name="text">
      <string>Block Size</string>
@@ -2398,7 +2400,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Dandere2x Settings</string>
+     <string>Settings</string>
     </property>
    </widget>
    <widget class="QLabel" name="block_help">
@@ -2510,7 +2512,8 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>Block size Dandere2x will use to compute blocks. You NEED to select a video first before selecting this.,</string>
+     <string>Block size Dandere2x will use to compute blocks. You NEED to select a video first before
+ selecting this.,               </string>
     </property>
     <property name="text">
      <string>?</string>
@@ -2625,7 +2628,8 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>The acceptable quality loss in an frame depicted by JPEG's standards.</string>
+     <string>The acceptable quality loss in an frame depicted by JPEG's standards. 
+ The developer highly recommends a value between 70-80</string>
     </property>
     <property name="text">
      <string>?</string>

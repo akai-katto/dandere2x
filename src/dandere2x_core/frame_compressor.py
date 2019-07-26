@@ -1,6 +1,7 @@
+import os
+
 from context import Context
 from wrappers.frame import Frame
-import os
 
 
 # starting from 1 to frame_count, compress each frame.

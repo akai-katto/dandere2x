@@ -1,25 +1,14 @@
-# from wrappers.videosettings import VideoSettings
-# import configparser
-#
-# ffprobe_dir = "C:\\Users\\windwoz\\AppData\\Local\\video2x\\ffmpeg-latest-win64-static\\bin\\ffprobe.exe"
-# file_dir = "C:\\Users\\windwoz\\Desktop\\plz\\customvideos\\violetep8.mkv"
-#
-# video_settings = VideoSettings(ffprobe_dir, file_dir)
-#
-# config = configparser.ConfigParser()
-# config.read("config.ini")
-#
-# print(config.get('dandere2x', 'workspace'))
-#
-# config.set('dandere2x','workspace', 'memes')
-#
-# print(config.get('dandere2x', 'workspace'))
+from dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
+import json
 
-import configparser
-import time
+with open("dandere2x.json", "r") as read_file:
+    config_json = json.load(read_file)
 
-from dandere2x_core.dandere2x_utils import wait_on_either_file
+print(config_json["dandere2x"]["realtime_encoding"])
+d = Dandere2x_Gui_Wrapper(config_json)
 
-wait_on_either_file("C:\\Users\\windwoz\\Documents\\debugs\\new\\file1.txt", "C:\\Users\\windwoz\\Documents\\debugs\\new\\file2.txt")
 
-print("Either exists!")
+print(d.context.realtime_encoding)
+
+d.start()
+

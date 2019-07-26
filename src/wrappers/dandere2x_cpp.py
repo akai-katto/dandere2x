@@ -10,9 +10,9 @@ import logging
 import os
 import subprocess
 import threading
-from dandere2x_core.dandere2x_utils import get_lexicon_value
 
 from context import Context
+from dandere2x_core.dandere2x_utils import get_lexicon_value
 
 
 class Dandere2xCppWrapper(threading.Thread):
@@ -82,7 +82,8 @@ class Dandere2xCppWrapper(threading.Thread):
         # so we do a try. There's cases where inversion data or difference_image didn't save.
         try:
             os.remove(self.workspace + os.path.sep + "pframe_data" + os.path.sep + "pframe_" + str(last_found) + ".txt")
-            os.remove(self.workspace + os.path.sep + "inversion_data" + os.path.sep + "inversion_" + str(last_found) + ".txt")
+            os.remove(
+                self.workspace + os.path.sep + "inversion_data" + os.path.sep + "inversion_" + str(last_found) + ".txt")
             os.remove(self.differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
         except FileNotFoundError:
@@ -95,7 +96,8 @@ class Dandere2xCppWrapper(threading.Thread):
         # Delete the current files, and resume work from there. We know all 3 of these files exist
         # because we started one lower.
         os.remove(self.workspace + os.path.sep + "pframe_data" + os.path.sep + "pframe_" + str(last_found) + ".txt")
-        os.remove(self.workspace + os.path.sep + "inversion_data" + os.path.sep + "inversion_" + str(last_found) + ".txt")
+        os.remove(
+            self.workspace + os.path.sep + "inversion_data" + os.path.sep + "inversion_" + str(last_found) + ".txt")
         os.remove(self.differences_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
 
         exec = [self.dandere2x_cpp_dir,

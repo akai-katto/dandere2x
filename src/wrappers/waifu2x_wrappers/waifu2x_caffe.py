@@ -6,6 +6,7 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
+import copy
 import logging
 import os
 import subprocess
@@ -13,6 +14,7 @@ import threading
 
 from context import Context
 from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2x_core.dandere2x_utils import get_options_from_section
 
 
 # temporary implementation of waifu2x-caffe wrapper
@@ -33,23 +35,33 @@ class Waifu2xCaffe(threading.Thread):
         self.workspace = context.workspace
         self.context = context
 
+        # Create Caffe Command
+        self.waifu2x_caffe_upscale_frame = [self.waifu2x_caffe_cui_dir,
+                                            "-i", "[input_file]",
+                                            "-n", str(self.noise_level),
+                                            "-s", str(self.scale_factor)]
+
+        waifu2x_caffe_options = get_options_from_section(context.config_json["waifu2x_caffe"]["output_options"])
+
+        for element in waifu2x_caffe_options:
+            self.waifu2x_caffe_upscale_frame.append(element)
+
+        self.waifu2x_caffe_upscale_frame.extend(["-o", "[output_file]"])
+
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
-    @staticmethod
-    def upscale_file(context: Context, input_file: str, output_file: str):
+    def upscale_file(self, input_file: str, output_file: str):
 
-        waifu2x_caffe_upscale_frame = context.waifu2x_caffe_upscale_frame
+        exec = copy.copy(self.waifu2x_caffe_upscale_frame)
 
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[waifu2x_caffe_cui_dir]",
-                                                                          context.waifu2x_caffe_cui_dir)
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = input_file
 
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[input_file]", input_file)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[noise_level]", context.noise_level)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[scale_factor]", context.scale_factor)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[output_file]", output_file)
-
-        exec = waifu2x_caffe_upscale_frame.split(" ")
+            if exec[x] == "[output_file]":
+                exec[x] = output_file
 
         subprocess.run(exec)
 
@@ -65,20 +77,17 @@ class Waifu2xCaffe(threading.Thread):
     def run(self):
         logger = logging.getLogger(__name__)
 
-        waifu2x_caffe_upscale_frame = self.context.waifu2x_caffe_upscale_frame
+        differences_dir = self.context.differences_dir
+        upscaled_dir = self.context.upscaled_dir
+        exec = copy.copy(self.waifu2x_caffe_upscale_frame)
 
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[waifu2x_caffe_cui_dir]",
-                                                                          self.waifu2x_caffe_cui_dir)
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec)):
+            if exec[x] == "[input_file]":
+                exec[x] = differences_dir
 
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[input_file]", self.differences_dir)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[noise_level]", self.noise_level)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[scale_factor]", self.scale_factor)
-        waifu2x_caffe_upscale_frame = waifu2x_caffe_upscale_frame.replace("[output_file]", self.upscaled_dir)
-
-        exec = waifu2x_caffe_upscale_frame.split(" ")
-
-        logger.info("waifu2xcaffe session")
-        logger.info(exec)
+            if exec[x] == "[output_file]":
+                exec[x] = upscaled_dir
 
         # make a list of names that will eventually (past or future) be upscaled
         names = []

@@ -1,6 +1,5 @@
-import subprocess
 import json
-from fractions import Fraction
+import subprocess
 
 
 # Credit: https://github.com/k4yt3x/video2x
