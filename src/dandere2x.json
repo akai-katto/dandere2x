@@ -89,7 +89,6 @@
     },
     "concat_videos": {
       "output_options": {
-        "-hwaccel": "auto",
         "-vcodec": "libx264",
         "-crf": 17,
         "-b:v": null,

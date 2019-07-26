@@ -80,9 +80,9 @@ def extract_frames(context: Context):
 def concat_encoded_vids(context: Context, output_file: str):
     text_file = context.workspace + "encoded\\list.txt"
     concat_videos_command = [context.ffmpeg_dir,
-                             "-hwaccel", context.hwaccel,
                              "-f", "concat",
                              "-safe", "0",
+                             "-hwaccel", context.hwaccel,
                              "-i", "[text_file]"]
 
     concat_videos_option = get_options_from_section(context.config_json["ffmpeg"]["concat_videos"]['output_options'])
@@ -99,6 +99,8 @@ def concat_encoded_vids(context: Context, output_file: str):
         if concat_videos_command[x] == "[output_file]":
             concat_videos_command[x] = output_file
 
+    print(concat_videos_command)
+
     subprocess.run(concat_videos_command)
 
 
@@ -106,7 +108,6 @@ def concat_encoded_vids(context: Context, output_file: str):
 
 def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str):
     migrate_tracks_command = [context.ffmpeg_dir,
-                              "-hwaccel", context.hwaccel,
                               "-i", "[no_audio]",
                               "-i", "[video_sound]",
                               "-map", "0:v:0?",
@@ -141,8 +142,8 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
 # Create a short video using those values.
 def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
     video_from_frames_command = [context.ffmpeg_dir,
-                                 "-hwaccel", context.hwaccel,
                                  "-start_number", "[start_number]",
+                                 "-hwaccel", context.hwaccel,
                                  "-i", "[input_file]",
                                  "-vframes", "[frames_per_video]",
                                  "-r", str(context.frame_rate)]
