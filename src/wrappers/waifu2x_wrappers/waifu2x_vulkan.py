@@ -63,6 +63,7 @@ class Waifu2xVulkan(threading.Thread):
         # load context
         waifu2x_vulkan_dir_dir = self.context.waifu2x_vulkan_dir_dir
         exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        logger = logging.getLogger(__name__)
 
         # replace the exec command withthe files we're concerned with
         for x in range(len(exec)):
@@ -72,14 +73,11 @@ class Waifu2xVulkan(threading.Thread):
             if exec[x] == "[output_file]":
                 exec[x] = output_file
 
-        print("exec!")
-        print(exec)
+        logger.info("Vulkan Exec")
+        logger.info(str(exec))
 
-        logger = logging.getLogger(__name__)
-
-
-        print("Changing Dir's")
-        print(waifu2x_vulkan_dir_dir)
+        logger.info("Changind Dirs")
+        logger.info(str(waifu2x_vulkan_dir_dir))
 
         os.chdir(waifu2x_vulkan_dir_dir)
 
@@ -159,8 +157,11 @@ class Waifu2xVulkan(threading.Thread):
             if exec[x] == "[output_file]":
                 exec[x] = upscaled_dir
 
-        print("exec2!")
-        print(exec)
+        logger.info("Vulkan Exec")
+        logger.info(str(exec))
+
+        logger.info("Changind Dirs")
+        logger.info(str(self.waifu2x_vulkan_dir_dir))
 
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()

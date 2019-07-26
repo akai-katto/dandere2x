@@ -150,6 +150,7 @@ class Context:
 
         self.logger.propagate = False
 
+    # this can be done with fprobe I guess, but why change things, you feel
     def update_frame_count(self):
         self.frame_count = len([name for name in os.listdir(self.input_frames_dir)
                                 if os.path.isfile(os.path.join(self.input_frames_dir, name))])

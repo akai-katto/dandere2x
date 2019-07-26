@@ -35,6 +35,7 @@ import os
 import threading
 import time
 import shutil
+import sys
 
 from dandere2x_core.dandere2x_utils import verify_user_settings
 from dandere2x_core.difference import difference_loop
@@ -57,30 +58,21 @@ class Dandere2x:
     def __init__(self, context):
         self.context = context
 
-    # pre-setup is doing really basic book keeping, such as creating the directories needed
-    # during runtime, extracting the frames out of ffmpeg, etc. I denote this 'pre-setup', as
-    # no computation is really done here
-    def pre_setup(self):
+    # create a series of threads and external processes
+    # to run in real time with each other for the dandere2x session.
+    # the code is self documenting here.
+    def run_concurrent(self):
         self.create_dirs()
+        self.context.set_logger()
 
-        # if the user selected to trim the video, create a new video that matches
-        # their trim settings, then re-assign the video to work with to be the trimmed video
         if self.context.user_trim_video:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
             self.context.file_dir = trimed_video
 
-        ffmpeg_extract_frames(self.context)
-        self.context.update_frame_count()  # after we've extracted all the frames, count how many frames are being used
+        ffmpeg_extract_frames(self.context, self.context.file_dir)
+        self.context.update_frame_count()
 
-        self.write_merge_commands()
-
-    # create a series of threads and external processes
-    # to run in real time with each other for the dandere2x session.
-    # the code is self documenting here.
-    def run_concurrent(self):
-        self.pre_setup()
-        self.context.set_logger()
         verify_user_settings(self.context)
 
         start = time.time()  # This timer prints out how long it takes to upscale one frame
@@ -145,6 +137,10 @@ class Dandere2x:
     def resume_concurrent(self):
         self.context.update_frame_count()  # we need to count how many outputs there are after ffmpeg extracted stuff
         self.context.set_logger()
+
+        if self.context.realtime_encoding_delete_files:
+            print("CANNOT RESUME RUN ON DELETE FILES TYPED SESSION")
+            sys.exit(1)
 
         if self.context.user_trim_video:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")

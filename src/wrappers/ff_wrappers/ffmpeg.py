@@ -10,6 +10,7 @@ Description: temp ffmpeg wrapper, terrible implementation fix later
 """
 import os
 import subprocess
+import logging
 
 from context import Context
 from dandere2x_core.dandere2x_utils import get_options_from_section
@@ -47,11 +48,11 @@ def trim_video(context: Context, output_file: str):
     subprocess.call(trim_video_command, shell=True, stderr=console_output, stdout=console_output)
 
 
-def extract_frames(context: Context):
-    file_dir = context.file_dir
+def extract_frames(context: Context, file_dir: str):
     input_frames_dir = context.input_frames_dir
     extension_type = context.extension_type
     output_file = input_frames_dir + "frame%01d" + extension_type
+    logger = logging.getLogger(__name__)
 
     extract_frames_command = [context.ffmpeg_dir,
                               "-hwaccel", context.hwaccel,
@@ -73,8 +74,7 @@ def extract_frames(context: Context):
         if extract_frames_command[x] == "[output_file]":
             extract_frames_command[x] = output_file
 
-    print("extracting frames")
-    print(extract_frames_command)
+    logger.info("extracting frames")
 
     console_output = open(context.log_dir + "ffmpeg_extract_frames_console.txt", "w")
     console_output.write(str(extract_frames_command))
@@ -105,8 +105,6 @@ def concat_encoded_vids(context: Context, output_file: str):
 
         if concat_videos_command[x] == "[output_file]":
             concat_videos_command[x] = output_file
-
-    print(concat_videos_command)
 
     console_output = open(context.log_dir + "ffmpeg_concat_videos_command.txt", "w")
     console_output.write((str(concat_videos_command)))
@@ -142,7 +140,6 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
         if migrate_tracks_command[x] == "[output_file]":
             migrate_tracks_command[x] = str(output_file)
 
-    print(migrate_tracks_command)
 
     console_output = open(context.log_dir + "migrate_tracks_command.txt", "w")
     console_output.write(str(migrate_tracks_command))
