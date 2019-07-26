@@ -86,8 +86,10 @@ class Waifu2xVulkan(threading.Thread):
         logger.info("manually upscaling file")
         logger.info(exec)
 
-        subprocess.call(exec)
-        #subprocess.call(exec, stdout=open(os.devnull, 'wb'), stderr=subprocess.STDOUT)
+        console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
+        console_output.write(str(exec))
+        subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+        console_output.close()
 
     # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
     # this function just renames the files so Dandere2x can interpret them correctly.
@@ -145,8 +147,10 @@ class Waifu2xVulkan(threading.Thread):
 
         differences_dir = self.context.differences_dir
         upscaled_dir = self.context.upscaled_dir
-
         exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+
+        console_output = open(self.context.log_dir + "vulkan_upscale_frames.txt", "w")
+
         # replace the exec command with the files we're concerned with
         for x in range(len(exec)):
             if exec[x] == "[input_file]":
@@ -191,12 +195,13 @@ class Waifu2xVulkan(threading.Thread):
 
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.call(exec)
-            #subprocess.call(exec, stdout=open(os.devnull, 'w'),
-            #                stderr=subprocess.STDOUT)  # We're supressing A LOT of errors btw.
-            # self.fix_names()
+
+            console_output.write(str(exec))
+            subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
 
             for name in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
                     os.remove(self.differences_dir + name)
                     names.remove(name)
+
+        console_output.close()

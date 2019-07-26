@@ -11,8 +11,8 @@
     "extension_type": ".jpg",
     "debug": true,
     "realtime_encoding": true,
-    "realtime_encoding_delete_files": true,
-    "waifu2x_type": "vulkan",
+    "realtime_encoding_delete_files": false,
+    "waifu2x_type": "caffe",
     "noise_level": 3,
     "scale_factor": 2
   },
@@ -20,12 +20,12 @@
     "waifu2x_caffe_path": "..\\externals\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
     "output_options": {
       "-process": "gpu",
-      "-crop_size": 128,
-      "-output_quality": -1,
-      "-output_depth": 8,
-      "-batch_size": 1,
-      "-gpu": 0,
-      "-tta": 0,
+      "-crop_size": null,
+      "-output_quality": null,
+      "-output_depth": null,
+      "-batch_size": null,
+      "-gpu": null,
+      "-tta": null,
       "-model_dir": null
     }
   },

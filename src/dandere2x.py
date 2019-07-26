@@ -62,7 +62,6 @@ class Dandere2x:
     # no computation is really done here
     def pre_setup(self):
         self.create_dirs()
-        self.context.set_logger()
 
         # if the user selected to trim the video, create a new video that matches
         # their trim settings, then re-assign the video to work with to be the trimmed video
@@ -81,6 +80,7 @@ class Dandere2x:
     # the code is self documenting here.
     def run_concurrent(self):
         self.pre_setup()
+        self.context.set_logger()
         verify_user_settings(self.context)
 
         start = time.time()  # This timer prints out how long it takes to upscale one frame
@@ -144,25 +144,31 @@ class Dandere2x:
     # Consider merging this into one function, but for the time being I prefer it seperate
     def resume_concurrent(self):
         self.context.update_frame_count()  # we need to count how many outputs there are after ffmpeg extracted stuff
-        verify_user_settings(self.context)
+        self.context.set_logger()
 
+        if self.context.user_trim_video:
+            trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
+            self.context.file_dir = trimed_video
+
+
+        # set waifu2x to be whatever waifu2x type we are using
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
-            Waifu2xCaffe.upscale_file(self.context,
-                                      input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                      output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-        elif self.context.waifu2x_type == "conv":
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+        elif self.context.waifu2x_type == "converter_cpp":
             waifu2x = Waifu2xConverterCpp(self.context)
-            Waifu2xConverterCpp.upscale_file(self.context,
-                                             input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                             output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
-            Waifu2xVulkan.upscale_file(
-                input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))

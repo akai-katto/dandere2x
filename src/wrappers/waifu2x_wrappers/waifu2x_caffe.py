@@ -63,7 +63,11 @@ class Waifu2xCaffe(threading.Thread):
             if exec[x] == "[output_file]":
                 exec[x] = output_file
 
-        subprocess.run(exec)
+        print(exec)
+
+        console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
+        console_output.write(str(exec))
+        subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
 
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -76,6 +80,7 @@ class Waifu2xCaffe(threading.Thread):
     #          4) Repeat this process until all the names are removed.
     def run(self):
         logger = logging.getLogger(__name__)
+        console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_all.txt", "w")
 
         differences_dir = self.context.differences_dir
         upscaled_dir = self.context.upscaled_dir
@@ -109,7 +114,10 @@ class Waifu2xCaffe(threading.Thread):
         while names:
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.run(exec, stdout=open(os.devnull, 'wb'))
+
+            console_output.write(str(exec))
+            subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+
             for item in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + item):
                     os.remove(self.differences_dir + item)
