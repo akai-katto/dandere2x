@@ -26,11 +26,7 @@ class Dandere2x_Gui_Wrapper:
         d.run_concurrent()
         d.context.close_logger()
 
-        # deleting shit
-        print("deleting shit")
-        if dir_exists(self.context.workspace):
-            print("it exists")
-            shutil.rmtree(self.context.workspace)
+        d.delete_workspace_files()
 
 
         # if folder exists, delete

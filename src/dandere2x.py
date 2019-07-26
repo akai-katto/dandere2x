@@ -34,6 +34,7 @@ import logging
 import os
 import threading
 import time
+import shutil
 
 from dandere2x_core.dandere2x_utils import verify_user_settings
 from dandere2x_core.difference import difference_loop
@@ -217,9 +218,34 @@ class Dandere2x:
         merge_thread.start()
         merge_thread.join()
 
+    # delete every folder except the log file in the workspace
+    # This because the log file doesn't want to get deleted + having the log
+    # stay alive even after everything finishes is useful to know
+    def delete_workspace_files(self):
+        # create each directory
+        for subdirectory in self.directories:
+            try:
+                shutil.rmtree(subdirectory)
+            except OSError:
+                print("Deletion of the directory %s failed" % subdirectory)
+            else:
+                print("Successfully deleted the directory %s " % subdirectory)
+
+        no_sound = os.path.join(self.context.workspace, "nosound.mkv")
+
+        try:
+            os.remove(no_sound)
+
+        except OSError:
+            print("Deletion of the file %s failed" % no_sound)
+            print(OSError.strerror)
+        else:
+            print("Successfully deleted the file %s " % no_sound)
+
+
     def create_dirs(self):
         # create a list of directories we need to create
-        directories = {self.context.input_frames_dir,
+        self.directories = {self.context.input_frames_dir,
                        self.context.correction_data_dir,
                        self.context.differences_dir,
                        self.context.upscaled_dir,
@@ -243,7 +269,7 @@ class Dandere2x:
             print("Successfully created the directory %s " % self.context.workspace)
 
         # create each directory
-        for subdirectory in directories:
+        for subdirectory in self.directories:
             try:
                 os.mkdir(subdirectory)
             except OSError:
