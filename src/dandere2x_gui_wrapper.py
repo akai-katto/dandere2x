@@ -26,7 +26,8 @@ class Dandere2x_Gui_Wrapper:
         d.run_concurrent()
         d.context.close_logger()
 
-        d.delete_workspace_files()
+        if d.context.realtime_encoding_delete_files:
+            d.delete_workspace_files()
 
 
         # if folder exists, delete

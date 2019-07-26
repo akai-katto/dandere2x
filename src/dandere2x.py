@@ -125,7 +125,7 @@ class Dandere2x:
         status_thread.start()
         compress_frames_thread.start()
 
-        if self.context.realtime_encoding == 1:
+        if self.context.realtime_encoding:
             realtime_encode_thread.start()
 
         compress_frames_thread.join()
@@ -135,7 +135,7 @@ class Dandere2x:
         waifu2x.join()
         status_thread.join()
 
-        if self.context.realtime_encoding == 1:
+        if self.context.realtime_encoding:
             realtime_encode_thread.join()
 
         self.context.logger.info("Threaded Processes Finished succcesfully")

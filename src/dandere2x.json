@@ -4,14 +4,14 @@
     "file_dir": "..\\workspace\\evenshorter.mkv",
     "output_file": "..\\workspace\\wontcrash.mkv",
     "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe",
-    "block_size": 20,
+    "block_size": 30,
     "step_size": 4,
     "bleed": 1,
     "quality_low": 75,
     "extension_type": ".jpg",
     "debug": true,
     "realtime_encoding": true,
-    "realtime_encoding_delete_files": false,
+    "realtime_encoding_delete_files": true,
     "waifu2x_type": "vulkan",
     "noise_level": 3,
     "scale_factor": 2
@@ -57,6 +57,7 @@
   },
   "ffmpeg": {
     "ffmpeg_path": "..\\externals\\",
+    "-hwaccel": "auto",
     "trim_video": {
       "time": {
         "-ss": null,
@@ -88,6 +89,7 @@
     },
     "concat_videos": {
       "output_options": {
+        "-hwaccel": "auto",
         "-vcodec": "libx264",
         "-crf": 17,
         "-b:v": null,

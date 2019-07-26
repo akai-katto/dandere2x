@@ -54,7 +54,7 @@ def run_realtime_encoding(context: Context, output_file: str):
         text_file.write("file " + "'" + encoded_vid + "'" + "\n")
 
         # put files to delete inside of here.
-        if realtime_encoding_delete_files == 1:
+        if realtime_encoding_delete_files:
             delete_specific_merged(merged_files_prefix, extension_type, 0, x * frame_rate + 1,
                                    x * frame_rate + frame_rate + 1)
             delete_specific_merged(compressed_files_prefix, extension_type, 0, x * frame_rate + 1,

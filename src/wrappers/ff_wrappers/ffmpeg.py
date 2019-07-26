@@ -17,6 +17,7 @@ from dandere2x_core.dandere2x_utils import get_options_from_section
 
 def trim_video(context: Context, output_file: str):
     trim_video_command = [context.ffmpeg_dir,
+                          "-hwaccel", context.hwaccel,
                           "-i", "[input_file]"]
 
     trim_video_time = get_options_from_section(context.config_json["ffmpeg"]["trim_video"]["time"])
@@ -51,6 +52,7 @@ def extract_frames(context: Context):
     output_file = input_frames_dir + "frame%01d" + extension_type
 
     extract_frames_command = [context.ffmpeg_dir,
+                              "-hwaccel", context.hwaccel,
                               "-i", "[input_file]"]
 
     extract_frames_options = get_options_from_section(
@@ -78,6 +80,7 @@ def extract_frames(context: Context):
 def concat_encoded_vids(context: Context, output_file: str):
     text_file = context.workspace + "encoded\\list.txt"
     concat_videos_command = [context.ffmpeg_dir,
+                             "-hwaccel", context.hwaccel,
                              "-f", "concat",
                              "-safe", "0",
                              "-i", "[text_file]"]
@@ -103,6 +106,7 @@ def concat_encoded_vids(context: Context, output_file: str):
 
 def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str):
     migrate_tracks_command = [context.ffmpeg_dir,
+                              "-hwaccel", context.hwaccel,
                               "-i", "[no_audio]",
                               "-i", "[video_sound]",
                               "-map", "0:v:0?",
@@ -137,6 +141,7 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
 # Create a short video using those values.
 def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
     video_from_frames_command = [context.ffmpeg_dir,
+                                 "-hwaccel", context.hwaccel,
                                  "-start_number", "[start_number]",
                                  "-i", "[input_file]",
                                  "-vframes", "[frames_per_video]",

@@ -54,7 +54,7 @@ class Context:
         # turn python's string'd json into a normal json
         config_json_string = config_json_string.replace("\'", "\"")
         config_json_string = config_json_string.replace("True", "true")
-        config_json_string = config_json_string.replace("False", "true")
+        config_json_string = config_json_string.replace("False", "false")
         config_json_string = config_json_string.replace("None", "null")
         config_json_string = config_json_string.replace("..", current_folder_json)
 
@@ -73,6 +73,7 @@ class Context:
 
         self.ffmpeg_dir = config_json['ffmpeg']['ffmpeg_path'] + "ffmpeg.exe"
         self.ffprobe_dir = config_json['ffmpeg']['ffmpeg_path'] + "ffprobe.exe"
+        self.hwaccel = config_json['ffmpeg']['-hwaccel']
 
         self.waifu2x_type = config_json['dandere2x']['waifu2x_type']
 
