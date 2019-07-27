@@ -143,12 +143,7 @@ class Context:
         self.logger = logging.getLogger(__name__)
 
     def close_logger(self):
-        handlers = self.logger.handlers[:]
-        for handler in handlers:
-            handler.close()
-            self.logger.removeHandler(handler)
-
-        self.logger.propagate = False
+        logging.shutdown()
 
     # this can be done with fprobe I guess, but why change things, you feel
     def update_frame_count(self):

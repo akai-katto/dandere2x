@@ -27,8 +27,6 @@ class Dandere2x_Gui_Wrapper:
             print("Creation of directory failed")
 
 
-
-
         # starting shit
         print("Starting Dandere2x")
         d = Dandere2x(self.context)
