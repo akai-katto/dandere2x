@@ -32,12 +32,12 @@ smooth and edges sharp.
 
 import logging
 import os
-import threading
-import time
 import shutil
 import sys
+import threading
+import time
 
-from dandere2x_core.dandere2x_utils import verify_user_settings
+from dandere2x_core.dandere2x_utils import verify_user_settings, file_exists
 from dandere2x_core.difference import difference_loop
 from dandere2x_core.difference import difference_loop_resume
 from dandere2x_core.frame_compressor import compress_frames
@@ -81,20 +81,20 @@ class Dandere2x:
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
 
-            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
-
         elif self.context.waifu2x_type == "converter_cpp":
             waifu2x = Waifu2xConverterCpp(self.context)
-
-            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
 
-            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+        waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                             output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+        if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
+            print("Could not upscale first file.. check logs file to see what's wrong")
+            logging.info("Could not upscale first file.. check logs file to see what's wrong")
+            logging.info("Exiting Dandere2x...")
+            sys.exit(1)
 
         print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
 
@@ -146,25 +146,15 @@ class Dandere2x:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             self.context.file_dir = trimed_video
 
-
         # set waifu2x to be whatever waifu2x type we are using
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
 
-            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
-
         elif self.context.waifu2x_type == "converter_cpp":
             waifu2x = Waifu2xConverterCpp(self.context)
 
-            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
-
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
-
-            waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                 output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
@@ -244,23 +234,22 @@ class Dandere2x:
         else:
             print("Successfully deleted the file %s " % no_sound)
 
-
     def create_dirs(self):
         # create a list of directories we need to create
         self.directories = {self.context.input_frames_dir,
-                       self.context.correction_data_dir,
-                       self.context.differences_dir,
-                       self.context.upscaled_dir,
-                       self.context.merged_dir,
-                       self.context.upscaled_dir,
-                       self.context.merged_dir,
-                       self.context.inversion_data_dir,
-                       self.context.pframe_data_dir,
-                       self.context.debug_dir,
-                       self.context.log_dir,
-                       self.context.compressed_dir,
-                       self.context.fade_data_dir,
-                       self.context.encoded_dir}
+                            self.context.correction_data_dir,
+                            self.context.differences_dir,
+                            self.context.upscaled_dir,
+                            self.context.merged_dir,
+                            self.context.upscaled_dir,
+                            self.context.merged_dir,
+                            self.context.inversion_data_dir,
+                            self.context.pframe_data_dir,
+                            self.context.debug_dir,
+                            self.context.log_dir,
+                            self.context.compressed_dir,
+                            self.context.fade_data_dir,
+                            self.context.encoded_dir}
 
         # need to create workspace before anything else
         try:
