@@ -73,9 +73,7 @@
         "-qscale:v": 2,
         "-pix_fmt": null,
         "-vf": "noise=c1s=8:c0f=u"
-      },
-      "-hwaccel": "auto",
-      "-y": true
+      }
     },
     "frames_to_video": {
       "output_options": {
