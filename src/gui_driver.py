@@ -27,6 +27,8 @@ class QtDandere2xThread(QtCore.QThread):
 
         self.finished.emit()
 
+        d = None
+
 
 class AppWindow(QMainWindow):
 
@@ -82,9 +84,11 @@ class AppWindow(QMainWindow):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
             self.ui.scale_3_radio_button.setEnabled(False)
             self.ui.scale_4_radio_button.setEnabled(False)
+            self.ui.scale_1_radio_button.setEnabled(False)
         else:
             self.ui.scale_3_radio_button.setEnabled(True)
             self.ui.scale_4_radio_button.setEnabled(True)
+            self.ui.scale_1_radio_button.setEnabled(True)
 
     def press_upscale_button(self):
 
@@ -136,6 +140,7 @@ class AppWindow(QMainWindow):
     def update(self):
         self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
         self.ui.upscale_status_label.setText("Upscale Complete!")
+        self.thread.terminate()
         self.enable_buttons()
 
     # Parse everything we need from the GUI into a dandere2x friendly format

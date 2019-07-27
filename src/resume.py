@@ -1,5 +1,23 @@
-from dandere2x import Dandere2x
+import time
 
-# 6-6-19 resuming doesnt work
-d = Dandere2x('config.ini')
+from dandere2x import Dandere2x
+import json
+from context import Context
+
+start = time.time()
+
+# resume only works if
+
+with open("dandere2x.json", "r") as read_file:
+    config_json = json.load(read_file)
+
+context = Context(config_json)
+
+d = Dandere2x(context)
 d.resume_concurrent()
+
+end = time.time()
+
+print("\n duration: " + str(time.time() - start))
+
+

@@ -15,12 +15,18 @@ from wrappers.ff_wrappers.ffmpeg import create_video_from_specific_frames, conca
 # delete the files using the file prefix as a format from the range start to end.
 
 
-def delete_specific_merged(file_prefix, extension, lexiconic_digits, start, end):
+def delete_specific_merged(context: Context, file_prefix, extension, lexiconic_digits, start, end):
+    logger = context.logger
+    logger.info("Deleting files " + file_prefix + extension + " from " + str(start) + " to " + str(end))
+
     for x in range(start, end):
         os.remove(file_prefix + str(get_lexicon_value(lexiconic_digits, x)) + extension)
 
 
 def run_realtime_encoding(context: Context, output_file: str):
+    logger = context.logger
+    logger.info("Real time encoding process started")
+
     workspace = context.workspace
     frame_rate = int(context.frame_rate)
     frame_count = int(context.frame_count)
@@ -39,6 +45,7 @@ def run_realtime_encoding(context: Context, output_file: str):
         encoded_vid = workspace + "encoded\\encoded_" + str(x) + ".mkv"
 
         if file_exists(encoded_vid):
+            logger.info(encoded_vid + " already exists: skipping iteration")
             continue
 
         wait_on_file(merged_files_prefix + str(x * frame_rate + 1) + extension_type)
@@ -55,21 +62,23 @@ def run_realtime_encoding(context: Context, output_file: str):
 
         # put files to delete inside of here.
         if realtime_encoding_delete_files:
-            delete_specific_merged(merged_files_prefix, extension_type, 0, x * frame_rate + 1,
+            delete_specific_merged(context, merged_files_prefix, extension_type, 0, x * frame_rate + 1,
                                    x * frame_rate + frame_rate + 1)
-            delete_specific_merged(compressed_files_prefix, extension_type, 0, x * frame_rate + 1,
+            delete_specific_merged(context, compressed_files_prefix, extension_type, 0, x * frame_rate + 1,
                                    x * frame_rate + frame_rate + 1)
-            delete_specific_merged(input_frames_prefix, extension_type, 0, x * frame_rate + 1,
+            delete_specific_merged(context, input_frames_prefix, extension_type, 0, x * frame_rate + 1,
                                    x * frame_rate + frame_rate + 1)
 
             # upscaled files end on a different number than merged files.
             if x == int(frame_count / frame_rate) - 1:
-                delete_specific_merged(
-                    upscaled_files_prefix, ".png", 6, x * frame_rate + 1, x * frame_rate + frame_rate)
+                delete_specific_merged(context,
+                                       upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
+                                       x * frame_rate + frame_rate)
 
             else:
-                delete_specific_merged(
-                    upscaled_files_prefix, ".png", 6, x * frame_rate + 1, x * frame_rate + frame_rate + 1)
+                delete_specific_merged(context,
+                                       upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
+                                       x * frame_rate + frame_rate + 1)
 
     text_file.close()
 

@@ -10,6 +10,7 @@ Description: temp ffmpeg wrapper, terrible implementation fix later
 """
 import os
 import subprocess
+import logging
 
 from context import Context
 from dandere2x_core.dandere2x_utils import get_options_from_section
@@ -42,14 +43,16 @@ def trim_video(context: Context, output_file: str):
         if trim_video_command[x] == "[output_file]":
             trim_video_command[x] = output_file
 
-    subprocess.run(trim_video_command)
+    console_output = open(context.log_dir + "ffmpeg_trim_video_command.txt", "w")
+    console_output.write(str(trim_video_command))
+    subprocess.call(trim_video_command, shell=True, stderr=console_output, stdout=console_output)
 
 
-def extract_frames(context: Context):
-    file_dir = context.file_dir
+def extract_frames(context: Context, file_dir: str):
     input_frames_dir = context.input_frames_dir
     extension_type = context.extension_type
     output_file = input_frames_dir + "frame%01d" + extension_type
+    logger = logging.getLogger(__name__)
 
     extract_frames_command = [context.ffmpeg_dir,
                               "-hwaccel", context.hwaccel,
@@ -71,7 +74,11 @@ def extract_frames(context: Context):
         if extract_frames_command[x] == "[output_file]":
             extract_frames_command[x] = output_file
 
-    subprocess.run(extract_frames_command)
+    logger.info("extracting frames")
+
+    console_output = open(context.log_dir + "ffmpeg_extract_frames_console.txt", "w")
+    console_output.write(str(extract_frames_command))
+    subprocess.call(extract_frames_command, shell=True, stderr = console_output, stdout = console_output)
 
 
 # we create about 'n' amount of videos during runtime, and we need to re-encode those videos into
@@ -99,9 +106,9 @@ def concat_encoded_vids(context: Context, output_file: str):
         if concat_videos_command[x] == "[output_file]":
             concat_videos_command[x] = output_file
 
-    print(concat_videos_command)
-
-    subprocess.run(concat_videos_command)
+    console_output = open(context.log_dir + "ffmpeg_concat_videos_command.txt", "w")
+    console_output.write((str(concat_videos_command)))
+    subprocess.call(concat_videos_command, shell=True, stderr = console_output, stdout = console_output)
 
 
 # 'file_dir' refers to the file in the config file, aka the 'input_video'.
@@ -133,14 +140,17 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
         if migrate_tracks_command[x] == "[output_file]":
             migrate_tracks_command[x] = str(output_file)
 
-    print(migrate_tracks_command)
 
-    subprocess.run(migrate_tracks_command)
+    console_output = open(context.log_dir + "migrate_tracks_command.txt", "w")
+    console_output.write(str(migrate_tracks_command))
+    subprocess.call(migrate_tracks_command, shell=True, stderr=console_output, stdout=console_output)
 
 
 # Given the file prefixes, the starting frame, and how many frames should fit in a video
 # Create a short video using those values.
 def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
+
+    logger = context.logger
     video_from_frames_command = [context.ffmpeg_dir,
                                  "-start_number", "[start_number]",
                                  "-hwaccel", context.hwaccel,
@@ -172,4 +182,8 @@ def create_video_from_specific_frames(context: Context, file_prefix, output_file
         if video_from_frames_command[x] == "[frames_per_video]":
             video_from_frames_command[x] = str(frames_per_video)
 
-    subprocess.run(video_from_frames_command)
+    logger.info("running ffmpeg command: " + str(video_from_frames_command))
+
+    console_output = open(context.log_dir + "video_from_frames_command.txt", "w")
+    console_output.write(str(video_from_frames_command))
+    subprocess.call(video_from_frames_command, shell=True, stderr=console_output, stdout=console_output)

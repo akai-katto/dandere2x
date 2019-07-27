@@ -123,9 +123,8 @@ def difference_loop(context, start_frame):
     # for every frame in the video, create a difference_frame given the text files.
     for x in range(start_frame, frame_count):
         f1 = Frame()
+        logger.info("Waiting on text file: " + input_frames_dir + "frame" + str(x + 1) + extension_type)
         f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
-        logger.info("waiting on text")
-        logger.info(f1)
 
         difference_data = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")

@@ -63,6 +63,7 @@ class Waifu2xVulkan(threading.Thread):
         # load context
         waifu2x_vulkan_dir_dir = self.context.waifu2x_vulkan_dir_dir
         exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        logger = logging.getLogger(__name__)
 
         # replace the exec command withthe files we're concerned with
         for x in range(len(exec)):
@@ -72,22 +73,21 @@ class Waifu2xVulkan(threading.Thread):
             if exec[x] == "[output_file]":
                 exec[x] = output_file
 
-        print("exec!")
-        print(exec)
+        logger.info("Vulkan Exec")
+        logger.info(str(exec))
 
-        logger = logging.getLogger(__name__)
-
-
-        print("Changing Dir's")
-        print(waifu2x_vulkan_dir_dir)
+        logger.info("Changind Dirs")
+        logger.info(str(waifu2x_vulkan_dir_dir))
 
         os.chdir(waifu2x_vulkan_dir_dir)
 
         logger.info("manually upscaling file")
         logger.info(exec)
 
-        subprocess.call(exec)
-        #subprocess.call(exec, stdout=open(os.devnull, 'wb'), stderr=subprocess.STDOUT)
+        console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
+        console_output.write(str(exec))
+        subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+        console_output.close()
 
     # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
     # this function just renames the files so Dandere2x can interpret them correctly.
@@ -145,8 +145,10 @@ class Waifu2xVulkan(threading.Thread):
 
         differences_dir = self.context.differences_dir
         upscaled_dir = self.context.upscaled_dir
-
         exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+
+        console_output = open(self.context.log_dir + "vulkan_upscale_frames.txt", "w")
+
         # replace the exec command with the files we're concerned with
         for x in range(len(exec)):
             if exec[x] == "[input_file]":
@@ -155,8 +157,11 @@ class Waifu2xVulkan(threading.Thread):
             if exec[x] == "[output_file]":
                 exec[x] = upscaled_dir
 
-        print("exec2!")
-        print(exec)
+        logger.info("Vulkan Exec")
+        logger.info(str(exec))
+
+        logger.info("Changind Dirs")
+        logger.info(str(self.waifu2x_vulkan_dir_dir))
 
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
@@ -191,12 +196,13 @@ class Waifu2xVulkan(threading.Thread):
 
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
-            subprocess.call(exec)
-            #subprocess.call(exec, stdout=open(os.devnull, 'w'),
-            #                stderr=subprocess.STDOUT)  # We're supressing A LOT of errors btw.
-            # self.fix_names()
+
+            console_output.write(str(exec))
+            subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
 
             for name in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
                     os.remove(self.differences_dir + name)
                     names.remove(name)
+
+        console_output.close()

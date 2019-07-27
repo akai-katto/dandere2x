@@ -146,6 +146,8 @@ def get_valid_block_sizes(width: int, height: int):
     return valid_sizes
 
 
+# TODO bring this to ffprobe's modern settings
+# TODO Very outdated!
 # load the first frame, check if the block size is compatible with the resolution
 def verify_user_settings(context):
     from wrappers.frame import Frame
