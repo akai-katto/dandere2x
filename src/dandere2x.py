@@ -299,3 +299,5 @@ class Dandere2x:
         with open(self.context.workspace + os.path.sep + 'commands.txt', 'w') as f:
             f.write(video_from_frames_command + "\n")
             f.write(migrate_tracks_command + "\n")
+
+        f.close()
