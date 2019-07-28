@@ -103,12 +103,12 @@ class AppWindow(QMainWindow):
         with open(os.path.join(self.this_folder, "dandere2x.json"), "r") as read_file:
             config_json = json.load(read_file)
 
-        config_json['dandere2x']['output_file'] = self.output_file
-        config_json['dandere2x']['file_dir'] = self.file_dir
-        config_json['dandere2x']['block_size'] = self.block_size
-        config_json['dandere2x']['quality_low'] = self.image_quality
-        config_json['dandere2x']['waifu2x_type'] = self.waifu2x_type
-        config_json['dandere2x']['scale_factor'] = self.scale_factor
+        config_json['dandere2x']['usersettings']['output_file'] = self.output_file
+        config_json['dandere2x']['usersettings']['file_dir'] = self.file_dir
+        config_json['dandere2x']['usersettings']['block_size'] = self.block_size
+        config_json['dandere2x']['usersettings']['quality_low'] = self.image_quality
+        config_json['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
+        config_json['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
 
         print("output_file = " + self.output_file)
         print("file_dir = " + self.file_dir)

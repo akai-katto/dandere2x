@@ -65,17 +65,11 @@ class Context:
         # directories
         self.waifu2x_caffe_cui_dir = config_json['waifu2x_caffe']['waifu2x_caffe_path']
 
-        self.workspace = config_json['dandere2x']['workspace']
-        self.file_dir = config_json['dandere2x']['file_dir']
-        self.output_file = config_json['dandere2x']['output_file']
-
-        self.dandere2x_cpp_dir = config_json['dandere2x']['dandere2x_cpp_dir']
 
         self.ffmpeg_dir = config_json['ffmpeg']['ffmpeg_path'] + "ffmpeg.exe"
         self.ffprobe_dir = config_json['ffmpeg']['ffmpeg_path'] + "ffprobe.exe"
         self.hwaccel = config_json['ffmpeg']['-hwaccel']
 
-        self.waifu2x_type = config_json['dandere2x']['waifu2x_type']
 
         self.waifu2x_converter_cpp_dir = os.path.join(config_json['waifu2x_converter']['waifu2x_converter_path'],
                                              "waifu2x-converter-cpp.exe")
@@ -87,11 +81,6 @@ class Context:
 
         self.waifu2x_vulkan_dir_dir = config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
 
-        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
-
-        self.frame_rate = self.video_settings.frame_rate
-        self.width = self.video_settings.width
-        self.height = self.video_settings.height
 
         # find out if the user trimmed a video by checking the time part of the json. IF theres nothing there,
         # then the user didn't trim anything
@@ -104,21 +93,36 @@ class Context:
         # linux
         self.dandere_dir = 'lol what linux'
 
-        # D2x Settings
-        self.block_size = config_json['dandere2x']['block_size']
-        self.step_size = config_json['dandere2x']['step_size']
-        self.bleed = config_json['dandere2x']['bleed']
-        self.quality_low = config_json['dandere2x']['quality_low']
-        self.realtime_encoding = config_json['dandere2x']['realtime_encoding']
-        self.realtime_encoding_delete_files = config_json['dandere2x']['realtime_encoding_delete_files']
+        # User Settings
+        self.block_size = config_json['dandere2x']['usersettings']['block_size']
+        self.quality_low = config_json['dandere2x']['usersettings']['quality_low']
+        self.waifu2x_type = config_json['dandere2x']['usersettings']['waifu2x_type']
+        self.noise_level = config_json['dandere2x']['usersettings']['noise_level']
+        self.scale_factor = config_json['dandere2x']['usersettings']['scale_factor']
+        self.file_dir = config_json['dandere2x']['usersettings']['file_dir']
+        self.output_file = config_json['dandere2x']['usersettings']['output_file']
+        # Developer Settings
+
+        self.step_size = config_json['dandere2x']['developer_settings']['step_size']
+        self.bleed = config_json['dandere2x']['developer_settings']['bleed']
+        self.extension_type = config_json['dandere2x']['developer_settings']['extension_type']
+        self.debug = config_json['dandere2x']['developer_settings']['debug']
+        self.realtime_encoding = config_json['dandere2x']['developer_settings']['realtime_encoding']
+        self.realtime_encoding_delete_files = config_json['dandere2x']['developer_settings']['realtime_encoding_delete_files']
+        self.workspace_use_temp = config_json['dandere2x']['developer_settings']['workspace_use_temp']
+        self.workspace = config_json['dandere2x']['developer_settings']['workspace']
+        self.dandere2x_cpp_dir = config_json['dandere2x']['developer_settings']['dandere2x_cpp_dir']
+
+        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
+
+        self.frame_rate = self.video_settings.frame_rate
+        self.width = self.video_settings.width
+        self.height = self.video_settings.height
+
 
         # todo idunno if theres a better way to figure out how many frames will be used.
         self.frame_count = 0
 
-        # waifu2x settings
-        self.noise_level = config_json['dandere2x']['noise_level']
-        self.scale_factor = config_json['dandere2x']['scale_factor']
-        self.extension_type = config_json['dandere2x']['extension_type']
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
@@ -134,8 +138,7 @@ class Context:
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
 
-        # Developer Settings #
-        self.debug = config_json['dandere2x']['debug']
+
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):

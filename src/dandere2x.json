@@ -1,20 +1,25 @@
 {
   "dandere2x": {
-    "workspace": "..\\workspace\\workspace1\\",
-    "file_dir": "..\\workspace\\evenshorter.mkv",
-    "output_file": "..\\workspace\\wontcrash.mkv",
-    "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe",
-    "block_size": 30,
-    "step_size": 4,
-    "bleed": 1,
-    "quality_low": 75,
-    "extension_type": ".jpg",
-    "debug": true,
-    "realtime_encoding": true,
-    "realtime_encoding_delete_files": true,
-    "waifu2x_type": "vulkan",
-    "noise_level": 3,
-    "scale_factor": 2
+    "usersettings": {
+      "block_size": 30,
+      "quality_low": 75,
+      "waifu2x_type": "vulkan",
+      "noise_level": 3,
+      "scale_factor": 2,
+      "file_dir": "..\\workspace\\evenshorter.mkv",
+      "output_file": "..\\workspace\\wontcrash.mkv"
+    },
+    "developer_settings": {
+      "step_size": 4,
+      "bleed": 1,
+      "extension_type": ".jpg",
+      "debug": true,
+      "realtime_encoding": true,
+      "realtime_encoding_delete_files": true,
+      "workspace_use_temp": true,
+      "workspace": "..\\workspace\\workspace1\\",
+      "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
+    }
   },
   "waifu2x_caffe": {
     "waifu2x_caffe_path": "..\\externals\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
