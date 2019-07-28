@@ -71,11 +71,19 @@ def run_realtime_encoding(context: Context, output_file: str):
 
             # upscaled files end on a different number than merged files.
             if x == int(frame_count / frame_rate) - 1:
+
+                wait_on_file(upscaled_files_prefix + str(x * frame_rate + 1) + extension_type)
+                wait_on_file(upscaled_files_prefix + str(x * frame_rate + frame_rate) + extension_type)
+
                 delete_specific_merged(context,
                                        upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
                                        x * frame_rate + frame_rate)
 
             else:
+
+                wait_on_file(upscaled_files_prefix + str(x * frame_rate + 1) + extension_type)
+                wait_on_file(upscaled_files_prefix + str(x * frame_rate + frame_rate + 1) + extension_type)
+
                 delete_specific_merged(context,
                                        upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
                                        x * frame_rate + frame_rate + 1)
