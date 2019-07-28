@@ -36,6 +36,9 @@ class Dandere2x_Gui_Wrapper:
         if d.context.realtime_encoding_delete_files:
             d.delete_workspace_files()
 
+        print("Dandere2x GUI Run Finished Successfully")
+
+
 
 
 

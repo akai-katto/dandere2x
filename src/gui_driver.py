@@ -94,6 +94,7 @@ class AppWindow(QMainWindow):
 
         self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
         self.ui.upscale_status_label.setText("Upscaling in Progress")
+        self.ui.upscale_status_label.setStyleSheet('color: #fad201')
 
         self.parse_gui_inputs()
 
@@ -140,6 +141,7 @@ class AppWindow(QMainWindow):
     def update(self):
         self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
         self.ui.upscale_status_label.setText("Upscale Complete!")
+        self.ui.upscale_status_label.setStyleSheet('color: #27FB35')
         self.thread.terminate()
         self.enable_buttons()
 
@@ -214,7 +216,7 @@ class AppWindow(QMainWindow):
         videosettings = VideoSettings(context.ffprobe_dir, self.file_dir)
 
         # Get a list of valid list block sizes knowing the width and height
-        valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width)
+        valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width, minimum=8)
 
         self.ui.block_size_combo_box.clear()
         self.ui.block_size_combo_box.addItems(valid_list_blocksize)

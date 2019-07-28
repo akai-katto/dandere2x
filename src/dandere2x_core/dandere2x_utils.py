@@ -134,12 +134,12 @@ def get_seconds_from_time(time_frame: int):
     return hours_seconds + minutes_seconds + seconds
 
 
-def get_valid_block_sizes(width: int, height: int):
+def get_valid_block_sizes(width: int, height: int, minimum=1):
     valid_sizes = []
 
     larger_val = [width, height][height > width]
 
-    for x in range(1, larger_val):
+    for x in range(minimum, larger_val):
         if width % x == 0 and height % x == 0:
             valid_sizes.append(str(x))
 
