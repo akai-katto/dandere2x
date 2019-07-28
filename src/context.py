@@ -15,6 +15,8 @@ import json
 import logging
 import os
 import sys
+import tempfile
+import pathlib
 
 from dandere2x_core.dandere2x_utils import get_options_from_section
 from wrappers.videosettings import VideoSettings
@@ -112,6 +114,12 @@ class Context:
         self.workspace_use_temp = config_json['dandere2x']['developer_settings']['workspace_use_temp']
         self.workspace = config_json['dandere2x']['developer_settings']['workspace']
         self.dandere2x_cpp_dir = config_json['dandere2x']['developer_settings']['dandere2x_cpp_dir']
+
+        # if we're using a temporary workspace, assign workspace to be in the temp folder
+
+        if self.workspace_use_temp:
+            self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()),  'dandere2x') + "\\"
+
 
         self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
 

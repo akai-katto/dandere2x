@@ -15,4 +15,4 @@ d.start()
 # import tempfile
 # import pathlib
 #
-# print(pathlib.Path(tempfile.gettempdir()) / 'dandere2x')
+# print()pathlib.Path(tempfile.gettempdir()) / 'dandere2x'
