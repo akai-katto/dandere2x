@@ -4,6 +4,13 @@ Telegram Server:
 
 https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
+Subreddit:
+
+https://www.reddit.com/r/Dandere2x/
+
+Patreon:
+
+https://www.patreon.com/dandere2x
 
 ## What is Dandere2x
 
