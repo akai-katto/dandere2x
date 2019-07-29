@@ -144,8 +144,7 @@ class Context:
         self.log_dir = self.workspace + "logs" + os.path.sep
         self.compressed_dir = self.workspace + "compressed" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
-
-
+        self.temp_image_folder = self.workspace + "temp_image_folder" + os.path.sep
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):

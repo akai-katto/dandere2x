@@ -97,6 +97,20 @@ def wait_on_either_file(file_1: str, file_2: str):
         time.sleep(.001)
 
 
+# Sometimes dandere2x is offsync with window's handlers, and a directory might be deleted after
+# the call was made, so in some cases make sure it's completely deleted before moving on during runtime
+def wait_on_delete_dir(dir: str):
+    logger = logging.getLogger(__name__)
+    exists = dir_exists(dir)
+    count = 0
+    while exists:
+        if count % 1000000 == 0:
+            logger.info(dir + "dne, waiting")
+        exists = os.path.isfile(dir)
+        count += 1
+        time.sleep(.001)
+
+
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
 def file_exists(file_string: str):

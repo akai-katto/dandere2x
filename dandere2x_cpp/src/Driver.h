@@ -91,6 +91,9 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         string im2_file = image_prefix + to_string(x + 1) + extension_type;
         string im2_file_compressed = compressed_prefix + to_string(x + 1) + ".jpg";
 
+        dandere2x::wait_for_file(im2_file);
+        dandere2x::wait_for_file(im2_file_compressed);
+
         // load actual images themselves
         shared_ptr<Image> im2 = make_shared<Image>(im2_file);
         shared_ptr<Image> im2_copy = make_shared<Image>(im2_file); //for corrections
