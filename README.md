@@ -22,6 +22,8 @@ Dandere2x speeds up the time needed to upscale animation (sometimes live-action)
 - Interpolated Frame Video Compression
 - Minimum / Maximum quality loss (set by JPEG standards)
 - Color fading (fade to black) 
+- Real-time video encoding
+- Low-storage profile
 - FFMPEG Customizability 
 - Interactive GUI
 
