@@ -20,8 +20,6 @@
  * - Assume file is readible by stbi_image
  */
 Image::Image(std::string file_name) {
-    dandere2x::wait_for_file(file_name);
-
     unsigned char *rgb; //the raw pixels
     int width, height, bpp;
 

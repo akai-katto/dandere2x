@@ -131,7 +131,6 @@ class Context:
         # todo idunno if theres a better way to figure out how many frames will be used.
         self.frame_count = 0
 
-
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
         self.differences_dir = self.workspace + "differences" + os.path.sep
