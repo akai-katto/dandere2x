@@ -71,6 +71,8 @@ class Dandere2x:
             trim_video(self.context, trimed_video)
             self.context.file_dir = trimed_video
 
+
+        print("extracting frames from video... this might take a while..")
         ffmpeg_extract_frames(self.context, self.context.file_dir)
         self.context.update_frame_count()
 

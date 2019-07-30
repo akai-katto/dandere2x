@@ -33,7 +33,7 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
     if not list_difference and list_predictive:
         out_image = Frame()
         out_image.create_new(1, 1)
-        out_image.save_image(out_location)
+        out_image.save_image_temp(out_location, temp_image)
         return
 
     # if there are neither any predictive or inversions
@@ -43,7 +43,7 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
         out_image = Frame()
         out_image.create_new(raw_frame.width, raw_frame.height)
         out_image.copy_image(raw_frame)
-        out_image.save_image(out_location)
+        out_image.save_image_temp(out_location, temp_image)
         return
 
     # turn the list of differences into a list of vectors
