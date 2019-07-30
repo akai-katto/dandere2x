@@ -77,7 +77,7 @@ double Fade::mse_fade(Image &preceding_image, Image &original_image,
     try {
         for (int x = 0; x < block_size; x++)
             for (int y = 0; y < block_size; y++)
-                sum += ImageUtils::root_square(original_image.get_color(initial_x + x, initial_y + y),
+                sum += ImageUtils::square(original_image.get_color(initial_x + x, initial_y + y),
                                                add_scalar_to_color(preceding_image.get_color(variable_x + x, variable_y + y), scalar));
     }
     catch (std::invalid_argument e) { //make the MSE really high if it went out of bounds (i.e a bad match)
