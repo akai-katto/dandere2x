@@ -18,7 +18,7 @@
       "realtime_encoding_delete_files": false,
       "workspace_use_temp": false,
       "workspace": "..\\workspace\\shelter_85\\",
-      "dandere2x_cpp_dir": "C:\\Users\\windwoz\\Documents\\github_projects\\dandere2x_cpp\\cmake-build-debug\\dandere2x_cpp.exe"
+      "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },
   "waifu2x_caffe": {
