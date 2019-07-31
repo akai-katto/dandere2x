@@ -43,12 +43,12 @@ int main(int argc, char **argv) {
 //
     bool debug = false; //debug flag
 
-    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\workspace_rework\\";
-    int frame_count = 120;
+    string workspace = "C:\\Users\\windwoz\\Desktop\\1.3QA\\1.3-nightly-7.30.19\\workspace\\yournamedemo\\";
+    int frame_count = 15;
     int block_size = 30;
     int step_size = 4;
     string run_type = "n";// 'n' or 'r'
-    int resume_frame = 71;
+    int resume_frame = 55;
     string extension_type = ".jpg";
 
     cout << "Hello Dandere!!" << endl;

@@ -63,6 +63,7 @@ public:
         int b1 = (int) color_A.b;
         int b2 = (int) color_B.b;
 
+        //return (r2 - r1) + (g2 - g1) + (b2 - b1);
         return (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
     }
 

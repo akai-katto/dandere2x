@@ -18,7 +18,7 @@ import sys
 import tempfile
 import pathlib
 
-from dandere2x_core.dandere2x_utils import get_options_from_section
+from dandere2x_core.dandere2x_utils import get_options_from_section, absolutify_json
 from wrappers.videosettings import VideoSettings
 
 
@@ -26,7 +26,10 @@ from wrappers.videosettings import VideoSettings
 # cleaning this up in the future ;-;
 class Context:
 
-    def __init__(self, config_json: json):
+
+    # todo implement os.path.join for all directory stuff
+    # to clean up the mess that I've made
+    def __init__(self, config_json_unparsed: json):
 
         # load 'this folder' in a pyinstaller friendly way
         self.this_folder = ''
@@ -49,21 +52,9 @@ class Context:
         elif __file__:
             current_folder_json = os.path.dirname(__file__)
 
-        current_folder_json = current_folder_json.replace("\\", "\\\\")
+        config_json = absolutify_json(config_json_unparsed, current_folder_json, absolutify_key="..")
 
-        config_json_string = str(config_json)
-
-        # turn python's string'd json into a normal json
-        config_json_string = config_json_string.replace("\'", "\"")
-        config_json_string = config_json_string.replace("True", "true")
-        config_json_string = config_json_string.replace("False", "false")
-        config_json_string = config_json_string.replace("None", "null")
-        config_json_string = config_json_string.replace("..", current_folder_json)
-
-        #load the json back into the config
-        config_json = json.loads(config_json_string)
         self.config_json = config_json
-
         # directories
         self.waifu2x_caffe_cui_dir = config_json['waifu2x_caffe']['waifu2x_caffe_path']
 
@@ -121,6 +112,7 @@ class Context:
             self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()),  'dandere2x') + "\\"
 
 
+        print(self.ffprobe_dir)
         self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
 
         self.frame_rate = self.video_settings.frame_rate
