@@ -39,12 +39,13 @@ void benchmark(){
 }
 
 int main(int argc, char **argv) {
+
     //benchmark();
 //
-    bool debug = false; //debug flag
+    bool debug = true; //debug flag
 
-    string workspace = "C:\\Users\\windwoz\\Desktop\\1.3QA\\1.3-nightly-7.30.19\\workspace\\yournamedemo\\";
-    int frame_count = 15;
+    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_fall_3\\";
+    int frame_count = 50;
     int block_size = 30;
     int step_size = 4;
     string run_type = "n";// 'n' or 'r'

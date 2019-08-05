@@ -9,7 +9,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include "stb_image.h"
-#include "../Dandere2xUtils/Dandere2xUtils.h"
+
 
 
 /*
@@ -28,7 +28,17 @@ Image::Image(std::string file_name) {
     this->stb_image = stb_image;
     this->height = height;
     this->width = width;
-    //the pixels are now in the vector "image", 4 bytes per pixel, ordered RGBARGBA...,
+    //the pixels are now in the vector "image", are in 'stb_image' 4 bytes per pixel, ordered RGBARGBA...,
+
+    this->color_array.resize(this->width, std::vector<Image::Color>(this->height));
+
+    // Put all the colors into color_array
+
+    for(int x = 0; x < width; x++){
+        for(int y = 0; y < height; y++){
+            this->color_array[x][y] = this->construct_color(x,y);
+        }
+    }
 }
 
 Image::~Image() {
@@ -36,16 +46,11 @@ Image::~Image() {
 }
 
 
-Image::Color Image::get_color(int x, int y) {
+Image::Color &Image::get_color(int x, int y) {
     if (x > width - 1 || y > height - 1 || x < 0 || y < 0)
         throw std::invalid_argument("invalid dimensions");
 
-    Image::Color color;
-    color.r = stb_image[x * 3 + 3 * y * width + 0];
-    color.g = stb_image[x * 3 + 3 * y * width + 1];
-    color.b = stb_image[x * 3 + 3 * y * width + 2];
-
-    return color;
+    return color_array[x][y];
 }
 
 
@@ -56,4 +61,17 @@ void Image::set_color(int x, int y, Image::Color color) {
     stb_image[x * 3 + 3 * y * width + 0] = color.r;
     stb_image[x * 3 + 3 * y * width + 1] = color.g;
     stb_image[x * 3 + 3 * y * width + 2] = color.b;
+}
+
+
+Image::Color Image::construct_color(int x, int y) {
+    if (x > width - 1 || y > height - 1 || x < 0 || y < 0)
+        throw std::invalid_argument("invalid dimensions");
+
+    Image::Color color;
+    color.r = stb_image[x * 3 + 3 * y * width + 0];
+    color.g = stb_image[x * 3 + 3 * y * width + 1];
+    color.b = stb_image[x * 3 + 3 * y * width + 2];
+
+    return color;
 }
