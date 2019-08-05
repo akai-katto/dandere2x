@@ -112,10 +112,12 @@ double Fade::get_scalar_for_block(int x, int y) {
 
 void Fade::draw_over(int x, int y, int scalar) {
 
-    for (int i = x; i < x + block_size; i++)
-        for (int j = y; j < y + block_size; j++)
-            image1->set_color(i, j, add_scalar_to_color(image1->get_color(i, j), scalar));
-
+    for (int i = x; i < x + block_size; i++) {
+        for (int j = y; j < y + block_size; j++) {
+            Image::Color col = add_scalar_to_color(image1->get_color(i, j), scalar);
+            image1->set_color(i, j, col);
+        }
+    }
 
 }
 

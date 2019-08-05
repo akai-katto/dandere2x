@@ -30,13 +30,13 @@ Image::Image(std::string file_name) {
     this->width = width;
     //the pixels are now in the vector "image", are in 'stb_image' 4 bytes per pixel, ordered RGBARGBA...,
 
-    this->color_array.resize(this->width, std::vector<Image::Color>(this->height));
+    this->image_colors.resize(this->width, std::vector<Image::Color>(this->height));
 
-    // Put all the colors into color_array
+    // Put all the colors into image_colors
 
     for(int x = 0; x < width; x++){
         for(int y = 0; y < height; y++){
-            this->color_array[x][y] = this->construct_color(x,y);
+            this->image_colors[x][y] = this->construct_color(x,y);
         }
     }
 }
@@ -50,11 +50,11 @@ Image::Color &Image::get_color(int x, int y) {
     if (x > width - 1 || y > height - 1 || x < 0 || y < 0)
         throw std::invalid_argument("invalid dimensions");
 
-    return color_array[x][y];
+    return image_colors[x][y];
 }
 
 
-void Image::set_color(int x, int y, Image::Color color) {
+void Image::set_color(int x, int y, Image::Color &color) {
     if (x > width - 1 || y > height - 1 || x < 0 || y < 0)
         throw std::invalid_argument("set color has invalid dimensions");
 
