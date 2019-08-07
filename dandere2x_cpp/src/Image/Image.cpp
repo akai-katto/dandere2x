@@ -58,9 +58,7 @@ void Image::set_color(int x, int y, Image::Color &color) {
     if (x > width - 1 || y > height - 1 || x < 0 || y < 0)
         throw std::invalid_argument("set color has invalid dimensions");
 
-    stb_image[x * 3 + 3 * y * width + 0] = color.r;
-    stb_image[x * 3 + 3 * y * width + 1] = color.g;
-    stb_image[x * 3 + 3 * y * width + 2] = color.b;
+    image_colors[x][y] = color;
 }
 
 
