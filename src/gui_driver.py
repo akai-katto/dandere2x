@@ -285,7 +285,7 @@ class AppWindow(QMainWindow):
 
         save_file_name = self.save_file_name()
 
-        if save_file_name == self.output_file:
+        if save_file_name == '':
             return
 
         self.output_file = save_file_name
