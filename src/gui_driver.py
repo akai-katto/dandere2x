@@ -23,11 +23,16 @@ class QtDandere2xThread(QtCore.QThread):
 
     def run(self):
         d = Dandere2x_Gui_Wrapper(self.config_json)
-        d.start()
+
+        try:
+            d.start()
+
+        except:
+            print("dandere2x could not start.. trying again. If it fails, try running as admin..")
+            d.start()
 
         self.finished.emit()
 
-        d = None
 
 
 class AppWindow(QMainWindow):
@@ -224,8 +229,12 @@ class AppWindow(QMainWindow):
             self.noise_level = 3
 
         # Dandere2x Settings
+
         self.image_quality = int(self.ui.image_quality_box.currentText())
         self.block_size = int(self.ui.block_size_combo_box.currentText())
+
+
+
 
         # Waifu2x Type
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Caffe':
@@ -261,10 +270,13 @@ class AppWindow(QMainWindow):
         # Get a list of valid list block sizes knowing the width and height
         valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width, minimum=8)
 
+        # bug where clearing causes text to change, and since there's nothing there, the box is null and cant
+        # be used in other stuff. Disconnect it when changing legal settings
+        self.ui.block_size_combo_box.disconnect()
         self.ui.block_size_combo_box.clear()
         self.ui.block_size_combo_box.addItems(valid_list_blocksize)
         self.ui.block_size_combo_box.setEnabled(True)
-
+        self.ui.block_size_combo_box.currentIndexChanged.connect(self.refresh_output_file)
         # to avoid users leaving it as '1'
         self.ui.block_size_combo_box.setCurrentIndex(len(valid_list_blocksize) / 1.5)
 
