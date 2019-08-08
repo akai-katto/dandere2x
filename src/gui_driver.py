@@ -52,6 +52,7 @@ class AppWindow(QMainWindow):
         self.image_quality = None
         self.block_size = ''
         self.waifu2x_type = ''
+        self.use_default_name = True
 
         # theres a bug with qt designer and '80' for default quality needs to be set elsewhere
         _translate = QtCore.QCoreApplication.translate
@@ -70,6 +71,25 @@ class AppWindow(QMainWindow):
         self.ui.upscale_button.clicked.connect(self.press_upscale_button)
         self.ui.waifu2x_type_combo_box.currentIndexChanged.connect(self.refresh_scale_factor)
 
+
+        # The following connects are to re-adjust the file name
+
+        noise_radio_list = [self.ui.noise_0_radio_button, self.ui.noise_1_radio_button,
+                            self.ui.noise_2_radio_button, self.ui.noise_3_radio_button]
+
+        for radio in noise_radio_list:
+            radio.clicked.connect(self.refresh_output_file)
+
+        scale_radio_list = [self.ui.scale_1_radio_button, self.ui.scale_2_radio_button,
+                            self.ui.scale_3_radio_button, self.ui.scale_4_radio_button]
+
+        for radio in scale_radio_list:
+            radio.clicked.connect(self.refresh_output_file)
+
+        self.ui.waifu2x_type_combo_box.currentIndexChanged.connect(self.refresh_output_file)
+        self.ui.block_size_combo_box.currentIndexChanged.connect(self.refresh_output_file)
+        self.ui.image_quality_box.currentIndexChanged.connect(self.refresh_output_file)
+
     # if vulkan is enabled, we cant do scale factor 3 or 4
 
     # refresh the buttons to see if upscale can be called
@@ -79,6 +99,29 @@ class AppWindow(QMainWindow):
             self.ui.upscale_button.setEnabled(True)
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Ready to upscale!")
+
+    def refresh_output_file(self):
+        if self.file_dir == '':
+            return
+
+        if not self.use_default_name:
+            return
+
+        self.parse_gui_inputs()
+
+        path, name = os.path.split(self.file_dir)
+        name_only = name.split(".")[0]
+
+        self.output_file = os.path.join(path, (name_only + "_"
+                                               + "[" + str(self.waifu2x_type) + "]"
+                                               + "[s" + str(self.scale_factor) + "]"
+                                               + "[n" + str(self.noise_level) + "]"
+                                               + "[b" + str(self.block_size) + "]"
+                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
+
+        self.set_output_file_name()
+
+
 
     def refresh_scale_factor(self):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
@@ -232,22 +275,21 @@ class AppWindow(QMainWindow):
 
         # make a default name
 
-        self.output_file = os.path.join(path, (name_only + "_upscaled" + ".mkv"))
-
-        ## temp disabled for time being
-        # self.output_file = os.path.join(path, (name_only + "_"
-        #                                        + "[" + str(self.waifu2x_type) + "]"
-        #                                        + "[s" + str(self.scale_factor) + "]"
-        #                                        + "[n" + str(self.noise_level) + "]"
-        #                                        + "[b" + str(self.block_size) + "]"
-        #                                        + "[q" + str(self.image_quality) + "]" + ".mkv"))
+        self.refresh_output_file()
 
         self.set_output_file_name()
         self.refresh_buttons()
 
     def press_select_output_button(self):
 
-        self.output_file = self.save_file_name()
+
+        save_file_name = self.save_file_name()
+
+        if save_file_name == self.output_file:
+            return
+
+        self.output_file = save_file_name
+        self.use_default_name = False
 
         # If the user didn't select anything, don't continue or it'll break
         # Everything
