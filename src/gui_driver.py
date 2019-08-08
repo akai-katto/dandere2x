@@ -94,6 +94,7 @@ class AppWindow(QMainWindow):
 
         self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
         self.ui.upscale_status_label.setText("Upscaling in Progress")
+        self.ui.upscale_status_label.setStyleSheet('color: #fad201')
 
         self.parse_gui_inputs()
 
@@ -102,12 +103,12 @@ class AppWindow(QMainWindow):
         with open(os.path.join(self.this_folder, "dandere2x.json"), "r") as read_file:
             config_json = json.load(read_file)
 
-        config_json['dandere2x']['output_file'] = self.output_file
-        config_json['dandere2x']['file_dir'] = self.file_dir
-        config_json['dandere2x']['block_size'] = self.block_size
-        config_json['dandere2x']['quality_low'] = self.image_quality
-        config_json['dandere2x']['waifu2x_type'] = self.waifu2x_type
-        config_json['dandere2x']['scale_factor'] = self.scale_factor
+        config_json['dandere2x']['usersettings']['output_file'] = self.output_file
+        config_json['dandere2x']['usersettings']['file_dir'] = self.file_dir
+        config_json['dandere2x']['usersettings']['block_size'] = self.block_size
+        config_json['dandere2x']['usersettings']['quality_low'] = self.image_quality
+        config_json['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
+        config_json['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
 
         print("output_file = " + self.output_file)
         print("file_dir = " + self.file_dir)
@@ -140,6 +141,7 @@ class AppWindow(QMainWindow):
     def update(self):
         self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
         self.ui.upscale_status_label.setText("Upscale Complete!")
+        self.ui.upscale_status_label.setStyleSheet('color: #27FB35')
         self.thread.terminate()
         self.enable_buttons()
 
@@ -214,7 +216,7 @@ class AppWindow(QMainWindow):
         videosettings = VideoSettings(context.ffprobe_dir, self.file_dir)
 
         # Get a list of valid list block sizes knowing the width and height
-        valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width)
+        valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width, minimum=8)
 
         self.ui.block_size_combo_box.clear()
         self.ui.block_size_combo_box.addItems(valid_list_blocksize)

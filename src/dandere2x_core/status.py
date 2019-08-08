@@ -4,6 +4,9 @@ import time
 
 from context import Context
 
+# todo
+# This could probably be improved visually for the user.. it's not the most pleasing to look at
+# Also, in a very niche case the GUI didn't catch up with the deletion of files, so it ceased updating
 
 def print_status(context: Context):
     workspace = context.workspace
@@ -39,6 +42,3 @@ def print_status(context: Context):
         difference = float(later - now)
         last_10.append(difference)
 
-        # variables
-
-        time.sleep(0.25)

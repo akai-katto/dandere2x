@@ -151,8 +151,13 @@ class Frame:
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
-    # save the picture given a specific quality setting
+    def save_image_temp(self, out_location, temp_location):
+        self.save_image(temp_location)
+        wait_on_file(temp_location)
+        rename_file(temp_location, out_location)
 
+
+    # save the picture given a specific quality setting
     def save_image_quality(self, out_location, quality_per):
         extension = os.path.splitext(os.path.basename(out_location))[1]
 

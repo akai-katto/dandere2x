@@ -15,7 +15,8 @@ import time
 # if the value in the key value pair exists, add it.
 # if the key is just 'true', only add the key
 
-# THis doesnt work with multiple keys and
+# THis doesnt work with multiple keys and import warnings
+
 def get_options_from_section(section: json):
     execute = []
 
@@ -29,6 +30,24 @@ def get_options_from_section(section: json):
 
     return execute
 
+
+    # absolutify a json method by replacing ".." into "current_folder".
+    # there's some trickery to do this, but it works
+def absolutify_json(config_json: json, current_folder: str, absolutify_key=".."):
+
+    current_folder_json = current_folder.replace("\\", "\\\\")
+
+    config_json_string = str(config_json)
+
+    # turn python's string'd json into a normal json
+    config_json_string = config_json_string.replace("\'", "\"")
+    config_json_string = config_json_string.replace("True", "true")
+    config_json_string = config_json_string.replace("False", "false")
+    config_json_string = config_json_string.replace("None", "null")
+    config_json_string = config_json_string.replace(absolutify_key, current_folder_json)
+
+    # load the json back into the config
+    return json.loads(config_json_string)
 
 # returns a list given a text file (representing a string)
 def get_list_from_file(text_file: str):
@@ -93,6 +112,20 @@ def wait_on_either_file(file_1: str, file_2: str):
         time.sleep(.001)
 
 
+# Sometimes dandere2x is offsync with window's handlers, and a directory might be deleted after
+# the call was made, so in some cases make sure it's completely deleted before moving on during runtime
+def wait_on_delete_dir(dir: str):
+    logger = logging.getLogger(__name__)
+    exists = dir_exists(dir)
+    count = 0
+    while exists:
+        if count % 1000000 == 0:
+            logger.info(dir + "dne, waiting")
+        exists = os.path.isfile(dir)
+        count += 1
+        time.sleep(.001)
+
+
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
 def file_exists(file_string: str):
@@ -134,12 +167,12 @@ def get_seconds_from_time(time_frame: int):
     return hours_seconds + minutes_seconds + seconds
 
 
-def get_valid_block_sizes(width: int, height: int):
+def get_valid_block_sizes(width: int, height: int, minimum=1):
     valid_sizes = []
 
     larger_val = [width, height][height > width]
 
-    for x in range(1, larger_val):
+    for x in range(minimum, larger_val):
         if width % x == 0 and height % x == 0:
             valid_sizes.append(str(x))
 

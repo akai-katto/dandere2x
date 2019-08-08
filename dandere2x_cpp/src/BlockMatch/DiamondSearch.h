@@ -176,7 +176,7 @@ public:
 
             /** Testing feature - if the smallest block is garishly larger than the minimum required,
              stop looking. */
-            if (smallest_block->sum >= min_mse*4){
+            if (smallest_block->sum >= min_mse*min_mse){
                 return Block(0, 0, 0, 0, 10000);
             }
 

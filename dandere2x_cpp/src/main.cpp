@@ -39,16 +39,17 @@ void benchmark(){
 }
 
 int main(int argc, char **argv) {
+
     //benchmark();
 //
-    bool debug = false; //debug flag
+    bool debug = true; //debug flag
 
-    string workspace = "C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\";
-    int frame_count = 120;
+    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_fall_3\\";
+    int frame_count = 50;
     int block_size = 30;
     int step_size = 4;
     string run_type = "n";// 'n' or 'r'
-    int resume_frame = 71;
+    int resume_frame = 55;
     string extension_type = ".jpg";
 
     cout << "Hello Dandere!!" << endl;

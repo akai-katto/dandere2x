@@ -9,9 +9,11 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <cmath>
 #include <exception>
 #include <stdexcept>
+#include "../Dandere2xUtils/Dandere2xUtils.h"
 #include "stb_image.h"
 
 
@@ -57,12 +59,17 @@ public:
 
     ~Image();
 
-    Color get_color(int x, int y);
+    Color &get_color(int x, int y);
 
-    void set_color(int x, int y, Color color);
+    void set_color(int x, int y, Color &color);
 
 private:
+
+    Color construct_color(int x, int y);
+
     unsigned char *stb_image;
+
+    std::vector<std::vector<Image::Color>> image_colors;
 
 };
 

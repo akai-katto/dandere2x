@@ -81,13 +81,13 @@ void Correction::match_block(int x, int y) {
 
     //this is producing very flickery results.
     //Perhaps resorting to lower res or adding a bias to fix.
-    if (sum >= min_mse*2) {
+    if (sum >= min_mse*min_mse) {
         //if it is lower, try running a diamond search around that area. If it's low enough add it as a displacement block.
         Block result = DiamondSearch::diamond_search_iterative_super(*image1_true,*image1_predicted,
                                                                      x * block_size, y * block_size,
                                                                      x * block_size, y * block_size,
-                                                                     min_mse*2, block_size, step_size, max_checks);
-        if (result.sum <=  min_mse*2)
+                                                                     min_mse*min_mse, block_size, step_size, max_checks);
+        if (result.sum <=  min_mse*min_mse)
             blocks.push_back(result);
 
     }

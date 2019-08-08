@@ -2,10 +2,11 @@
 
 import os
 import shutil
+import time
 
 from context import Context
 from dandere2x import Dandere2x
-from dandere2x_core.dandere2x_utils import dir_exists
+from dandere2x_core.dandere2x_utils import dir_exists, wait_on_delete_dir
 
 
 class Dandere2x_Gui_Wrapper:
@@ -21,11 +22,13 @@ class Dandere2x_Gui_Wrapper:
             print("Deleted Folder")
             shutil.rmtree(self.context.workspace)
 
+        wait_on_delete_dir(self.context.workspace)
         try:
             os.mkdir(self.context.workspace)
         except OSError:
             print("Creation of directory failed")
 
+        start = time.time()
 
         # starting shit
         print("Starting Dandere2x")
@@ -35,6 +38,14 @@ class Dandere2x_Gui_Wrapper:
 
         if d.context.realtime_encoding_delete_files:
             d.delete_workspace_files()
+
+        print("Dandere2x GUI Run Finished Successfully")
+
+        end = time.time()
+
+        print("\n "
+              "duration: " + str(time.time() - start))
+
 
 
 

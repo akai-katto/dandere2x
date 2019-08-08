@@ -18,7 +18,7 @@ from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
 
 
-def make_difference_image(context: Context, raw_frame, list_difference, list_predictive, out_location):
+def make_difference_image(context: Context, raw_frame, list_difference, list_predictive, out_location, temp_image):
     difference_vectors = []
     buffer = 5
     block_size = context.block_size
@@ -33,7 +33,7 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
     if not list_difference and list_predictive:
         out_image = Frame()
         out_image.create_new(1, 1)
-        out_image.save_image(out_location)
+        out_image.save_image_temp(out_location, temp_image)
         return
 
     # if there are neither any predictive or inversions
@@ -43,7 +43,7 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
         out_image = Frame()
         out_image.create_new(raw_frame.width, raw_frame.height)
         out_image.copy_image(raw_frame)
-        out_image.save_image(out_location)
+        out_image.save_image_temp(out_location, temp_image)
         return
 
     # turn the list of differences into a list of vectors
@@ -62,7 +62,7 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
                              vector.x_1 + buffer - bleed, vector.y_1 + buffer + - bleed,
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
-    out_image.save_image(out_location)
+    out_image.save_image_temp(out_location, temp_image)
 
 
 # for printing out what Dandere2x predictive frames are doing
@@ -117,6 +117,8 @@ def difference_loop(context, start_frame):
     bleed = context.bleed
     debug = context.debug
 
+    temp_image = context.temp_image_folder + "tempimage.png"
+
     logger = logging.getLogger(__name__)
     logger.info((workspace, start_frame, frame_count, block_size))
 
@@ -130,7 +132,7 @@ def difference_loop(context, start_frame):
         prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
         make_difference_image(context, f1, difference_data, prediction_data,
-                              differences_dir + "output_" + get_lexicon_value(6, x) + ".png")
+                              differences_dir + "output_" + get_lexicon_value(6, x) + ".png", temp_image)
 
         output_file = workspace + "debug/debug" + str(x + 1) + extension_type
 
