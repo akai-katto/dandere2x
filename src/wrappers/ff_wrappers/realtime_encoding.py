@@ -77,8 +77,6 @@ def run_realtime_encoding(context: Context, output_file: str):
             # upscaled files end on a different number than merged files.
             if x == int(frame_count / frames_per_encoded_video) - 1:
 
-                print("option 1")
-
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_encoded_video + 1) + ".png")
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_encoded_video + frames_per_encoded_video - 1) + ".png")
 
@@ -88,7 +86,6 @@ def run_realtime_encoding(context: Context, output_file: str):
 
             else:
 
-                print("option 2")
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_encoded_video + 1) + ".png")
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_encoded_video + frames_per_encoded_video + 1) + ".png")
 
