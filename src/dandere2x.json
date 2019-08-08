@@ -2,7 +2,7 @@
   "dandere2x": {
     "usersettings": {
       "block_size": 20,
-      "quality_low": 85,
+      "quality_low": 5,
       "waifu2x_type": "vulkan",
       "noise_level": 3,
       "scale_factor": 2,
@@ -15,8 +15,8 @@
       "extension_type": ".jpg",
       "debug": true,
       "realtime_encoding": true,
-      "realtime_encoding_delete_files": false,
-      "workspace_use_temp": false,
+      "realtime_encoding_delete_files": true,
+      "workspace_use_temp": true,
       "workspace": "..\\workspace\\shelter_test\\",
       "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
