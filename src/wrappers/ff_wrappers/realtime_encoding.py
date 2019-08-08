@@ -1,4 +1,5 @@
 import os
+import math
 
 from context import Context
 from dandere2x_core.dandere2x_utils import file_exists
@@ -28,7 +29,9 @@ def run_realtime_encoding(context: Context, output_file: str):
     logger.info("Real time encoding process started")
 
     workspace = context.workspace
-    frame_rate = int(context.frame_rate)
+    frames_per_encoded_video = int(math.ceil(context.frame_rate))
+    seconds_per_video = 1
+
     frame_count = int(context.frame_count)
     realtime_encoding_delete_files = context.realtime_encoding_delete_files
     extension_type = context.extension_type
@@ -40,7 +43,7 @@ def run_realtime_encoding(context: Context, output_file: str):
     compressed_files_prefix = context.compressed_dir + "compressed_"
     input_frames_prefix = context.input_frames_dir + "frame"
 
-    for x in range(0, int(frame_count / frame_rate)):
+    for x in range(0, int(frame_count / frames_per_encoded_video)):
         text_file = open(workspace + "encoded\\list.txt", 'a+')  # text file for ffmpeg to use to concat vids together
         encoded_vid = workspace + "encoded\\encoded_" + str(x) + ".mkv"
 
@@ -48,11 +51,11 @@ def run_realtime_encoding(context: Context, output_file: str):
             logger.info(encoded_vid + " already exists: skipping iteration")
             continue
 
-        wait_on_file(merged_files_prefix + str(x * frame_rate + 1) + extension_type)
-        wait_on_file(merged_files_prefix + str(x * frame_rate + frame_rate) + extension_type)
+        wait_on_file(merged_files_prefix + str(x * frames_per_encoded_video + 1) + extension_type)
+        wait_on_file(merged_files_prefix + str(x * frames_per_encoded_video + frames_per_encoded_video) + extension_type)
 
         # create a video for frames in this section
-        create_video_from_specific_frames(context, merged_files_prefix, encoded_vid, x * frame_rate + 1, frame_rate)
+        create_video_from_specific_frames(context, merged_files_prefix, encoded_vid, x * frames_per_encoded_video + 1, seconds_per_video)
 
         # ensure ffmpeg video exists before deleting files
         wait_on_file(encoded_vid)
@@ -62,33 +65,33 @@ def run_realtime_encoding(context: Context, output_file: str):
 
         # put files to delete inside of here.
         if realtime_encoding_delete_files:
-            delete_specific_merged(context, merged_files_prefix, extension_type, 0, x * frame_rate + 1,
-                                   x * frame_rate + frame_rate + 1)
+            delete_specific_merged(context, merged_files_prefix, extension_type, 0, x * frames_per_encoded_video + 1,
+                                   x * frames_per_encoded_video + frames_per_encoded_video + 1)
 
-            delete_specific_merged(context, compressed_files_prefix, extension_type, 0, x * frame_rate + 1,
-                                   x * frame_rate + frame_rate + 1)
+            delete_specific_merged(context, compressed_files_prefix, extension_type, 0, x * frames_per_encoded_video + 1,
+                                   x * frames_per_encoded_video + frames_per_encoded_video + 1)
 
-            delete_specific_merged(context, input_frames_prefix, extension_type, 0, x * frame_rate + 1,
-                                   x * frame_rate + frame_rate + 1)
+            delete_specific_merged(context, input_frames_prefix, extension_type, 0, x * frames_per_encoded_video + 1,
+                                   x * frames_per_encoded_video + frames_per_encoded_video + 1)
 
             # upscaled files end on a different number than merged files.
-            if x == int(frame_count / frame_rate) - 1:
+            if x == int(frame_count / frames_per_encoded_video) - 1:
 
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + 1) + ".png")
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + frame_rate) + ".png")
+                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_encoded_video + 1) + ".png")
+                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_encoded_video + frames_per_encoded_video) + ".png")
 
                 delete_specific_merged(context,
-                                       upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
-                                       x * frame_rate + frame_rate)
+                                       upscaled_files_prefix, ".png", 6, x * frames_per_encoded_video + 1,
+                                       x * frames_per_encoded_video + frames_per_encoded_video)
 
             else:
 
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + 1) + ".png")
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + frame_rate + 1) + ".png")
+                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_encoded_video + 1) + ".png")
+                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_encoded_video + frames_per_encoded_video + 1) + ".png")
 
                 delete_specific_merged(context,
-                                       upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
-                                       x * frame_rate + frame_rate + 1)
+                                       upscaled_files_prefix, ".png", 6, x * frames_per_encoded_video + 1,
+                                       x * frames_per_encoded_video + frames_per_encoded_video + 1)
 
     text_file.close()
 
