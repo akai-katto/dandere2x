@@ -1,4 +1,3 @@
-import sys
 import json
 import os
 import sys
@@ -7,9 +6,8 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from context import Context
-from dandere2x import Dandere2x
 from dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
-from dandere2x_core.dandere2x_utils import get_valid_block_sizes
+from dandere2xlib.utils.dandere2x_utils import get_valid_block_sizes
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 from wrappers.videosettings import VideoSettings
 

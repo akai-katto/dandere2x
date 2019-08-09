@@ -12,8 +12,8 @@ import os
 import math
 
 from context import Context
-from dandere2x_core.dandere2x_utils import get_lexicon_value
-from dandere2x_core.dandere2x_utils import get_list_from_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from dandere2xlib.utils.dandere2x_utils import get_list_from_file
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
 

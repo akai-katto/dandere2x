@@ -1,9 +1,9 @@
 from dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
 import json
 
-from dandere2x_core.json_utils import get_options_from_section
+from dandere2xlib.utils.json_utils import get_options_from_section
 
-from dandere2x_core.json_utils import list_to_string
+from dandere2xlib.utils.json_utils import list_to_string
 
 with open("dandere2x.json", "r") as read_file:
     config_json = json.load(read_file)

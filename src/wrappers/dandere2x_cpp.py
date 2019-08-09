@@ -12,7 +12,7 @@ import subprocess
 import threading
 
 from context import Context
-from dandere2x_core.dandere2x_utils import get_lexicon_value
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 
 
 class Dandere2xCppWrapper(threading.Thread):

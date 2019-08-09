@@ -77,7 +77,7 @@
       "output_options": {
         "-qscale:v": 2,
         "-pix_fmt": null,
-        "-vf": ["noise=c1s=8:c0f=u"]
+        "-vf": ["noise=c1s=8:c0f=u", "deband=range=22:blur=false"]
       }
     },
     "frames_to_video": {
@@ -86,7 +86,7 @@
         "-crf": 17,
         "-b:v": null,
         "-pix_fmt": null,
-        "-vf": ["deband=range=22:blur=false, pp7=qp=4:mode=medium"]
+        "-vf": ["deband=range=22:blur=false", "pp7=qp=4:mode=medium"]
       },
       "-y": true
     },

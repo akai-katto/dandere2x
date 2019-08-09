@@ -26,8 +26,8 @@ import numpy as np
 from PIL import Image
 from scipy import misc  # pip install Pillow
 
-from dandere2x_core.dandere2x_utils import rename_file
-from dandere2x_core.dandere2x_utils import wait_on_file
+from dandere2xlib.utils.dandere2x_utils import rename_file
+from dandere2xlib.utils.dandere2x_utils import wait_on_file
 
 
 # fuck this function, lmao. Credits to

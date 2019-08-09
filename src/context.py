@@ -18,7 +18,7 @@ import sys
 import tempfile
 import pathlib
 
-from dandere2x_core.json_utils import get_options_from_section, absolutify_json
+from dandere2xlib.utils.json_utils import get_options_from_section, absolutify_json
 from wrappers.videosettings import VideoSettings
 
 
@@ -111,8 +111,6 @@ class Context:
         if self.workspace_use_temp:
             self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()),  'dandere2x') + "\\"
 
-
-        print(self.ffprobe_dir)
         self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
 
         self.frame_rate = self.video_settings.frame_rate

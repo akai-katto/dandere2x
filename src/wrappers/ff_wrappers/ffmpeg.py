@@ -8,12 +8,11 @@ Last Modified: April 2, 2019
 
 Description: temp ffmpeg wrapper, terrible implementation fix later
 """
-import os
 import subprocess
 import logging
 
 from context import Context
-from dandere2x_core.json_utils import get_options_from_section
+from dandere2xlib.utils.json_utils import get_options_from_section
 
 
 def trim_video(context: Context, output_file: str):

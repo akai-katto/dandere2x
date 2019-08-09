@@ -2,9 +2,9 @@ import os
 import math
 
 from context import Context
-from dandere2x_core.dandere2x_utils import file_exists
-from dandere2x_core.dandere2x_utils import get_lexicon_value
-from dandere2x_core.dandere2x_utils import wait_on_file
+from dandere2xlib.utils.dandere2x_utils import file_exists
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from dandere2xlib.utils.dandere2x_utils import wait_on_file
 from wrappers.ff_wrappers.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, migrate_tracks
 
 

@@ -37,13 +37,13 @@ import sys
 import threading
 import time
 
-from dandere2x_core.dandere2x_utils import verify_user_settings, file_exists
-from dandere2x_core.difference import difference_loop
-from dandere2x_core.difference import difference_loop_resume
-from dandere2x_core.frame_compressor import compress_frames
-from dandere2x_core.merge import merge_loop
-from dandere2x_core.merge import merge_loop_resume
-from dandere2x_core.status import print_status
+from dandere2xlib.utils.dandere2x_utils import verify_user_settings, file_exists
+from dandere2xlib.core.difference import difference_loop
+from dandere2xlib.core.difference import difference_loop_resume
+from dandere2xlib.core.frame_compressor import compress_frames
+from dandere2xlib.core.merge import merge_loop
+from dandere2xlib.core.merge import merge_loop_resume
+from dandere2xlib.status import print_status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.ff_wrappers.ffmpeg import trim_video
