@@ -1889,13 +1889,8 @@
      </font>
     </property>
     <property name="currentText">
-     <string>100</string>
+     <string>95</string>
     </property>
-    <item>
-     <property name="text">
-      <string>100</string>
-     </property>
-    </item>
     <item>
      <property name="text">
       <string>95</string>
@@ -2178,7 +2173,7 @@
    </widget>
    <widget class="QComboBox" name="block_size_combo_box">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -2288,8 +2283,38 @@
      </font>
     </property>
     <property name="currentText">
-     <string/>
+     <string>20</string>
     </property>
+    <item>
+     <property name="text">
+      <string>10</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>15</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>20</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>30</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>40</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>60</string>
+     </property>
+    </item>
    </widget>
    <widget class="QLabel" name="video_label_7">
     <property name="geometry">
@@ -2408,7 +2433,7 @@
      <rect>
       <x>670</x>
       <y>160</y>
-      <width>20</width>
+      <width>40</width>
       <height>20</height>
      </rect>
     </property>
@@ -2512,19 +2537,20 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>Block size Dandere2x will use to compute blocks. You NEED to select a video first before
- selecting this.,               </string>
+     <string>The block size Dandere2x will use in computing blocks. 
+ If your input video's resolution does not evenly divide the block size, 
+ then Dandere2x will resize the video to the dimensions closest</string>
     </property>
     <property name="text">
-     <string>?</string>
+     <string>  ?</string>
     </property>
    </widget>
    <widget class="QLabel" name="quality_help">
     <property name="geometry">
      <rect>
-      <x>670</x>
+      <x>669</x>
       <y>130</y>
-      <width>20</width>
+      <width>41</width>
       <height>20</height>
      </rect>
     </property>
@@ -2632,7 +2658,7 @@
  The developer highly recommends a value between 70-80</string>
     </property>
     <property name="text">
-     <string>?</string>
+     <string>  ?</string>
     </property>
    </widget>
    <widget class="QLabel" name="upscale_status_label">
