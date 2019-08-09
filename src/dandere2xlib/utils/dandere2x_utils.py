@@ -147,6 +147,38 @@ def get_valid_block_sizes(width: int, height: int, minimum=1):
     return valid_sizes
 
 
+def valid_input_resolution(width: int, height: int, block_size: int):
+    return width % block_size == 0 and height % block_size == 0
+
+
+def get_a_valid_input_resolution(width: int, height: int, block_size: int):
+
+    width_up = width
+    width_down = width
+
+    height_up = height
+    height_down = height
+
+    while width_up % block_size != 0:
+        width_up = width_up + 1
+
+    while width_down % block_size != 0:
+        width_down = width_down - 1
+
+    while height_up % block_size != 0:
+        height_up = height_up + 1
+
+    while height_down % block_size != 0:
+        height_down = height_down - 1
+
+    smaller_width = width_up if abs(width_up - width) < abs(width_down - width) else width_down
+
+    smaller_height = height_up if abs(height_up - height) < abs(height_down - height) else height_down
+
+    return smaller_width, smaller_height
+
+
+
 # TODO bring this to ffprobe's modern settings
 # TODO Very outdated!
 # load the first frame, check if the block size is compatible with the resolution

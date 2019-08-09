@@ -4,21 +4,17 @@ import json
 from dandere2xlib.utils.json_utils import get_options_from_section
 
 from dandere2xlib.utils.json_utils import list_to_string
+from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution
+
+
 
 with open("dandere2x.json", "r") as read_file:
     config_json = json.load(read_file)
 
 
-print(config_json['ffmpeg']['video_to_frames']['output_options']['-vf'])
+config_json['ffmpeg']['frames_to_video']['output_options']['-vf'].append("hi")
 
-print(type(config_json['ffmpeg']['video_to_frames']['output_options']['-vf']))
-
-print(type(config_json['ffmpeg']['video_to_frames']['output_options']['-vf']) == list)
-
-print(list_to_string(config_json['ffmpeg']['video_to_frames']['output_options']['-vf']))
-
-
-print(get_options_from_section(config_json['ffmpeg']['video_to_frames']['output_options'], ffmpeg_command=True))
+print(config_json['ffmpeg']['frames_to_video']['output_options']['-vf'])
 
 d = Dandere2x_Gui_Wrapper(config_json)
 
