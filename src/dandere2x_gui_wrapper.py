@@ -6,7 +6,7 @@ import time
 
 from context import Context
 from dandere2x import Dandere2x
-from dandere2x_core.dandere2x_utils import dir_exists, wait_on_delete_dir
+from dandere2xlib.utils.dandere2x_utils import dir_exists, wait_on_delete_dir
 
 
 class Dandere2x_Gui_Wrapper:

@@ -6,7 +6,7 @@ Author: CardinalPanda
 Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
-import json
+
 import logging
 import os
 import time
@@ -16,38 +16,6 @@ import time
 # if the key is just 'true', only add the key
 
 # THis doesnt work with multiple keys and import warnings
-
-def get_options_from_section(section: json):
-    execute = []
-
-    for item in section:
-        if section[item] != None:
-            if section[item] != True:
-                execute.append(str(item))
-                execute.append(str(section[item]))
-            else:
-                execute.append(str(item))
-
-    return execute
-
-
-    # absolutify a json method by replacing ".." into "current_folder".
-    # there's some trickery to do this, but it works
-def absolutify_json(config_json: json, current_folder: str, absolutify_key=".."):
-
-    current_folder_json = current_folder.replace("\\", "\\\\")
-
-    config_json_string = str(config_json)
-
-    # turn python's string'd json into a normal json
-    config_json_string = config_json_string.replace("\'", "\"")
-    config_json_string = config_json_string.replace("True", "true")
-    config_json_string = config_json_string.replace("False", "false")
-    config_json_string = config_json_string.replace("None", "null")
-    config_json_string = config_json_string.replace(absolutify_key, current_folder_json)
-
-    # load the json back into the config
-    return json.loads(config_json_string)
 
 # returns a list given a text file (representing a string)
 def get_list_from_file(text_file: str):
@@ -177,6 +145,38 @@ def get_valid_block_sizes(width: int, height: int, minimum=1):
             valid_sizes.append(str(x))
 
     return valid_sizes
+
+
+def valid_input_resolution(width: int, height: int, block_size: int):
+    return width % block_size == 0 and height % block_size == 0
+
+
+def get_a_valid_input_resolution(width: int, height: int, block_size: int):
+
+    width_up = width
+    width_down = width
+
+    height_up = height
+    height_down = height
+
+    while width_up % block_size != 0:
+        width_up = width_up + 1
+
+    while width_down % block_size != 0:
+        width_down = width_down - 1
+
+    while height_up % block_size != 0:
+        height_up = height_up + 1
+
+    while height_down % block_size != 0:
+        height_down = height_down - 1
+
+    smaller_width = width_up if abs(width_up - width) < abs(width_down - width) else width_down
+
+    smaller_height = height_up if abs(height_up - height) < abs(height_down - height) else height_down
+
+    return smaller_width, smaller_height
+
 
 
 # TODO bring this to ffprobe's modern settings

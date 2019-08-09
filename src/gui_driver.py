@@ -1,4 +1,3 @@
-import sys
 import json
 import os
 import sys
@@ -7,9 +6,8 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from context import Context
-from dandere2x import Dandere2x
 from dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
-from dandere2x_core.dandere2x_utils import get_valid_block_sizes
+from dandere2xlib.utils.dandere2x_utils import get_valid_block_sizes
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 from wrappers.videosettings import VideoSettings
 
@@ -62,6 +60,7 @@ class AppWindow(QMainWindow):
         # theres a bug with qt designer and '80' for default quality needs to be set elsewhere
         _translate = QtCore.QCoreApplication.translate
         self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "75"))
+        self.ui.block_size_combo_box.setCurrentText(_translate("Dandere2xGUI", "20"))
         self.ui.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Vulkan"))
         # self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\aka.png"))
 
@@ -234,8 +233,6 @@ class AppWindow(QMainWindow):
         self.block_size = int(self.ui.block_size_combo_box.currentText())
 
 
-
-
         # Waifu2x Type
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Caffe':
             self.waifu2x_type = 'caffe'
@@ -258,29 +255,6 @@ class AppWindow(QMainWindow):
         # set the video label to the selected file name
         self.ui.video_label.setText(name)
         self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
-
-        with open(os.path.join(self.this_folder, "dandere2x.json"), "r") as read_file:
-            config_json = json.load(read_file)
-
-        context = Context(config_json)
-
-        # load the needed video settings for the GUI
-        videosettings = VideoSettings(context.ffprobe_dir, self.file_dir)
-
-        # Get a list of valid list block sizes knowing the width and height
-        valid_list_blocksize = get_valid_block_sizes(videosettings.height, videosettings.width, minimum=8)
-
-        # bug where clearing causes text to change, and since there's nothing there, the box is null and cant
-        # be used in other stuff. Disconnect it when changing legal settings
-        self.ui.block_size_combo_box.disconnect()
-        self.ui.block_size_combo_box.clear()
-        self.ui.block_size_combo_box.addItems(valid_list_blocksize)
-        self.ui.block_size_combo_box.setEnabled(True)
-        self.ui.block_size_combo_box.currentIndexChanged.connect(self.refresh_output_file)
-        # to avoid users leaving it as '1'
-        self.ui.block_size_combo_box.setCurrentIndex(len(valid_list_blocksize) / 1.5)
-
-        name_only = name.split(".")[0]
 
         # parse inputs so we can access variables
         self.parse_gui_inputs()
