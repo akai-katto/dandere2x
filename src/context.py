@@ -18,7 +18,7 @@ import sys
 import tempfile
 import pathlib
 
-from dandere2x_core.dandere2x_utils import get_options_from_section, absolutify_json
+from dandere2x_core.json_utils import get_options_from_section, absolutify_json
 from wrappers.videosettings import VideoSettings
 
 

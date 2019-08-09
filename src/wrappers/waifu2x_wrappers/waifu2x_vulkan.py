@@ -22,7 +22,7 @@ import threading
 from context import Context
 from dandere2x_core.dandere2x_utils import file_exists
 from dandere2x_core.dandere2x_utils import get_lexicon_value
-from dandere2x_core.dandere2x_utils import get_options_from_section
+from dandere2x_core.json_utils import get_options_from_section
 from dandere2x_core.dandere2x_utils import rename_file
 from dandere2x_core.dandere2x_utils import wait_on_either_file
 

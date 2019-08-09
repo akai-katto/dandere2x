@@ -13,7 +13,7 @@ import subprocess
 import logging
 
 from context import Context
-from dandere2x_core.dandere2x_utils import get_options_from_section
+from dandere2x_core.json_utils import get_options_from_section
 
 
 def trim_video(context: Context, output_file: str):

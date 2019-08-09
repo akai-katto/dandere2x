@@ -4,11 +4,18 @@ import json
 with open("dandere2x.json", "r") as read_file:
     config_json = json.load(read_file)
 
-d = Dandere2x_Gui_Wrapper(config_json)
 
-print(d.context.realtime_encoding)
+print(config_json['ffmpeg']['video_to_frames']['output_options']['-vf'])
 
-d.start()
+print(type(config_json['ffmpeg']['video_to_frames']['output_options']['-vf']))
+
+print(type(config_json['ffmpeg']['video_to_frames']['output_options']['-vf']) == list)
+
+# d = Dandere2x_Gui_Wrapper(config_json)
+#
+# print(d.context.realtime_encoding)
+#
+# d.start()
 # #
 # #
 # # # import tempfile
