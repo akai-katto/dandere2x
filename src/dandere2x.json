@@ -1,13 +1,13 @@
 {
   "dandere2x": {
     "usersettings": {
-      "block_size": 23,
-      "quality_low": 5,
+      "block_size": 20,
+      "quality_low": 85,
       "waifu2x_type": "vulkan",
       "noise_level": 3,
       "scale_factor": 2,
-      "file_dir": "..\\workspace\\shelter_trimmed.mkv",
-      "output_file": "..\\workspace\\shelter_upscaled_trimmed.mkv.mkv"
+      "file_dir": "..\\workspace\\violet_30_nice_video.mkv",
+      "output_file": "..\\workspace\\violet_30_upscaled_nice_video.mkv"
     },
     "developer_settings": {
       "step_size": 4,
@@ -15,9 +15,9 @@
       "extension_type": ".jpg",
       "debug": true,
       "realtime_encoding": true,
-      "realtime_encoding_delete_files": true,
-      "workspace_use_temp": true,
-      "workspace": "..\\workspace\\shelter_test\\",
+      "realtime_encoding_delete_files": false,
+      "workspace_use_temp": false,
+      "workspace": "..\\workspace\\vviolet_30_nice_video_l0l\\",
       "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },
@@ -86,16 +86,14 @@
         "-crf": 17,
         "-b:v": null,
         "-pix_fmt": null,
-        "-vf": ["deband=range=22:blur=false", "pp7=qp=4:mode=medium"]
+        "-vf": ["deband=range=22:blur=false","pp7=qp=4:mode=medium"]
       },
       "-y": true
     },
     "concat_videos": {
       "output_options": {
-        "-vcodec": "libx264",
-        "-crf": 17,
-        "-b:v": null,
-        "-pix_fmt": null
+        "-codec": "copy",
+        "-c": "copy"
       }
     },
     "migrating_tracks": {

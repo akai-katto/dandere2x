@@ -12,10 +12,6 @@ with open("dandere2x.json", "r") as read_file:
     config_json = json.load(read_file)
 
 
-config_json['ffmpeg']['frames_to_video']['output_options']['-vf'].append("hi")
-
-print(config_json['ffmpeg']['frames_to_video']['output_options']['-vf'])
-
 d = Dandere2x_Gui_Wrapper(config_json)
 
 print(d.context.realtime_encoding)

@@ -149,18 +149,19 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
 
 # Given the file prefixes, the starting frame, and how many frames should fit in a video
 # Create a short video using those values.
-def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, duration_seconds):
+def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
 
     logger = context.logger
     video_from_frames_command = [context.ffmpeg_dir,
                                  "-start_number", "[start_number]",
                                  "-hwaccel", context.hwaccel,
+                                 "-framerate",str(context.frame_rate),
                                  "-i", "[input_file]",
-                                 "-t", str(duration_seconds),
+                                 "-vframes", "[frames_per_video]",
                                  "-r", str(context.frame_rate)]
 
-    frame_to_video_option = get_options_from_section(context.config_json["ffmpeg"]["frames_to_video"]['output_options'],
-                                                     ffmpeg_command=True)
+    frame_to_video_option = get_options_from_section(context.config_json["ffmpeg"]["frames_to_video"]['output_options']
+                                                     ,ffmpeg_command= True)
 
     for element in frame_to_video_option:
         video_from_frames_command.append(element)
@@ -181,7 +182,8 @@ def create_video_from_specific_frames(context: Context, file_prefix, output_file
         if video_from_frames_command[x] == "[start_number]":
             video_from_frames_command[x] = str(start_number)
 
-
+        if video_from_frames_command[x] == "[frames_per_video]":
+            video_from_frames_command[x] = str(frames_per_video)
 
     logger.info("running ffmpeg command: " + str(video_from_frames_command))
 
