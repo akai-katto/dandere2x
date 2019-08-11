@@ -151,7 +151,8 @@ class Frame:
             rename_file(out_location + "temp" + extension, out_location)
 
         else:
-            imageio.imsave(out_location + "temp" + extension, self.frame)
+            save_image = Image.fromarray(self.frame.astype(np.uint8))
+            save_image.save(out_location + "temp" + extension, format='PNG')
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
