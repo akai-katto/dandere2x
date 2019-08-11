@@ -151,7 +151,7 @@ class Frame:
             rename_file(out_location + "temp" + extension, out_location)
 
         else:
-            misc.imsave(out_location + "temp" + extension, self.frame)
+            imageio.imsave(out_location + "temp" + extension, self.frame)
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
