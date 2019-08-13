@@ -73,8 +73,6 @@ private:
     std::string p_frame_file;
     std::string difference_file;
 
-    std::vector<Block> blocks;
-
     std::vector<std::vector<Block>> matched_blocks;
     std::shared_ptr<Image> image1;
     std::shared_ptr<Image> image2;

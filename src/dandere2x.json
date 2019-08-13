@@ -3,8 +3,8 @@
     "usersettings": {
       "block_size": 30,
       "quality_low": 85,
-      "waifu2x_type": "caffe",
-      "noise_level": 0,
+      "waifu2x_type": "vulkan",
+      "noise_level": 3,
       "scale_factor": 2,
       "file_dir": "..\\workspace\\yn_moving.mkv",
       "output_file": "..\\workspace\\yn_upscaled_new_cpp.mkv"

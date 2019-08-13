@@ -42,7 +42,6 @@ void PFrame::run() {
     if (psnr < 10) {
         std::cout << "PSNR " << psnr << std::endl;
         std::cout << "PSNR is low - not going to match blocks" << std::endl;
-        blocks.clear();
     }
         //if the PSNR is acceptable, try matching all the blocks.
     else {
@@ -55,7 +54,6 @@ void PFrame::run() {
 
         if ((max_blocks_possible - this->count) > (.85) * max_blocks_possible) {
             std::cout << "Too many missing blocks - conducting redraw" << std::endl;
-            //this->matched_blocks.resize(this->width / block_size, std::vector<Block>(this->height / block_size));
             this->count = 0;
         }
     }
@@ -82,7 +80,7 @@ void PFrame::save() {
 
 
 void PFrame::create_difference() {
-    dif = std::make_shared<Differences>(blocks, block_size, image2);
+    dif = std::make_shared<Differences>(matched_blocks, block_size, image2);
     dif->run();
 }
 
@@ -92,7 +90,6 @@ void PFrame::draw_over() {
     for (int i = 0; i < width / block_size; i++) {
         for (int j = 0; j < height / block_size; j++) {
             if (matched_blocks[i][j].valid) {
-
                 for (int x = 0; x < block_size; x++) {
                     for (int y = 0; y < block_size; y++) {
                         image2->set_color(x + matched_blocks[i][j].x_start,

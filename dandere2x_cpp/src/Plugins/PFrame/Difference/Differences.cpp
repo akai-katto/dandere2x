@@ -48,17 +48,23 @@ void Differences::write(std::string output_file) {
 void Differences::flag_pixels() {
     this->occupied_pixel.resize(this->width, std::vector<bool>(this->height));
 
+    for (int i = 0; i < width / block_size; i++) {
+        for (int j = 0; j < height / block_size; j++) {
+            if (matched_blocks[i][j].valid) {
+                for (int x = 0; x < block_size; x++) {
+                    for (int y = 0; y < block_size; y++) {
+                        this->occupied_pixel[matched_blocks[i][j].x_start + x][matched_blocks[i][j].y_start + y] = true;
+                    }
+                }
+
+            }
+        }
+    }
+
     /**
      * Flag all the pixels that already exist within predictive_frame2,
      * so we know which pixels are NOT found in predictive_frame_2
      */
-    for (int outer = 0; outer < blocks.size(); outer++) {
-        for (int x = 0; x < block_size; x++) {
-            for (int y = 0; y < block_size; y++) {
-                this->occupied_pixel[blocks[outer].x_start + x][blocks[outer].y_start + y] = true;
-            }
-        }
-    }
 }
 
 

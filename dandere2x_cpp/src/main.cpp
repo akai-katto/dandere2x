@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 
     //benchmark();
 //
-    bool debug = true; //debug flag
+    bool debug = false; //debug flag
 
     string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_upscaled_new_cpp\\";
     int frame_count = 50;
