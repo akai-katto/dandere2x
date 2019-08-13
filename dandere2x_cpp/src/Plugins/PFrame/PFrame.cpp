@@ -89,6 +89,7 @@ void PFrame::draw_over() {
 
     for (int i = 0; i < width / block_size; i++) {
         for (int j = 0; j < height / block_size; j++) {
+
             if (matched_blocks[i][j].valid) {
                 for (int x = 0; x < block_size; x++) {
                     for (int y = 0; y < block_size; y++) {
@@ -98,12 +99,10 @@ void PFrame::draw_over() {
                                                             y + matched_blocks[i][j].y_end));
                     }
                 }
-
             }
+
         }
     }
-
-
 }
 
 void PFrame::force_copy() {
