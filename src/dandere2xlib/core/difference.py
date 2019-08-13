@@ -8,6 +8,7 @@ Last Modified: April 2, 2019
 """
 import logging
 import os
+import time
 
 import math
 
@@ -65,6 +66,7 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
     out_image.save_image_temp(out_location, temp_image)
 
 
+
 # for printing out what Dandere2x predictive frames are doing
 def debug_image(block_size, frame_base, list_predictive, list_differences, output_location):
     logger = logging.getLogger(__name__)
@@ -117,7 +119,7 @@ def difference_loop(context, start_frame):
     bleed = context.bleed
     debug = context.debug
 
-    temp_image = context.temp_image_folder + "tempimage.png"
+    temp_image = context.temp_image_folder + "tempimage.jpg"
 
     logger = logging.getLogger(__name__)
     logger.info((workspace, start_frame, frame_count, block_size))
@@ -132,7 +134,7 @@ def difference_loop(context, start_frame):
         prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
         make_difference_image(context, f1, difference_data, prediction_data,
-                              differences_dir + "output_" + get_lexicon_value(6, x) + ".png", temp_image)
+                              differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg", temp_image)
 
         output_file = workspace + "debug/debug" + str(x + 1) + extension_type
 

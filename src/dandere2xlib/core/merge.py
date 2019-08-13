@@ -17,11 +17,14 @@ from dandere2xlib.core.fade import fade_image
 from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
 
+import time
 
 # todo - clean this function up into a few smaller functions.
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
                      list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,
                      output_location: str):
+
+    start = time.time()
     # Load context
     block_size = context.block_size
     scale_factor = context.scale_factor
@@ -81,6 +84,9 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
 
     out_image.save_image(output_location)
 
+    end = time.time()
+    print("\n duration: " + str(time.time() - start))
+
 
 def merge_loop(context: Context, start_frame: int):
     # load variables from context
@@ -100,7 +106,7 @@ def merge_loop(context: Context, start_frame: int):
 
         # load images required to merge this frame
         f1 = Frame()
-        f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
+        f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".jpg")
 
         base = Frame()
         base.load_from_string_wait(merged_dir + "merged_" + str(x) + extension_type)

@@ -25,12 +25,4 @@ d.start()
 # # # # print()pathlib.Path(tempfile.gettempdir()) / 'dandere2x'
 #
 #
-
-from wrappers.frame import Frame
-
-
-f1 = Frame()
-
-f1.load_from_string("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\15_seconds_round_up\\inputs\\frame1.jpg")
-
-f1.save_image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\15_seconds_round_up\\inputs\\temp.jpg")
+# print(f1.mean(f2))

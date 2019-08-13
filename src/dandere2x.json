@@ -1,10 +1,10 @@
 {
   "dandere2x": {
     "usersettings": {
-      "block_size": 20,
+      "block_size": 30,
       "quality_low": 85,
-      "waifu2x_type": "vulkan",
-      "noise_level": 3,
+      "waifu2x_type": "caffe",
+      "noise_level": 0,
       "scale_factor": 2,
       "file_dir": "..\\workspace\\yn_moving.mkv",
       "output_file": "..\\workspace\\yn_upscaled_new_cpp.mkv"
@@ -77,7 +77,7 @@
       "output_options": {
         "-qscale:v": 2,
         "-pix_fmt": null,
-        "-vf": ["noise=c1s=8:c0f=u", "deband=range=22:blur=false"]
+        "-vf": ["noise=c1s=8:c0f=u"]
       }
     },
     "frames_to_video": {
