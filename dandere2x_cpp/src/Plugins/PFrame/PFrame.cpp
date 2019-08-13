@@ -47,7 +47,6 @@ void PFrame::run() {
     else {
         match_all_blocks();
 
-        std::cout << "got here  " << std::endl;
         //if the amount of blocks matched is greater than 85% of the total blocks, throw away all the blocks.
         //At a certain point it's just easier / faster to redraw a scene rather than trying to piece it back together.
         int max_blocks_possible = (this->height * this->width) / (this->block_size * this->block_size);
@@ -112,11 +111,15 @@ void PFrame::force_copy() {
 
 
 // Call match_block on every possible block in an image
+// todo: To be more effecient, consider coding the match blocks to seperate into N seperate threads,
+// as to avoid having to create a new process for each block, have 8 processes handle N / 8 blocks each.
+
 void PFrame::match_all_blocks() {
 
     int x = 0;
     int y = 0;
-
+    int numthreads = 8;
+    
 #pragma omp parallel for shared(image1, image2, image2_compressed, matched_blocks) private(x, y)
 
     for (x = 0; x < width / block_size; x++) {
