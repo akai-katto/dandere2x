@@ -95,9 +95,9 @@ class Waifu2xVulkan(threading.Thread):
 
         list_of_names = os.listdir(self.upscaled_dir)
         for name in list_of_names:
-            if '.png.png' in name:
+            if '.jpg.jpg' in name:
                 rename_file(self.upscaled_dir + name,
-                            self.upscaled_dir + name.replace('.png.png', '.png'))
+                            self.upscaled_dir + name.replace('.jpg.png', '.png'))
 
     # This function is tricky. Essentially we do multiple things in one function
     # Because of 'gotchas'
@@ -115,8 +115,8 @@ class Waifu2xVulkan(threading.Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.upscaled_dir + file + ".png.png"
-            clean_name = self.upscaled_dir + file + ".png"
+            dirty_name = self.upscaled_dir + file + ".jpg.png"
+            clean_name = self.upscaled_dir + file + ".jpg"
 
             wait_on_either_file(clean_name, dirty_name)
 
@@ -175,7 +175,7 @@ class Waifu2xVulkan(threading.Thread):
         # make a list of names that will eventually (past or future) be upscaled
         names = []
         for x in range(1, self.frame_count):
-            names.append("output_" + get_lexicon_value(6, x) + ".png")
+            names.append("output_" + get_lexicon_value(6, x) + ".jpg")
 
         fix_names_forever_thread = threading.Thread(target=self.fix_names_all)
         fix_names_forever_thread.start()

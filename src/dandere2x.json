@@ -1,13 +1,13 @@
 {
   "dandere2x": {
     "usersettings": {
-      "block_size": 20,
+      "block_size": 30,
       "quality_low": 85,
-      "waifu2x_type": "vulkan",
-      "noise_level": 3,
+      "waifu2x_type": "caffe",
+      "noise_level": 0,
       "scale_factor": 2,
-      "file_dir": "..\\workspace\\violet_30_nice_video.mkv",
-      "output_file": "..\\workspace\\violet_30_upscaled_nice_video.mkv"
+      "file_dir": "..\\workspace\\15seconds.mkv",
+      "output_file": "..\\workspace\\15seconds_filter"
     },
     "developer_settings": {
       "step_size": 4,
@@ -17,7 +17,7 @@
       "realtime_encoding": true,
       "realtime_encoding_delete_files": false,
       "workspace_use_temp": false,
-      "workspace": "..\\workspace\\vviolet_30_nice_video_l0l\\",
+      "workspace": "..\\workspace\\caffe_n0_unfiltered\\",
       "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },
@@ -77,7 +77,7 @@
       "output_options": {
         "-qscale:v": 2,
         "-pix_fmt": null,
-        "-vf": ["noise=c1s=8:c0f=u", "deband=range=22:blur=false"]
+        "-vf": ["noise=c1s=8:c0f=u"]
       }
     },
     "frames_to_video": {
