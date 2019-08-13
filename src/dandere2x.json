@@ -6,8 +6,8 @@
       "waifu2x_type": "vulkan",
       "noise_level": 3,
       "scale_factor": 2,
-      "file_dir": "..\\workspace\\violet_30_nice_video.mkv",
-      "output_file": "..\\workspace\\violet_30_upscaled_nice_video.mkv"
+      "file_dir": "..\\workspace\\shelter_1sec.mkv",
+      "output_file": "..\\workspace\\shelter_upscaled_1_second.mkv"
     },
     "developer_settings": {
       "step_size": 4,
@@ -17,8 +17,8 @@
       "realtime_encoding": true,
       "realtime_encoding_delete_files": false,
       "workspace_use_temp": false,
-      "workspace": "..\\workspace\\vviolet_30_nice_video_l0l\\",
-      "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
+      "workspace": "..\\workspace\\shelter_test\\",
+      "dandere2x_cpp_dir": "C:\\Users\\windwoz\\Documents\\github_projects\\dandere2x_cpp\\cmake-build-debug\\dandere2x_cpp.exe"
     }
   },
   "waifu2x_caffe": {
