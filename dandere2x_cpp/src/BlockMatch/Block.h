@@ -23,6 +23,7 @@ public:
     int x_end;
     int y_end;
     double sum;
+    bool valid;
 
     Block(int x_start, int y_start, int x_end, int y_end, double sum) {
         this->x_start = x_start;
@@ -30,6 +31,16 @@ public:
         this->x_end = x_end;
         this->y_end = y_end;
         this->sum = sum;
+        this->valid = true;
+    }
+
+    Block() {
+        this->x_start = -1;
+        this->y_start = -1;
+        this->x_end = -1;
+        this->y_end = -1;
+        this->sum = INT32_MAX;
+        this->valid = false;
     }
 
     Block(const Block &other) {
@@ -38,6 +49,7 @@ public:
         this->x_end = other.x_end;
         this->y_end = other.y_end;
         this->sum = other.sum;
+        this->valid = other.valid;
     }
 
     bool operator<(const Block &other) {

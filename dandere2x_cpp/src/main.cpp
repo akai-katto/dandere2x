@@ -42,9 +42,9 @@ int main(int argc, char **argv) {
 
     //benchmark();
 //
-    bool debug = false; //debug flag
+    bool debug = true; //debug flag
 
-    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_fall_3\\";
+    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_upscaled_new_cpp\\";
     int frame_count = 50;
     int block_size = 30;
     int step_size = 4;

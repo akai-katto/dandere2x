@@ -5,7 +5,7 @@
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
 #include "Plugins/PFrame/PFrame.h"
-
+#include <omp.h>
 
 PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
                unsigned int block_size, std::string p_frame_file, std::string difference_file,
@@ -22,6 +22,8 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std
     this->dif = nullptr;
     this->p_frame_file = p_frame_file;
     this->difference_file = difference_file;
+    this->matched_blocks.resize(this->width / block_size, std::vector<Block>(this->height / block_size));
+    this->count = 0;
 
     //Sanity Checks
     if (image1->height != image2->height || image1->width != image2->width)
@@ -46,17 +48,20 @@ void PFrame::run() {
     else {
         match_all_blocks();
 
+        std::cout << "got here  " << std::endl;
         //if the amount of blocks matched is greater than 85% of the total blocks, throw away all the blocks.
         //At a certain point it's just easier / faster to redraw a scene rather than trying to piece it back together.
         int max_blocks_possible = (this->height * this->width) / (this->block_size * this->block_size);
 
-        if ((max_blocks_possible - blocks.size()) > (.85) * max_blocks_possible) {
+        if ((max_blocks_possible - this->count) > (.85) * max_blocks_possible) {
             std::cout << "Too many missing blocks - conducting redraw" << std::endl;
-            blocks.clear();
+            //this->matched_blocks.resize(this->width / block_size, std::vector<Block>(this->height / block_size));
+            this->count = 0;
         }
     }
 
     draw_over();
+    std::cout << "matched blocks: " << this->count << std::endl;
 
 }
 
@@ -65,7 +70,7 @@ void PFrame::run() {
  * Saves the blocks (if they are there) into a relevent text files
  */
 void PFrame::save() {
-    if (!blocks.empty()) { //if parts of frame2 can be made of frame1, create frame2'
+    if (this->count != 0) { //if parts of frame2 can be made of frame1, create frame2'
         create_difference();
         this->dif->write(difference_file);
         this->write(p_frame_file);
@@ -83,15 +88,25 @@ void PFrame::create_difference() {
 
 // Make edits to image2 using the matched parts of image1.
 void PFrame::draw_over() {
-    for (int outer = 0; outer < blocks.size(); outer++) {
-        for (int x = 0; x < block_size; x++) {
-            for (int y = 0; y < block_size; y++) {
-                image2->set_color(x + blocks[outer].x_start,
-                                  y + blocks[outer].y_start,
-                                  image1->get_color( x + blocks[outer].x_end, y + blocks[outer].y_end));
+
+    for (int i = 0; i < width / block_size; i++) {
+        for (int j = 0; j < height / block_size; j++) {
+            if (matched_blocks[i][j].valid) {
+
+                for (int x = 0; x < block_size; x++) {
+                    for (int y = 0; y < block_size; y++) {
+                        image2->set_color(x + matched_blocks[i][j].x_start,
+                                          y + matched_blocks[i][j].y_start,
+                                          image1->get_color(x + matched_blocks[i][j].x_end,
+                                                            y + matched_blocks[i][j].y_end));
+                    }
+                }
+
             }
         }
     }
+
+
 }
 
 void PFrame::force_copy() {
@@ -102,11 +117,18 @@ void PFrame::force_copy() {
 
 // Call match_block on every possible block in an image
 void PFrame::match_all_blocks() {
-    for (int x = 0; x < width / block_size; x++) {
-        for (int y = 0; y < height / block_size; y++) {
+
+    int x = 0;
+    int y = 0;
+
+#pragma omp parallel for shared(image1, image2, image2_compressed, matched_blocks) private(x, y)
+
+    for (x = 0; x < width / block_size; x++) {
+        for (y = 0; y < height / block_size; y++) {
             match_block(x, y);
         }
     }
+
 }
 
 
@@ -134,9 +156,8 @@ void PFrame::match_block(int x, int y) {
 
     // If the MSE found at the stationary location is good enough, add it to the list of matched blocks.
     if (stationary_mse <= min_mse) {
-        blocks.push_back(Block(x * block_size, y * block_size,
-                               x * block_size, y * block_size,
-                               stationary_mse));
+        matched_blocks[x][y] = Block(x * block_size, y * block_size, x * block_size, y * block_size, stationary_mse);
+        this->count++;
     } else {
         // If the MSE found at the stationary location isn't good enough, conduct a diamond search looking
         // for the blocks match nearby.
@@ -146,8 +167,10 @@ void PFrame::match_block(int x, int y) {
                                                                      min_mse, block_size, step_size, max_checks);
 
         //If the Diamond Searched block is a good enough match, add it to the list of matched blocks.
-        if (result.sum <= min_mse)
-            blocks.push_back(result);
+        if (result.sum <= min_mse) {
+            matched_blocks[x][y] = result;
+            this->count++;
+        }
     }
 }
 
@@ -158,13 +181,19 @@ void PFrame::match_block(int x, int y) {
 void PFrame::write(std::string output_file) {
 
     std::ofstream out(output_file + ".temp");
-    for (int x = 0; x < blocks.size(); x++) {
-        out <<
-            blocks[x].x_start << "\n" <<
-            blocks[x].y_start << "\n" <<
-            blocks[x].x_end << "\n" <<
-            blocks[x].y_end << std::endl;
+
+    for (int x = 0; x < width / block_size; x++) {
+        for (int y = 0; y < height / block_size; y++) {
+            if (matched_blocks[x][y].valid) {
+                out <<
+                    matched_blocks[x][y].x_start << "\n" <<
+                    matched_blocks[x][y].y_start << "\n" <<
+                    matched_blocks[x][y].x_end << "\n" <<
+                    matched_blocks[x][y].y_end << std::endl;
+            }
+        }
     }
+
     out.close();
 
     rename((output_file + ".temp").c_str(), output_file.c_str());
