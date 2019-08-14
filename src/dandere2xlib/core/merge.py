@@ -10,9 +10,9 @@ import logging
 import os
 
 from context import Context
-from dandere2xlib.core.correction import correct_image
-from dandere2xlib.core.fade import fade_image
-from dandere2xlib.core.pframe import pframe_image
+from dandere2xlib.core.plugins.correction import correct_image
+from dandere2xlib.core.plugins.fade import fade_image
+from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 from dandere2xlib.utils.dandere2x_utils import get_list_from_file
 from wrappers.frame import Frame

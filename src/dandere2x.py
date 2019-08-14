@@ -40,7 +40,7 @@ import time
 from dandere2xlib.utils.dandere2x_utils import verify_user_settings, file_exists
 from dandere2xlib.core.difference import difference_loop
 from dandere2xlib.core.difference import difference_loop_resume
-from dandere2xlib.core.frame_compressor import compress_frames
+from dandere2xlib.utils.frame_compressor import compress_frames
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.merge import merge_loop_resume
 from dandere2xlib.status import print_status

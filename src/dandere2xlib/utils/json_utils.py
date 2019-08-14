@@ -7,13 +7,9 @@ import json
 # This is because ffmpeg expects it in this format
 def list_to_string(list_input: list):
 
-    print(list_input)
-
     return_str = ''
     for item in list_input:
         return_str += item + ","
-
-    print(return_str[:-1])
 
     return return_str[:-1]
 
