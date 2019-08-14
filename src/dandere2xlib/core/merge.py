@@ -14,7 +14,7 @@ from dandere2xlib.core.correction import correct_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 from dandere2xlib.utils.dandere2x_utils import get_list_from_file
 from dandere2xlib.core.fade import fade_image
-from wrappers.frame import DisplacementVector
+from dandere2xlib.core.pframe import pframe_image
 from wrappers.frame import Frame
 
 import time
@@ -23,20 +23,11 @@ import time
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
                      list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,
                      output_location: str):
-
-    start = time.time()
     # Load context
-    block_size = context.block_size
-    scale_factor = context.scale_factor
-    bleed = context.bleed
-
     logger = logging.getLogger(__name__)
 
-    predictive_vectors = []
-    difference_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
-    scale_factor = int(scale_factor)
 
     if not list_predictive and not list_differences:
         logger.info("list_predictive and not list_differences: true")
@@ -56,57 +47,12 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     # (0,0) -> (0,0) are also coppied
     out_image.copy_image(frame_base)
 
-    # load list into vector displacements
-    for x in range(int(len(list_differences) / 4)):
-        difference_vectors.append(DisplacementVector(int(list_differences[x * 4 + 0]),
-                                                     int(list_differences[x * 4 + 1]),
-                                                     int(list_differences[x * 4 + 2]),
-                                                     int(list_differences[x * 4 + 3])))
-
-
-    for x in range(int(len(list_predictive) / 4)):
-            predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
-                                                         int(list_predictive[x * 4 + 1]),
-                                                         int(list_predictive[x * 4 + 2]),
-                                                         int(list_predictive[x * 4 + 3])))
-
-    predictive_time = time.time()
-    # copy over predictive vectors into new image
-    for vector in predictive_vectors:
-        out_image.copy_block(frame_base, block_size * scale_factor,
-                             vector.x_2 * scale_factor,
-                             vector.y_2 * scale_factor,
-                             vector.x_1 * scale_factor,
-                             vector.y_1 * scale_factor)
-
-    print("\n Predictive time: " + str(time.time() - predictive_time))
-
-    difference_applying = time.time()
-    # copy over inversion vectors (the difference images) into new image
-    for vector in difference_vectors:
-        out_image.copy_block(frame_inversion, block_size * scale_factor,
-                             (vector.x_2 * (block_size + bleed * 2)) * scale_factor + (bleed * scale_factor),
-                             (vector.y_2 * (block_size + bleed * 2)) * scale_factor + (bleed * scale_factor),
-                             vector.x_1 * scale_factor,
-                             vector.y_1 * scale_factor)
-
-    print("\n Difference time: " + str(time.time() - difference_applying))
-
-    fade_time = time.time()
-    out_image = fade_image(context, block_size, out_image, list_fade)
-    print("\n Fade time: " + str(time.time() - difference_applying))
-
-    correc_time = time.time()
+    out_image = pframe_image(context, out_image, frame_base, frame_inversion, list_differences, list_predictive)
+    out_image = fade_image(context, int(context.block_size), out_image, list_fade)
     out_image = correct_image(context, 2, out_image, list_corrections)
 
-    print("\n Correct time: " + str(time.time() - correc_time))
-
-    save_time = time.time()
     out_image.save_image(output_location)
 
-    print("\n Save time: " + str(time.time() - save_time))
-
-    print("\n duration: " + str(time.time() - start))
 
 
 def merge_loop(context: Context, start_frame: int):
