@@ -17,12 +17,4 @@ d = Dandere2x_Gui_Wrapper(config_json)
 print(d.context.realtime_encoding)
 
 d.start()
-# # #
-# # #
-# # # # import tempfile
-# # # # import pathlib
-# # # #
-# # # # print()pathlib.Path(tempfile.gettempdir()) / 'dandere2x'
-#
-#
-# print(f1.mean(f2))
+

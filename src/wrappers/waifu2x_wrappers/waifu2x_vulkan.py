@@ -116,7 +116,7 @@ class Waifu2xVulkan(threading.Thread):
 
         for file in file_names:
             dirty_name = self.upscaled_dir + file + ".jpg.png"
-            clean_name = self.upscaled_dir + file + ".jpg"
+            clean_name = self.upscaled_dir + file + ".png"
 
             wait_on_either_file(clean_name, dirty_name)
 
@@ -173,9 +173,9 @@ class Waifu2xVulkan(threading.Thread):
         logger.info(exec)
 
         # make a list of names that will eventually (past or future) be upscaled
-        names = []
+        upscaled_names = []
         for x in range(1, self.frame_count):
-            names.append("output_" + get_lexicon_value(6, x) + ".jpg")
+            upscaled_names.append("output_" + get_lexicon_value(6, x) + ".png")
 
         fix_names_forever_thread = threading.Thread(target=self.fix_names_all)
         fix_names_forever_thread.start()
@@ -183,26 +183,26 @@ class Waifu2xVulkan(threading.Thread):
         count_removed = 0
 
         # remove from the list images that have already been upscaled
-        for name in names[::-1]:
+        for name in upscaled_names[::-1]:
             if os.path.isfile(self.upscaled_dir + name):
-                names.remove(name)
+                upscaled_names.remove(name)
                 count_removed += 1
 
         if count_removed:
             logger.info("Already have " + str(count_removed) + " upscaled")
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
-        while names:
+        while upscaled_names:
 
             logger.info("Frames remaining before batch: ")
-            logger.info(len(names))
+            logger.info(len(upscaled_names))
 
             console_output.write(str(exec))
             subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
 
-            for name in names[::-1]:
+            for name in upscaled_names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
-                    os.remove(self.differences_dir + name)
-                    names.remove(name)
+                    os.remove(self.differences_dir + name.replace(".png", ".jpg"))
+                    upscaled_names.remove(name)
 
         console_output.close()

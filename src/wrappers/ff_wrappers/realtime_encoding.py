@@ -76,20 +76,20 @@ def run_realtime_encoding(context: Context, output_file: str):
             # upscaled files end on a different number than merged files.
             if x == int(frame_count / frame_rate) - 1:
 
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + 1) + ".jpg")
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + frame_rate) + ".jpg")
+                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + 1) + ".png")
+                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + frame_rate) + ".png")
 
                 delete_specific_merged(context,
-                                       upscaled_files_prefix, ".jpg", 6, x * frame_rate + 1,
+                                       upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
                                        x * frame_rate + frame_rate)
 
             else:
 
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + 1) + ".jpg")
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + frame_rate + 1) + ".jpg")
+                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + 1) + ".png")
+                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + frame_rate + 1) + ".png")
 
                 delete_specific_merged(context,
-                                       upscaled_files_prefix, ".jpg", 6, x * frame_rate + 1,
+                                       upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
                                        x * frame_rate + frame_rate + 1)
 
     text_file.close()

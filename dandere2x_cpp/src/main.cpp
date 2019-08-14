@@ -44,8 +44,8 @@ int main(int argc, char **argv) {
 //
     bool debug = false; //debug flag
 
-    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_upscaled_new_cpp\\";
-    int frame_count = 50;
+    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_upscaled_new_cpp_2\\";
+    int frame_count = 240;
     int block_size = 30;
     int step_size = 4;
     string run_type = "n";// 'n' or 'r'

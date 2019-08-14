@@ -102,9 +102,9 @@ class Waifu2xCaffe(threading.Thread):
         count_removed = 0
 
         # remove from the list images that have already been upscaled
-        for item in names[::-1]:
-            if os.path.isfile(self.upscaled_dir + item):
-                names.remove(item)
+        for name in names[::-1]:
+            if os.path.isfile(self.upscaled_dir + name):
+                names.remove(name)
                 count_removed += 1
 
         if count_removed:
@@ -118,7 +118,7 @@ class Waifu2xCaffe(threading.Thread):
             console_output.write(str(exec))
             subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
 
-            for item in names[::-1]:
-                if os.path.isfile(self.upscaled_dir + item):
-                    os.remove(self.differences_dir + item)
-                    names.remove(item)
+            for name in names[::-1]:
+                if os.path.isfile(self.upscaled_dir + name):
+                    os.remove(self.differences_dir + name.replace(".png",".jpg"))
+                    names.remove(name)

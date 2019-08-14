@@ -52,17 +52,23 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
         out_image.save_image(output_location)
         return
 
+    out_image.copy_image(frame_base)
+
     # load list into vector displacements
     for x in range(int(len(list_differences) / 4)):
         difference_vectors.append(DisplacementVector(int(list_differences[x * 4 + 0]),
                                                      int(list_differences[x * 4 + 1]),
                                                      int(list_differences[x * 4 + 2]),
                                                      int(list_differences[x * 4 + 3])))
+
     for x in range(int(len(list_predictive) / 4)):
-        predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
-                                                     int(list_predictive[x * 4 + 1]),
-                                                     int(list_predictive[x * 4 + 2]),
-                                                     int(list_predictive[x * 4 + 3])))
+        if list_predictive[x * 4 + 0] != list_predictive[x * 4 + 2] and\
+           list_predictive[x * 4 + 1] != list_differences[x * 4 + 3]:
+
+                predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
+                                                             int(list_predictive[x * 4 + 1]),
+                                                             int(list_predictive[x * 4 + 2]),
+                                                             int(list_predictive[x * 4 + 3])))
     # copy over predictive vectors into new image
     for vector in predictive_vectors:
         out_image.copy_block(frame_base, block_size * scale_factor,
@@ -84,7 +90,6 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
 
     out_image.save_image(output_location)
 
-    end = time.time()
     print("\n duration: " + str(time.time() - start))
 
 
@@ -106,7 +111,7 @@ def merge_loop(context: Context, start_frame: int):
 
         # load images required to merge this frame
         f1 = Frame()
-        f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".jpg")
+        f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
 
         base = Frame()
         base.load_from_string_wait(merged_dir + "merged_" + str(x) + extension_type)
@@ -146,14 +151,9 @@ def merge_loop_resume(context: Context):
     merge_loop(context, start_frame=last_found)
 
 
+# For debugging
 def main():
-    # merge_loop("/home/linux/Videos/testrun/testrun2/", 120)
-    merge_loop_resume("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\",
-                      "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\upscaled\\",
-                      "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\merged\\",
-                      "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inversion_data\\",
-                      "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\pframe_data\\",
-                      120, 30, ".jpg")
+    pass
 
 
 if __name__ == "__main__":

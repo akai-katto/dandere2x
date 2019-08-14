@@ -90,6 +90,11 @@ class Dandere2x:
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
 
+        else:
+            logging.info("no valid waifu2x selected")
+            print("no valid waifu2x selected")
+            exit(1)
+
         waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
