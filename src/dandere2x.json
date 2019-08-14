@@ -14,8 +14,9 @@
       "bleed": 1,
       "extension_type": ".jpg",
       "debug": true,
+      "gui_delete_workspace_after": true,
       "realtime_encoding": true,
-      "realtime_encoding_delete_files": true,
+      "realtime_encoding_delete_files": false,
       "workspace_use_temp": true,
       "workspace": "..\\workspace\\debug_optimize\\",
       "dandere2x_cpp_dir": "C:\\Users\\windwoz\\Documents\\github_projects\\dandere2x_cpp\\cmake-build-debug\\dandere2x_cpp.exe"
