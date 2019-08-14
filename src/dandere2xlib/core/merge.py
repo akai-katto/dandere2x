@@ -18,7 +18,6 @@ from dandere2xlib.utils.dandere2x_utils import get_list_from_file
 from wrappers.frame import Frame
 
 
-# todo - clean this function up into a few smaller functions.
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
                      list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,
                      output_location: str):
@@ -28,7 +27,7 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
 
-    # access the two cases where out images are either duplicates or a new frame completely
+    # assess the two cases where out images are either duplicates or a new frame completely
 
     if not list_predictive and not list_differences:
         logger.info("list_predictive and not list_differences: true")
@@ -48,6 +47,7 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     # (0,0) -> (0,0) are also coppied
     out_image.copy_image(frame_base)
 
+    # run the image through the same plugins IN ORDER it was ran in d2x_cpp
     out_image = pframe_image(context, out_image, frame_base, frame_inversion, list_differences, list_predictive)
     out_image = fade_image(context, out_image, list_fade)
     out_image = correct_image(context, out_image, list_corrections)
