@@ -6,8 +6,8 @@
       "waifu2x_type": "vulkan",
       "noise_level": 3,
       "scale_factor": 2,
-      "file_dir": "..\\workspace\\1sec.mkv",
-      "output_file": "..\\workspace\\1_second_optmized"
+      "file_dir": "..\\workspace\\yn_moving.mkv",
+      "output_file": "..\\workspace\\yn_moving_upscaled.mkv"
     },
     "developer_settings": {
       "step_size": 4,

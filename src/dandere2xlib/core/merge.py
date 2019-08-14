@@ -49,7 +49,7 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image.copy_image(frame_base)
 
     out_image = pframe_image(context, out_image, frame_base, frame_inversion, list_differences, list_predictive)
-    out_image = fade_image(context,  out_image, list_fade)
+    out_image = fade_image(context, out_image, list_fade)
     out_image = correct_image(context, out_image, list_corrections)
 
     out_image.save_image(output_location)
