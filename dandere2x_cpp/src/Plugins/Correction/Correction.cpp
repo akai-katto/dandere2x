@@ -41,10 +41,13 @@ void Correction::save() {
     std::ofstream out(this->correction_file + ".temp");
 
     for (int x = 0; x < blocks.size(); x++) {
-        out << blocks[x].x_start << "\n" <<
-               blocks[x].y_start << "\n" <<
-               blocks[x].x_end   << "\n" <<
-               blocks[x].y_end   << std::endl;
+
+        if (blocks[x].x_start != blocks[x].y_start && blocks[x].y_start != blocks[x].y_end) {
+            out << blocks[x].x_start << "\n" <<
+                blocks[x].y_start << "\n" <<
+                blocks[x].x_end << "\n" <<
+                blocks[x].y_end << std::endl;
+        }
     }
     out.close();
     std::rename((this->correction_file + ".temp").c_str(), this->correction_file.c_str());

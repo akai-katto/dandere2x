@@ -52,6 +52,8 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
         out_image.save_image(output_location)
         return
 
+    # by copying the image first as the first step, all the predictive elements like
+    # (0,0) -> (0,0) are also coppied
     out_image.copy_image(frame_base)
 
     # load list into vector displacements
@@ -61,11 +63,14 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
                                                      int(list_differences[x * 4 + 2]),
                                                      int(list_differences[x * 4 + 3])))
 
+
     for x in range(int(len(list_predictive) / 4)):
             predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
                                                          int(list_predictive[x * 4 + 1]),
                                                          int(list_predictive[x * 4 + 2]),
                                                          int(list_predictive[x * 4 + 3])))
+
+    predictive_time = time.time()
     # copy over predictive vectors into new image
     for vector in predictive_vectors:
         out_image.copy_block(frame_base, block_size * scale_factor,
@@ -74,6 +79,9 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
                              vector.x_1 * scale_factor,
                              vector.y_1 * scale_factor)
 
+    print("\n Predictive time: " + str(time.time() - predictive_time))
+
+    difference_applying = time.time()
     # copy over inversion vectors (the difference images) into new image
     for vector in difference_vectors:
         out_image.copy_block(frame_inversion, block_size * scale_factor,
@@ -82,10 +90,21 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
                              vector.x_1 * scale_factor,
                              vector.y_1 * scale_factor)
 
+    print("\n Difference time: " + str(time.time() - difference_applying))
+
+    fade_time = time.time()
     out_image = fade_image(context, block_size, out_image, list_fade)
+    print("\n Fade time: " + str(time.time() - difference_applying))
+
+    correc_time = time.time()
     out_image = correct_image(context, 2, out_image, list_corrections)
 
+    print("\n Correct time: " + str(time.time() - correc_time))
+
+    save_time = time.time()
     out_image.save_image(output_location)
+
+    print("\n Save time: " + str(time.time() - save_time))
 
     print("\n duration: " + str(time.time() - start))
 
