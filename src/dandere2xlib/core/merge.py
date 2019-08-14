@@ -62,13 +62,10 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
                                                      int(list_differences[x * 4 + 3])))
 
     for x in range(int(len(list_predictive) / 4)):
-        if list_predictive[x * 4 + 0] != list_predictive[x * 4 + 2] and\
-           list_predictive[x * 4 + 1] != list_differences[x * 4 + 3]:
-
-                predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
-                                                             int(list_predictive[x * 4 + 1]),
-                                                             int(list_predictive[x * 4 + 2]),
-                                                             int(list_predictive[x * 4 + 3])))
+            predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
+                                                         int(list_predictive[x * 4 + 1]),
+                                                         int(list_predictive[x * 4 + 2]),
+                                                         int(list_predictive[x * 4 + 3])))
     # copy over predictive vectors into new image
     for vector in predictive_vectors:
         out_image.copy_block(frame_base, block_size * scale_factor,

@@ -177,13 +177,19 @@ void PFrame::match_block(int x, int y) {
 //write all the matched blocks into a text file.
 // Save it as '.temp' initially so D2xPython doesn't read it before
 // it's done writing.
+
+// If the item is a duplicate prediction (i.e (0,0) -> (0,0))
+// We can save computational time by simply not saving it
 void PFrame::write(std::string output_file) {
 
     std::ofstream out(output_file + ".temp");
 
     for (int x = 0; x < width / block_size; x++) {
         for (int y = 0; y < height / block_size; y++) {
-            if (matched_blocks[x][y].valid) {
+            if (matched_blocks[x][y].valid &&
+                matched_blocks[x][y].x_start != matched_blocks[x][y].x_end &&
+                matched_blocks[x][y].y_start != matched_blocks[x][y].y_end ) {
+
                 out <<
                     matched_blocks[x][y].x_start << "\n" <<
                     matched_blocks[x][y].y_start << "\n" <<
