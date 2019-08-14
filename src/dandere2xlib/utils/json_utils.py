@@ -1,26 +1,21 @@
 import json
 
 
-
 # given a list like ["hi", "bye", "kyle"],
 # return a list in the shape "hi, bye, kyle"
 # This is because ffmpeg expects it in this format
 def list_to_string(list_input: list):
-
-    print(list_input)
-
     return_str = ''
     for item in list_input:
         return_str += item + ","
 
-    print(return_str[:-1])
-
     return return_str[:-1]
+
 
 # This is a pretty messy function, but if it's an ffmpeg command we
 # need to be cognizant if an element ia  list or not.
 # If it's a list, we need to add it in a very peculiar way so that ffmpeg can recognize the input
-def get_options_from_section(section: json, ffmpeg_command = False):
+def get_options_from_section(section: json, ffmpeg_command=False):
     execute = []
 
     for item in section:
@@ -43,11 +38,11 @@ def get_options_from_section(section: json, ffmpeg_command = False):
 
     return execute
 
-
     # absolutify a json method by replacing ".." into "current_folder".
     # there's some trickery to do this, but it works
-def absolutify_json(config_json: json, current_folder: str, absolutify_key=".."):
 
+
+def absolutify_json(config_json: json, current_folder: str, absolutify_key=".."):
     current_folder_json = current_folder.replace("\\", "\\\\")
 
     config_json_string = str(config_json)

@@ -69,9 +69,13 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
 def debug_image(block_size, frame_base, list_predictive, list_differences, output_location):
     logger = logging.getLogger(__name__)
 
-    predictive_vectors = []
+    difference_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
+    out_image.copy_image(frame_base)
+
+    black_image = Frame()
+    black_image.create_new(frame_base.width, frame_base.height)
 
     if not list_predictive and not list_differences:
         logger.info("list_predictive and not list_differences: true")
@@ -89,16 +93,16 @@ def debug_image(block_size, frame_base, list_predictive, list_differences, outpu
         return
 
     # load list into vector displacements
-    for x in range(int(len(list_predictive) / 4)):
-        predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4]),
-                                                     int(list_predictive[x * 4 + 1]),
-                                                     int(list_predictive[x * 4 + 2]),
-                                                     int(list_predictive[x * 4 + 3])))
+    for x in range(int(len(list_differences) / 4)):
+        difference_vectors.append(DisplacementVector(int(list_differences[x * 4]),
+                                                     int(list_differences[x * 4 + 1]),
+                                                     int(list_differences[x * 4 + 2]),
+                                                     int(list_differences[x * 4 + 3])))
 
     # copy over predictive vectors into new image
-    for vector in predictive_vectors:
-        out_image.copy_block(frame_base, block_size,
-                             vector.x_2, vector.y_2,
+    for vector in difference_vectors:
+        out_image.copy_block(black_image, block_size,
+                             vector.x_1, vector.y_1,
                              vector.x_1, vector.y_1)
 
     out_image.save_image_quality(output_location, 25)
@@ -117,7 +121,7 @@ def difference_loop(context, start_frame):
     bleed = context.bleed
     debug = context.debug
 
-    temp_image = context.temp_image_folder + "tempimage.png"
+    temp_image = context.temp_image_folder + "tempimage.jpg"
 
     logger = logging.getLogger(__name__)
     logger.info((workspace, start_frame, frame_count, block_size))
@@ -132,7 +136,7 @@ def difference_loop(context, start_frame):
         prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
         make_difference_image(context, f1, difference_data, prediction_data,
-                              differences_dir + "output_" + get_lexicon_value(6, x) + ".png", temp_image)
+                              differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg", temp_image)
 
         output_file = workspace + "debug/debug" + str(x + 1) + extension_type
 

@@ -59,8 +59,8 @@
 
 class Differences {
 public:
-    Differences(std::vector<Block> &blocks, int block_size, std::shared_ptr<Image> frame2) {
-        this->blocks = blocks;
+    Differences(std::vector<std::vector<Block>> &matched_blocks, int block_size, std::shared_ptr<Image> frame2) {
+        this->matched_blocks = matched_blocks;
         this->block_size = block_size;
         this->frame2 = frame2;
         this->height = frame2->height;
@@ -74,7 +74,7 @@ public:
 private:
 
     std::vector<std::vector<bool>> occupied_pixel;
-    std::vector<Block> blocks;
+    std::vector<std::vector<Block>> matched_blocks;
     std::shared_ptr<DifferenceBlocks> difference_blocks;
     std::shared_ptr<Image> frame2;
 

@@ -10,30 +10,24 @@ import logging
 import os
 
 from context import Context
-from dandere2xlib.core.correction import correct_image
+from dandere2xlib.core.plugins.correction import correct_image
+from dandere2xlib.core.plugins.fade import fade_image
+from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 from dandere2xlib.utils.dandere2x_utils import get_list_from_file
-from dandere2xlib.core.fade import fade_image
-from wrappers.frame import DisplacementVector
 from wrappers.frame import Frame
 
 
-# todo - clean this function up into a few smaller functions.
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
                      list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,
                      output_location: str):
     # Load context
-    block_size = context.block_size
-    scale_factor = context.scale_factor
-    bleed = context.bleed
-
     logger = logging.getLogger(__name__)
 
-    predictive_vectors = []
-    difference_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
-    scale_factor = int(scale_factor)
+
+    # assess the two cases where out images are either duplicates or a new frame completely
 
     if not list_predictive and not list_differences:
         logger.info("list_predictive and not list_differences: true")
@@ -49,35 +43,14 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
         out_image.save_image(output_location)
         return
 
-    # load list into vector displacements
-    for x in range(int(len(list_differences) / 4)):
-        difference_vectors.append(DisplacementVector(int(list_differences[x * 4 + 0]),
-                                                     int(list_differences[x * 4 + 1]),
-                                                     int(list_differences[x * 4 + 2]),
-                                                     int(list_differences[x * 4 + 3])))
-    for x in range(int(len(list_predictive) / 4)):
-        predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
-                                                     int(list_predictive[x * 4 + 1]),
-                                                     int(list_predictive[x * 4 + 2]),
-                                                     int(list_predictive[x * 4 + 3])))
-    # copy over predictive vectors into new image
-    for vector in predictive_vectors:
-        out_image.copy_block(frame_base, block_size * scale_factor,
-                             vector.x_2 * scale_factor,
-                             vector.y_2 * scale_factor,
-                             vector.x_1 * scale_factor,
-                             vector.y_1 * scale_factor)
+    # by copying the image first as the first step, all the predictive elements like
+    # (0,0) -> (0,0) are also coppied
+    out_image.copy_image(frame_base)
 
-    # copy over inversion vectors (the difference images) into new image
-    for vector in difference_vectors:
-        out_image.copy_block(frame_inversion, block_size * scale_factor,
-                             (vector.x_2 * (block_size + bleed * 2)) * scale_factor + (bleed * scale_factor),
-                             (vector.y_2 * (block_size + bleed * 2)) * scale_factor + (bleed * scale_factor),
-                             vector.x_1 * scale_factor,
-                             vector.y_1 * scale_factor)
-
-    out_image = fade_image(context, block_size, out_image, list_fade)
-    out_image = correct_image(context, 2, out_image, list_corrections)
+    # run the image through the same plugins IN ORDER it was ran in d2x_cpp
+    out_image = pframe_image(context, out_image, frame_base, frame_inversion, list_differences, list_predictive)
+    out_image = fade_image(context, out_image, list_fade)
+    out_image = correct_image(context, out_image, list_corrections)
 
     out_image.save_image(output_location)
 
@@ -140,14 +113,9 @@ def merge_loop_resume(context: Context):
     merge_loop(context, start_frame=last_found)
 
 
+# For debugging
 def main():
-    # merge_loop("/home/linux/Videos/testrun/testrun2/", 120)
-    merge_loop_resume("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\",
-                      "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\upscaled\\",
-                      "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\merged\\",
-                      "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inversion_data\\",
-                      "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\pframe_data\\",
-                      120, 30, ".jpg")
+    pass
 
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
 import os
-import math
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists
@@ -22,7 +21,6 @@ def delete_specific_merged(context: Context, file_prefix, extension, lexiconic_d
 
     for x in range(start, end):
         os.remove(file_prefix + str(get_lexicon_value(lexiconic_digits, x)) + extension)
-
 
 
 def run_realtime_encoding(context: Context, output_file: str):

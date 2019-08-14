@@ -37,13 +37,13 @@ import sys
 import threading
 import time
 
-from dandere2xlib.utils.dandere2x_utils import verify_user_settings, file_exists
 from dandere2xlib.core.difference import difference_loop
 from dandere2xlib.core.difference import difference_loop_resume
-from dandere2xlib.core.frame_compressor import compress_frames
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.merge import merge_loop_resume
 from dandere2xlib.status import print_status
+from dandere2xlib.utils.dandere2x_utils import verify_user_settings, file_exists
+from dandere2xlib.utils.frame_compressor import compress_frames
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.ff_wrappers.ffmpeg import trim_video
@@ -71,7 +71,6 @@ class Dandere2x:
             trim_video(self.context, trimed_video)
             self.context.file_dir = trimed_video
 
-
         print("extracting frames from video... this might take a while..")
         ffmpeg_extract_frames(self.context, self.context.file_dir)
         self.context.update_frame_count()
@@ -89,6 +88,11 @@ class Dandere2x:
 
         elif self.context.waifu2x_type == "vulkan":
             waifu2x = Waifu2xVulkan(self.context)
+
+        else:
+            logging.info("no valid waifu2x selected")
+            print("no valid waifu2x selected")
+            exit(1)
 
         waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)

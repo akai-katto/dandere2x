@@ -15,7 +15,7 @@ from wrappers.frame import Frame
 
 # correction size needs to be added to config file
 
-def correct_image(context, block_size, frame_base: Frame, list_correction: list):
+def correct_image(context, frame_base: Frame, list_correction: list):
     logger = logging.getLogger(__name__)
 
     # load context
@@ -26,6 +26,7 @@ def correct_image(context, block_size, frame_base: Frame, list_correction: list)
     out_image.create_new(frame_base.width, frame_base.height)
     out_image.copy_image(frame_base)
     scale_factor = int(scale_factor)
+    block_size = context.correction_block_size
 
     for x in range(int(len(list_correction) / 4)):  # / 4 because each there's 4 data points per block
         predictive_vectors.append(DisplacementVector(int(list_correction[x * 4 + 0]),
