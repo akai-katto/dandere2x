@@ -11,13 +11,12 @@ import os
 
 from context import Context
 from dandere2xlib.core.correction import correct_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2xlib.utils.dandere2x_utils import get_list_from_file
 from dandere2xlib.core.fade import fade_image
 from dandere2xlib.core.pframe import pframe_image
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from dandere2xlib.utils.dandere2x_utils import get_list_from_file
 from wrappers.frame import Frame
 
-import time
 
 # todo - clean this function up into a few smaller functions.
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
@@ -28,6 +27,8 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
 
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
+
+    # access the two cases where out images are either duplicates or a new frame completely
 
     if not list_predictive and not list_differences:
         logger.info("list_predictive and not list_differences: true")
@@ -48,11 +49,10 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image.copy_image(frame_base)
 
     out_image = pframe_image(context, out_image, frame_base, frame_inversion, list_differences, list_predictive)
-    out_image = fade_image(context, int(context.block_size), out_image, list_fade)
-    out_image = correct_image(context, 2, out_image, list_corrections)
+    out_image = fade_image(context,  out_image, list_fade)
+    out_image = correct_image(context, out_image, list_corrections)
 
     out_image.save_image(output_location)
-
 
 
 def merge_loop(context: Context, start_frame: int):

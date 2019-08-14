@@ -105,6 +105,7 @@ class Context:
         self.workspace_use_temp = self.config_json['dandere2x']['developer_settings']['workspace_use_temp']
         self.workspace = self.config_json['dandere2x']['developer_settings']['workspace']
         self.dandere2x_cpp_dir = self.config_json['dandere2x']['developer_settings']['dandere2x_cpp_dir']
+        self.correction_block_size = 2
 
         # if we're using a temporary workspace, assign workspace to be in the temp folder
 

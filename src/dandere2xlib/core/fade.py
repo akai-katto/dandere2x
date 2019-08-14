@@ -17,7 +17,7 @@ class FadeData:
 # a copy than reassigns. Perhaps someone can test if we can just edit the input rather than
 # change the fade.
 
-def fade_image(context, block_size, frame_base: Frame, list_correction: list):
+def fade_image(context, frame_base: Frame, list_correction: list):
     logger = logging.getLogger(__name__)
 
     # load context
@@ -27,6 +27,7 @@ def fade_image(context, block_size, frame_base: Frame, list_correction: list):
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
     out_image.copy_image(frame_base)
+    block_size = int(context.block_size)
 
     fade_data_size = 3
 

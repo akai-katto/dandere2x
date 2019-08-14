@@ -1,14 +1,11 @@
-import logging
-from dataclasses import dataclass
 from wrappers.frame import DisplacementVector
 
 from wrappers.frame import Frame
 
 
 def pframe_image(context,
-           out_image: Frame, frame_base: Frame, frame_inversion: Frame,
-           list_differences: list, list_predictive: list):
-
+                 out_image: Frame, frame_base: Frame, frame_inversion: Frame,
+                 list_differences: list, list_predictive: list):
     # load context
     predictive_vectors = []
     difference_vectors = []
@@ -23,12 +20,11 @@ def pframe_image(context,
                                                      int(list_differences[x * 4 + 2]),
                                                      int(list_differences[x * 4 + 3])))
 
-
     for x in range(int(len(list_predictive) / 4)):
-            predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
-                                                         int(list_predictive[x * 4 + 1]),
-                                                         int(list_predictive[x * 4 + 2]),
-                                                         int(list_predictive[x * 4 + 3])))
+        predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
+                                                     int(list_predictive[x * 4 + 1]),
+                                                     int(list_predictive[x * 4 + 2]),
+                                                     int(list_predictive[x * 4 + 3])))
 
     # copy over predictive vectors into new image
     for vector in predictive_vectors:
