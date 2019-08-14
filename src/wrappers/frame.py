@@ -26,7 +26,6 @@ import numpy
 import numpy as np
 from PIL import Image
 from scipy import misc  # pip install Pillow
-from scipy import ndimage
 
 from dandere2xlib.utils.dandere2x_utils import rename_file
 from dandere2xlib.utils.dandere2x_utils import wait_on_file
@@ -109,7 +108,6 @@ class Frame:
 
     def load_from_string(self, input_string):
 
-
         self.frame = imageio.imread(input_string).astype(np.uint8)
         self.height = self.frame.shape[0]
         self.width = self.frame.shape[1]
@@ -160,7 +158,6 @@ class Frame:
         self.save_image(temp_location)
         wait_on_file(temp_location)
         rename_file(temp_location, out_location)
-
 
     # save the picture given a specific quality setting
     def save_image_quality(self, out_location, quality_per):

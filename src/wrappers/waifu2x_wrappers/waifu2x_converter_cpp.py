@@ -22,7 +22,6 @@ import threading
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists
 from dandere2xlib.utils.dandere2x_utils import rename_file
-
 from dandere2xlib.utils.json_utils import get_options_from_section
 
 
@@ -186,5 +185,5 @@ class Waifu2xConverterCpp(threading.Thread):
 
             for name in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
-                    os.remove(self.differences_dir + name.replace(".png",".jpg"))
+                    os.remove(self.differences_dir + name.replace(".png", ".jpg"))
                     names.remove(name)

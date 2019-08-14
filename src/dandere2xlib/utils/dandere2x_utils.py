@@ -100,9 +100,11 @@ def file_exists(file_string: str):
     logger = logging.getLogger(__name__)
     return os.path.isfile(file_string)
 
+
 def dir_exists(file_string: str):
     logger = logging.getLogger(__name__)
     return os.path.isdir(file_string)
+
 
 # custom function to rename file if it already exists
 def rename_file(file1, file2):
@@ -152,7 +154,6 @@ def valid_input_resolution(width: int, height: int, block_size: int):
 
 
 def get_a_valid_input_resolution(width: int, height: int, block_size: int):
-
     width_up = width
     width_down = width
 
@@ -176,7 +177,6 @@ def get_a_valid_input_resolution(width: int, height: int, block_size: int):
     smaller_height = height_up if abs(height_up - height) < abs(height_down - height) else height_down
 
     return smaller_width, smaller_height
-
 
 
 # TODO bring this to ffprobe's modern settings

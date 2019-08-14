@@ -18,7 +18,6 @@ class FadeData:
 # change the fade.
 
 def fade_image(context, out_image: Frame, list_correction: list):
-
     # load context
     scale_factor = int(context.scale_factor)
     logger = logging.getLogger(__name__)

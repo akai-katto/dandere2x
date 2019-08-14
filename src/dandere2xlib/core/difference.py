@@ -8,7 +8,6 @@ Last Modified: April 2, 2019
 """
 import logging
 import os
-import time
 
 import math
 
@@ -64,7 +63,6 @@ def make_difference_image(context: Context, raw_frame, list_difference, list_pre
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
     out_image.save_image_temp(out_location, temp_image)
-
 
 
 # for printing out what Dandere2x predictive frames are doing

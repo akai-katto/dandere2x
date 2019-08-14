@@ -120,5 +120,5 @@ class Waifu2xCaffe(threading.Thread):
 
             for name in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
-                    os.remove(self.differences_dir + name.replace(".png",".jpg"))
+                    os.remove(self.differences_dir + name.replace(".png", ".jpg"))
                     names.remove(name)

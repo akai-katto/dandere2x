@@ -37,13 +37,13 @@ import sys
 import threading
 import time
 
-from dandere2xlib.utils.dandere2x_utils import verify_user_settings, file_exists
 from dandere2xlib.core.difference import difference_loop
 from dandere2xlib.core.difference import difference_loop_resume
-from dandere2xlib.utils.frame_compressor import compress_frames
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.merge import merge_loop_resume
 from dandere2xlib.status import print_status
+from dandere2xlib.utils.dandere2x_utils import verify_user_settings, file_exists
+from dandere2xlib.utils.frame_compressor import compress_frames
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.ff_wrappers.ffmpeg import trim_video
@@ -70,7 +70,6 @@ class Dandere2x:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
             self.context.file_dir = trimed_video
-
 
         print("extracting frames from video... this might take a while..")
         ffmpeg_extract_frames(self.context, self.context.file_dir)
