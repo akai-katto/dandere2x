@@ -13,8 +13,7 @@ from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2xlib.utils.dandere2x_utils import get_list_from_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
 from wrappers.frame import Frame
 
 
@@ -30,15 +29,11 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     # assess the two cases where out images are either duplicates or a new frame completely
 
     if not list_predictive and not list_differences:
-        logger.info("list_predictive and not list_differences: true")
-        logger.info("Saving inversion image..")
         out_image.copy_image(frame_inversion)
         out_image.save_image(output_location)
         return
 
     if list_predictive and not list_differences:
-        logger.info("list_predictive and not list_differences")
-        logger.info("saving last image..")
         out_image.copy_image(frame_base)
         out_image.save_image(output_location)
         return

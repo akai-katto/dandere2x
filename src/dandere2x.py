@@ -37,17 +37,19 @@ import sys
 import threading
 import time
 
-from dandere2xlib.core.difference import difference_loop
-from dandere2xlib.core.difference import difference_loop_resume
-from dandere2xlib.core.merge import merge_loop
-from dandere2xlib.core.merge import merge_loop_resume
+from dandere2xlib.core.difference import difference_loop, difference_loop_resume
+from dandere2xlib.core.merge import merge_loop,  merge_loop_resume
 from dandere2xlib.status import print_status
+
 from dandere2xlib.utils.dandere2x_utils import verify_user_settings, file_exists
 from dandere2xlib.utils.frame_compressor import compress_frames
+
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
+
 from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
 from wrappers.ff_wrappers.ffmpeg import trim_video
 from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
+
 from wrappers.waifu2x_wrappers.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_wrappers.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
@@ -58,10 +60,14 @@ class Dandere2x:
     def __init__(self, context):
         self.context = context
 
-    # create a series of threads and external processes
-    # to run in real time with each other for the dandere2x session.
-    # the code is self documenting here.
+    # This is the main driver for Dandere2x_Python.
+    # Essentially we need to call a bunch of different subprocesses to run concurrent with one another
+    # To achieve maximum performance.
+
     def run_concurrent(self):
+        # load context
+        output_file = self.context.output_file
+
         self.create_dirs()
         self.context.set_logger()
         self.write_merge_commands()
@@ -74,12 +80,11 @@ class Dandere2x:
         print("extracting frames from video... this might take a while..")
         ffmpeg_extract_frames(self.context, self.context.file_dir)
         self.context.update_frame_count()
-
         verify_user_settings(self.context)
 
-        start = time.time()  # This timer prints out how long it takes to upscale one frame
+        one_frame_time = time.time()  # This timer prints out how long it takes to upscale one frame
+        # Assign the Waifu2x Variable to whatever waifu2x type the user chose
 
-        # set waifu2x to be whatever waifu2x type we are using
         if self.context.waifu2x_type == "caffe":
             waifu2x = Waifu2xCaffe(self.context)
 
@@ -97,17 +102,17 @@ class Dandere2x:
         waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
+        # Check to make sure at least the first file got upscaled.. if it doesnt, it's generally
+        # A user-end issue with the one of the waifu2x's.
         if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
             print("Could not upscale first file.. check logs file to see what's wrong")
             logging.info("Could not upscale first file.. check logs file to see what's wrong")
             logging.info("Exiting Dandere2x...")
             sys.exit(1)
 
-        print("\nTime to upscale an uncompressed frame: " + str(round(time.time() - start, 2)))
+        print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
 
-        output_file = self.context.output_file
-
-        # start all the threads needed for running
+        # Start all the threads needed for running
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))

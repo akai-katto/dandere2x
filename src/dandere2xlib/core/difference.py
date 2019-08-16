@@ -12,10 +12,8 @@ import os
 import math
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2xlib.utils.dandere2x_utils import get_list_from_file
-from wrappers.frame import DisplacementVector
-from wrappers.frame import Frame
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value,  get_list_from_file
+from wrappers.frame import DisplacementVector, Frame
 
 
 def make_difference_image(context: Context, raw_frame, list_difference, list_predictive, out_location, temp_image):
@@ -78,16 +76,10 @@ def debug_image(block_size, frame_base, list_predictive, list_differences, outpu
     black_image.create_new(frame_base.width, frame_base.height)
 
     if not list_predictive and not list_differences:
-        logger.info("list_predictive and not list_differences: true")
-        logger.info("Saving inversion image..")
-
         out_image.save_image(output_location)
         return
 
     if list_predictive and not list_differences:
-        logger.info("list_predictive and not list_differences")
-        logger.info("saving last image..")
-
         out_image.copy_image(frame_base)
         out_image.save_image(output_location)
         return
@@ -118,7 +110,6 @@ def difference_loop(context, start_frame):
     frame_count = context.frame_count
     block_size = context.block_size
     extension_type = context.extension_type
-    bleed = context.bleed
     debug = context.debug
 
     temp_image = context.temp_image_folder + "tempimage.jpg"
@@ -129,7 +120,6 @@ def difference_loop(context, start_frame):
     # for every frame in the video, create a difference_frame given the text files.
     for x in range(start_frame, frame_count):
         f1 = Frame()
-        logger.info("Waiting on text file: " + input_frames_dir + "frame" + str(x + 1) + extension_type)
         f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
 
         difference_data = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")

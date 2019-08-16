@@ -1,14 +1,10 @@
 """
-Name: Dandere2X Frame
-Author: CardinalPanda
-Date Created: 5-4-2019
-Last Modified: 5-4-2019
 
 Description:
 
-Have all the variables used in Dandere2x stored in here
-and have this class be passed to scripts
-rather than passing like 8-9 variables
+Rather than feed functions stuff like block_size, ffmpeg_dir each time, all the variables needed for every
+Dandere2x sub-function call is within
+
 """
 
 import json

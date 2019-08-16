@@ -20,20 +20,16 @@ import subprocess
 import threading
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import file_exists
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2xlib.utils.dandere2x_utils import rename_file
-from dandere2xlib.utils.dandere2x_utils import wait_on_either_file
+from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
 from dandere2xlib.utils.json_utils import get_options_from_section
 
 
-# this is pretty ugly
 class Waifu2xVulkan(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
         self.waifu2x_vulkan_dir = context.waifu2x_vulkan_dir
-        self.waifu2x_vulkan_dir_dir = context.waifu2x_vulkan_path
+        self.waifu2x_vulkan_path = context.waifu2x_vulkan_path
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
         self.noise_level = context.noise_level
@@ -161,13 +157,13 @@ class Waifu2xVulkan(threading.Thread):
         logger.info(str(exec))
 
         logger.info("Changind Dirs")
-        logger.info(str(self.waifu2x_vulkan_dir_dir))
+        logger.info(str(self.waifu2x_vulkan_path))
 
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.fix_names()
 
         # we need to os.chdir to set the directory or else waifu2x-vulkan won't work.
-        os.chdir(self.waifu2x_vulkan_dir_dir)
+        os.chdir(self.waifu2x_vulkan_path)
 
         logger.info("waifu2x_vulkan session")
         logger.info(exec)

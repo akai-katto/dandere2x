@@ -20,18 +20,16 @@ import subprocess
 import threading
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists
-from dandere2xlib.utils.dandere2x_utils import rename_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists, rename_file
 from dandere2xlib.utils.json_utils import get_options_from_section
 
 
-# this is pretty ugly
 class Waifu2xConverterCpp(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
         self.waifu2x_converter_cpp_dir = context.waifu2x_converter_cpp_dir
-        self.waifu2x_converter_cpp_dir_dir = context.waifu2x_converter_cpp_path
+        self.waifu2x_converter_cpp_path = context.waifu2x_converter_cpp_path
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
         self.noise_level = context.noise_level
@@ -144,7 +142,7 @@ class Waifu2xConverterCpp(threading.Thread):
         fix_names_forever_thread.start()
 
         # we need to os.chdir or else waifu2x-conveter won't work.
-        os.chdir(self.waifu2x_converter_cpp_dir_dir)
+        os.chdir(self.waifu2x_converter_cpp_path)
 
         exec = copy.copy(self.waifu2x_conv_upscale_frame)
 
