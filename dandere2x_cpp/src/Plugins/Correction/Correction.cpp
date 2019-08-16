@@ -40,13 +40,13 @@ void Correction::run() {
 void Correction::save() {
     std::ofstream out(this->correction_file + ".temp");
 
-    for (int x = 0; x < blocks.size(); x++) {
+    for (int iter = 0; iter < blocks.size(); iter++) {
 
-        if (blocks[x].x_start != blocks[x].y_start && blocks[x].y_start != blocks[x].y_end) {
-            out << blocks[x].x_start << "\n" <<
-                blocks[x].y_start << "\n" <<
-                blocks[x].x_end << "\n" <<
-                blocks[x].y_end << std::endl;
+        if (blocks[iter].x_start != blocks[iter].y_start && blocks[iter].y_start != blocks[iter].y_end) {
+            out << blocks[iter].x_start << "\n" <<
+                   blocks[iter].y_start << "\n" <<
+                   blocks[iter].x_end << "\n" <<
+                   blocks[iter].y_end << std::endl;
         }
     }
     out.close();
@@ -55,12 +55,12 @@ void Correction::save() {
 }
 
 void Correction::draw_over() {
-    for (int outer = 0; outer < blocks.size(); outer++) {
+    for (int iter = 0; iter < blocks.size(); iter++) {
         for (int x = 0; x < block_size; x++) {
             for (int y = 0; y < block_size; y++) {
-                image1_predicted->set_color(x + blocks[outer].x_start,
-                                       y + blocks[outer].y_start,
-                                       image1_predicted->get_color(x + blocks[outer].x_end, y + blocks[outer].y_end));
+                image1_predicted->set_color(x + blocks[iter].x_start,
+                                       y + blocks[iter].y_start,
+                                       image1_predicted->get_color(x + blocks[iter].x_end, y + blocks[iter].y_end));
             }
         }
     }

@@ -19,6 +19,7 @@
 /**
  * Todo:
  * - Simplify this driver class
+ * - Add ability to test individual parts
  */
 
 
@@ -55,7 +56,7 @@ void driver_difference(string workspace, int resume_count, int frame_count,
    // Before we start anything, we need to load the gensises image, image_1. This is because the first
    // Image is treated sort of differently in Dandere2x - it's the only image we can gurantee it is a 'i' frame,
    // And the entire image needs to be loaded.
-    shared_ptr<Image> im1 = make_shared<Image>(image_prefix + to_string(1) + extension_type);
+    shared_ptr<Image> image_1 = make_shared<Image>(image_prefix + to_string(1) + extension_type);
 
     // Dandere2x_cpp Handles the resume case by leaving everything empty, which serves as a signal to
     // Dandere2x_python simply draw a new frame at the resume frame.
@@ -74,7 +75,7 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         write_empty(correction_file);
         write_empty(fade_file);
 
-        im1 = im2;
+        image_1 = im2;
 
         resume_count++;
     }
@@ -86,22 +87,25 @@ void driver_difference(string workspace, int resume_count, int frame_count,
     // Happening within Dandere2x. The saving of files, the calculation of vectors, the loading of
     // Images all happens here.
 
+    // The goal of this is, given frame_x, try and draw frame_x+1 using parts of x.
+    // The 'plugins' section of this loop is a series of tools to help us achieve that.
+
     for (int x = resume_count; x < frame_count; x++) {
         auto frame_time_start = high_resolution_clock::now();
         cout << "\n\n Computing differences for frame: " << x << endl;
 
         // Create strings for the files we need to interact with for this computation iteration
-        string im2_file = image_prefix + to_string(x + 1) + extension_type;
-        string im2_file_compressed = compressed_prefix + to_string(x + 1) + ".jpg";
+        string image_2_file = image_prefix + to_string(x + 1) + extension_type;
+        string image_2_compressed_file = compressed_prefix + to_string(x + 1) + ".jpg";
 
         // Wait for those files...
-        dandere2x::wait_for_file(im2_file);
-        dandere2x::wait_for_file(im2_file_compressed);
+        dandere2x::wait_for_file(image_2_file);
+        dandere2x::wait_for_file(image_2_compressed_file);
 
         // load actual images themselves
-        shared_ptr<Image> im2 = make_shared<Image>(im2_file);
-        shared_ptr<Image> im2_copy = make_shared<Image>(im2_file); //load im_2 twice for 'corrections'
-        shared_ptr<Image> im2_compressed = make_shared<Image>(im2_file_compressed);
+        shared_ptr<Image> image_2 = make_shared<Image>(image_2_file);
+        shared_ptr<Image> image_2_copy = make_shared<Image>(image_2_file); //load im_2 twice for 'corrections'
+        shared_ptr<Image> image_2_compressed = make_shared<Image>(image_2_compressed_file);
 
         // Create strings for the files we need to save for this computation iteration
         string p_data_file = p_data_prefix + to_string(x) + ".txt";
@@ -109,18 +113,27 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         string correction_file = correction_prefix + to_string(x) + ".txt";
         string fade_file = fade_prefix + to_string(x) + ".txt";
 
+        /**
+         *  ## Compute Plugins ##
+         */
+
+        // This is the area where we compute plugins. Note that the way D2x_cpp works, image_2 ends up becoming
+        // Modified during each plugin run. Recall that our goal is to produce image_2 using as many parts
+        // from image_1, so it makes sense to overwrite image_2 with parts of image_1 as we go along.
+
         // First run the 'fade' plugin, which checks if two frames are simply fade to black / fade to white
-        Fade fade = Fade(im1, im2, im2_compressed, block_size, fade_file);
+        Fade fade = Fade(image_1, image_2, image_2_compressed, block_size, fade_file);
         fade.run();
 
-        // Find similar blocks between image_1 and image_2 for every block between im1 and im2.
-        PFrame pframe = PFrame(im1, im2, im2_compressed, block_size, p_data_file, difference_file, step_size);
+        // Find similar blocks between image_1 and image_2 and match them, and document which matched (p_data_file).
+        // Document which blocks we could not find a match for, and add them to a list of missing blocks (difference_file)
+        PFrame pframe = PFrame(image_1, image_2, image_2_compressed, block_size, p_data_file, difference_file, step_size);
         pframe.run();
 
         // When finding similar blocks, there may be small blemishes left in as a result. Try our best
         // To find those errors, and replace them with nearby pixels. Use the original image as a reference
         // On how to preform these corrections.
-        Correction correction = Correction(im2, im2_copy, im2_compressed, correction_block_size, correction_file, 2);
+        Correction correction = Correction(image_2, image_2_copy, image_2_compressed, correction_block_size, correction_file, 2);
         correction.run();
 
         // Save the results for Dandere2x_python to use
@@ -130,14 +143,14 @@ void driver_difference(string workspace, int resume_count, int frame_count,
 
        // For Debugging. Create a folder called 'debug_frames' in workspace when testing this -
        // Enabling this will allow you to see what Dandere2x_Cpp is seeing when it finishes processing a frame.
-//        DebugImage before = DebugImage::create_debug_from_image(*im2);
+//        DebugImage before = DebugImage::create_debug_from_image(*image_2);
 //        before.save(workspace + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
 
 
         // For the next iteration, we simply let frame 'x' become frame 'x+1'.
-        // For example, when computing frame 100 -> 101, im1=100 and im2=101.
-        // Assign im1=101, so when computing 101 -> 102, 101 is already loaded.
-        im1 = im2;
+        // For example, when computing frame 100 -> 101, image_1=100 and image_2=101.
+        // Assign image_1=101, so when computing 101 -> 102, 101 is already loaded.
+        image_1 = image_2;
 
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<microseconds>(stop - frame_time_start);

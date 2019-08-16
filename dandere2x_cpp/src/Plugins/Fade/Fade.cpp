@@ -15,16 +15,20 @@
 void Fade::save() {
     std::ofstream out(this->fade_file + ".temp");
 
-    for (int x = 0; x < fade_blocks.size(); x++)
-        out << fade_blocks[x].x << "\n" <<
-               fade_blocks[x].y << "\n" <<
-               fade_blocks[x].scalar << std::endl;
+    for (int iter = 0; iter < fade_blocks.size(); iter++)
+        out << fade_blocks[iter].x << "\n" <<
+               fade_blocks[iter].y << "\n" <<
+               fade_blocks[iter].scalar << std::endl;
 
     out.close();
     std::rename((this->fade_file + ".temp").c_str(), this->fade_file.c_str());
 }
 
-
+/*
+ *  The goal of the fade function is to to find a scalar value to add a block im image_1 to make it look
+ *  like it's block in the same position in image_2. This is because for many fade to white / fade to black
+ *  Scenes, it's enough to add some scalar value to all RGB values to achieve this.
+ */
 void Fade::run() {
 
     int height = image1->height;
@@ -88,7 +92,7 @@ double Fade::mse_fade(Image &preceding_image, Image &original_image,
     return sum;
 }
 
-// essentially we're flattening the block array and computing the mean of all the valeus
+// essentially we're flattening the block array and computing the mean of all the values
 // https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.flatten.html
 
 double Fade::get_scalar_for_block(int x, int y) {
@@ -110,12 +114,13 @@ double Fade::get_scalar_for_block(int x, int y) {
 }
 
 
-void Fade::draw_over(int x, int y, int scalar) {
+// Over-write every pixel in the block with the scalar.
+void Fade::draw_over(int x_start, int y_start, int scalar) {
 
-    for (int i = x; i < x + block_size; i++) {
-        for (int j = y; j < y + block_size; j++) {
-            Image::Color col = add_scalar_to_color(image1->get_color(i, j), scalar);
-            image1->set_color(i, j, col);
+    for (int x = x_start; x < x_start + block_size; x++) {
+        for (int y = y_start; y < y_start + block_size; y++) {
+            Image::Color col = add_scalar_to_color(image1->get_color(x, y), scalar);
+            image1->set_color(x, y, col);
         }
     }
 
