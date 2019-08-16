@@ -24,102 +24,49 @@ from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_val
 from wrappers.videosettings import VideoSettings
 
 
-# init is pretty messy at the moment. I'll look into
-# cleaning this up in the future ;-;
 class Context:
 
+    # This is probably the most disorganized part of Dandere2x - everything else is fine.
+    # If you don't want to read through the init, essentially creates all the variables we need
+    # from the json and puts them into an object we can pass around Dandere2x pretty liberally
 
-    # todo implement os.path.join for all directory stuff
-    # to clean up the mess that I've made
     def __init__(self, config_json_unparsed: json):
 
         # load 'this folder' in a pyinstaller friendly way
-        self.this_folder = ''
+        self.this_folder = None
 
         if getattr(sys, 'frozen', False):
-            self.this_folder = os.path.dirname(sys.executable) + os.path.sep
+            self.this_folder = os.path.dirname(sys.executable)
         elif __file__:
-            self.this_folder = os.path.dirname(__file__) + os.path.sep
+            self.this_folder = os.path.dirname(__file__)
 
-        # in this section right here, we need to absolutify the
-        # json paths in the json file. Meaning, ../ -> C:\stuff\
-        # We do this by creating a string representation of the json, changing the hard codings,
-        # then renaming the variables from python styled json to normal json, then
-        # parsing it back.
+        self.this_folder = pathlib.Path(self.this_folder)
 
-        current_folder_json = ''
+        # We need the json to be absolute, meaning ".." --> this.folder
+        # This allows Dandere2x to be somewhat portable on different systems
 
-        if getattr(sys, 'frozen', False):
-            current_folder_json = os.path.dirname(sys.executable)
-        elif __file__:
-            current_folder_json = os.path.dirname(__file__)
+        self.config_json = absolutify_json(config_json_unparsed, str(self.this_folder.absolute()), absolutify_key="..")
 
-        self.config_json = absolutify_json(config_json_unparsed, current_folder_json, absolutify_key="..")
-        # directories
-        self.waifu2x_caffe_cui_dir = self.config_json['waifu2x_caffe']['waifu2x_caffe_path']
+        ################################
+        #  setup all the directories.. #
+        ################################
 
+        # side note - for vulkan and converter, we need to know the path of the file in order for it to run correctly,
+        # hence why we have two variables for them
+        self.waifu2x_converter_cpp_path = self.config_json['waifu2x_converter']['waifu2x_converter_path']
+        self.waifu2x_converter_cpp_dir = os.path.join(self.waifu2x_converter_cpp_path, "waifu2x-converter-cpp.exe")
 
-        self.ffmpeg_dir = self.config_json['ffmpeg']['ffmpeg_path'] + "ffmpeg.exe"
-        self.ffprobe_dir = self.config_json['ffmpeg']['ffmpeg_path'] + "ffprobe.exe"
-        self.hwaccel = self.config_json['ffmpeg']['-hwaccel']
+        self.waifu2x_vulkan_path = self.config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
+        self.waifu2x_vulkan_dir = os.path.join(self.waifu2x_vulkan_path, "waifu2x-ncnn-vulkan.exe")
 
+        self.waifu2x_caffe_cui_dir = pathlib.Path(self.config_json['waifu2x_caffe']['waifu2x_caffe_path'])
 
-        self.waifu2x_converter_cpp_dir = os.path.join(self.config_json['waifu2x_converter']['waifu2x_converter_path'],
-                                             "waifu2x-converter-cpp.exe")
-
-        self.waifu2x_converter_cpp_dir_dir = self.config_json['waifu2x_converter']['waifu2x_converter_path']
-
-        self.waifu2x_vulkan_dir = os.path.join(self.config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path'],
-                                               "waifu2x-ncnn-vulkan.exe")
-
-        self.waifu2x_vulkan_dir_dir = self.config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
-
-
-        # find out if the user trimmed a video by checking the time part of the json. IF theres nothing there,
-        # then the user didn't trim anything
-        self.user_trim_video = False
-        find_out_if_trim = get_options_from_section(self.config_json["ffmpeg"]["trim_video"]['time'])
-
-        if find_out_if_trim:
-            self.user_trim_video = True
-
-        # linux
-        self.dandere_dir = 'lol what linux'
-
-        # User Settings
-        self.block_size = self.config_json['dandere2x']['usersettings']['block_size']
-        self.quality_low = self.config_json['dandere2x']['usersettings']['quality_low']
-        self.waifu2x_type = self.config_json['dandere2x']['usersettings']['waifu2x_type']
-        self.noise_level = self.config_json['dandere2x']['usersettings']['noise_level']
-        self.scale_factor = self.config_json['dandere2x']['usersettings']['scale_factor']
-        self.file_dir = self.config_json['dandere2x']['usersettings']['file_dir']
-        self.output_file = self.config_json['dandere2x']['usersettings']['output_file']
-        # Developer Settings
-
-        self.step_size = self.config_json['dandere2x']['developer_settings']['step_size']
-        self.bleed = self.config_json['dandere2x']['developer_settings']['bleed']
-        self.extension_type = self.config_json['dandere2x']['developer_settings']['extension_type']
-        self.debug = self.config_json['dandere2x']['developer_settings']['debug']
-        self.realtime_encoding = self.config_json['dandere2x']['developer_settings']['realtime_encoding']
-        self.realtime_encoding_delete_files = self.config_json['dandere2x']['developer_settings']['realtime_encoding_delete_files']
-        self.workspace_use_temp = self.config_json['dandere2x']['developer_settings']['workspace_use_temp']
         self.workspace = self.config_json['dandere2x']['developer_settings']['workspace']
-        self.dandere2x_cpp_dir = self.config_json['dandere2x']['developer_settings']['dandere2x_cpp_dir']
-        self.correction_block_size = 2
+        self.workspace_use_temp = self.config_json['dandere2x']['developer_settings']['workspace_use_temp']
 
         # if we're using a temporary workspace, assign workspace to be in the temp folder
-
         if self.workspace_use_temp:
-            self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()),  'dandere2x') + "\\"
-
-        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
-
-        self.frame_rate = self.video_settings.frame_rate
-        self.width = self.video_settings.width
-        self.height = self.video_settings.height
-
-        # todo idunno if theres a better way to figure out how many frames will be used.
-        self.frame_count = 0
+            self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()), 'dandere2x') + "\\"
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
@@ -136,7 +83,55 @@ class Context:
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
         self.temp_image_folder = self.workspace + "temp_image_folder" + os.path.sep
 
-        # force a valid resolution
+        self.ffmpeg_dir = self.config_json['ffmpeg']['ffmpeg_path']
+        self.ffprobe_dir = self.config_json['ffmpeg']['ffprobe_path']
+        self.hwaccel = self.config_json['ffmpeg']['-hwaccel']
+
+
+        ################################
+        # Load Dandere2x User Settings #
+        ################################
+
+        # User Settings
+        self.block_size = self.config_json['dandere2x']['usersettings']['block_size']
+        self.quality_low = self.config_json['dandere2x']['usersettings']['quality_low']
+        self.waifu2x_type = self.config_json['dandere2x']['usersettings']['waifu2x_type']
+        self.noise_level = self.config_json['dandere2x']['usersettings']['noise_level']
+        self.scale_factor = self.config_json['dandere2x']['usersettings']['scale_factor']
+        self.file_dir = self.config_json['dandere2x']['usersettings']['file_dir']
+        self.output_file = self.config_json['dandere2x']['usersettings']['output_file']
+
+        # Developer Settings
+
+        self.step_size = self.config_json['dandere2x']['developer_settings']['step_size']
+        self.bleed = self.config_json['dandere2x']['developer_settings']['bleed']
+        self.extension_type = self.config_json['dandere2x']['developer_settings']['extension_type']
+        self.debug = self.config_json['dandere2x']['developer_settings']['debug']
+        self.realtime_encoding = self.config_json['dandere2x']['developer_settings']['realtime_encoding']
+        self.realtime_encoding_delete_files = self.config_json['dandere2x']['developer_settings']['realtime_encoding_delete_files']
+        self.dandere2x_cpp_dir = self.config_json['dandere2x']['developer_settings']['dandere2x_cpp_dir']
+        self.correction_block_size = 2
+
+        ################################
+        #       Video Settings         #
+        ################################
+
+        # find out if the user trimmed a video by checking the time part of the json. IF theres nothing there,
+        # then the user didn't trim anything
+        self.user_trim_video = False
+        find_out_if_trim = get_options_from_section(self.config_json["ffmpeg"]["trim_video"]['time'])
+
+        if find_out_if_trim:
+            self.user_trim_video = True
+
+        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
+
+        self.frame_rate = self.video_settings.frame_rate
+        self.width = self.video_settings.width
+        self.height = self.video_settings.height
+        self.frame_count = 0
+
+        # force a valid resolution by appending the correct settings to the frames to video filter
         if not valid_input_resolution(self.width, self.height, self.block_size):
             print("Forcing Resizing to match blocksize..")
             width, height = get_a_valid_input_resolution(self.width, self.height, self.block_size)
@@ -149,8 +144,6 @@ class Context:
 
             self.config_json['ffmpeg']['video_to_frames']['output_options']['-vf']\
                 .append("scale=" + str(self.width) + ":" + str(self.height))
-
-
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):

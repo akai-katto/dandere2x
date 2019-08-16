@@ -33,7 +33,7 @@ class Waifu2xVulkan(threading.Thread):
         # load context
         self.frame_count = context.frame_count
         self.waifu2x_vulkan_dir = context.waifu2x_vulkan_dir
-        self.waifu2x_vulkan_dir_dir = context.waifu2x_vulkan_dir_dir
+        self.waifu2x_vulkan_dir_dir = context.waifu2x_vulkan_path
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
         self.noise_level = context.noise_level
@@ -61,7 +61,7 @@ class Waifu2xVulkan(threading.Thread):
     # manually upscale a single file
     def upscale_file(self, input_file: str, output_file: str):
         # load context
-        waifu2x_vulkan_dir_dir = self.context.waifu2x_vulkan_dir_dir
+        waifu2x_vulkan_dir_dir = self.context.waifu2x_vulkan_path
         exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
         logger = logging.getLogger(__name__)
 

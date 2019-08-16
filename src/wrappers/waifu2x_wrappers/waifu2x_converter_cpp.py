@@ -31,7 +31,7 @@ class Waifu2xConverterCpp(threading.Thread):
         # load context
         self.frame_count = context.frame_count
         self.waifu2x_converter_cpp_dir = context.waifu2x_converter_cpp_dir
-        self.waifu2x_converter_cpp_dir_dir = context.waifu2x_converter_cpp_dir_dir
+        self.waifu2x_converter_cpp_dir_dir = context.waifu2x_converter_cpp_path
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
         self.noise_level = context.noise_level
@@ -58,7 +58,7 @@ class Waifu2xConverterCpp(threading.Thread):
     def upscale_file(self, input_file: str, output_file: str):
         # load context
 
-        waifu2x_conv_dir_dir = self.context.waifu2x_converter_cpp_dir_dir
+        waifu2x_conv_dir_dir = self.context.waifu2x_converter_cpp_path
         logger = logging.getLogger(__name__)
 
         exec = copy.copy(self.waifu2x_conv_upscale_frame)

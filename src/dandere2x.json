@@ -61,7 +61,8 @@
     }
   },
   "ffmpeg": {
-    "ffmpeg_path": "..\\externals\\",
+    "ffmpeg_path": "..\\externals\\ffmpeg.exe",
+    "ffprobe_path": "..\\externals\\ffprobe.exe",
     "-hwaccel": "auto",
     "trim_video": {
       "time": {
