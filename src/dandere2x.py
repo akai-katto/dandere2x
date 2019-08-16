@@ -41,7 +41,7 @@ from dandere2xlib.core.difference import difference_loop, difference_loop_resume
 from dandere2xlib.core.merge import merge_loop,  merge_loop_resume
 from dandere2xlib.status import print_status
 
-from dandere2xlib.utils.dandere2x_utils import verify_user_settings, file_exists
+from dandere2xlib.utils.dandere2x_utils import valid_input_resolution,get_a_valid_input_resolution, file_exists
 from dandere2xlib.utils.frame_compressor import compress_frames
 
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
@@ -68,6 +68,7 @@ class Dandere2x:
         # load context
         output_file = self.context.output_file
 
+        # The first thing to do is create the dirs we will need during runtime
         self.create_dirs()
         self.context.set_logger()
         self.write_merge_commands()
@@ -77,33 +78,34 @@ class Dandere2x:
             trim_video(self.context, trimed_video)
             self.context.file_dir = trimed_video
 
+        # force a valid resolution by appending the correct settings to the frames to video filter
+        if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
+            print("Forcing Resizing to match blocksize..")
+            width, height = get_a_valid_input_resolution(self.context.width, self.context.height, self.context.block_size)
+
+            print("New width -> " + str(width))
+            print("New height -> " + str(height))
+
+            self.context.width = width
+            self.context.height = height
+
+            self.context.config_json['ffmpeg']['video_to_frames']['output_options']['-vf']\
+                .append("scale=" + str(self.context.width) + ":" + str(self.context.height))
+
+        # Extracting all the frames comes second
         print("extracting frames from video... this might take a while..")
         ffmpeg_extract_frames(self.context, self.context.file_dir)
         self.context.update_frame_count()
-        verify_user_settings(self.context)
 
+        # Assign the waifu2x object to whatever waifu2x we're using
+        waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
+
+        # Upscale the first file (the genesis file is treated different in Dandere2x)
         one_frame_time = time.time()  # This timer prints out how long it takes to upscale one frame
-        # Assign the Waifu2x Variable to whatever waifu2x type the user chose
-
-        if self.context.waifu2x_type == "caffe":
-            waifu2x = Waifu2xCaffe(self.context)
-
-        elif self.context.waifu2x_type == "converter_cpp":
-            waifu2x = Waifu2xConverterCpp(self.context)
-
-        elif self.context.waifu2x_type == "vulkan":
-            waifu2x = Waifu2xVulkan(self.context)
-
-        else:
-            logging.info("no valid waifu2x selected")
-            print("no valid waifu2x selected")
-            exit(1)
-
         waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-        # Check to make sure at least the first file got upscaled.. if it doesnt, it's generally
-        # A user-end issue with the one of the waifu2x's.
+        # Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
         if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
             print("Could not upscale first file.. check logs file to see what's wrong")
             logging.info("Could not upscale first file.. check logs file to see what's wrong")
@@ -112,7 +114,8 @@ class Dandere2x:
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
 
-        # Start all the threads needed for running
+        # This is where Dandere2x's core functions start. Each core function is divided into a series of threads,
+        # All with their own segregated tasks and goals. Dandere2x starts all the threads, and lets it go from there.
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
@@ -121,8 +124,8 @@ class Dandere2x:
         realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
 
         logging.info("starting new d2x process")
-
         waifu2x.start()
+
         merge_thread.start()
         difference_thread.start()
         dandere2xcpp_thread.start()
@@ -160,15 +163,8 @@ class Dandere2x:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             self.context.file_dir = trimed_video
 
-        # set waifu2x to be whatever waifu2x type we are using
-        if self.context.waifu2x_type == "caffe":
-            waifu2x = Waifu2xCaffe(self.context)
-
-        elif self.context.waifu2x_type == "converter_cpp":
-            waifu2x = Waifu2xConverterCpp(self.context)
-
-        elif self.context.waifu2x_type == "vulkan":
-            waifu2x = Waifu2xVulkan(self.context)
+        # get whatever waifu2x class we're using
+        waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
 
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
         merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
@@ -204,7 +200,24 @@ class Dandere2x:
 
         self.context.logger.info("Threaded Processes Finished successfully")
 
-    # only calculate the differences. To be implemented in video2x / converter-cpp
+    # We could just get the name from self.context, but for readibility it's easier to know
+    # What the function does based off what it's passed.
+    def get_waifu2x_class(self, name: str):
+
+        if name == "caffe":
+            return Waifu2xCaffe(self.context)
+
+        elif name == "converter_cpp":
+            return Waifu2xConverterCpp(self.context)
+
+        elif name == "vulkan":
+            return Waifu2xVulkan(self.context)
+
+        else:
+            logging.info("no valid waifu2x selected")
+            print("no valid waifu2x selected")
+            exit(1)
+
     def difference_only(self):
         self.pre_setup()
 

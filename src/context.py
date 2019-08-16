@@ -15,8 +15,6 @@ import tempfile
 import pathlib
 
 from dandere2xlib.utils.json_utils import get_options_from_section, absolutify_json
-from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution
-
 from wrappers.videosettings import VideoSettings
 
 
@@ -127,19 +125,6 @@ class Context:
         self.height = self.video_settings.height
         self.frame_count = 0
 
-        # force a valid resolution by appending the correct settings to the frames to video filter
-        if not valid_input_resolution(self.width, self.height, self.block_size):
-            print("Forcing Resizing to match blocksize..")
-            width, height = get_a_valid_input_resolution(self.width, self.height, self.block_size)
-
-            print("New width -> " + str(width))
-            print("New height -> " + str(height))
-
-            self.width = width
-            self.height = height
-
-            self.config_json['ffmpeg']['video_to_frames']['output_options']['-vf']\
-                .append("scale=" + str(self.width) + ":" + str(self.height))
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
