@@ -2,14 +2,13 @@
 #include "Plugins/Fade/Fade.h"
 #include "Image/DebugImage/DebugImage.h"
 
-/**
- * Todo
- * - Implement CLI interface into dandere2x python for long -term usability.
- * - Debug function for people to test individual features.
+
+
+/*
+ * It's a bit messy to leave this here, but this section is dedicated to doing random tests
+ * On specific functions for Dandere2x. To use it, simply uncomment //benchmark() in the main class
+ * to benchmark or test various features.
  */
-
-
-
 void benchmark(){
     #include "Image/Image.h"
     #include "Plugins/PFrame/PFrame.h"
@@ -41,8 +40,10 @@ void benchmark(){
 int main(int argc, char **argv) {
 
     //benchmark();
-//
+
     bool debug = false; //debug flag
+
+    //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
     string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_upscaled_new_cpp_2\\";
     int frame_count = 240;
@@ -53,7 +54,6 @@ int main(int argc, char **argv) {
     string extension_type = ".jpg";
 
     cout << "Hello Dandere!!" << endl;
-
 
     //load arguments
     if (!debug) {
