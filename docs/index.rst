@@ -9,7 +9,7 @@ Dandere2x speeds up the time needed to upscale animation (sometimes live-action)
 
 Fast
     Dandere2x can provide a dramatic speedup for anime upscaling.
-    In `this<https://www.youtube.com/watch?v=d1Y4pmQb44k>` anime upscale, Dandere2x took a whopping 3.5 minutes, while 
+    In this comparison video (https://www.youtube.com/watch?v=d1Y4pmQb44k),  Dandere2x took only 3.5 minutes, while 
     using Video2x's lossless upscaling took 18 minutes!
 
 Easy
