@@ -5,7 +5,7 @@ Dandere2x Overview
    :description lang=en: Automate building, versioning, and hosting of your technical documentation continuously on Read the Docs.
 
 
-Dandere2x speeds up the time needed to upscale animation (sometimes live-action) videos by applying compression techniques. Just as Netflix uses compression to quickly stream videos to your home, Dandere2x uses compression to make quickly upscale videos using waifu2x.
+Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes live-action) videos by applying compression techniques. Just as Netflix uses compression to quickly stream videos to your home, Dandere2x uses compression to expedite the waifu2x upscaling process.
 
 Fast
     Dandere2x can provide a dramatic speedup for anime upscaling.
