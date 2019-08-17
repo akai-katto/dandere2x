@@ -5,12 +5,12 @@ Dandere2x Overview
    :description lang=en: Automate building, versioning, and hosting of your technical documentation continuously on Read the Docs.
 
 
-`Dandere2x`_ speeds up the time needed to upscale animation (sometimes live-action) videos by applying compression techniques. Just as Netflix uses compression to quickly stream videos to your home, Dandere2x uses compression to make quickly upscale videos using waifu2x.
+Dandere2x speeds up the time needed to upscale animation (sometimes live-action) videos by applying compression techniques. Just as Netflix uses compression to quickly stream videos to your home, Dandere2x uses compression to make quickly upscale videos using waifu2x.
 
 Fast
-    Dandere2x can provide a dramatic speed up for anime upscaling.
-    In [this](https://www.youtube.com/watch?v=d1Y4pmQb44k) anime upscale, Dandere2x took a whopping 3.5 minutes, while 
-    using Video2x's losseless upscaling took 18 minutes!
+    Dandere2x can provide a dramatic speedup for anime upscaling.
+    In `this<https://www.youtube.com/watch?v=d1Y4pmQb44k>` anime upscale, Dandere2x took a whopping 3.5 minutes, while 
+    using Video2x's lossless upscaling took 18 minutes!
 
 Easy
    Dandere2x comes included with a GUI interface to make Dandere2x easy and fast to use, for both experienced and inexperienced users.
@@ -31,13 +31,49 @@ https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc1
 
 
 
-* **Tutorial / Basic Usage**:
+* **Tutorial Basic Usage**:
+
+* **Basic Settings**:
+
+The basic settings can be found under the 'usersettings' in the JSON and are choosable settings in the GUI. 
+
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| JSON parameter |                                                      | description                                                                                                        |
+|                | values                                               |                                                                                                                    |
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+|                | Any positive integer                                 |                                                                                                                    |
+| block_size     |                                                      | The block size of macroblocks when computing block matching calculations.                                          |
+|                |                                                      |                                                                                                                    |
+|                |                                                      | The developer highly encourages block sizes between 15-30.                                                          |
+|                |                                                      |                                                                                                                    |
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| quality_low    | Integers [1-100]                                     | The minimum MSE quality loss dictated a block can have, when                                                       |
+|                |                                                      | compared to how JPEG quantizes a block in a certain region.                                                        |
+|                |                                                      |                                                                                                                    |
+|                |                                                      |                                                                                                                    |
+|                |                                                      | The developer discourages the use of this value is between 90-100,                                               |
+|                |                                                      | as the visual blemishes produced by JPEG between these values are indistinguishable,                               |
+|                |                                                      | and greatly increases Dandere2x's runtime.                                                                         |
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| waifu2x_type   | 'Vulkan', 'converter_cpp', 'Caffe'                   | The implementation of waifu2x to use.                                                                              |
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| noise_level    | Integers [0-3]                                       | Waifu2x denoising level.                                                                                           |
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| scale_factor   | Integers [0-4] (dependent on Waifu2x implementation) | How much to scale an image. As it currently stands, Vulkan only offers 2x scaling for the model used in Dandere2x. |
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| file_dir       | String                                               | Input File                                                                                                         |
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| output_file    | String                                               | Output file, when realtime_encoding is set to true.                                                                |
++----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+
 
 * **Advanced Settings**:
 
+The more advanced settings can be found under 'developer_settings' in the JSON. These are not modifiable in the GUI. 
+
                                                                                                                    |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| json paramater                 |                          | description                                                                                                                                                    |
+| JSON parameter                 |                          | description                                                                                                                                                    |
 |                                | values                   |                                                                                                                                                                |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                                | any positive integer     | The starting step size for Diamond Search when detecting similar blocks                                                                                        |
@@ -47,7 +83,7 @@ https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc1
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | debug                          | boolean                  | Output debug images, which is useful for detecting whether or not Dandere2x is behaving optimally                                                              |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| realtime_encoding              | boolean                  | Start encoding Dandere2x's frames into videos during runtime, and concontate all the videos at the end. This reduces overall runtime experienced by the user.  |
+| realtime_encoding              | boolean                  | Start encoding Dandere2x's frames into videos during runtime, and concentrate all the videos at the end. This reduces the overall runtime experienced by the user.  |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | realtime_encoding_delete_files | boolean                  | Leave off - When it works, this option deletes workspace files during runtime, reducing the amount of used storage.                                            |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
