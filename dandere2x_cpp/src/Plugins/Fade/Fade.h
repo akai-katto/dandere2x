@@ -7,6 +7,32 @@
 #ifndef DANDERE2X_CPP_FADE_H
 #define DANDERE2X_CPP_FADE_H
 
+/**
+ * Description:
+ *
+ * Sometimes two images can be replicated by applying scalar values to blocks. This happens when a scene
+ * is fade to black or fade to white: we need to simply try and guess a good scalar value to add to an
+ * entire block to bring us closer to the desired image.
+ *
+ * Inputs:
+ *
+ * - image1 input image
+ *
+ * - image2 is hopefully image1, but faded to black / faded to white.
+ *
+ * Runtime:
+ *
+ * -  See if we can find good scalars for each block in order to replicate image2 using image + scalars.
+ *
+ * Outputs:
+ *
+ * - A series of vectors and scalars that will bring image1 to look like image2.
+ *
+ * - Draw over image2 using pieces found in image1 (if it is correct)
+ *
+ *
+ */
+
 #include "Image.h"
 #include <memory>
 #include <iostream>
@@ -50,7 +76,6 @@ private:
     std::string fade_file;
     std::vector<FadeBlock> fade_blocks;
 
-
     double mse_fade(Image &preceding_image, Image &original_image,
                     int initial_x, int initial_y,
                     int variable_x, int variable_y,
@@ -58,7 +83,7 @@ private:
 
     double get_scalar_for_block(int x, int y);
 
-    void draw_over(int x, int y, int scalar);
+    void draw_over(int x_start, int y_start, int scalar);
 
     int bound_integer(int min, int max, int val);
 

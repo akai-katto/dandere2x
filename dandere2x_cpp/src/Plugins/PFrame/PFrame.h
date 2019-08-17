@@ -44,7 +44,7 @@
  *
  * - A series of vectors to create image2 out of pieces using image1
  *
- * - Draw over image2 using pieces found in image1
+ * - Draw over image2 using pieces found in image1 (if it is correct)
  *
  * - A series of vectors to denote the parts of image2 that could not be drawn
  *   using parts of image1, so Waifu2x can re-upscale those parts

@@ -1,24 +1,85 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X Differences
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
-"""
 import logging
 import os
 
 import math
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2xlib.utils.dandere2x_utils import get_list_from_file
-from wrappers.frame import DisplacementVector
-from wrappers.frame import Frame
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value,  get_list_from_file
+from wrappers.frame import DisplacementVector, Frame
 
 
-def make_difference_image(context: Context, raw_frame, list_difference, list_predictive, out_location, temp_image):
+def difference_loop(context, start_frame: int):
+    # load variables from context
+    workspace = context.workspace
+    differences_dir = context.differences_dir
+    inversion_data_dir = context.inversion_data_dir
+    pframe_data_dir = context.pframe_data_dir
+    input_frames_dir = context.input_frames_dir
+    frame_count = context.frame_count
+    block_size = context.block_size
+    extension_type = context.extension_type
+    debug = context.debug
+
+    temp_image = context.temp_image_folder + "tempimage.jpg"
+
+    logger = logging.getLogger(__name__)
+    logger.info((workspace, start_frame, frame_count, block_size))
+
+    # for every frame in the video, create a difference_frame given the text files.
+    for x in range(start_frame, frame_count):
+        f1 = Frame()
+        f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
+
+        difference_data = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")
+        prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
+
+        make_difference_image(context, f1, difference_data, prediction_data,
+                              differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg", temp_image)
+
+        output_file = workspace + "debug/debug" + str(x + 1) + extension_type
+
+        if debug == 1:
+            debug_image(block_size, f1, prediction_data, difference_data, output_file)
+
+
+# find the last difference_frame, and start from there.
+
+def difference_loop_resume(context):
+    # load variables from context
+    workspace = context.workspace
+    differences_dir = context.differences_dir
+    inversion_data_dir = context.inversion_data_dir
+    pframe_data_dir = context.pframe_data_dir
+    input_frames_dir = context.input_frames_dir
+    frame_count = context.frame_count
+    block_size = context.block_size
+    extension_type = context.extension_type
+    upscaled_dir = context.upscaled_dir
+
+    logger = logging.getLogger(__name__)
+
+    last_found = frame_count
+
+    while last_found > 1:
+        upscaled_exists = os.path.isfile(upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
+
+        if not upscaled_exists:
+            last_found -= 1
+
+        elif upscaled_exists:
+            break
+
+    last_found -= 1
+    logger.info("difference loop last frame found: " + str(last_found))
+
+    difference_loop(context, start_frame=last_found)
+
+
+def make_difference_image(context: Context, raw_frame: Frame, list_difference: list, list_predictive: list,
+                          out_location: str, temp_image: str):
+
     difference_vectors = []
     buffer = 5
     block_size = context.block_size
@@ -78,16 +139,10 @@ def debug_image(block_size, frame_base, list_predictive, list_differences, outpu
     black_image.create_new(frame_base.width, frame_base.height)
 
     if not list_predictive and not list_differences:
-        logger.info("list_predictive and not list_differences: true")
-        logger.info("Saving inversion image..")
-
         out_image.save_image(output_location)
         return
 
     if list_predictive and not list_differences:
-        logger.info("list_predictive and not list_differences")
-        logger.info("saving last image..")
-
         out_image.copy_image(frame_base)
         out_image.save_image(output_location)
         return
@@ -106,87 +161,3 @@ def debug_image(block_size, frame_base, list_predictive, list_differences, outpu
                              vector.x_1, vector.y_1)
 
     out_image.save_image_quality(output_location, 25)
-
-
-def difference_loop(context, start_frame):
-    # load variables from context
-    workspace = context.workspace
-    differences_dir = context.differences_dir
-    inversion_data_dir = context.inversion_data_dir
-    pframe_data_dir = context.pframe_data_dir
-    input_frames_dir = context.input_frames_dir
-    frame_count = context.frame_count
-    block_size = context.block_size
-    extension_type = context.extension_type
-    bleed = context.bleed
-    debug = context.debug
-
-    temp_image = context.temp_image_folder + "tempimage.jpg"
-
-    logger = logging.getLogger(__name__)
-    logger.info((workspace, start_frame, frame_count, block_size))
-
-    # for every frame in the video, create a difference_frame given the text files.
-    for x in range(start_frame, frame_count):
-        f1 = Frame()
-        logger.info("Waiting on text file: " + input_frames_dir + "frame" + str(x + 1) + extension_type)
-        f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
-
-        difference_data = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")
-        prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
-
-        make_difference_image(context, f1, difference_data, prediction_data,
-                              differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg", temp_image)
-
-        output_file = workspace + "debug/debug" + str(x + 1) + extension_type
-
-        if debug == 1:
-            debug_image(block_size, f1, prediction_data, difference_data, output_file)
-
-
-# find the last difference_frame, and start from there.
-
-def difference_loop_resume(context):
-    # load variables from context
-    workspace = context.workspace
-    differences_dir = context.differences_dir
-    inversion_data_dir = context.inversion_data_dir
-    pframe_data_dir = context.pframe_data_dir
-    input_frames_dir = context.input_frames_dir
-    frame_count = context.frame_count
-    block_size = context.block_size
-    extension_type = context.extension_type
-    upscaled_dir = context.upscaled_dir
-
-    logger = logging.getLogger(__name__)
-
-    last_found = frame_count
-
-    while last_found > 1:
-        upscaled_exists = os.path.isfile(upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
-
-        if not upscaled_exists:
-            last_found -= 1
-
-        elif upscaled_exists:
-            break
-
-    last_found -= 1
-    logger.info("difference loop last frame found: " + str(last_found))
-
-    difference_loop(context, start_frame=last_found)
-
-
-def main():
-    difference_loop_resume("C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\",
-                           "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\differences\\",
-                           "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inversion_data\\",
-                           "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\pframe_data\\",
-                           "C:\\Users\\windwoz\\Desktop\\workspace\\stealpython\\inputs\\",
-                           120,
-                           30,
-                           ".jpg")
-
-
-if __name__ == "__main__":
-    main()

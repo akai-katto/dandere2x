@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X Merge
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
-"""
 import logging
 import os
 
@@ -13,46 +7,8 @@ from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2xlib.utils.dandere2x_utils import get_list_from_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
 from wrappers.frame import Frame
-
-
-def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
-                     list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,
-                     output_location: str):
-    # Load context
-    logger = logging.getLogger(__name__)
-
-    out_image = Frame()
-    out_image.create_new(frame_base.width, frame_base.height)
-
-    # assess the two cases where out images are either duplicates or a new frame completely
-
-    if not list_predictive and not list_differences:
-        logger.info("list_predictive and not list_differences: true")
-        logger.info("Saving inversion image..")
-        out_image.copy_image(frame_inversion)
-        out_image.save_image(output_location)
-        return
-
-    if list_predictive and not list_differences:
-        logger.info("list_predictive and not list_differences")
-        logger.info("saving last image..")
-        out_image.copy_image(frame_base)
-        out_image.save_image(output_location)
-        return
-
-    # by copying the image first as the first step, all the predictive elements like
-    # (0,0) -> (0,0) are also coppied
-    out_image.copy_image(frame_base)
-
-    # run the image through the same plugins IN ORDER it was ran in d2x_cpp
-    out_image = pframe_image(context, out_image, frame_base, frame_inversion, list_differences, list_predictive)
-    out_image = fade_image(context, out_image, list_fade)
-    out_image = correct_image(context, out_image, list_corrections)
-
-    out_image.save_image(output_location)
 
 
 def merge_loop(context: Context, start_frame: int):
@@ -111,6 +67,40 @@ def merge_loop_resume(context: Context):
 
     logger.info("resume info: last found: " + str(last_found))
     merge_loop(context, start_frame=last_found)
+
+
+def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
+                     list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,
+                     output_location: str):
+    # Load context
+    logger = logging.getLogger(__name__)
+
+    out_image = Frame()
+    out_image.create_new(frame_base.width, frame_base.height)
+
+    # assess the two cases where out images are either duplicates or a new frame completely
+
+    if not list_predictive and not list_differences:
+        out_image.copy_image(frame_inversion)
+        out_image.save_image(output_location)
+        return
+
+    if list_predictive and not list_differences:
+        out_image.copy_image(frame_base)
+        out_image.save_image(output_location)
+        return
+
+    # by copying the image first as the first step, all the predictive elements like
+    # (0,0) -> (0,0) are also coppied
+    out_image.copy_image(frame_base)
+
+    # run the image through the same plugins IN ORDER it was ran in d2x_cpp
+    out_image = pframe_image(context, out_image, frame_base, frame_inversion, list_differences, list_predictive)
+    out_image = fade_image(context, out_image, list_fade)
+    out_image = correct_image(context, out_image, list_corrections)
+
+    out_image.save_image(output_location)
+
 
 
 # For debugging
