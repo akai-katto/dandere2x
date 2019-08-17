@@ -1,5 +1,4 @@
 from wrappers.frame import DisplacementVector
-
 from wrappers.frame import Frame
 
 

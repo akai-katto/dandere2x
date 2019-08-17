@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Name: Dandere2X
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
-
 Licensed under the GNU General Public License Version 3 (GNU GPL v3),
     available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
-(C) 2018-2019 CardinalPanda
+(C) 2018-2019 aka_katto
 
 Dandere2X is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,8 +41,7 @@ from dandere2xlib.utils.frame_compressor import compress_frames
 
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 
-from wrappers.ff_wrappers.ffmpeg import extract_frames as ffmpeg_extract_frames
-from wrappers.ff_wrappers.ffmpeg import trim_video
+from wrappers.ff_wrappers.ffmpeg import extract_frames, trim_video
 from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
 
 from wrappers.waifu2x_wrappers.waifu2x_caffe import Waifu2xCaffe
@@ -73,28 +67,20 @@ class Dandere2x:
         self.context.set_logger()
         self.write_merge_commands()
 
+        # If the user wishes to trim the video, trim the video, then rename the file_dir to point to the trimmed video
         if self.context.user_trim_video:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
             self.context.file_dir = trimed_video
 
-        # force a valid resolution by appending the correct settings to the frames to video filter
+        # Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video
+        # To make the settings valid somehow.
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
-            print("Forcing Resizing to match blocksize..")
-            width, height = get_a_valid_input_resolution(self.context.width, self.context.height, self.context.block_size)
+            self.append_video_resize_filter()
 
-            print("New width -> " + str(width))
-            print("New height -> " + str(height))
-
-            self.context.width = width
-            self.context.height = height
-
-            self.context.config_json['ffmpeg']['video_to_frames']['output_options']['-vf']\
-                .append("scale=" + str(self.context.width) + ":" + str(self.context.height))
-
-        # Extracting all the frames comes second
+        # Extract all the frames
         print("extracting frames from video... this might take a while..")
-        ffmpeg_extract_frames(self.context, self.context.file_dir)
+        extract_frames(self.context, self.context.file_dir)
         self.context.update_frame_count()
 
         # Assign the waifu2x object to whatever waifu2x we're using
@@ -217,6 +203,20 @@ class Dandere2x:
             logging.info("no valid waifu2x selected")
             print("no valid waifu2x selected")
             exit(1)
+
+    def append_video_resize_filter(self):
+        print("Forcing Resizing to match blocksize..")
+        width, height = get_a_valid_input_resolution(self.context.width, self.context.height, self.context.block_size)
+
+        print("New width -> " + str(width))
+        print("New height -> " + str(height))
+
+        self.context.width = width
+        self.context.height = height
+
+        self.context.config_json['ffmpeg']['video_to_frames']['output_options']['-vf'] \
+            .append("scale=" + str(self.context.width) + ":" + str(self.context.height))
+
 
     def difference_only(self):
         self.pre_setup()
