@@ -42,24 +42,24 @@ The basic settings can be found under the 'usersettings' in the JSON and are cho
 |                | values                                               |                                                                                                                    |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 |                | Any positive integer                                 |                                                                                                                    |
-| block_size     |                                                      | The block size of macroblocks when computing block matching calculations.                                          |
+| block_size     |                                                      | The block size of macro-blocks when computing block matches.                                                       |
 |                |                                                      |                                                                                                                    |
-|                |                                                      | The developer highly encourages block sizes between 15-30.                                                          |
+|                |                                                      | The developer highly encourages block sizes between 15-30.                                                         |
 |                |                                                      |                                                                                                                    |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | quality_low    | Integers [1-100]                                     | The minimum MSE quality loss dictated a block can have, when                                                       |
 |                |                                                      | compared to how JPEG quantizes a block in a certain region.                                                        |
 |                |                                                      |                                                                                                                    |
 |                |                                                      |                                                                                                                    |
-|                |                                                      | The developer discourages the use of this value is between 90-100,                                               |
+|                |                                                      | The developer discourges the use of this value being between 90-100,                                               |
 |                |                                                      | as the visual blemishes produced by JPEG between these values are indistinguishable,                               |
 |                |                                                      | and greatly increases Dandere2x's runtime.                                                                         |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| waifu2x_type   | 'Vulkan', 'converter_cpp', 'Caffe'                   | The implementation of waifu2x to use.                                                                              |
+| waifu2x_type   | 'vulkan', 'converter_cpp', 'caffe'                   | The implementation of waifu2x to use.                                                                              |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | noise_level    | Integers [0-3]                                       | Waifu2x denoising level.                                                                                           |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| scale_factor   | Integers [0-4] (dependent on Waifu2x implementation) | How much to scale an image. As it currently stands, Vulkan only offers 2x scaling for the model used in Dandere2x. |
+| scale_factor   | Integers [0-4] (dependent on Waifu2x implementation) | How much to scale an image. As it currently stands, vulkan only offers 2x scaling for the model used in Dandere2x. |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | file_dir       | String                                               | Input File                                                                                                         |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
@@ -73,7 +73,7 @@ The more advanced settings can be found under 'developer_settings' in the JSON. 
 
                                                                                                                    |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| JSON parameter                 |                          | description                                                                                                                                                    |
+| JSON Parameter                 |                          | description                                                                                                                                                    |
 |                                | values                   |                                                                                                                                                                |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                                | any positive integer     | The starting step size for Diamond Search when detecting similar blocks                                                                                        |
@@ -83,7 +83,7 @@ The more advanced settings can be found under 'developer_settings' in the JSON. 
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | debug                          | boolean                  | Output debug images, which is useful for detecting whether or not Dandere2x is behaving optimally                                                              |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| realtime_encoding              | boolean                  | Start encoding Dandere2x's frames into videos during runtime, and concentrate all the videos at the end. This reduces the overall runtime experienced by the user.  |
+| realtime_encoding              | boolean                  | Start encoding Dandere2x's frames into videos during runtime, and concontate all the videos at the end. This reduces overall runtime experienced by the user.  |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | realtime_encoding_delete_files | boolean                  | Leave off - When it works, this option deletes workspace files during runtime, reducing the amount of used storage.                                            |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
