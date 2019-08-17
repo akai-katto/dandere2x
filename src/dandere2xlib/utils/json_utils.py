@@ -43,8 +43,8 @@ def get_options_from_section(section: json, ffmpeg_command=False):
 
 
 def absolutify_json(config_json: json, current_folder: str, absolutify_key=".."):
-    current_folder_json = current_folder.replace("\\", "\\\\")
 
+    current_folder_json = current_folder.replace("\\", "\\\\")
     config_json_string = str(config_json)
 
     # turn python's string'd json into a normal json

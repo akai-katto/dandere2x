@@ -7,6 +7,11 @@
 #include "Plugins/PFrame/PFrame.h"
 #include <omp.h>
 
+
+// Note to self, what happens if pframes declares too many unmatched blocks, but fade made
+// predictions? This is a really niche scenario - I wouldn't imagine it to ever happen.
+
+
 PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
                unsigned int block_size, std::string p_frame_file, std::string difference_file,
                int step_size) {
@@ -31,9 +36,6 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std
 }
 
 
-/**
- * Run will modify image2 when the draw over command is called.
- */
 void PFrame::run() {
     double psnr = ImageUtils::psnr(*image1, *image2);
 
@@ -45,6 +47,8 @@ void PFrame::run() {
     }
         //if the PSNR is acceptable, try matching all the blocks.
     else {
+
+        // Try and find matches for all the blocks, and then we'll decide if we want to keep them or not.
         match_all_blocks();
 
         //if the amount of blocks matched is greater than 85% of the total blocks, throw away all the blocks.
@@ -52,6 +56,8 @@ void PFrame::run() {
         int max_blocks_possible = (this->height * this->width) / (this->block_size * this->block_size);
 
         if ((max_blocks_possible - this->count) > (.85) * max_blocks_possible) {
+            // We decided not to keep any of the blocks.. abandon all the progress we did in this function
+
             std::cout << "Too many missing blocks - conducting redraw" << std::endl;
             this->count = 0;
         }
@@ -63,15 +69,21 @@ void PFrame::run() {
 }
 
 
-/**
- * Saves the blocks (if they are there) into a relevent text files
- */
+// I mentioned earlier that we have a 'count' variable to count how many matched blocks we have.
+//
+// If for whatever reason (some forced by the developer, some coincidental) there are zero matched blocks
+// Save empty text files signalling to Dandere2x_Python to simply upscale a brand new frame.
+//
+// If however we do have matching blocks, we have to write down what blocks DIDNT get matched into a text file,
+// So we can produce upscale those images and patch them into the image in dandere2x_python.
+
 void PFrame::save() {
-    if (this->count != 0) { //if parts of frame2 can be made of frame1, create frame2'
+    if (this->count != 0) {
         create_difference();
         this->dif->write(difference_file);
         this->write(p_frame_file);
-    } else { //if parts of frame2 cannot be made from frame1, just copy frame2.
+    }
+    else { //if parts of frame2 cannot be made from frame1, just copy frame2.
         dandere2x::write_empty(difference_file);
         dandere2x::write_empty(p_frame_file);
     }
@@ -79,34 +91,30 @@ void PFrame::save() {
 
 
 void PFrame::create_difference() {
-    dif = std::make_shared<Differences>(matched_blocks, block_size, image2);
-    dif->run();
+    this->dif = std::make_shared<Differences>(matched_blocks, block_size, image2);
+    this->dif->run();
 }
 
-// Make edits to image2 using the matched parts of image1.
+// After computations are all done, we need to draw over every match from matching image_1 -> image_2.
+// We do this because we need errors to carry over between two frames.
 void PFrame::draw_over() {
 
-    for (int i = 0; i < width / block_size; i++) {
-        for (int j = 0; j < height / block_size; j++) {
+    for (int block_x_iter = 0; block_x_iter < width / block_size; block_x_iter++) {
+        for (int block_y_iter = 0; block_y_iter < height / block_size; block_y_iter++) {
 
-            if (matched_blocks[i][j].valid) {
+            if (matched_blocks[block_x_iter][block_y_iter].valid) {
                 for (int x = 0; x < block_size; x++) {
                     for (int y = 0; y < block_size; y++) {
-                        image2->set_color(x + matched_blocks[i][j].x_start,
-                                          y + matched_blocks[i][j].y_start,
-                                          image1->get_color(x + matched_blocks[i][j].x_end,
-                                                            y + matched_blocks[i][j].y_end));
+                        image2->set_color(x + matched_blocks[block_x_iter][block_y_iter].x_start,
+                                          y + matched_blocks[block_x_iter][block_y_iter].y_start,
+                                          image1->get_color(x + matched_blocks[block_x_iter][block_y_iter].x_end,
+                                                            y + matched_blocks[block_x_iter][block_y_iter].y_end));
                     }
                 }
             }
 
         }
     }
-}
-
-void PFrame::force_copy() {
-    dandere2x::write_empty(difference_file);
-    dandere2x::write_empty(p_frame_file);
 }
 
 
