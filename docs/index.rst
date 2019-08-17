@@ -1,212 +1,49 @@
-Read the Docs: Documentation Simplified
+Dandere2x Overview
 =======================================
 
 .. meta::
    :description lang=en: Automate building, versioning, and hosting of your technical documentation continuously on Read the Docs.
 
 
-`Read the Docs`_ simplifies software documentation
-by automating building, versioning, and hosting of your docs for you.
-Think of it as *Continuous Documentation*.
+`Dandere2x`_ speeds up the time needed to upscale animation (sometimes live-action) videos by applying compression techniques. Just as Netflix uses compression to quickly stream videos to your home, Dandere2x uses compression to make quickly upscale videos using waifu2x.
 
-Never out of sync
-    Whenever you push code to your favorite version control system,
-    whether that is Git, Mercurial, Bazaar, or Subversion,
-    Read the Docs will automatically build your docs
-    so your code and documentation are always up-to-date.
+Fast
+    Dandere2x can provide a dramatic speed up for anime upscaling.
+    In [this](https://www.youtube.com/watch?v=d1Y4pmQb44k) anime upscale, Dandere2x took a whopping 3.5 minutes, while 
+    using Video2x's losseless upscaling took 18 minutes!
 
-Multiple versions
-    Read the Docs can host and build multiple versions of your docs
-    so having a 1.0 version of your docs and a 2.0 version
-    of your docs is as easy as having a separate branch or tag in your version control system.
-
-Free and open source
-    Read the Docs is free and open source and hosts documentation
-    for nearly 100,000 large and small open source projects
-    in almost every human and computer language.
-
+Easy
+   Dandere2x comes included with a GUI interface to make Dandere2x easy and fast to use, for both experienced and inexperienced users.
+   
+Customizable and Open Source
+    Dandere2x is highly customizable and modifiable. In theory, Dandere2x can be applied to any CNN based upscaling algorithm -
+    not just Waifu2x! Experienced users are also free to play with the .json file to find settings that best suits their needs. 
+    
 .. _Read the docs: http://readthedocs.org/
 
 
-First steps
+Downloading Dandere2x
 -----------
 
-Are you new to software documentation
-or are you looking to use your existing docs with Read the Docs?
-Learn about documentation authoring tools such as Sphinx and MkDocs
-to help you create fantastic documentation for your project.
+Dandere2x is still in development, but you can download test and use the beta-candidate release here!
 
-* **Getting started**:
-  :doc:`With Sphinx <intro/getting-started-with-sphinx>` |
-  :doc:`With MkDocs <intro/getting-started-with-mkdocs>`
-
-* **Importing your existing documentation**:
-  :doc:`Import guide <intro/import-guide>`
+https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc1
 
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: First steps
 
-   intro/getting-started-with-sphinx
-   intro/getting-started-with-mkdocs
+* **Tutorial / Basic Usage**:
 
-   intro/import-guide
+* **Advanced Settings**:
 
-
-Getting started with Read the Docs
------------------------------------
-
-Learn more about configuring your automated documentation builds
-and some of the core features of Read the Docs.
-
-* **Overview of core features**:
-  :doc:`features`
-
-* **Configure your documentation**:
-  :doc:`Configuration reference <config-file/index>` |
-  :doc:`webhooks` |
-  :doc:`badges` |
-  :doc:`Custom domains <custom_domains>`
-
-* **Connecting with GitHub, BitBucket, or GitLab**:
-  :doc:`Connecting your account <connected-accounts>`
-
-* **Read the Docs build and versioning process**:
-  :doc:`Build process <builds>` |
-  :doc:`Handling multiple docs versions <versions>`
-
-* **Troubleshooting**:
-  :doc:`support` |
-  :doc:`Frequently asked questions <faq>`
-
-.. toctree::
-   :maxdepth: 1
-   :hidden:
-   :caption: Getting started
-
-   features
-
-   config-file/index
-   webhooks
-   badges
-   custom_domains
-
-   connected-accounts
-
-   builds
-   versions
-
-   support
-   faq
-
-
-Advanced features of Read the Docs
-----------------------------------
-
-Read the Docs offers many advanced features and options.
-Learn more about these integrations and how you can get the most
-out of your documentation and Read the Docs.
-
-* **Advanced project configuration**:
-  :doc:`subprojects` |
-  :doc:`Single version docs <single_version>` |
-  :doc:`Privacy levels <privacy>`
-
-* **Multi-language documentation**:
-  :doc:`Translations and localization <localization>`
-
-* **Redirects**:
-  :doc:`User defined redirects <user-defined-redirects>` |
-  :doc:`Automatic redirects <automatic-redirects>`
-
-* **Topic specific guides**:
-  :doc:`How-to guides <guides/index>`
-
-* **Extending Read the Docs**:
-  :doc:`REST API <api/index>`
-
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :glob:
-   :caption: Advanced features
-
-   subprojects
-   single_version
-   privacy
-
-   localization
-
-   user-defined-redirects
-   automatic-redirects
-
-   guides/index
-
-   api/index
-
-
-The Read the Docs project and organization
-------------------------------------------
-
-Learn about Read the Docs, the project and the company,
-and find out how you can get involved and contribute to the development and success
-of Read the Docs and the larger software documentation ecosystem.
-
-* **Getting involved with Read the Docs**:
-  :doc:`Contributing <contribute>` |
-  :doc:`roadmap` |
-  :doc:`gsoc` |
-  :doc:`Code of conduct <code-of-conduct>`
-
-* **Policies & Process**:
-  :doc:`security` |
-  :doc:`Privacy policy <privacy-policy>` |
-  :doc:`DMCA takedown policy <dmca/index>` |
-  :doc:`Policy for abandoned projects <abandoned-projects>` |
-  :doc:`Release notes & changelog <changelog>`
-
-* **The people and philosophy behind Read the Docs**:
-  :doc:`Team <team>` |
-  :doc:`Open source philosophy <open-source-philosophy>` |
-  :doc:`Our story <story>`
-
-* **Financial and material support**:
-  :doc:`advertising/index` |
-  :doc:`Sponsors <sponsors>`
-
-* **Read the Docs for Business**:
-  :doc:`Support and additional features <commercial/index>`
-
-* **Running your own version of Read the Docs**:
-  :doc:`Private installations <custom_installs/index>`
-
-
-.. toctree::
-   :maxdepth: 1
-   :hidden:
-   :caption: About Read the Docs
-
-   contribute
-   roadmap
-   gsoc
-   code-of-conduct
-
-   security
-   privacy-policy
-   dmca/index
-   abandoned-projects
-   changelog
-
-   team
-   open-source-philosophy
-   story
-
-   advertising/index
-   sponsors
-
-   commercial/index
-
-   custom_installs/index
+                                                                                                                   |
+| json paramater                 	|  values                  	| description                                                                                                                                                    	|
+|--------------------------------	|--------------------------	|----------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+|  step_size                     	| any positive integer     	| The starting step size for Diamond Search when detecting similar blocks                                                                                        	|
+| bleed                          	| any non-negative integer 	| How much bleeding to allow when constructing 'difference' images. The bigger the bleed, the amount of pixels waifu2x must process grows exponentially.         	|
+| debug                          	| boolean                  	| Output debug images, which is useful for detecting whether or not Dandere2x is behaving optimally                                                              	|
+| realtime_encoding              	| boolean                  	| Start encoding Dandere2x's frames into videos during runtime, and concontate all the videos at the end. This reduces overall runtime experienced by the user.  	|
+| realtime_encoding_delete_files 	| boolean                  	| Leave off - When it works, this option deletes workspace files during runtime, reducing the amount of used storage.                                            	|
+| workspace_use_temp             	| boolean                  	| Operate out of the %temp% folder for the user.                                                                                                                 	|
+| workspace                      	| directory                	| If workspace_use_temp is false, operate out of this directory instead.                                                                                         	|
+| dandere2x_cpp_dir              	| directory                	| Location of the Dandere2x_Cpp binary.                                                                                                                          	|
 
