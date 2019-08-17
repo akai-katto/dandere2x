@@ -8,6 +8,10 @@ Subreddit:
 
 https://www.reddit.com/r/Dandere2x/
 
+Documentation:
+
+https://dandere2x.readthedocs.io/
+
 Patreon:
 
 https://www.patreon.com/dandere2x
