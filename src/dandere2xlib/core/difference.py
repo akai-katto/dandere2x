@@ -34,28 +34,21 @@ def difference_loop(context, start_frame: int):
 
         difference_data = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
+        debug_output_file = workspace + "debug/debug" + str(x + 1) + extension_type
+        output_file = differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
 
-        make_difference_image(context, f1, difference_data, prediction_data,
-                              differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg", temp_image)
-
-        output_file = workspace + "debug/debug" + str(x + 1) + extension_type
+        out_image = make_difference_image(context, f1, difference_data, prediction_data)
+        out_image.save_image_temp(output_file, temp_image)
 
         if debug == 1:
-            debug_image(block_size, f1, prediction_data, difference_data, output_file)
+            debug_image(block_size, f1, prediction_data, difference_data, debug_output_file)
 
 
 # find the last difference_frame, and start from there.
 
 def difference_loop_resume(context):
     # load variables from context
-    workspace = context.workspace
-    differences_dir = context.differences_dir
-    inversion_data_dir = context.inversion_data_dir
-    pframe_data_dir = context.pframe_data_dir
-    input_frames_dir = context.input_frames_dir
     frame_count = context.frame_count
-    block_size = context.block_size
-    extension_type = context.extension_type
     upscaled_dir = context.upscaled_dir
 
     logger = logging.getLogger(__name__)
@@ -77,8 +70,7 @@ def difference_loop_resume(context):
     difference_loop(context, start_frame=last_found)
 
 
-def make_difference_image(context: Context, raw_frame: Frame, list_difference: list, list_predictive: list,
-                          out_location: str, temp_image: str):
+def make_difference_image(context: Context, raw_frame: Frame, list_difference: list, list_predictive: list):
 
     difference_vectors = []
     buffer = 5
@@ -94,8 +86,7 @@ def make_difference_image(context: Context, raw_frame: Frame, list_difference: l
     if not list_difference and list_predictive:
         out_image = Frame()
         out_image.create_new(1, 1)
-        out_image.save_image_temp(out_location, temp_image)
-        return
+        return out_image
 
     # if there are neither any predictive or inversions
     # then the frame is a brand new frame with no resemblence to previous frame.
@@ -104,8 +95,7 @@ def make_difference_image(context: Context, raw_frame: Frame, list_difference: l
         out_image = Frame()
         out_image.create_new(raw_frame.width, raw_frame.height)
         out_image.copy_image(raw_frame)
-        out_image.save_image_temp(out_location, temp_image)
-        return
+        return out_image
 
     # turn the list of differences into a list of vectors
     for x in range(int(len(list_difference) / 4)):
@@ -123,7 +113,7 @@ def make_difference_image(context: Context, raw_frame: Frame, list_difference: l
                              vector.x_1 + buffer - bleed, vector.y_1 + buffer + - bleed,
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
-    out_image.save_image_temp(out_location, temp_image)
+    return out_image
 
 
 # for printing out what Dandere2x predictive frames are doing

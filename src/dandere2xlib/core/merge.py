@@ -42,8 +42,8 @@ def merge_loop(context: Context, start_frame: int):
 
         output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
 
-        new_base = make_merge_image(context, f1, base, prediction_data_list,
-                                    difference_data_list, correction_data_list, fade_data_list, output_file)
+        new_base = make_merge_image(context, f1, base,
+                                    prediction_data_list, difference_data_list, correction_data_list, fade_data_list)
 
         new_base.save_image(output_file)
         base = new_base
@@ -73,8 +73,7 @@ def merge_loop_resume(context: Context):
 
 
 def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
-                     list_predictive: list, list_differences: list, list_corrections: list, list_fade: list,
-                     output_location: str):
+                     list_predictive: list, list_differences: list, list_corrections: list, list_fade: list):
     # Load context
     logger = logging.getLogger(__name__)
 
