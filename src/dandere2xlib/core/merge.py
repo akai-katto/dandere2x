@@ -10,6 +10,8 @@ from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
 from wrappers.frame import Frame
 
+from dandere2xlib.utils.AsyncFrameWrite import AsyncFrameWrite
+
 
 def merge_loop(context: Context, start_frame: int):
     # load variables from context
@@ -45,7 +47,9 @@ def merge_loop(context: Context, start_frame: int):
         new_base = make_merge_image(context, f1, base,
                                     prediction_data_list, difference_data_list, correction_data_list, fade_data_list)
 
-        new_base.save_image(output_file)
+        background_frame_write = AsyncFrameWrite(new_base, output_file)
+        background_frame_write.start()
+
         base = new_base
 
 

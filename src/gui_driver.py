@@ -72,7 +72,6 @@ class AppWindow(QMainWindow):
         self.ui.upscale_button.clicked.connect(self.press_upscale_button)
         self.ui.waifu2x_type_combo_box.currentIndexChanged.connect(self.refresh_scale_factor)
 
-
         # The following connects are to re-adjust the file name
 
         noise_radio_list = [self.ui.noise_0_radio_button, self.ui.noise_1_radio_button,
