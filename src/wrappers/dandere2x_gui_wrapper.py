@@ -36,7 +36,7 @@ class Dandere2x_Gui_Wrapper:
         d.run_concurrent()
         d.context.close_logger()
 
-        if d.context.realtime_encoding_delete_files:
+        if d.context.config_json['dandere2x']['developer_settings']['gui_delete_workspace_after']:
             d.delete_workspace_files()
 
         print("Dandere2x GUI Run Finished Successfully")

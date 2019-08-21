@@ -24,15 +24,15 @@ def merge_loop(context: Context, start_frame: int):
     extension_type = context.extension_type
     logger = logging.getLogger(__name__)
 
+    base = Frame()
+    base.load_from_string_wait(merged_dir + "merged_" + str(start_frame) + extension_type)
+
     for x in range(start_frame, frame_count):
         logger.info("Upscaling frame " + str(x))
 
         # load images required to merge this frame
         f1 = Frame()
         f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
-
-        base = Frame()
-        base.load_from_string_wait(merged_dir + "merged_" + str(x) + extension_type)
 
         # load vectors needed to piece image back together
         prediction_data_list = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
@@ -42,8 +42,11 @@ def merge_loop(context: Context, start_frame: int):
 
         output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
 
-        make_merge_image(context, f1, base, prediction_data_list,
-                         difference_data_list, correction_data_list, fade_data_list, output_file)
+        new_base = make_merge_image(context, f1, base, prediction_data_list,
+                                    difference_data_list, correction_data_list, fade_data_list, output_file)
+
+        new_base.save_image(output_file)
+        base = new_base
 
 
 # find the last photo to be merged, then start the loop from there
@@ -79,16 +82,13 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image.create_new(frame_base.width, frame_base.height)
 
     # assess the two cases where out images are either duplicates or a new frame completely
-
     if not list_predictive and not list_differences:
         out_image.copy_image(frame_inversion)
-        out_image.save_image(output_location)
-        return
+        return out_image
 
     if list_predictive and not list_differences:
         out_image.copy_image(frame_base)
-        out_image.save_image(output_location)
-        return
+        return out_image
 
     # by copying the image first as the first step, all the predictive elements like
     # (0,0) -> (0,0) are also coppied
@@ -99,7 +99,7 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image = fade_image(context, out_image, list_fade)
     out_image = correct_image(context, out_image, list_corrections)
 
-    out_image.save_image(output_location)
+    return out_image
 
 
 

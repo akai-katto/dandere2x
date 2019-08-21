@@ -1,13 +1,13 @@
 {
   "dandere2x": {
     "usersettings": {
-      "block_size": 311,
+      "block_size": 30,
       "quality_low": 85,
       "waifu2x_type": "vulkan",
       "noise_level": 3,
       "scale_factor": 2,
-      "file_dir": "..\\workspace\\15seconds.mkv",
-      "output_file": "..\\workspace\\stress_test.mkv"
+      "file_dir": "..\\workspace\\twig_clipped.mkv",
+      "output_file": "..\\workspace\\twig_clipped_upscaled_what.mkv"
     },
     "developer_settings": {
       "step_size": 4,
@@ -15,10 +15,11 @@
       "extension_type": ".jpg",
       "debug": true,
       "realtime_encoding": true,
-      "realtime_encoding_delete_files": true,
-      "workspace_use_temp": true,
-      "workspace": "..\\workspace\\debug_optimize\\",
-      "dandere2x_cpp_dir": "C:\\Users\\windwoz\\Documents\\github_projects\\dandere2x_cpp\\cmake-build-debug\\dandere2x_cpp.exe"
+      "realtime_encoding_delete_files": false,
+      "workspace_use_temp": false,
+      "gui_delete_workspace_after": false,
+      "workspace": "..\\workspace\\twig_upscaled_what_2\\",
+      "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },
   "waifu2x_caffe": {

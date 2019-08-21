@@ -194,9 +194,9 @@ void PFrame::write(std::string output_file) {
 
     for (int x = 0; x < width / block_size; x++) {
         for (int y = 0; y < height / block_size; y++) {
-            if (matched_blocks[x][y].valid &&
-                matched_blocks[x][y].x_start != matched_blocks[x][y].x_end &&
-                matched_blocks[x][y].y_start != matched_blocks[x][y].y_end ) {
+            if (matched_blocks[x][y].valid){ // &&
+                //matched_blocks[x][y].x_start != matched_blocks[x][y].x_end &&
+                //matched_blocks[x][y].y_start != matched_blocks[x][y].y_end ) {
 
                 out <<
                     matched_blocks[x][y].x_start << "\n" <<

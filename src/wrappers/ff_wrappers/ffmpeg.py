@@ -53,6 +53,7 @@ def extract_frames(context: Context, file_dir: str):
     extension_type = context.extension_type
     output_file = input_frames_dir + "frame%01d" + extension_type
     logger = logging.getLogger(__name__)
+    frame_rate = context.frame_rate
 
     extract_frames_command = [context.ffmpeg_dir,
                               "-hwaccel", context.hwaccel,
@@ -64,6 +65,9 @@ def extract_frames(context: Context, file_dir: str):
 
     for element in extract_frames_options:
         extract_frames_command.append(element)
+
+    extract_frames_command.append("-r")
+    extract_frames_command.append(str(frame_rate))
 
     extract_frames_command.extend(["[output_file]"])
 

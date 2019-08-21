@@ -20,7 +20,10 @@ def pframe_image(context,
                                                      int(list_differences[x * 4 + 3])))
 
     for x in range(int(len(list_predictive) / 4)):
-        predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
+        if int(list_predictive[x * 4 + 0]) != int(list_predictive[x * 4 + 1]) and\
+           int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
+
+                predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
                                                      int(list_predictive[x * 4 + 1]),
                                                      int(list_predictive[x * 4 + 2]),
                                                      int(list_predictive[x * 4 + 3])))
