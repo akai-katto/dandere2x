@@ -101,8 +101,8 @@ def concat_encoded_vids(context: Context, output_file: str):
 
 def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str):
     migrate_tracks_command = [context.ffmpeg_dir,
-                              "-i", "[no_audio]",
-                              "-i", "[video_sound]",
+                              "-i", no_audio,
+                              "-i", file_dir,
                               "-map", "0:v:0?",
                               "-map", "1?",
                               "-c", "copy",
@@ -115,17 +115,7 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
     for element in migrate_tracks_options:
         migrate_tracks_command.append(element)
 
-    migrate_tracks_command.extend(["[output_file]"])
-
-    for x in range(len(migrate_tracks_command)):
-        if migrate_tracks_command[x] == "[no_audio]":
-            migrate_tracks_command[x] = no_audio
-
-        if migrate_tracks_command[x] == "[video_sound]":
-            migrate_tracks_command[x] = file_dir
-
-        if migrate_tracks_command[x] == "[output_file]":
-            migrate_tracks_command[x] = str(output_file)
+    migrate_tracks_command.extend([str(output_file)])
 
     console_output = open(context.log_dir + "migrate_tracks_command.txt", "w")
     console_output.write(str(migrate_tracks_command))
