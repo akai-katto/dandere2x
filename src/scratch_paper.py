@@ -10,4 +10,18 @@ d = Dandere2x_Gui_Wrapper(config_json)
 print(d.context.realtime_encoding)
 
 d.start()
+#
 
+# import time
+# from wrappers.frame import Frame
+#
+# start = time.time()
+#
+#
+# f1 = Frame()
+#
+# f1.load_from_string("C:\\Users\\windwoz\\Pictures\\computational_tests\\3D\\output1.jpg")
+#
+#
+# print("\n "
+#       "duration: " + str(time.time() - start))
