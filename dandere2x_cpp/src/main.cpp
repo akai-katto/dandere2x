@@ -41,13 +41,13 @@ int main(int argc, char **argv) {
 
     //benchmark();
 
-    bool debug = false; //debug flag
+    bool debug = true; //debug flag
 
     //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
     string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_upscaled_new_cpp_2\\";
     int frame_count = 240;
-    int block_size = 30;
+    int block_size = 20;
     int step_size = 4;
     string run_type = "n";// 'n' or 'r'
     int resume_frame = 55;

@@ -17,7 +17,7 @@ char dandere2x::separator() {
 
 //credit to https://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
 //returns true if file exists, false if not.
-inline bool dandere2x::file_exists(const std::string &name) {
+bool dandere2x::file_exists(const std::string &name) {
     std::ifstream f(name.c_str());
     return f.good();
 }

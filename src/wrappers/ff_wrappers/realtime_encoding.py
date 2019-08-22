@@ -22,7 +22,7 @@ def run_realtime_encoding(context: Context, output_file: str):
     frame_count = int(context.frame_count)
     realtime_encoding_delete_files = context.realtime_encoding_delete_files
     extension_type = context.extension_type
-    file_dir = context.file_dir
+    input_file = context.input_file
 
     # directories
     merged_files_prefix = context.merged_dir + "merged_"
@@ -83,4 +83,4 @@ def run_realtime_encoding(context: Context, output_file: str):
     text_file.close()
 
     concat_encoded_vids(context, workspace + "nosound.mkv")
-    migrate_tracks(context, workspace + "nosound.mkv", file_dir, output_file)
+    migrate_tracks(context, workspace + "nosound.mkv", input_file, output_file)

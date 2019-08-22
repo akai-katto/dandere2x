@@ -69,6 +69,7 @@ private:
     int width;
     int height;
     int count;
+    int bleed;
 
     std::string p_frame_file;
     std::string difference_file;

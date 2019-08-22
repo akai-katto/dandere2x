@@ -20,6 +20,9 @@
  * - Assume file is readible by stbi_image
  */
 Image::Image(std::string file_name) {
+    if (!dandere2x::file_exists(file_name))
+        throw std::runtime_error("Could not find image file");
+
     unsigned char *rgb; //the raw pixels
     int width, height, bpp;
 

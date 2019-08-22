@@ -7,11 +7,11 @@ from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file, wait_on_file
 from wrappers.frame import Frame
 
 from dandere2xlib.utils.AsyncFrameWrite import AsyncFrameWrite
-
+from dandere2xlib.utils.AsyncFrameRead import AsyncFrameRead
 
 def merge_loop(context: Context, start_frame: int):
     # load variables from context
@@ -26,15 +26,29 @@ def merge_loop(context: Context, start_frame: int):
     extension_type = context.extension_type
     logger = logging.getLogger(__name__)
 
+    # Load the genesis image + the first upscaled image.
+
     base = Frame()
     base.load_from_string_wait(merged_dir + "merged_" + str(start_frame) + extension_type)
 
+    f1 = Frame()
+    f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, 1) + ".png")
+
+    # When upscaling every frame between start_frame to frame_count, there's obviously no x + 1 at frame_count - 1 .
+    # So just make a small note not to load that image. Pretty much load images concurrently until we get to x - 1
+    last_frame = False
     for x in range(start_frame, frame_count):
         logger.info("Upscaling frame " + str(x))
 
-        # load images required to merge this frame
-        f1 = Frame()
-        f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
+        # Check if we're at the last image
+        if x == frame_count - 1:
+            last_frame = True
+
+        # load the next image ahead of time.
+
+        if not last_frame:
+            background_frame_load = AsyncFrameRead(upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
+            background_frame_load.start()
 
         # load vectors needed to piece image back together
         prediction_data_list = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
@@ -50,7 +64,15 @@ def merge_loop(context: Context, start_frame: int):
         background_frame_write = AsyncFrameWrite(new_base, output_file)
         background_frame_write.start()
 
+        # Assign variables for next iteration
         base = new_base
+        # ensure the file is loaded for background_frame_load. If we're on the last frame, the thread will
+        # Still be waiting for that image, but just manually close the thread if we're done.
+        if not last_frame:
+            while not background_frame_load.load_complete:
+                wait_on_file(upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
+
+            f1 = background_frame_load.loaded_image
 
 
 # find the last photo to be merged, then start the loop from there

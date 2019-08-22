@@ -80,7 +80,7 @@ class Dandere2x:
 
         # Extract all the frames
         print("extracting frames from video... this might take a while..")
-        extract_frames(self.context, self.context.file_dir)
+        extract_frames(self.context, self.context.input_file)
         self.context.update_frame_count()
 
         # Assign the waifu2x object to whatever waifu2x we're using
@@ -311,7 +311,7 @@ class Dandere2x:
 
         migrate_tracks_command = migrate_tracks_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
         migrate_tracks_command = migrate_tracks_command.replace("[no_audio]", no_audio_video)
-        migrate_tracks_command = migrate_tracks_command.replace("[file_dir]", self.context.file_dir)
+        migrate_tracks_command = migrate_tracks_command.replace("[file_dir]", self.context.input_file)
         migrate_tracks_command = migrate_tracks_command.replace("[output_file]", finished_video)
 
         video_from_frames_command = "[ffmpeg_dir] -loglevel 0 -nostats -framerate [frame_rate]" \

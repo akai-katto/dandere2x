@@ -29,6 +29,7 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std
     this->difference_file = difference_file;
     this->matched_blocks.resize(this->width / block_size, std::vector<Block>(this->height / block_size));
     this->count = 0;
+    this->bleed = 1;
 
     //Sanity Checks
     if (image1->height != image2->height || image1->width != image2->width)
@@ -55,7 +56,7 @@ void PFrame::run() {
         //At a certain point it's just easier / faster to redraw a scene rather than trying to piece it back together.
         int max_blocks_possible = (this->height * this->width) / (this->block_size * this->block_size);
 
-        if ((max_blocks_possible - this->count) > (.85) * max_blocks_possible) {
+        if (max_blocks_possible <= ((block_size*block_size)*count) / ((block_size+bleed)*(block_size+bleed))) {
             // We decided not to keep any of the blocks.. abandon all the progress we did in this function
 
             std::cout << "Too many missing blocks - conducting redraw" << std::endl;

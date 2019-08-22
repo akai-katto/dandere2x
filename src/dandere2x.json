@@ -2,12 +2,12 @@
   "dandere2x": {
     "usersettings": {
       "block_size": 30,
-      "quality_low": 85,
+      "quality_minimum": 80,
       "waifu2x_type": "vulkan",
-      "noise_level": 3,
+      "denoise_level": 3,
       "scale_factor": 2,
-      "file_dir": "..\\workspace\\twig_clipped.mkv",
-      "output_file": "..\\workspace\\twig_clipped_upscaled_what.mkv"
+      "input_file": "..\\workspace\\broken.mp4",
+      "output_file": "..\\workspace\\twig_upscaled_long.mkv"
     },
     "developer_settings": {
       "step_size": 4,
@@ -16,9 +16,9 @@
       "debug": true,
       "realtime_encoding": true,
       "realtime_encoding_delete_files": false,
-      "workspace_use_temp": false,
+      "workspace_use_temp": true,
       "gui_delete_workspace_after": false,
-      "workspace": "..\\workspace\\twig_upscaled_what_2\\",
+      "workspace": "..\\workspace\\mp4_broken_workspace\\",
       "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },
