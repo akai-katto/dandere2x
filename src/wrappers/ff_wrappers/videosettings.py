@@ -11,7 +11,9 @@ class VideoSettings:
         self.ffprobe_dir = ffprobe_dir
         self.settings_json = get_video_info(self.ffprobe_dir, video_file)
 
-
+        # todo: This entire class can be removed and simplified into the 'except' clause,
+        # but having this try / except provides me a sense of security. Some file containers
+        # Won't work for the first try, and some won't work for the except, so there's double security here?
         try:
             self.height = self.settings_json['streams'][0]['height']
             self.width = self.settings_json['streams'][0]['width']
