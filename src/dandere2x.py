@@ -80,7 +80,7 @@ class Dandere2x:
 
         # Extract all the frames
         print("extracting frames from video... this might take a while..")
-        extract_frames(self.context, self.context.file_dir)
+        extract_frames(self.context, self.context.input_file)
         self.context.update_frame_count()
 
         # Assign the waifu2x object to whatever waifu2x we're using

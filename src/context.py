@@ -16,7 +16,7 @@ import pathlib
 import math
 
 from dandere2xlib.utils.json_utils import get_options_from_section, absolutify_json
-from wrappers.videosettings import VideoSettings
+from wrappers.ff_wrappers.videosettings import VideoSettings
 
 
 class Context:
