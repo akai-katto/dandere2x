@@ -11,7 +11,6 @@ class VideoSettings:
         self.ffprobe_dir = ffprobe_dir
         self.settings_json = get_video_info(self.ffprobe_dir, video_file)
 
-        print(self.settings_json)
 
         try:
             self.height = self.settings_json['streams'][0]['height']
