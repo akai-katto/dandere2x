@@ -22,7 +22,7 @@ def run_realtime_encoding(context: Context, output_file: str):
     frame_count = int(context.frame_count)
     realtime_encoding_delete_files = context.realtime_encoding_delete_files
     extension_type = context.extension_type
-    file_dir = context.file_dir
+    file_dir = context.input_file
 
     # directories
     merged_files_prefix = context.merged_dir + "merged_"

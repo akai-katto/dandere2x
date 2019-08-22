@@ -19,7 +19,7 @@ def trim_video(context: Context, output_file: str):
 
     # load context
 
-    input_file = context.file_dir
+    input_file = context.input_file
 
     trim_video_command = [context.ffmpeg_dir,
                           "-hwaccel", context.hwaccel,

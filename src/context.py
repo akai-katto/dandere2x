@@ -89,11 +89,11 @@ class Context:
 
         # User Settings
         self.block_size = self.config_json['dandere2x']['usersettings']['block_size']
-        self.quality_low = self.config_json['dandere2x']['usersettings']['quality_low']
+        self.quality_low = self.config_json['dandere2x']['usersettings']['quality_minimum']
         self.waifu2x_type = self.config_json['dandere2x']['usersettings']['waifu2x_type']
-        self.noise_level = self.config_json['dandere2x']['usersettings']['noise_level']
+        self.noise_level = self.config_json['dandere2x']['usersettings']['denoise_level']
         self.scale_factor = self.config_json['dandere2x']['usersettings']['scale_factor']
-        self.file_dir = self.config_json['dandere2x']['usersettings']['file_dir']
+        self.input_file = self.config_json['dandere2x']['usersettings']['input_file']
         self.output_file = self.config_json['dandere2x']['usersettings']['output_file']
 
         # Developer Settings
@@ -119,7 +119,7 @@ class Context:
         if find_out_if_trim:
             self.user_trim_video = True
 
-        self.video_settings = VideoSettings(self.ffprobe_dir, self.file_dir)
+        self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
 
         self.frame_rate = math.ceil(self.video_settings.frame_rate)
         self.width = self.video_settings.width
