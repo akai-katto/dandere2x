@@ -15,7 +15,7 @@ namespace dandere2x {
 
     char separator();
 
-    inline bool file_exists(const std::string &name);
+    bool file_exists(const std::string &name);
 
     void write_empty(std::string input);
 
