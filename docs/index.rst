@@ -93,3 +93,20 @@ The more advanced settings can be found under 'developer_settings' in the JSON. 
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | dandere2x_cpp_dir              | directory                | Location of the Dandere2x_Cpp binary.                                                                                                                          |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+Trouble Shooting Dandere2x
+-----------
+
+
+Before you start, check to make sure
+
+A) Your drivers are up to date.
+
+B) You are running Dandere2x.exe as administrator
+
+C) The video file is FFMPEG compatible.
+
+**Dandere2x is Producing Black Frames / Video**
+-----------
+
+This is a common issue with the Waifu2x-Vulkan. Change the 'tile_size' in the waifu2x_ncnn_vulkan section of the dandere2x.json file to something smaller. The default for Dandere2x is 200, so try 100. 
