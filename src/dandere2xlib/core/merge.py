@@ -44,7 +44,6 @@ def merge_loop(context: Context, start_frame: int):
             last_frame = True
 
         # load the next image ahead of time.
-
         if not last_frame:
             background_frame_load = AsyncFrameRead(upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
             background_frame_load.start()
@@ -60,19 +59,21 @@ def merge_loop(context: Context, start_frame: int):
         new_base = make_merge_image(context, f1, base,
                                     prediction_data_list, difference_data_list, correction_data_list, fade_data_list)
 
+        # Write the image in the background for the preformance increase
         background_frame_write = AsyncFrameWrite(new_base, output_file)
         background_frame_write.start()
 
         # Assign variables for next iteration
-        base = new_base
-        # ensure the file is loaded for background_frame_load. If we're on the last frame, the thread will
-        # Still be waiting for that image, but just manually close the thread if we're done.
+
+        # Ensure the file is loaded for background_frame_load. If we're on the last frame, simply ignore this section
+        # Because the frame_count + 1 does not exist.
         if not last_frame:
             while not background_frame_load.load_complete:
                 wait_on_file(upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
 
             f1 = background_frame_load.loaded_image
 
+        base = new_base
 
 # find the last photo to be merged, then start the loop from there
 def merge_loop_resume(context: Context):

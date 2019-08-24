@@ -32,11 +32,15 @@ def difference_loop(context, start_frame: int):
         f1 = Frame()
         f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
 
+        # Load the neccecary lists to compute this iteration of difference making
         difference_data = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")
         prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
+
+        # Create the output files..
         debug_output_file = workspace + "debug/debug" + str(x + 1) + extension_type
         output_file = differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
 
+        # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
         out_image = make_difference_image(context, f1, difference_data, prediction_data)
         out_image.save_image_temp(output_file, temp_image)
 
