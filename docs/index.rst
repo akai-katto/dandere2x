@@ -27,21 +27,11 @@ Downloading Dandere2x
 
 Dandere2x is still in development, but you can download test and use the beta-candidate release here!
 
-https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc2
+https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc1
 
 
 
 * **Tutorial Basic Usage**:
-
-1) Download the latest release.
-
-2) Read the read-me
-
-3) Run dandere2x.exe as administrator
-
-4) Check %temp%/dandere2x to ensure Dandere2x is working correctly.
-
-5) Sit back and relax!
 
 * **Basic Settings**:
 
@@ -57,7 +47,7 @@ The basic settings can be found under the 'usersettings' in the JSON and are cho
 |                |                                                      | The developer highly encourages block sizes between 15-30.                                                         |
 |                |                                                      |                                                                                                                    |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| quality_minimum    | Integers [1-100]                                     | The minimum MSE quality loss dictated a block can have, when                                                       |
+| quality_min    | Integers [1-100]                                     | The minimum MSE quality loss dictated a block can have, when                                                       |
 |                |                                                      | compared to how JPEG quantizes a block in a certain region.                                                        |
 |                |                                                      |                                                                                                                    |
 |                |                                                      |                                                                                                                    |
@@ -67,11 +57,11 @@ The basic settings can be found under the 'usersettings' in the JSON and are cho
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | waifu2x_type   | 'vulkan', 'converter_cpp', 'caffe'                   | The implementation of waifu2x to use.                                                                              |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| denoise_level    | Integers [0-3]                                       | Waifu2x denoising level.                                                                                           |
+| denoise_level  | Integers [0-3]                                       | Waifu2x denoising level.                                                                                           |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | scale_factor   | Integers [0-4] (dependent on Waifu2x implementation) | How much to scale an image. As it currently stands, vulkan only offers 2x scaling for the model used in Dandere2x. |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
-| input_file       | String                                               | Input File                                                                                                         |
+| input_file     | String                                               | Input File                                                                                                         |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 | output_file    | String                                               | Output file, when realtime_encoding is set to true.                                                                |
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
