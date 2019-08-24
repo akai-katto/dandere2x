@@ -1,6 +1,6 @@
 from fractions import Fraction
 
-from wrappers.ff_wrappers.ffprobe import get_video_info, get_width_height, get_frame_rate
+from wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate
 
 
 # A simple way to just have a class w/ the contents we need to operate dandere2x

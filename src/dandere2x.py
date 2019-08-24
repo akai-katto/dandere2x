@@ -41,8 +41,8 @@ from wrappers.frame.frame_compressor import compress_frames
 
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 
-from wrappers.ff_wrappers.ffmpeg import extract_frames, trim_video
-from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
+from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
+from dandere2xlib.realtime_encoding import run_realtime_encoding
 
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp

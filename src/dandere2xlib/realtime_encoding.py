@@ -2,7 +2,7 @@ import os
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, wait_on_file
-from wrappers.ff_wrappers.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, migrate_tracks
+from wrappers.ffmpeg.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, migrate_tracks
 
 
 def delete_specific_merged(context: Context, file_prefix, extension, lexiconic_digits, start, end):
