@@ -22,15 +22,17 @@ Customizable and Open Source
 .. _Read the docs: http://readthedocs.org/
 
 
-Downloading Dandere2x
------------
+Downloading And Using Dandere2x
+===============================
 
 Dandere2x is still in development, but you can download and use the beta-candidate release here!
 
 https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc2
 
 
-* **Basic Settings**:
+
+BASIC JSON SETTINGS
+===================
 
 The basic settings can be found under the 'usersettings' in the JSON and are choosable settings in the GUI. 
 
@@ -64,7 +66,8 @@ The basic settings can be found under the 'usersettings' in the JSON and are cho
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 
 
-* **Advanced Settings**:
+Advanced JSON Settings
+======================
 
 The more advanced settings can be found under 'developer_settings' in the JSON. These are not modifiable in the GUI. 
 
@@ -91,8 +94,30 @@ The more advanced settings can be found under 'developer_settings' in the JSON. 
 | dandere2x_cpp_dir              | directory                | Location of the Dandere2x_Cpp binary.                                                                                                                          |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
+Recommended Settings
+====================
+
+Although I personally don't have any preference, I go by ear and only upscale 1-2 seconds to see how the quality will turn out, before deciding to upscale a full video. However, a reddit users posted his findings, which I believe to be universal to many. 
+
+https://www.reddit.com/r/Dandere2x/comments/cba28h/best_d2x_settings/
+
+Naizuri77's rule of thumb:
+
+
+.. code-block:: python
+
+    1080p
+    block_size = 15
+    quality_minimum = 80
+
+.. code-block:: python
+    720p
+    block_size = 10
+    quality_minimum = 80
+
+
 Trouble Shooting Dandere2x
------------
+==========================
 
 
 Before you start, check to make sure
@@ -114,25 +139,3 @@ This is a common issue with the waifu2x-ncnn-vulkan. Change the 'tile_size' in t
 
 In dandere2x.json, find the 'workspace_use_temp' flag and set it to false. Then, you can choose where to put the workspace using the 'workspace flag. 
 
-
-Recommended Settings
------------
-
-Although I personally don't have any preference, I go by ear and only upscale 1-2 seconds to see how the quality will turn out, before deciding to upscale a full video. However, a reddit users posted his findings, which I believe to be universal to many. 
-
-https://www.reddit.com/r/Dandere2x/comments/cba28h/best_d2x_settings/
-
-Naizuri77's rule of thumb:
-
-
-**1080p:**
-
-block_size = 15
-
-quality_minimum = 80
-
-**720p:**
-
-block_size = 10
-
-quality_minimum = 80
