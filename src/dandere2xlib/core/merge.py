@@ -8,10 +8,9 @@ from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file, wait_on_file
-from wrappers.frame import Frame
+from wrappers.frame.frame import Frame
 
-from dandere2xlib.utils.AsyncFrameWrite import AsyncFrameWrite
-from dandere2xlib.utils.AsyncFrameRead import AsyncFrameRead
+from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 
 def merge_loop(context: Context, start_frame: int):
     # load variables from context
