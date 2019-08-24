@@ -183,7 +183,7 @@ def get_a_valid_input_resolution(width: int, height: int, block_size: int):
 # TODO Very outdated!
 # load the first frame, check if the block size is compatible with the resolution
 def verify_user_settings(context):
-    from wrappers.frame import Frame
+    from wrappers.frame.frame import Frame
 
     input_frames_dir = context.input_frames_dir
     extension_type = context.extension_type

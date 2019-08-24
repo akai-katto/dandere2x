@@ -7,7 +7,7 @@ import math
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value,  get_list_from_file
-from wrappers.frame import DisplacementVector, Frame
+from wrappers.frame.frame import DisplacementVector, Frame
 
 
 def difference_loop(context, start_frame: int):

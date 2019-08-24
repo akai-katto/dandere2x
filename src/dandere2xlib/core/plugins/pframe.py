@@ -1,5 +1,5 @@
-from wrappers.frame import DisplacementVector
-from wrappers.frame import Frame
+from wrappers.frame.frame import DisplacementVector
+from wrappers.frame.frame import Frame
 
 
 def pframe_image(context,

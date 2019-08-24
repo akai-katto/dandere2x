@@ -22,7 +22,7 @@
 #
 #
 
-from wrappers.frame import Frame
+from wrappers.frame.frame import Frame
 
 f = Frame()
 

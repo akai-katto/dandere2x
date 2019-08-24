@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 
-from wrappers.frame import Frame
+from wrappers.frame.frame import Frame
 
 
 # A simple struct to hold the data to produce a fade.
