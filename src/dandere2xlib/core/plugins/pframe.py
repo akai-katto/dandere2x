@@ -23,6 +23,9 @@ def pframe_image(context,
                                                      int(list_differences[x * 4 + 2]),
                                                      int(list_differences[x * 4 + 3])))
 
+    # Neat optimization trick - there's no need for pframe to copy over a block if the vectors
+    # point to the same place. In merge.py we just need to load the previous frame into the current frame
+    # To reach this optimization. 
     for x in range(int(len(list_predictive) / 4)):
         if int(list_predictive[x * 4 + 0]) != int(list_predictive[x * 4 + 1]) and \
                 int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
