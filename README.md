@@ -40,7 +40,7 @@ https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works
 
 ## GUI Preview
 
-![Image of the GUI](https://i.imgur.com/3SmNotr.png)
+![Image of the GUI](https://i.imgur.com/PWe7NzV.png)
 
 ## Development Status
 
