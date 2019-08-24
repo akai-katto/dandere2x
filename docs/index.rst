@@ -94,6 +94,49 @@ The more advanced settings can be found under 'developer_settings' in the JSON. 
 | dandere2x_cpp_dir              | directory                | Location of the Dandere2x_Cpp binary.                                                                                                                          |
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
+
+FFMPEG JSON SETTINGS
+====================
+
+Frames to Video
+---------------
+
+Dandere2x is heavily reliant FFMPEG video filters in order to work correctly. 
+
+.. code-block:: python
+
+    "frames_to_video": {
+      "output_options": {
+      .....
+        "-vf": ["deband=range=22:blur=false","pp7=qp=4:mode=medium"]
+       .....
+      },
+    },
+
+Without debanding and pp7, Dandere2x would have compression artifacts. Dandere2x is very dependent on these filters helping deblock and denoise the artifacts produced by Dandere2x. 
+
+Image Examples Provided by Reddit User Naizuri77
+
+https://imgur.com/a/2AOXsC7
+
+Video to Frames
+---------------
+
+This is a really weird one - Dandere2x_CPP behaves better when we add noise (this same noise is always removed by Waifu2x when noise level > 2). Props to reddit user Judas0001 in his post here finding this optimization trick. You can read his full explanation here
+
+https://www.reddit.com/r/Dandere2x/comments/bp5n8o/dandere2x_0712_impressions_and_other_stuff/
+
+.. code-block:: python
+
+    "video_to_frames": {
+      "output_options": {
+        "-vf": ["noise=c1s=8:c0f=u"]
+      }
+    },
+
+It seems when a compression codec processes macroblocks, Dandere2x is unable to identify those changes as movement, and as a result, flags the block as needed to be re-drawn. Adding noise at a consistent rate helps balance out these macro-block changes, although this is just pure speculation. Without this, Dandere2x preforms much worse. 
+
+
 Recommended Settings
 ====================
 
@@ -129,14 +172,14 @@ B) You are running Dandere2x.exe as administrator
 
 C) The video file is FFMPEG compatible.
 
-**Problem: Dandere2x is Producing Black Frames / Video**
------------
+Problem: Dandere2x is Producing Black Frames / Video
+----------------------------------------------------
 
 This is a common issue with the waifu2x-ncnn-vulkan. Change the 'tile_size' in the waifu2x_ncnn_vulkan section of the dandere2x.json file to something smaller. The default for Dandere2x is 200, so try 100. 
 
 
-**Problem: I want Dandere2x to not operate out of %temp%. How do I do this?**
------------
+Problem: I want Dandere2x to not operate out of %temp%. How do I do this?
+-------------------------------------------------------------------------
 
 In dandere2x.json, find the 'workspace_use_temp' flag and set it to false. Then, you can choose where to put the workspace using the 'workspace flag. 
 
