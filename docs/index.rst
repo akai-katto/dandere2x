@@ -111,6 +111,7 @@ Naizuri77's rule of thumb:
     quality_minimum = 80
 
 .. code-block:: python
+
     720p
     block_size = 10
     quality_minimum = 80
