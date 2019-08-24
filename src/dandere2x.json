@@ -64,7 +64,7 @@
   "ffmpeg": {
     "ffmpeg_path": "..\\externals\\ffmpeg.exe",
     "ffprobe_path": "..\\externals\\ffprobe.exe",
-    "-hwaccel": "auto",
+    "-hwaccel": "none",
     "trim_video": {
       "time": {
         "-ss": null,
