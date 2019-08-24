@@ -3,17 +3,17 @@
 
 ## Links 
 
-Telegram Server:
+Documentation:
 
-https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
+https://dandere2x.readthedocs.io/
 
 Subreddit:
 
 https://www.reddit.com/r/Dandere2x/
 
-Documentation:
+Telegram Server:
 
-https://dandere2x.readthedocs.io/
+https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
 Patreon:
 
