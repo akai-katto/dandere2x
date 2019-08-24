@@ -5,7 +5,7 @@ from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, w
 from wrappers.ffmpeg.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, migrate_tracks
 
 
-def delete_specific_merged(context: Context, file_prefix, extension, lexiconic_digits, start, end):
+def delete_digit_files_in_range(context: Context, file_prefix, extension, lexiconic_digits, start, end):
     logger = context.logger
     logger.info("Deleting files " + file_prefix + extension + " from " + str(start) + " to " + str(end))
 
@@ -52,14 +52,14 @@ def run_realtime_encoding(context: Context, output_file: str):
 
         # put files to delete inside of here.
         if realtime_encoding_delete_files:
-            delete_specific_merged(context, merged_files_prefix, extension_type, 0, x * frame_rate + 1,
-                                   x * frame_rate + frame_rate + 1)
+            delete_digit_files_in_range(context, merged_files_prefix, extension_type, 0, x * frame_rate + 1,
+                                        x * frame_rate + frame_rate + 1)
 
-            delete_specific_merged(context, compressed_files_prefix, extension_type, 0, x * frame_rate + 1,
-                                   x * frame_rate + frame_rate + 1)
+            delete_digit_files_in_range(context, compressed_files_prefix, extension_type, 0, x * frame_rate + 1,
+                                        x * frame_rate + frame_rate + 1)
 
-            delete_specific_merged(context, input_frames_prefix, extension_type, 0, x * frame_rate + 1,
-                                   x * frame_rate + frame_rate + 1)
+            delete_digit_files_in_range(context, input_frames_prefix, extension_type, 0, x * frame_rate + 1,
+                                        x * frame_rate + frame_rate + 1)
 
             # upscaled files end on a different number than merged files.
             if x == int(frame_count / frame_rate) - 1:
@@ -67,18 +67,18 @@ def run_realtime_encoding(context: Context, output_file: str):
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + 1) + ".png")
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + frame_rate) + ".png")
 
-                delete_specific_merged(context,
-                                       upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
-                                       x * frame_rate + frame_rate)
+                delete_digit_files_in_range(context,
+                                            upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
+                                            x * frame_rate + frame_rate)
 
             else:
 
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + 1) + ".png")
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frame_rate + frame_rate + 1) + ".png")
 
-                delete_specific_merged(context,
-                                       upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
-                                       x * frame_rate + frame_rate + 1)
+                delete_digit_files_in_range(context,
+                                            upscaled_files_prefix, ".png", 6, x * frame_rate + 1,
+                                            x * frame_rate + frame_rate + 1)
 
     text_file.close()
 
