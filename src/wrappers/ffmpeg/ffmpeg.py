@@ -15,6 +15,7 @@ from context import Context
 from dandere2xlib.utils.json_utils import get_options_from_section
 
 
+# Create a trimmed video using -ss and -to commands from FFMPEG. The trimmed video will be named output_file
 def trim_video(context: Context, output_file: str):
 
     # load context
@@ -43,6 +44,7 @@ def trim_video(context: Context, output_file: str):
     subprocess.call(trim_video_command, shell=True, stderr=console_output, stdout=console_output)
 
 
+# Extract frames from a video
 def extract_frames(context: Context, input_file: str):
     input_frames_dir = context.input_frames_dir
     extension_type = context.extension_type
