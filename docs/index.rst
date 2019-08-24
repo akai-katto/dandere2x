@@ -130,7 +130,9 @@ https://www.reddit.com/r/Dandere2x/comments/bp5n8o/dandere2x_0712_impressions_an
 
     "video_to_frames": {
       "output_options": {
+      ....
         "-vf": ["noise=c1s=8:c0f=u"]
+      ....
       }
     },
 
