@@ -45,9 +45,3 @@ class Dandere2x_Gui_Wrapper:
 
         print("\n "
               "duration: " + str(time.time() - start))
-
-
-
-
-
-

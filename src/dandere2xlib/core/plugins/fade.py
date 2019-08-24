@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from wrappers.frame.frame import Frame
 
+
 # See "fade.cpp" in dandere2x_cpp for more in depth documentation.
 
 # A simple struct to hold the data to produce a fade.
@@ -11,6 +12,7 @@ class FadeData:
     x: int
     y: int
     scalar: int
+
 
 def fade_image(context, out_image: Frame, list_correction: list):
     # load context

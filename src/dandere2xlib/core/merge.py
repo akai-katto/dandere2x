@@ -8,9 +8,9 @@ from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file, wait_on_file
+from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 from wrappers.frame.frame import Frame
 
-from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 
 def merge_loop(context: Context, start_frame: int):
     # load variables from context
@@ -75,6 +75,7 @@ def merge_loop(context: Context, start_frame: int):
 
         base = new_base
 
+
 # find the last photo to be merged, then start the loop from there
 def merge_loop_resume(context: Context):
     workspace = context.workspace
@@ -125,7 +126,6 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image = correct_image(context, out_image, list_corrections)
 
     return out_image
-
 
 
 # For debugging

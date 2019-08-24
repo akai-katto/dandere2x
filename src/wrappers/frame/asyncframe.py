@@ -1,4 +1,5 @@
 import threading
+
 from wrappers.frame.frame import Frame
 
 
@@ -26,4 +27,3 @@ class AsyncFrameWrite(threading.Thread):
 
     def run(self):
         self.image.save_image(out_location=self.output_image)
-

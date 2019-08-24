@@ -6,7 +6,7 @@ import os
 import math
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value,  get_list_from_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
 from wrappers.frame.frame import DisplacementVector, Frame
 
 
@@ -75,7 +75,6 @@ def difference_loop_resume(context):
 
 
 def make_difference_image(context: Context, raw_frame: Frame, list_difference: list, list_predictive: list):
-
     difference_vectors = []
     buffer = 5
     block_size = context.block_size

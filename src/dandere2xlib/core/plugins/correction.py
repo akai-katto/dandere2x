@@ -6,6 +6,7 @@ from dandere2xlib.utils.dandere2x_utils import get_list_from_file
 from wrappers.frame.frame import DisplacementVector
 from wrappers.frame.frame import Frame
 
+
 # See "corrections.cpp" in dandere2x_cpp for more in depth documentation.
 
 # correction size needs to be added to config file
