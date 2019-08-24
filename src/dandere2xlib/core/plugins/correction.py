@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X Merge
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
-"""
 import logging
 
 from dandere2xlib.utils.dandere2x_utils import get_list_from_file
-from wrappers.frame import DisplacementVector
-from wrappers.frame import Frame
+from wrappers.frame.frame import DisplacementVector
+from wrappers.frame.frame import Frame
 
+
+# See "corrections.cpp" in dandere2x_cpp for more in depth documentation.
 
 # correction size needs to be added to config file
 

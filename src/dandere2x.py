@@ -37,16 +37,16 @@ from dandere2xlib.core.merge import merge_loop,  merge_loop_resume
 from dandere2xlib.status import print_status
 
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution,get_a_valid_input_resolution, file_exists
-from dandere2xlib.utils.frame_compressor import compress_frames
+from wrappers.frame.frame_compressor import compress_frames
 
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 
-from wrappers.ff_wrappers.ffmpeg import extract_frames, trim_video
-from wrappers.ff_wrappers.realtime_encoding import run_realtime_encoding
+from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
+from dandere2xlib.realtime_encoding import run_realtime_encoding
 
-from wrappers.waifu2x_wrappers.waifu2x_caffe import Waifu2xCaffe
-from wrappers.waifu2x_wrappers.waifu2x_converter_cpp import Waifu2xConverterCpp
-from wrappers.waifu2x_wrappers.waifu2x_vulkan import Waifu2xVulkan
+from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
+from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
+from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
 
 
 class Dandere2x:
@@ -71,7 +71,7 @@ class Dandere2x:
         if self.context.user_trim_video:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
-            self.context.file_dir = trimed_video
+            self.context.input_file = trimed_video
 
         # Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video
         # To make the settings valid somehow.
@@ -147,7 +147,7 @@ class Dandere2x:
 
         if self.context.user_trim_video:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
-            self.context.file_dir = trimed_video
+            self.context.input_file = trimed_video
 
         # get whatever waifu2x class we're using
         waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)

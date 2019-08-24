@@ -33,6 +33,7 @@ def get_video_info(ffprobe_dir, input_video):
 
     return json.loads(json_str.decode('utf-8'))
 
+
 def get_width_height(ffprobe_dir, input_video):
     """ Gets input video information
     This method reads input video information
@@ -62,6 +63,7 @@ def get_width_height(ffprobe_dir, input_video):
     return_string = return_bytes.decode("utf-8").split(",")
 
     return int(return_string[0]), int(return_string[1])
+
 
 def get_frame_rate(ffprobe_dir, input_video):
     """ Gets input video information

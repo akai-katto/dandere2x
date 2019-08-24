@@ -1,8 +1,10 @@
 import logging
 from dataclasses import dataclass
 
-from wrappers.frame import Frame
+from wrappers.frame.frame import Frame
 
+
+# See "fade.cpp" in dandere2x_cpp for more in depth documentation.
 
 # A simple struct to hold the data to produce a fade.
 @dataclass
@@ -11,11 +13,6 @@ class FadeData:
     y: int
     scalar: int
 
-
-# comments: I'm not sure if we need to create a new frame, but it's not causing
-# preformance issues so far, and this solution is easier for me to debug knowing that it creates
-# a copy than reassigns. Perhaps someone can test if we can just edit the input rather than
-# change the fade.
 
 def fade_image(context, out_image: Frame, list_correction: list):
     # load context

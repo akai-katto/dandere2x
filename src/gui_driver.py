@@ -45,7 +45,7 @@ class AppWindow(QMainWindow):
         elif __file__:
             self.this_folder = os.path.dirname(__file__) + os.path.sep
 
-        self.file_dir = ''
+        self.input_file = ''
         self.output_file = ''
         self.scale_factor = None
         self.noise_level = None
@@ -95,13 +95,13 @@ class AppWindow(QMainWindow):
     # refresh the buttons to see if upscale can be called
     def refresh_buttons(self):
         # allow user to upscale if two output_file are met
-        if self.file_dir != '' and self.output_file != '':
+        if self.input_file != '' and self.output_file != '':
             self.ui.upscale_button.setEnabled(True)
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Ready to upscale!")
 
     def refresh_output_file(self):
-        if self.file_dir == '':
+        if self.input_file == '':
             return
 
         if not self.use_default_name:
@@ -109,7 +109,7 @@ class AppWindow(QMainWindow):
 
         self.parse_gui_inputs()
 
-        path, name = os.path.split(self.file_dir)
+        path, name = os.path.split(self.input_file)
         name_only = name.split(".")[0]
 
         self.output_file = os.path.join(path, (name_only + "_"
@@ -147,16 +147,16 @@ class AppWindow(QMainWindow):
             config_json = json.load(read_file)
 
         config_json['dandere2x']['usersettings']['output_file'] = self.output_file
-        config_json['dandere2x']['usersettings']['file_dir'] = self.file_dir
+        config_json['dandere2x']['usersettings']['input_file'] = self.input_file
         config_json['dandere2x']['usersettings']['block_size'] = self.block_size
-        config_json['dandere2x']['usersettings']['quality_low'] = self.image_quality
+        config_json['dandere2x']['usersettings']['image_quality'] = self.image_quality
         config_json['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
         config_json['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
 
         print("output_file = " + self.output_file)
-        print("file_dir = " + self.file_dir)
+        print("input_file = " + self.input_file)
         print("block_size = " + str(self.block_size))
-        print("quality_low = " + str(self.image_quality))
+        print("image_quality = " + str(self.image_quality))
         print("waifu2x_type = " + self.waifu2x_type)
 
         self.thread = QtDandere2xThread(self, config_json)
@@ -193,7 +193,7 @@ class AppWindow(QMainWindow):
     def parse_gui_inputs(self):
 
         self.output_file = self.output_file.replace("/", "\\")
-        self.file_dir = self.file_dir.replace("/", "\\")
+        self.input_file = self.input_file.replace("/", "\\")
 
         # Scale Factors
 
@@ -241,12 +241,12 @@ class AppWindow(QMainWindow):
 
     def press_select_video_button(self):
 
-        self.file_dir = self.load_file()[0]
+        self.input_file = self.load_file()[0]
 
-        if self.file_dir == '':
+        if self.input_file == '':
             return
 
-        path, name = os.path.split(self.file_dir)
+        path, name = os.path.split(self.input_file)
 
         # set the video label to the selected file name
         self.ui.video_label.setText(name)
