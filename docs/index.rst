@@ -30,9 +30,10 @@ Dandere2x is still in development, but you can download and use the beta-candida
 https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc2
 
 
-
-BASIC JSON SETTINGS
-===================
+Dandere2x JSON Settings
+=======================
+Basic Settings
+--------------
 
 The basic settings can be found under the 'usersettings' in the JSON and are choosable settings in the GUI. 
 
@@ -66,8 +67,8 @@ The basic settings can be found under the 'usersettings' in the JSON and are cho
 +----------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
 
 
-Advanced JSON Settings
-======================
+Advanced Settings
+-----------------
 
 The more advanced settings can be found under 'developer_settings' in the JSON. These are not modifiable in the GUI. 
 
@@ -95,7 +96,7 @@ The more advanced settings can be found under 'developer_settings' in the JSON. 
 +--------------------------------+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
-FFMPEG JSON SETTINGS
+FFMPEG JSON Settings
 ====================
 
 Frames to Video
