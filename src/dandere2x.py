@@ -71,7 +71,7 @@ class Dandere2x:
         if self.context.user_trim_video:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
-            self.context.file_dir = trimed_video
+            self.context.input_file = trimed_video
 
         # Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video
         # To make the settings valid somehow.
@@ -147,7 +147,7 @@ class Dandere2x:
 
         if self.context.user_trim_video:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
-            self.context.file_dir = trimed_video
+            self.context.input_file = trimed_video
 
         # get whatever waifu2x class we're using
         waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
