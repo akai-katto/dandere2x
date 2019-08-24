@@ -25,13 +25,10 @@ Customizable and Open Source
 Downloading Dandere2x
 -----------
 
-Dandere2x is still in development, but you can download test and use the beta-candidate release here!
+Dandere2x is still in development, but you can download and use the beta-candidate release here!
 
-https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc1
+https://github.com/aka-katto/dandere2x/releases/tag/1.2.3bc2
 
-
-
-* **Tutorial Basic Usage**:
 
 * **Basic Settings**:
 
