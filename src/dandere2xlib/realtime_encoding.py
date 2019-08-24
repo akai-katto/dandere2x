@@ -14,10 +14,9 @@ def delete_digit_files_in_range(context: Context, file_prefix, extension, lexico
         os.remove(file_prefix + str(get_lexicon_value(lexiconic_digits, x)) + extension)
 
 
-# This function allows Dandere2x to apply filters to the Dandere2x processed video while Dandere2x / Waifu2x works on.
-# The filters dandere2x requires are really computationally heavy - having it encode during runtime allows us to
-# Save overall computational time for the user by concurrently encoding videos while the rest of Dandere2x waits
-# On waifu2x.
+# This function allows Dandere2x to apply filters to the Dandere2x created images while waifu2x upscales frames
+# The filters dandere2x requires are really computationally heavy - having it encode during runtime allows us to reduce
+# Overall runtime, since encoding all the frames after could waste a lot of time for the user.
 
 def run_realtime_encoding(context: Context, output_file: str):
     logger = context.logger
