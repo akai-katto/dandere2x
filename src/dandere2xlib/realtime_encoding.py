@@ -5,6 +5,7 @@ from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, w
 from wrappers.ffmpeg.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, migrate_tracks
 
 
+# Delete files that come in the form filename_1, filename_2.... filename_end.
 def delete_digit_files_in_range(context: Context, file_prefix, extension, lexiconic_digits, start, end):
     logger = context.logger
     logger.info("Deleting files " + file_prefix + extension + " from " + str(start) + " to " + str(end))
@@ -13,10 +14,16 @@ def delete_digit_files_in_range(context: Context, file_prefix, extension, lexico
         os.remove(file_prefix + str(get_lexicon_value(lexiconic_digits, x)) + extension)
 
 
+# This function allows Dandere2x to apply filters to the Dandere2x processed video while Dandere2x / Waifu2x works on.
+# The filters dandere2x requires are really computationally heavy - having it encode during runtime allows us to
+# Save overall computational time for the user by concurrently encoding videos while the rest of Dandere2x waits
+# On waifu2x.
+
 def run_realtime_encoding(context: Context, output_file: str):
     logger = context.logger
     logger.info("Real time encoding process started")
 
+    # Load context
     workspace = context.workspace
     frame_rate = int(context.frame_rate)
     frame_count = int(context.frame_count)
@@ -30,6 +37,7 @@ def run_realtime_encoding(context: Context, output_file: str):
     compressed_files_prefix = context.compressed_dir + "compressed_"
     input_frames_prefix = context.input_frames_dir + "frame"
 
+    # Create an encoded every frame_rate seconds.
     for x in range(0, int(frame_count / frame_rate)):
         text_file = open(workspace + "encoded\\list.txt", 'a+')  # text file for ffmpeg to use to concat vids together
         encoded_vid = workspace + "encoded\\encoded_" + str(x) + ".mkv"
