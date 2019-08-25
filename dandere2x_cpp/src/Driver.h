@@ -49,8 +49,8 @@ void driver_difference(string workspace, int resume_count, int frame_count,
     string difference_prefix = workspace + separator() + "inversion_data" + separator() + "inversion_";
     string correction_prefix = workspace + separator() + "correction_data" + separator() + "correction_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
-    string compressed_prefix = workspace + separator() + "compressed" + separator() + "compressed_";
-
+    string compressed_static_prefix = workspace + separator() + "compressed_static" + separator() + "compressed_";
+    string compressed_moving_prefix = workspace + separator() + "compressed_moving" + separator() + "compressed_";
    // DANDERE2x_CPP DRIVER STARTS HERE //
 
    // Before we start anything, we need to load the gensises image, image_1. This is because the first
@@ -96,16 +96,19 @@ void driver_difference(string workspace, int resume_count, int frame_count,
 
         // Create strings for the files we need to interact with for this computation iteration
         string image_2_file = image_prefix + to_string(x + 1) + extension_type;
-        string image_2_compressed_file = compressed_prefix + to_string(x + 1) + ".jpg";
+        string image_2_compressed_static_file = compressed_static_prefix + to_string(x + 1) + ".jpg";
+        string image_2_compressed_moving_file = compressed_moving_prefix + to_string(x + 1) + ".jpg";
 
         // Wait for those files...
         dandere2x::wait_for_file(image_2_file);
-        dandere2x::wait_for_file(image_2_compressed_file);
+        dandere2x::wait_for_file(image_2_compressed_static_file);
+        dandere2x::wait_for_file(image_2_compressed_moving_file);
 
         // load actual images themselves
         shared_ptr<Image> image_2 = make_shared<Image>(image_2_file);
         shared_ptr<Image> image_2_copy = make_shared<Image>(image_2_file); //load im_2 twice for 'corrections'
-        shared_ptr<Image> image_2_compressed = make_shared<Image>(image_2_compressed_file);
+        shared_ptr<Image> image_2_compressed_static = make_shared<Image>(image_2_compressed_static_file);
+        shared_ptr<Image> image_2_compressed_moving = make_shared<Image>(image_2_compressed_moving_file);
 
         // Create strings for the files we need to save for this computation iteration
         string p_data_file = p_data_prefix + to_string(x) + ".txt";
@@ -122,18 +125,18 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         // from image_1, so it makes sense to overwrite image_2 with parts of image_1 as we go along.
 
         // First run the 'fade' plugin, which checks if two frames are simply fade to black / fade to white
-        Fade fade = Fade(image_1, image_2, image_2_compressed, block_size, fade_file);
+        Fade fade = Fade(image_1, image_2, image_2_compressed_static, block_size, fade_file);
         fade.run();
 
         // Find similar blocks between image_1 and image_2 and match them, and document which matched (p_data_file).
         // Document which blocks we could not find a match for, and add them to a list of missing blocks (difference_file)
-        PFrame pframe = PFrame(image_1, image_2, image_2_compressed, block_size, p_data_file, difference_file, step_size);
+        PFrame pframe = PFrame(image_1, image_2, image_2_compressed_static, image_2_compressed_moving, block_size, p_data_file, difference_file, step_size);
         pframe.run();
 
         // When finding similar blocks, there may be small blemishes left in as a result. Try our best
         // To find those errors, and replace them with nearby pixels. Use the original image as a reference
         // On how to preform these corrections.
-        Correction correction = Correction(image_2, image_2_copy, image_2_compressed, correction_block_size, correction_file, 2);
+        Correction correction = Correction(image_2, image_2_copy, image_2_compressed_static, correction_block_size, correction_file, 2);
         correction.run();
 
         // Save the results for Dandere2x_python to use

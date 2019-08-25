@@ -60,7 +60,7 @@ RECENT REVISION HISTORY:
       2.11  (2016-04-02) 16-bit PNGS; enable SSE2 in non-gcc x64
                          RGB-format JPEG; remove white matting in PSD;
                          allocate large structures on the stack;
-                         correct channel count for PNG & BMP
+                         correct channel matched_blocks_count for PNG & BMP
       2.10  (2016-01-22) avoid warning introduced in 2.09
       2.09  (2016-01-16) 16-bit TGA; comments in PNM files; STBI_REALLOC_SIZED
 
@@ -1521,12 +1521,12 @@ static int stbi__getn(stbi__context *s, stbi_uc *buffer, int n)
    if (s->io.read) {
       int blen = (int) (s->img_buffer_end - s->img_buffer);
       if (blen < n) {
-         int res, count;
+         int res, matched_blocks_count;
 
          memcpy(buffer, s->img_buffer, blen);
 
-         count = (s->io.read)(s->io_user_data, (char*) buffer + blen, n - blen);
-         res = (count == (n-blen));
+         matched_blocks_count = (s->io.read)(s->io_user_data, (char*) buffer + blen, n - blen);
+         res = (matched_blocks_count == (n-blen));
          s->img_buffer = s->img_buffer_end;
          return res;
       }
@@ -1824,17 +1824,17 @@ typedef struct
 
 // kernels
    void (*idct_block_kernel)(stbi_uc *out, int out_stride, short data[64]);
-   void (*YCbCr_to_RGB_kernel)(stbi_uc *out, const stbi_uc *y, const stbi_uc *pcb, const stbi_uc *pcr, int count, int step);
+   void (*YCbCr_to_RGB_kernel)(stbi_uc *out, const stbi_uc *y, const stbi_uc *pcb, const stbi_uc *pcr, int matched_blocks_count, int step);
    stbi_uc *(*resample_row_hv_2_kernel)(stbi_uc *out, stbi_uc *in_near, stbi_uc *in_far, int w, int hs);
 } stbi__jpeg;
 
-static int stbi__build_huffman(stbi__huffman *h, int *count)
+static int stbi__build_huffman(stbi__huffman *h, int *matched_blocks_count)
 {
    int i,j,k=0;
    unsigned int code;
    // build size list for each symbol (from JPEG spec)
    for (i=0; i < 16; ++i)
-      for (j=0; j < count[i]; ++j)
+      for (j=0; j < matched_blocks_count[i]; ++j)
          h->size[k++] = (stbi_uc) (i+1);
    h->size[k] = 0;
 
@@ -2811,7 +2811,7 @@ static int stbi__parse_entropy_coded_data(stbi__jpeg *z)
                   }
                }
                // after all interleaved components, that's an interleaved MCU,
-               // so now count down the restart interval
+               // so now matched_blocks_count down the restart interval
                if (--z->todo <= 0) {
                   if (z->code_bits < 24) stbi__grow_buffer_unsafe(z);
                   if (!STBI__RESTART(z->marker)) return 1;
@@ -2871,7 +2871,7 @@ static int stbi__parse_entropy_coded_data(stbi__jpeg *z)
                   }
                }
                // after all interleaved components, that's an interleaved MCU,
-               // so now count down the restart interval
+               // so now matched_blocks_count down the restart interval
                if (--z->todo <= 0) {
                   if (z->code_bits < 24) stbi__grow_buffer_unsafe(z);
                   if (!STBI__RESTART(z->marker)) return 1;
@@ -3018,7 +3018,7 @@ static int stbi__process_scan_header(stbi__jpeg *z)
    int i;
    int Ls = stbi__get16be(z->s);
    z->scan_n = stbi__get8(z->s);
-   if (z->scan_n < 1 || z->scan_n > 4 || z->scan_n > (int) z->s->img_n) return stbi__err("bad SOS component count","Corrupt JPEG");
+   if (z->scan_n < 1 || z->scan_n > 4 || z->scan_n > (int) z->s->img_n) return stbi__err("bad SOS component matched_blocks_count","Corrupt JPEG");
    if (Ls != 6+2*z->scan_n) return stbi__err("bad SOS len","Corrupt JPEG");
    for (i=0; i < z->scan_n; ++i) {
       int id = stbi__get8(z->s), which;
@@ -3083,7 +3083,7 @@ static int stbi__process_frame_header(stbi__jpeg *z, int scan)
    s->img_y = stbi__get16be(s);   if (s->img_y == 0) return stbi__err("no header height", "JPEG format not supported: delayed height"); // Legal, but we don't handle it--but neither does IJG
    s->img_x = stbi__get16be(s);   if (s->img_x == 0) return stbi__err("0 width","Corrupt JPEG"); // JPEG requires
    c = stbi__get8(s);
-   if (c != 3 && c != 1 && c != 4) return stbi__err("bad component count","Corrupt JPEG");
+   if (c != 3 && c != 1 && c != 4) return stbi__err("bad component matched_blocks_count","Corrupt JPEG");
    s->img_n = c;
    for (i=0; i < c; ++i) {
       z->img_comp[i].data = NULL;
@@ -3442,10 +3442,10 @@ static stbi_uc *stbi__resample_row_generic(stbi_uc *out, stbi_uc *in_near, stbi_
 // this is a reduced-precision calculation of YCbCr-to-RGB introduced
 // to make sure the code produces the same results in both SIMD and scalar
 #define stbi__float2fixed(x)  (((int) ((x) * 4096.0f + 0.5f)) << 8)
-static void stbi__YCbCr_to_RGB_row(stbi_uc *out, const stbi_uc *y, const stbi_uc *pcb, const stbi_uc *pcr, int count, int step)
+static void stbi__YCbCr_to_RGB_row(stbi_uc *out, const stbi_uc *y, const stbi_uc *pcb, const stbi_uc *pcr, int matched_blocks_count, int step)
 {
    int i;
-   for (i=0; i < count; ++i) {
+   for (i=0; i < matched_blocks_count; ++i) {
       int y_fixed = (y[i] << 20) + (1<<19); // rounding
       int r,g,b;
       int cr = pcr[i] - 128;
@@ -3468,7 +3468,7 @@ static void stbi__YCbCr_to_RGB_row(stbi_uc *out, const stbi_uc *y, const stbi_uc
 }
 
 #if defined(STBI_SSE2) || defined(STBI_NEON)
-static void stbi__YCbCr_to_RGB_simd(stbi_uc *out, stbi_uc const *y, stbi_uc const *pcb, stbi_uc const *pcr, int count, int step)
+static void stbi__YCbCr_to_RGB_simd(stbi_uc *out, stbi_uc const *y, stbi_uc const *pcb, stbi_uc const *pcr, int matched_blocks_count, int step)
 {
    int i = 0;
 
@@ -3486,7 +3486,7 @@ static void stbi__YCbCr_to_RGB_simd(stbi_uc *out, stbi_uc const *y, stbi_uc cons
       __m128i y_bias = _mm_set1_epi8((char) (unsigned char) 128);
       __m128i xw = _mm_set1_epi16(255); // alpha channel
 
-      for (; i+7 < count; i += 8) {
+      for (; i+7 < matched_blocks_count; i += 8) {
          // load
          __m128i y_bytes = _mm_loadl_epi64((__m128i *) (y+i));
          __m128i cr_bytes = _mm_loadl_epi64((__m128i *) (pcr+i));
@@ -3543,7 +3543,7 @@ static void stbi__YCbCr_to_RGB_simd(stbi_uc *out, stbi_uc const *y, stbi_uc cons
       int16x8_t cb_const0 = vdupq_n_s16( - (short) ( 0.34414f*4096.0f+0.5f));
       int16x8_t cb_const1 = vdupq_n_s16(   (short) ( 1.77200f*4096.0f+0.5f));
 
-      for (; i+7 < count; i += 8) {
+      for (; i+7 < matched_blocks_count; i += 8) {
          // load
          uint8x8_t y_bytes  = vld1_u8(y + i);
          uint8x8_t cr_bytes = vld1_u8(pcr + i);
@@ -3579,7 +3579,7 @@ static void stbi__YCbCr_to_RGB_simd(stbi_uc *out, stbi_uc const *y, stbi_uc cons
    }
 #endif
 
-   for (; i < count; ++i) {
+   for (; i < matched_blocks_count; ++i) {
       int y_fixed = (y[i] << 20) + (1<<19); // rounding
       int r,g,b;
       int cr = pcr[i] - 128;
@@ -5713,7 +5713,7 @@ static void *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int req
       }
    }
 
-   // convert to target component count
+   // convert to target component matched_blocks_count
    if (req_comp && req_comp != tga_comp)
       tga_data = stbi__convert_format(tga_data, tga_comp, req_comp, tga_width, tga_height);
 
@@ -5739,10 +5739,10 @@ static int stbi__psd_test(stbi__context *s)
 
 static int stbi__psd_decode_rle(stbi__context *s, stbi_uc *p, int pixelCount)
 {
-   int count, nleft, len;
+   int matched_blocks_count, nleft, len;
 
-   count = 0;
-   while ((nleft = pixelCount - count) > 0) {
+   matched_blocks_count = 0;
+   while ((nleft = pixelCount - matched_blocks_count) > 0) {
       len = stbi__get8(s);
       if (len == 128) {
          // No-op.
@@ -5750,7 +5750,7 @@ static int stbi__psd_decode_rle(stbi__context *s, stbi_uc *p, int pixelCount)
          // Copy next len+1 bytes literally.
          len++;
          if (len > nleft) return 0; // corrupt data
-         count += len;
+         matched_blocks_count += len;
          while (len) {
             *p = stbi__get8(s);
             p += 4;
@@ -5763,7 +5763,7 @@ static int stbi__psd_decode_rle(stbi__context *s, stbi_uc *p, int pixelCount)
          len = 257 - len;
          if (len > nleft) return 0; // corrupt data
          val = stbi__get8(s);
-         count += len;
+         matched_blocks_count += len;
          while (len) {
             *p = val;
             p += 4;
@@ -5799,7 +5799,7 @@ static void *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req
    // Read the number of channels (R, G, B, A, etc).
    channelCount = stbi__get16be(s);
    if (channelCount < 0 || channelCount > 16)
-      return stbi__errpuc("wrong channel count", "Unsupported number of channels in PSD image");
+      return stbi__errpuc("wrong channel matched_blocks_count", "Unsupported number of channels in PSD image");
 
    // Read the rows and columns of the image.
    h = stbi__get32be(s);
@@ -5868,7 +5868,7 @@ static void *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req
       //     Else if n is 128, noop.
       // Endloop
 
-      // The RLE-compressed data is preceded by a 2-byte data count for each row in the data,
+      // The RLE-compressed data is preceded by a 2-byte data matched_blocks_count for each row in the data,
       // which we're going to just skip.
       stbi__skip(s, h * channelCount * 2 );
 
@@ -6089,19 +6089,19 @@ static stbi_uc *stbi__pic_load_core(stbi__context *s,int width,int height,int *c
                   int left=width, i;
 
                   while (left>0) {
-                     stbi_uc count,value[4];
+                     stbi_uc matched_blocks_count,value[4];
 
-                     count=stbi__get8(s);
-                     if (stbi__at_eof(s))   return stbi__errpuc("bad file","file too short (pure read count)");
+                     matched_blocks_count=stbi__get8(s);
+                     if (stbi__at_eof(s))   return stbi__errpuc("bad file","file too short (pure read matched_blocks_count)");
 
-                     if (count > left)
-                        count = (stbi_uc) left;
+                     if (matched_blocks_count > left)
+                        matched_blocks_count = (stbi_uc) left;
 
                      if (!stbi__readval(s,packet->channel,value))  return 0;
 
-                     for(i=0; i<count; ++i,dest+=4)
+                     for(i=0; i<matched_blocks_count; ++i,dest+=4)
                         stbi__copyval(packet->channel,dest,value);
-                     left -= count;
+                     left -= matched_blocks_count;
                   }
                }
                break;
@@ -6109,33 +6109,33 @@ static stbi_uc *stbi__pic_load_core(stbi__context *s,int width,int height,int *c
             case 2: {//Mixed RLE
                int left=width;
                while (left>0) {
-                  int count = stbi__get8(s), i;
-                  if (stbi__at_eof(s))  return stbi__errpuc("bad file","file too short (mixed read count)");
+                  int matched_blocks_count = stbi__get8(s), i;
+                  if (stbi__at_eof(s))  return stbi__errpuc("bad file","file too short (mixed read matched_blocks_count)");
 
-                  if (count >= 128) { // Repeated
+                  if (matched_blocks_count >= 128) { // Repeated
                      stbi_uc value[4];
 
-                     if (count==128)
-                        count = stbi__get16be(s);
+                     if (matched_blocks_count==128)
+                        matched_blocks_count = stbi__get16be(s);
                      else
-                        count -= 127;
-                     if (count > left)
+                        matched_blocks_count -= 127;
+                     if (matched_blocks_count > left)
                         return stbi__errpuc("bad file","scanline overrun");
 
                      if (!stbi__readval(s,packet->channel,value))
                         return 0;
 
-                     for(i=0;i<count;++i, dest += 4)
+                     for(i=0;i<matched_blocks_count;++i, dest += 4)
                         stbi__copyval(packet->channel,dest,value);
                   } else { // Raw
-                     ++count;
-                     if (count>left) return stbi__errpuc("bad file","scanline overrun");
+                     ++matched_blocks_count;
+                     if (matched_blocks_count>left) return stbi__errpuc("bad file","scanline overrun");
 
-                     for(i=0;i<count;++i, dest+=4)
+                     for(i=0;i<matched_blocks_count;++i, dest+=4)
                         if (!stbi__readval(s,packet->channel,dest))
                            return 0;
                   }
-                  left-=count;
+                  left-=matched_blocks_count;
                }
                break;
             }
@@ -6756,7 +6756,7 @@ static float *stbi__hdr_load(stbi__context *s, int *x, int *y, int *comp, int re
    stbi_uc *scanline;
    float *hdr_data;
    int len;
-   unsigned char count, value;
+   unsigned char matched_blocks_count, value;
    int i, j, k, c1,c2, z;
    const char *headerToken;
    STBI_NOTUSED(ri);
@@ -6849,18 +6849,18 @@ static float *stbi__hdr_load(stbi__context *s, int *x, int *y, int *comp, int re
             int nleft;
             i = 0;
             while ((nleft = width - i) > 0) {
-               count = stbi__get8(s);
-               if (count > 128) {
+               matched_blocks_count = stbi__get8(s);
+               if (matched_blocks_count > 128) {
                   // Run
                   value = stbi__get8(s);
-                  count -= 128;
-                  if (count > nleft) { STBI_FREE(hdr_data); STBI_FREE(scanline); return stbi__errpf("corrupt", "bad RLE data in HDR"); }
-                  for (z = 0; z < count; ++z)
+                  matched_blocks_count -= 128;
+                  if (matched_blocks_count > nleft) { STBI_FREE(hdr_data); STBI_FREE(scanline); return stbi__errpf("corrupt", "bad RLE data in HDR"); }
+                  for (z = 0; z < matched_blocks_count; ++z)
                      scanline[i++ * 4 + k] = value;
                } else {
                   // Dump
-                  if (count > nleft) { STBI_FREE(hdr_data); STBI_FREE(scanline); return stbi__errpf("corrupt", "bad RLE data in HDR"); }
-                  for (z = 0; z < count; ++z)
+                  if (matched_blocks_count > nleft) { STBI_FREE(hdr_data); STBI_FREE(scanline); return stbi__errpf("corrupt", "bad RLE data in HDR"); }
+                  for (z = 0; z < matched_blocks_count; ++z)
                      scanline[i++ * 4 + k] = stbi__get8(s);
                }
             }
@@ -7342,7 +7342,7 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
       2.12  (2016-04-02) fix typo in 2.11 PSD fix that caused crashes
       2.11  (2016-04-02) allocate large structures on the stack
                          remove white matting for transparent PSD
-                         fix reported channel count for PNG & BMP
+                         fix reported channel matched_blocks_count for PNG & BMP
                          re-enable SSE2 in non-gcc 64-bit
                          support RGB-formatted JPEG
                          read 16-bit PNGs (only as 8-bit)
@@ -7377,7 +7377,7 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
       1.48  (2014-12-14) fix incorrectly-named assert()
       1.47  (2014-12-14) 1/2/4-bit PNG support, both direct and paletted (Omar Cornut & stb)
                          optimize PNG (ryg)
-                         fix bug in interlaced PNG with user-specified channel count (stb)
+                         fix bug in interlaced PNG with user-specified channel matched_blocks_count (stb)
       1.46  (2014-08-26)
               fix broken tRNS chunk (colorkey-style transparency) in non-paletted PNG
       1.45  (2014-08-16)

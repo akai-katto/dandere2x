@@ -149,7 +149,7 @@ public:
             //Create an array that is used to signal if a point is "valid" or not, i.e if it is legal to visit.
             //In other words, we need to know the index of an array is allowed or not.
 
-            bool flag_array[TOTAL_CHECKS] = {true};
+            bool flag_array[16] = {true};
             bool any_legal_points = flag_invalid_points(x_bounds, y_bounds, point_array, TOTAL_CHECKS, flag_array);
 
             //flag invalid points returns a boolean if there are no valid points for diamond search to visit

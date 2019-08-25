@@ -6,19 +6,20 @@
       "waifu2x_type": "vulkan",
       "denoise_level": 3,
       "scale_factor": 2,
-      "input_file": "..\\workspace\\broken.mp4",
-      "output_file": "..\\workspace\\twig_upscaled_long.mkv"
+      "input_file": "..\\workspace\\violetmovement.mkv",
+      "output_file": "..\\workspace\\violet_movemnt_upscaled_2.mkv"
     },
     "developer_settings": {
-      "step_size": 4,
+      "step_size": 8,
       "bleed": 1,
+      "quality_moving_ratio": 0.65,
       "extension_type": ".jpg",
       "debug": true,
       "realtime_encoding": true,
       "realtime_encoding_delete_files": false,
-      "workspace_use_temp": true,
+      "workspace_use_temp": false,
       "gui_delete_workspace_after": false,
-      "workspace": "..\\workspace\\mp4_broken_workspace\\",
+      "workspace": "..\\workspace\\violet_movement_workspace_2\\",
       "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },

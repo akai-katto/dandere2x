@@ -41,14 +41,14 @@ int main(int argc, char **argv) {
 
     //benchmark();
 
-    bool debug = true; //debug flag
+    bool debug = false; //debug flag
 
     //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
-    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\yn_upscaled_new_cpp_2\\";
-    int frame_count = 240;
-    int block_size = 20;
-    int step_size = 4;
+    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\weathering_with_you_workspace\\";
+    int frame_count = 43;
+    int block_size = 30;
+    int step_size = 8;
     string run_type = "n";// 'n' or 'r'
     int resume_frame = 55;
     string extension_type = ".jpg";

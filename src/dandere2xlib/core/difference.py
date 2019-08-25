@@ -124,6 +124,7 @@ def debug_image(block_size, frame_base, list_predictive, list_differences, outpu
     logger = logging.getLogger(__name__)
 
     difference_vectors = []
+    predictive_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
     out_image.copy_image(frame_base)
@@ -146,11 +147,19 @@ def debug_image(block_size, frame_base, list_predictive, list_differences, outpu
                                                      int(list_differences[x * 4 + 1]),
                                                      int(list_differences[x * 4 + 2]),
                                                      int(list_differences[x * 4 + 3])))
+    for x in range(int(len(list_predictive) / 4)):
+        if (int(list_predictive[x * 4 + 0]) != int(list_predictive[x * 4 + 1])) and \
+                (int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3])):
+            predictive_vectors.append(DisplacementVector(int(list_predictive[x * 4 + 0]),
+                                                         int(list_predictive[x * 4 + 1]),
+                                                         int(list_predictive[x * 4 + 2]),
+                                                         int(list_predictive[x * 4 + 3])))
 
     # copy over predictive vectors into new image
     for vector in difference_vectors:
         out_image.copy_block(black_image, block_size,
                              vector.x_1, vector.y_1,
                              vector.x_1, vector.y_1)
+
 
     out_image.save_image_quality(output_location, 25)
