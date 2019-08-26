@@ -32,12 +32,16 @@ Link: https://www.reddit.com/r/Dandere2x/
 
 Telegram
    The telegram server for Dandere2x can be found here:
-   Link: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
    The telegram can be seen as a means for immediate help or general discussion, although due to the school year starting I'm not sure how active I will be. 
+
+Link: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
 Donations
    Dandere2x is 100% free and will always be 100% free. If you wish to contribute to dandere2x development, feel free to send me some  change! Funds go-to playing games with friends and food. 
+
+Donation Links:
    https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=thatweeblife%40gmail.com&currency_code=USD&source=url 
+   
    https://www.patreon.com/dandere2x/
 
 
