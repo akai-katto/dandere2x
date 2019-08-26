@@ -13,7 +13,7 @@ void Differences::run() {
     //flag all the pixels that were able to be copied
     flag_pixels();
 
-    //once flagPixels is called, count how many pixels didn't get flagged
+    //once flagPixels is called, matched_blocks_count how many pixels didn't get flagged
     int count = count_empty_pixels();
 
     //find out how many blocks are needed to redraw all the missing pixels

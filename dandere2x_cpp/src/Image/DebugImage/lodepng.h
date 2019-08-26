@@ -659,7 +659,7 @@ typedef enum LodePNGFilterStrategy
             LFS_PREDEFINED
 } LodePNGFilterStrategy;
 
-/*Gives characteristics about the integer RGBA colors of the image (count, alpha channel usage, bit depth, ...),
+/*Gives characteristics about the integer RGBA colors of the image (matched_blocks_count, alpha channel usage, bit depth, ...),
 which helps decide which color model to use for encoding.
 Used internally by default if "auto_convert" is enabled. Public because it's useful for custom algorithms.
 NOTE: This is not related to the ICC color profile, search "iccp_profile" instead to find the ICC/chromacity/...

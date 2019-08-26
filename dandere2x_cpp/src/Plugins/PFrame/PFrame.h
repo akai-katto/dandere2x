@@ -55,7 +55,8 @@
 class PFrame {
 
 public:
-    PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
+    PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed_static,
+           std::shared_ptr<Image> image2_compressed_moving,
            unsigned int block_size, std::string p_frame_file, std::string difference_file, int step_size = 4);
 
     void run();
@@ -68,7 +69,8 @@ private:
     unsigned int block_size;
     int width;
     int height;
-    int count;
+    int matched_blocks_count;
+    int moving_blocks_count;
     int bleed;
 
     std::string p_frame_file;
@@ -77,7 +79,8 @@ private:
     std::vector<std::vector<Block>> matched_blocks;
     std::shared_ptr<Image> image1;
     std::shared_ptr<Image> image2;
-    std::shared_ptr<Image> image2_compressed;
+    std::shared_ptr<Image> image2_compressed_static;
+    std::shared_ptr<Image> image2_compressed_moving;
     std::shared_ptr<Differences> dif;
 
     void force_copy();

@@ -12,13 +12,15 @@
 // predictions? This is a really niche scenario - I wouldn't imagine it to ever happen.
 
 
-PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed,
+PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed_static,
+               std::shared_ptr<Image> image2_compressed_moving,
                unsigned int block_size, std::string p_frame_file, std::string difference_file,
                int step_size) {
 
     this->image1 = image1;
     this->image2 = image2;
-    this->image2_compressed = image2_compressed;
+    this->image2_compressed_static = image2_compressed_static;
+    this->image2_compressed_moving = image2_compressed_moving;
     this->step_size = step_size;
     this->max_checks = 128; //prevent diamond search from going on forever
     this->block_size = block_size;
@@ -28,7 +30,8 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std
     this->p_frame_file = p_frame_file;
     this->difference_file = difference_file;
     this->matched_blocks.resize(this->width / block_size, std::vector<Block>(this->height / block_size));
-    this->count = 0;
+    this->matched_blocks_count = 0;
+    this->moving_blocks_count = 0;
     this->bleed = 1;
 
     //Sanity Checks
@@ -56,21 +59,21 @@ void PFrame::run() {
         //At a certain point it's just easier / faster to redraw a scene rather than trying to piece it back together.
         int max_blocks_possible = (this->height * this->width) / (this->block_size * this->block_size);
 
-        if (max_blocks_possible <= ((block_size*block_size)*count) / ((block_size+bleed)*(block_size+bleed))) {
+        if (max_blocks_possible <= ((block_size*block_size)*matched_blocks_count) / ((block_size+bleed)*(block_size+bleed))) {
             // We decided not to keep any of the blocks.. abandon all the progress we did in this function
 
             std::cout << "Too many missing blocks - conducting redraw" << std::endl;
-            this->count = 0;
+            this->matched_blocks_count = 0;
         }
     }
 
     draw_over();
-    std::cout << "matched blocks: " << this->count << std::endl;
-
+    std::cout << "matched blocks: " << this->matched_blocks_count << std::endl;
+    std::cout << "moving blocks: " << this->moving_blocks_count << std::endl;
 }
 
 
-// I mentioned earlier that we have a 'count' variable to count how many matched blocks we have.
+// I mentioned earlier that we have a 'matched_blocks_count' variable to matched_blocks_count how many matched blocks we have.
 //
 // If for whatever reason (some forced by the developer, some coincidental) there are zero matched blocks
 // Save empty text files signalling to Dandere2x_Python to simply upscale a brand new frame.
@@ -79,7 +82,7 @@ void PFrame::run() {
 // So we can produce upscale those images and patch them into the image in dandere2x_python.
 
 void PFrame::save() {
-    if (this->count != 0) {
+    if (this->matched_blocks_count != 0) {
         create_difference();
         this->dif->write(difference_file);
         this->write(p_frame_file);
@@ -129,7 +132,7 @@ void PFrame::match_all_blocks() {
     int y = 0;
     int numthreads = 8;
     
-#pragma omp parallel for shared(image1, image2, image2_compressed, matched_blocks) private(x, y)
+#pragma omp parallel for shared(image1, image2, image2_compressed_static,image2_compressed_moving, matched_blocks) private(x, y)
 
     for (x = 0; x < width / block_size; x++) {
         for (y = 0; y < height / block_size; y++) {
@@ -151,10 +154,15 @@ void PFrame::match_all_blocks() {
 void PFrame::match_block(int x, int y) {
 
     // Using the compressed image, determine a good measure of the minimum MSE required for the matched to have.
-    double min_mse = ImageUtils::mse(*image2, *image2_compressed,
+    double min_mse_static = ImageUtils::mse(*image2, *image2_compressed_static,
                                      x * block_size, y * block_size,
                                      x * block_size, y * block_size,
                                      block_size);
+
+    double min_mse_moving = ImageUtils::mse(*image2, *image2_compressed_moving,
+                                            x * block_size, y * block_size,
+                                            x * block_size, y * block_size,
+                                            block_size);
 
     // Compute the MSE of the block at the same (x,y) location.
     double stationary_mse = ImageUtils::mse(*image1, *image2,
@@ -163,21 +171,23 @@ void PFrame::match_block(int x, int y) {
                                             block_size);
 
     // If the MSE found at the stationary location is good enough, add it to the list of matched blocks.
-    if (stationary_mse <= min_mse) {
+    if (stationary_mse <= min_mse_static) {
         matched_blocks[x][y] = Block(x * block_size, y * block_size, x * block_size, y * block_size, stationary_mse);
-        this->count++;
+        this->matched_blocks_count++;
     } else {
         // If the MSE found at the stationary location isn't good enough, conduct a diamond search looking
         // for the blocks match nearby.
         Block result = DiamondSearch::diamond_search_iterative_super(*image2, *image1,
                                                                      x * block_size, y * block_size,
                                                                      x * block_size, y * block_size,
-                                                                     min_mse, block_size, step_size, max_checks);
+                                                                     min_mse_moving, block_size, step_size, max_checks);
 
         //If the Diamond Searched block is a good enough match, add it to the list of matched blocks.
-        if (result.sum <= min_mse) {
+        if (result.sum <= min_mse_moving && result.x_end != result.x_start && result.y_end != result.y_start) {
+//            std::cout << " x:  " <<  result.x_start << " -> " <<  result.x_end << " y: " <<  result.y_start << " -> " <<  result.y_end << std::endl;
             matched_blocks[x][y] = result;
-            this->count++;
+            this->matched_blocks_count++;
+            this->moving_blocks_count++;
         }
     }
 }

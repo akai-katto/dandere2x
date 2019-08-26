@@ -74,7 +74,8 @@ class Context:
         self.fade_data_dir = self.workspace + "fade_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
-        self.compressed_dir = self.workspace + "compressed" + os.path.sep
+        self.compressed_static_dir = self.workspace + "compressed_static" + os.path.sep
+        self.compressed_moving_dir = self.workspace + "compressed_moving" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
         self.temp_image_folder = self.workspace + "temp_image_folder" + os.path.sep
 
@@ -89,7 +90,7 @@ class Context:
 
         # User Settings
         self.block_size = self.config_json['dandere2x']['usersettings']['block_size']
-        self.quality_low = self.config_json['dandere2x']['usersettings']['quality_minimum']
+        self.quality_minimum = self.config_json['dandere2x']['usersettings']['quality_minimum']
         self.waifu2x_type = self.config_json['dandere2x']['usersettings']['waifu2x_type']
         self.noise_level = self.config_json['dandere2x']['usersettings']['denoise_level']
         self.scale_factor = self.config_json['dandere2x']['usersettings']['scale_factor']
@@ -98,6 +99,7 @@ class Context:
 
         # Developer Settings
 
+        self.quality_moving_ratio = self.config_json['dandere2x']['developer_settings']['quality_moving_ratio']
         self.step_size = self.config_json['dandere2x']['developer_settings']['step_size']
         self.bleed = self.config_json['dandere2x']['developer_settings']['bleed']
         self.extension_type = self.config_json['dandere2x']['developer_settings']['extension_type']
