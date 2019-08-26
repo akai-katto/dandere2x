@@ -35,14 +35,9 @@
 class DiamondSearch {
 
 public:
-    struct Point {
-        int x;
-        int y;
-    };
-
 
     //Flags the points that are out of bounds / not within the scope of the image.
-    static bool flag_invalid_points(int x_bounds, int y_bounds, Point points[], int size, bool flagged[]) {
+    static bool flag_invalid_points(int x_bounds, int y_bounds, Block::Point points[], int size, bool flagged[]) {
 
         int count = 0;
         for (int i = 0; i < size; i++) {
@@ -79,7 +74,7 @@ public:
         std::vector<Block> blocks = std::vector<Block>();
 
         //create the points to be used in diamond searching
-        Point point_array[TOTAL_CHECKS];
+        Block::Point point_array[TOTAL_CHECKS];
 
         for (int x = 0; x < max_checks; x++) {
             blocks.clear();

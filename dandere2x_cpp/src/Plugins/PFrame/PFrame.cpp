@@ -5,6 +5,7 @@
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
 #include "Plugins/PFrame/PFrame.h"
+#include "BlockMatch/ExhaustiveSearch.h"
 #include <omp.h>
 
 
@@ -67,7 +68,9 @@ void PFrame::run() {
         }
     }
 
+    int max_blocks_possible = (this->height * this->width) / (this->block_size * this->block_size);
     draw_over();
+    std::cout << "max possible blocks: " << max_blocks_possible << std::endl;
     std::cout << "matched blocks: " << this->matched_blocks_count << std::endl;
     std::cout << "moving blocks: " << this->moving_blocks_count << std::endl;
 }
@@ -182,6 +185,8 @@ void PFrame::match_block(int x, int y) {
                                                                      x * block_size, y * block_size,
                                                                      min_mse_moving, block_size, step_size, max_checks);
 
+//        Block result = ExhaustiveSearch::exhaustive_search(*image2, *image1, x * block_size, y * block_size, block_size);
+
         //If the Diamond Searched block is a good enough match, add it to the list of matched blocks.
         if (result.sum <= min_mse_moving && result.x_end != result.x_start && result.y_end != result.y_start) {
 //            std::cout << " x:  " <<  result.x_start << " -> " <<  result.x_end << " y: " <<  result.y_start << " -> " <<  result.y_end << std::endl;
@@ -191,6 +196,7 @@ void PFrame::match_block(int x, int y) {
         }
     }
 }
+
 
 
 //write all the matched blocks into a text file.

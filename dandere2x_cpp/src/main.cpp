@@ -9,45 +9,33 @@
  * On specific functions for Dandere2x. To use it, simply uncomment //benchmark() in the main class
  * to benchmark or test various features.
  */
+
+
 void benchmark(){
-    #include "Image/Image.h"
-    #include "Plugins/PFrame/PFrame.h"
+#include "Image/Image.h"
+#include "Plugins/PFrame/PFrame.h"
 
-    shared_ptr<Image> f1 = make_shared<Image>("C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\inputs\\frame30.jpg");
-//    Image fake = Image("C:\\Users\\windwoz\\Desktop\\gradient\\fake.png");
-    shared_ptr<Image> f2 = make_shared<Image>("C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\inputs\\frame31.jpg");
-    shared_ptr<Image> compressed = make_shared<Image>("C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\compressed\\31.jpg");
+#include "BlockMatch/ExhaustiveSearch.h"
 
+    Image im1 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame120.jpg");
+    Image im2 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame121.jpg");
 
-    cout << ImageUtils::mse_image(*f1, *f2) << endl;
+    Block b = ExhaustiveSearch::exhaustive_search(im1, im2, 500, 500, 20);
 
-    Fade f = Fade(f1, f2, compressed, 30, "C:\\Users\\windwoz\\Desktop\\gradient\\output.txt");
-
-    f.run();
-
-    cout << "Predicted whole" << std::endl;
-    cout << ImageUtils::mse_image(*f1, *f2) << endl;
-
-    cout << "compressed whole" << std::endl;
-    cout << ImageUtils::mse_image(*compressed, *f2) << endl;
-
-
-    DebugImage debug = DebugImage::create_debug_from_image(*f1);
-    debug.save("C:\\Users\\windwoz\\Desktop\\workspace\\violetfade\\31_fake_predict.png");
-
+    std::cout << b.x_start << " -> " << b.x_end << b.y_start << " -> " << b.y_end << std::endl;
 }
 
 int main(int argc, char **argv) {
 
-    //benchmark();
+//    benchmark();
 
-    bool debug = false; //debug flag
+    bool debug = true; //debug flag
 
     //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
-    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\weathering_with_you_workspace\\";
+    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\idunnowhattest\\";
     int frame_count = 43;
-    int block_size = 30;
+    int block_size = 20;
     int step_size = 8;
     string run_type = "n";// 'n' or 'r'
     int resume_frame = 55;

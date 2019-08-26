@@ -18,6 +18,14 @@
 
 class Block {
 public:
+
+    struct Point {
+        int x;
+        int y;
+    };
+
+
+
     int x_start;
     int y_start;
     int x_end;
