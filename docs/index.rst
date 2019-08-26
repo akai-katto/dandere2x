@@ -152,16 +152,8 @@ Naizuri77's rule of thumb:
 
 .. code-block:: python
 
-    1080p
-    block_size = 15
+    block_size = 20
     quality_minimum = 80
-
-.. code-block:: python
-
-    720p
-    block_size = 10
-    quality_minimum = 80
-
 
 Trouble Shooting Dandere2x
 ==========================
