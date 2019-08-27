@@ -23,4 +23,5 @@ def compress_frames(context: Context):
         frame = Frame()
         frame.load_from_string(inputs_dir + "frame" + str(x) + extension_type)
         frame.save_image_quality(compressed_static_dir + "compressed_" + str(x) + ".jpg", quality_minimum)
-        frame.save_image_quality(compressed_moving_dir + "compressed_" + str(x) + ".jpg", int(quality_minimum*quality_moving_ratio))
+        frame.save_image_quality(compressed_moving_dir + "compressed_" + str(x) + ".jpg",
+                                 int(quality_minimum * quality_moving_ratio))

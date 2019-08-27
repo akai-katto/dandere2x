@@ -10,9 +10,10 @@ Dandere2x sub-function call is within
 import json
 import logging
 import os
+import pathlib
 import sys
 import tempfile
-import pathlib
+
 import math
 
 from dandere2xlib.utils.json_utils import get_options_from_section, absolutify_json
@@ -83,7 +84,6 @@ class Context:
         self.ffprobe_dir = self.config_json['ffmpeg']['ffprobe_path']
         self.hwaccel = self.config_json['ffmpeg']['-hwaccel']
 
-
         ################################
         # Load Dandere2x User Settings #
         ################################
@@ -109,9 +109,12 @@ class Context:
 
         # Real Time Encoding
 
-        self.realtime_encoding_enabled = self.config_json['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_enabled']
-        self.realtime_encoding_delete_files = self.config_json['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_delete_files']
-        self.realtime_encoding_seconds_per_video = self.config_json['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_seconds_per_video']
+        self.realtime_encoding_enabled = self.config_json['dandere2x']['developer_settings']['realtime_encoding'][
+            'realtime_encoding_enabled']
+        self.realtime_encoding_delete_files = self.config_json['dandere2x']['developer_settings']['realtime_encoding'][
+            'realtime_encoding_delete_files']
+        self.realtime_encoding_seconds_per_video = \
+        self.config_json['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_seconds_per_video']
 
         ################################
         #       Video Settings         #
@@ -132,10 +135,9 @@ class Context:
         self.height = self.video_settings.height
         self.frame_count = 0
 
-
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
-        logging.basicConfig(filename=os.path.join(self.workspace, 'dandere2x.log' ), level=logging.INFO)
+        logging.basicConfig(filename=os.path.join(self.workspace, 'dandere2x.log'), level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
     def close_logger(self):

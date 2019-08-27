@@ -5,8 +5,8 @@ import sys
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
-from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
+from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
 
 
 class QtDandere2xThread(QtCore.QThread):
@@ -27,7 +27,6 @@ class QtDandere2xThread(QtCore.QThread):
             d.start()
 
         self.finished.emit()
-
 
 
 class AppWindow(QMainWindow):
@@ -120,8 +119,6 @@ class AppWindow(QMainWindow):
                                                + "[q" + str(self.image_quality) + "]" + ".mkv"))
 
         self.set_output_file_name()
-
-
 
     def refresh_scale_factor(self):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
@@ -228,7 +225,6 @@ class AppWindow(QMainWindow):
         self.image_quality = int(self.ui.image_quality_box.currentText())
         self.block_size = int(self.ui.block_size_combo_box.currentText())
 
-
         # Waifu2x Type
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Caffe':
             self.waifu2x_type = 'caffe'
@@ -263,7 +259,6 @@ class AppWindow(QMainWindow):
         self.refresh_buttons()
 
     def press_select_output_button(self):
-
 
         save_file_name = self.save_file_name()
 

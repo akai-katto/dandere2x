@@ -1,8 +1,8 @@
+import json
 import time
 
-from dandere2x import Dandere2x
-import json
 from context import Context
+from dandere2x import Dandere2x
 
 start = time.time()
 
@@ -17,5 +17,3 @@ d.run_concurrent()
 end = time.time()
 
 print("\n duration: " + str(time.time() - start))
-
-

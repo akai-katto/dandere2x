@@ -24,7 +24,7 @@ def run_realtime_encoding(context: Context, output_file: str):
 
     # Load context
     workspace = context.workspace
-    frames_per_video = int(context.frame_rate*context.realtime_encoding_seconds_per_video)
+    frames_per_video = int(context.frame_rate * context.realtime_encoding_seconds_per_video)
     frame_count = int(context.frame_count)
     realtime_encoding_delete_files = context.realtime_encoding_delete_files
     extension_type = context.extension_type
@@ -49,7 +49,8 @@ def run_realtime_encoding(context: Context, output_file: str):
         wait_on_file(merged_files_prefix + str(x * frames_per_video + frames_per_video) + extension_type)
 
         # create a video for frames in this section
-        create_video_from_specific_frames(context, merged_files_prefix, encoded_vid, x * frames_per_video + 1, frames_per_video)
+        create_video_from_specific_frames(context, merged_files_prefix, encoded_vid, x * frames_per_video + 1,
+                                          frames_per_video)
 
         # ensure ffmpeg video exists before deleting files
         wait_on_file(encoded_vid)
@@ -72,7 +73,8 @@ def run_realtime_encoding(context: Context, output_file: str):
             if x == int(frame_count / frames_per_video) - 1:
 
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_video + 1) + ".png")
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_video + frames_per_video) + ".png")
+                wait_on_file(
+                    upscaled_files_prefix + get_lexicon_value(6, x * frames_per_video + frames_per_video) + ".png")
 
                 delete_digit_files_in_range(context,
                                             upscaled_files_prefix, ".png", 6, x * frames_per_video + 1,
@@ -81,7 +83,8 @@ def run_realtime_encoding(context: Context, output_file: str):
             else:
 
                 wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_video + 1) + ".png")
-                wait_on_file(upscaled_files_prefix + get_lexicon_value(6, x * frames_per_video + frames_per_video + 1) + ".png")
+                wait_on_file(
+                    upscaled_files_prefix + get_lexicon_value(6, x * frames_per_video + frames_per_video + 1) + ".png")
 
                 delete_digit_files_in_range(context,
                                             upscaled_files_prefix, ".png", 6, x * frames_per_video + 1,
@@ -92,7 +95,6 @@ def run_realtime_encoding(context: Context, output_file: str):
     # We need to now encode those separately
 
     if frame_count - int(frame_count / frames_per_video) * frames_per_video > 0:
-
         print("got in here")
         x = int(frame_count / frames_per_video)
         encoded_vid = workspace + "encoded\\encoded_" + str(x) + ".mkv"
@@ -101,16 +103,14 @@ def run_realtime_encoding(context: Context, output_file: str):
         wait_on_file(merged_files_prefix + str(frame_count - x * frames_per_video + frames_per_video) + extension_type)
 
         # create a video for frames in this section
-        create_video_from_specific_frames(context, merged_files_prefix, encoded_vid, x * frames_per_video + 1, frames_per_video)
+        create_video_from_specific_frames(context, merged_files_prefix, encoded_vid, x * frames_per_video + 1,
+                                          frames_per_video)
 
         # ensure ffmpeg video exists before deleting files
         wait_on_file(encoded_vid)
 
         # write to text file video for ffmpeg to concat vids with
         text_file.write("file " + "'" + encoded_vid + "'" + "\n")
-
-
-
 
     text_file.close()
 

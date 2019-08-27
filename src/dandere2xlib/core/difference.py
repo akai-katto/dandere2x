@@ -161,5 +161,4 @@ def debug_image(block_size, frame_base, list_predictive, list_differences, outpu
                              vector.x_1, vector.y_1,
                              vector.x_1, vector.y_1)
 
-
     out_image.save_image_quality(output_location, 25)
