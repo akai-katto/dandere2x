@@ -128,7 +128,7 @@ class Dandere2x:
         waifu2x.join()
         status_thread.join()
 
-        if self.context.realtime_encoding:
+        if self.context.realtime_encoding_enabled:
             realtime_encode_thread.join()
 
         self.context.logger.info("Threaded Processes Finished succcesfully")
