@@ -17,7 +17,7 @@
       },
       "step_size": 8,
       "bleed": 1,
-      "quality_moving_ratio": 0.45,
+      "quality_moving_ratio": 0.55,
       "extension_type": ".jpg",
       "debug": true,
       "workspace_use_temp": false,
