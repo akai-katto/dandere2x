@@ -21,6 +21,30 @@ Customizable and Open Source
     
 .. _Read the docs: http://readthedocs.org/
 
+Help and Resources
+==================
+
+Reddit
+   Reddit is the primary medium of communication for Dandere2x. If you want help, this is the best place to get an answer.  Usually, if I spend a night working on something, I'll do a short write up about it the night of.
+
+Link: https://www.reddit.com/r/Dandere2x/
+
+
+Telegram
+   The telegram server for Dandere2x can be found here:
+   The telegram can be seen as a means for immediate help or general discussion, although due to the school year starting I'm not sure how active I will be. 
+
+Link: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
+
+Donations
+   Dandere2x is 100% free and will always be 100% free. If you wish to contribute to dandere2x development, feel free to send me some  change! Funds go-to playing games with friends and food. 
+
+Donation Links:
+   https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=thatweeblife%40gmail.com&currency_code=USD&source=url 
+   
+   https://www.patreon.com/dandere2x/
+
+
 
 Downloading And Using Dandere2x
 ===============================
