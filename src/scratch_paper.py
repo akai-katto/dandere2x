@@ -7,8 +7,6 @@ with open("dandere2x.json", "r") as read_file:
 
 d = Dandere2x_Gui_Wrapper(config_json)
 
-print(d.context.realtime_encoding)
-
 d.start()
 #
 

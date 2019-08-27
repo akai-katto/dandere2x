@@ -1,25 +1,28 @@
 {
   "dandere2x": {
     "usersettings": {
-      "block_size": 30,
+      "block_size": 20,
       "quality_minimum": 80,
       "waifu2x_type": "vulkan",
       "denoise_level": 3,
       "scale_factor": 2,
-      "input_file": "..\\workspace\\violetmovement.mkv",
-      "output_file": "..\\workspace\\violet_movemnt_upscaled_2.mkv"
+      "input_file": "..\\workspace\\30secondstwig.mkv",
+      "output_file": "..\\workspace\\twig_thirty_seconds.mkv"
     },
     "developer_settings": {
+      "realtime_encoding": {
+        "realtime_encoding_enabled": true,
+        "realtime_encoding_delete_files": false,
+        "realtime_encoding_seconds_per_video": 3
+      },
       "step_size": 8,
       "bleed": 1,
-      "quality_moving_ratio": 0.65,
+      "quality_moving_ratio": 0.45,
       "extension_type": ".jpg",
       "debug": true,
-      "realtime_encoding": true,
-      "realtime_encoding_delete_files": false,
       "workspace_use_temp": false,
       "gui_delete_workspace_after": false,
-      "workspace": "..\\workspace\\violet_movement_workspace_2\\",
+      "workspace": "..\\workspace\\thirty_seconds_workspace\\",
       "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },
@@ -80,7 +83,9 @@
       "output_options": {
         "-qscale:v": 2,
         "-pix_fmt": null,
-        "-vf": ["noise=c1s=8:c0f=u"]
+        "-vf": [
+          "noise=c1s=8:c0f=u"
+        ]
       }
     },
     "frames_to_video": {
@@ -89,7 +94,9 @@
         "-crf": 17,
         "-b:v": null,
         "-pix_fmt": null,
-        "-vf": ["deband=range=22:blur=false","pp7=qp=4:mode=medium"]
+        "-vf": [
+          " pp=hb/vb/dr/fq|32, deband=range=22:blur=false"
+        ]
       },
       "-y": true
     },

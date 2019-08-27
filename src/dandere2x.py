@@ -118,7 +118,7 @@ class Dandere2x:
         status_thread.start()
         compress_frames_thread.start()
 
-        if self.context.realtime_encoding:
+        if self.context.realtime_encoding_enabled:
             realtime_encode_thread.start()
 
         compress_frames_thread.join()

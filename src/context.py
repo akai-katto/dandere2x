@@ -104,10 +104,14 @@ class Context:
         self.bleed = self.config_json['dandere2x']['developer_settings']['bleed']
         self.extension_type = self.config_json['dandere2x']['developer_settings']['extension_type']
         self.debug = self.config_json['dandere2x']['developer_settings']['debug']
-        self.realtime_encoding = self.config_json['dandere2x']['developer_settings']['realtime_encoding']
-        self.realtime_encoding_delete_files = self.config_json['dandere2x']['developer_settings']['realtime_encoding_delete_files']
         self.dandere2x_cpp_dir = self.config_json['dandere2x']['developer_settings']['dandere2x_cpp_dir']
         self.correction_block_size = 2
+
+        # Real Time Encoding
+
+        self.realtime_encoding_enabled = self.config_json['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_enabled']
+        self.realtime_encoding_delete_files = self.config_json['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_delete_files']
+        self.realtime_encoding_seconds_per_video = self.config_json['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_seconds_per_video']
 
         ################################
         #       Video Settings         #
