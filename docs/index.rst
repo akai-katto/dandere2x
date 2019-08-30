@@ -42,11 +42,13 @@ Donations
    Dandere2x is 100% free and will always be 100% free. If you wish to contribute to dandere2x development, feel free to send me some  change! Funds go-to playing games with friends and food. 
 
 Donation Links:
-   https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=thatweeblife%40gmail.com&currency_code=USD&source=url 
+   Paypal_
    
-   https://www.patreon.com/dandere2x/
+   Patreon_
 
+.. _Paypal: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=thatweeblife%40gmail.com&currency_code=USD&source=url 
 
+.. _Patreon: https://www.patreon.com/dandere2x/
 
 Downloading And Using Dandere2x
 ===============================
