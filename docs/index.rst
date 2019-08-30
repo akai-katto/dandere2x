@@ -9,8 +9,10 @@ Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes li
 
 Fast
     Dandere2x can provide a dramatic speedup for anime upscaling.
-    In this comparison video (https://www.youtube.com/watch?v=d1Y4pmQb44k),  Dandere2x took only 3.5 minutes, while 
+    In this comparison video_,  Dandere2x took only 3.5 minutes, while 
     using Video2x's lossless upscaling took 18 minutes!
+    
+.. _video: http://www.python.org/
 
 Easy
    Dandere2x comes included with a GUI interface to make Dandere2x easy and fast to use, for both experienced and inexperienced users.
