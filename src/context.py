@@ -66,7 +66,7 @@ class Context:
 
         # if we're using a temporary workspace, assign workspace to be in the temp folder
         if self.workspace_use_temp:
-            self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()), 'dandere2x') + "\\"
+            self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()), 'dandere2x') + os.path.sep
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep

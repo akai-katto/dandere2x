@@ -10,6 +10,7 @@ Description: temp ffmpeg wrapper, terrible implementation fix later
 """
 import logging
 import subprocess
+import os
 
 from context import Context
 from dandere2xlib.utils.json_utils import get_options_from_section
@@ -78,7 +79,9 @@ def extract_frames(context: Context, input_file: str):
 # one whole video. If we don't re-encode it, we get black frames whenever two videos are spliced together,
 # so the whole thing needs to be quickly re-encoded at the very end.
 def concat_encoded_vids(context: Context, output_file: str):
-    text_file = context.workspace + "encoded\\list.txt"
+    encoded_dir = context.encoded_dir
+
+    text_file = encoded_dir + "list.txt"
     concat_videos_command = [context.ffmpeg_dir,
                              "-f", "concat",
                              "-safe", "0",

@@ -43,7 +43,7 @@ from wrappers.frame.frame_compressor import compress_frames
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
-
+from wrappers.waifu2x.waifu2x_vulkan_linux import Waifu2xVulkanLinux
 
 class Dandere2x:
 
@@ -87,12 +87,12 @@ class Dandere2x:
         waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-        # Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
-        if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
-            print("Could not upscale first file.. check logs file to see what's wrong")
-            logging.info("Could not upscale first file.. check logs file to see what's wrong")
-            logging.info("Exiting Dandere2x...")
-            sys.exit(1)
+        # # Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
+        # if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
+        #     print("Could not upscale first file.. check logs file to see what's wrong")
+        #     logging.info("Could not upscale first file.. check logs file to see what's wrong")
+        #     logging.info("Exiting Dandere2x...")
+        #     sys.exit(1)
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
 
@@ -194,6 +194,9 @@ class Dandere2x:
 
         elif name == "vulkan":
             return Waifu2xVulkan(self.context)
+
+        elif name == "vulkan_linux":
+            return Waifu2xVulkanLinux(self.context)
 
         else:
             logging.info("no valid waifu2x selected")

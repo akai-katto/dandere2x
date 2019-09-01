@@ -38,8 +38,8 @@ def run_realtime_encoding(context: Context, output_file: str):
 
     # Create an encoded every frame_rate seconds.
     for x in range(0, int(frame_count / frames_per_video)):
-        text_file = open(workspace + "encoded\\list.txt", 'a+')  # text file for ffmpeg to use to concat vids together
-        encoded_vid = workspace + "encoded\\encoded_" + str(x) + ".mkv"
+        text_file = open(workspace + "encoded" + os.path.sep + "list.txt", 'a+')  # text file for ffmpeg to use to concat vids together
+        encoded_vid = workspace + "encoded" + os.path.sep + "encoded_" + str(x) + ".mkv"
 
         if file_exists(encoded_vid):
             logger.info(encoded_vid + " already exists: skipping iteration")
@@ -97,7 +97,7 @@ def run_realtime_encoding(context: Context, output_file: str):
     if frame_count - int(frame_count / frames_per_video) * frames_per_video > 0:
         print("got in here")
         x = int(frame_count / frames_per_video)
-        encoded_vid = workspace + "encoded\\encoded_" + str(x) + ".mkv"
+        encoded_vid = workspace + "encoded" + os.path.sep + "encoded_" + str(x) + ".mkv"
 
         wait_on_file(merged_files_prefix + str(x * frames_per_video + 1) + extension_type)
         wait_on_file(merged_files_prefix + str(frame_count - x * frames_per_video + frames_per_video) + extension_type)

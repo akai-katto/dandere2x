@@ -52,7 +52,9 @@ class Dandere2xCppWrapper(threading.Thread):
 
         logger.info(exec)
 
-        return_val = subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE).returncode
+        # return_val = subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE).returncode
+        return_val = subprocess.run(exec).returncode
+        # p = subprocess.Popen(exec, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         if return_val == 0:
             logger.info("d2xcpp finished correctly")
