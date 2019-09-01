@@ -16,6 +16,7 @@ class QtDandere2xThread(QtCore.QThread):
         super(QtDandere2xThread, self).__init__(parent)
         self.config_json = config_json
 
+
     def run(self):
         d = Dandere2x_Gui_Wrapper(self.config_json)
 
@@ -140,7 +141,7 @@ class AppWindow(QMainWindow):
 
         print(os.getcwd())
 
-        with open(os.path.join(self.this_folder, "dandere2x.json"), "r") as read_file:
+        with open(os.path.join(self.this_folder, "dandere2x_linux.json"), "r") as read_file:
             config_json = json.load(read_file)
 
         config_json['dandere2x']['usersettings']['output_file'] = self.output_file
@@ -189,8 +190,18 @@ class AppWindow(QMainWindow):
     # Leave everything as STR's since config files are just strings
     def parse_gui_inputs(self):
 
-        self.output_file = self.output_file.replace("/", "\\")
-        self.input_file = self.input_file.replace("/", "\\")
+        # Get operating system
+
+        from sys import platform
+        if platform == "linux" or platform == "linux2":
+            self.operating_system = 'linux'
+        elif platform == "win32":
+            self.operating_system = 'win32'
+
+        # fuck windows and it's file management system
+        if self.operating_system == 'win32':
+            self.output_file = self.output_file.replace("/", "\\")
+            self.input_file = self.input_file.replace("/", "\\")
 
         # Scale Factors
 

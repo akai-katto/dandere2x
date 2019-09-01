@@ -87,12 +87,12 @@ class Dandere2x:
         waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-        # # Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
-        # if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
-        #     print("Could not upscale first file.. check logs file to see what's wrong")
-        #     logging.info("Could not upscale first file.. check logs file to see what's wrong")
-        #     logging.info("Exiting Dandere2x...")
-        #     sys.exit(1)
+        # Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
+        if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
+            print("Could not upscale first file.. check logs file to see what's wrong")
+            logging.info("Could not upscale first file.. check logs file to see what's wrong")
+            logging.info("Exiting Dandere2x...")
+            sys.exit(1)
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
 
@@ -186,17 +186,19 @@ class Dandere2x:
     # What the function does based off what it's passed.
     def get_waifu2x_class(self, name: str):
 
+
         if name == "caffe":
             return Waifu2xCaffe(self.context)
 
         elif name == "converter_cpp":
             return Waifu2xConverterCpp(self.context)
 
+        # for the time being linux and vulkan have seperate classes
         elif name == "vulkan":
-            return Waifu2xVulkan(self.context)
+            if self.context.operating_system == 'linux':
+                return Waifu2xVulkanLinux(self.context)
 
-        elif name == "vulkan_linux":
-            return Waifu2xVulkanLinux(self.context)
+            return Waifu2xVulkan(self.context)
 
         else:
             logging.info("no valid waifu2x selected")

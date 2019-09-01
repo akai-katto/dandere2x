@@ -3,7 +3,7 @@
     "usersettings": {
       "block_size": 20,
       "quality_minimum": 5,
-      "waifu2x_type": "vulkan_linux",
+      "waifu2x_type": "vulkan",
       "denoise_level": 3,
       "scale_factor": 2,
       "input_file": "../workspace/2seconds.mkv",

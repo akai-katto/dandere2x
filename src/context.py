@@ -139,6 +139,14 @@ class Context:
         self.height = self.video_settings.height
         self.frame_count = 0
 
+        # Get operating system
+
+        from sys import platform
+        if platform == "linux" or platform == "linux2":
+            self.operating_system = 'linux'
+        elif platform == "win32":
+            self.operating_system = 'win32'
+
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
         logging.basicConfig(filename=os.path.join(self.workspace, 'dandere2x.log'), level=logging.INFO)
