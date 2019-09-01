@@ -8,7 +8,7 @@
 #
 # # resume only works if
 #
-# with open("dandere2x.json", "r") as read_file:
+# with open("dandere2x_win32.json", "r") as read_file:
 #     config_json = json.load(read_file)
 #
 # context = Context(config_json)

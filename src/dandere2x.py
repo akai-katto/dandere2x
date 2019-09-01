@@ -36,7 +36,7 @@ from dandere2xlib.core.difference import difference_loop, difference_loop_resume
 from dandere2xlib.core.merge import merge_loop, merge_loop_resume
 from dandere2xlib.realtime_encoding import run_realtime_encoding
 from dandere2xlib.status import print_status
-from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
+from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists, get_operating_system
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
 from wrappers.frame.frame_compressor import compress_frames
@@ -195,7 +195,7 @@ class Dandere2x:
 
         # for the time being linux and vulkan have seperate classes
         elif name == "vulkan":
-            if self.context.operating_system == 'linux':
+            if get_operating_system() == 'linux':
                 return Waifu2xVulkanLinux(self.context)
 
             return Waifu2xVulkan(self.context)

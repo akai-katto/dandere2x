@@ -12,7 +12,7 @@ import subprocess
 import threading
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_operating_system
 
 
 class Dandere2xCppWrapper(threading.Thread):
@@ -26,7 +26,6 @@ class Dandere2xCppWrapper(threading.Thread):
         self.step_size = context.step_size
         self.extension_type = context.extension_type
         self.differences_dir = context.differences_dir
-        self.operating_system = context.operating_system
         self.log_dir = context.log_dir
 
         self.resume = resume
@@ -56,10 +55,10 @@ class Dandere2xCppWrapper(threading.Thread):
 
         # On linux, we can't use subprocess.create_new_console, so we just write
         # The dandere2x_cpp output to a text file.
-        if self.operating_system == 'win32':
+        if get_operating_system() == 'win32':
             return_val = subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE).returncode
 
-        elif self.operating_system == 'linux':
+        elif get_operating_system() == 'linux':
             console_output = open(self.log_dir + "dandere2x_cpp.txt", "w")
             console_output.write(str(exec))
             return_val = subprocess.run(exec, shell=False, stderr=console_output, stdout=console_output).returncode

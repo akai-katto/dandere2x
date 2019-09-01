@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
-
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
 
 class QtDandere2xThread(QtCore.QThread):
     finished = QtCore.pyqtSignal()
@@ -141,8 +141,13 @@ class AppWindow(QMainWindow):
 
         print(os.getcwd())
 
-        with open(os.path.join(self.this_folder, "dandere2x_linux.json"), "r") as read_file:
-            config_json = json.load(read_file)
+        if get_operating_system() == 'win32':
+            with open(os.path.join(self.this_folder, "dandere2x_win32.json"), "r") as read_file:
+                config_json = json.load(read_file)
+
+        elif get_operating_system() == 'linux':
+            with open(os.path.join(self.this_folder, "dandere2x_linux.json"), "r") as read_file:
+                config_json = json.load(read_file)
 
         config_json['dandere2x']['usersettings']['output_file'] = self.output_file
         config_json['dandere2x']['usersettings']['input_file'] = self.input_file
@@ -190,16 +195,8 @@ class AppWindow(QMainWindow):
     # Leave everything as STR's since config files are just strings
     def parse_gui_inputs(self):
 
-        # Get operating system
-
-        from sys import platform
-        if platform == "linux" or platform == "linux2":
-            self.operating_system = 'linux'
-        elif platform == "win32":
-            self.operating_system = 'win32'
-
         # fuck windows and it's file management system
-        if self.operating_system == 'win32':
+        if get_operating_system() == 'win32':
             self.output_file = self.output_file.replace("/", "\\")
             self.input_file = self.input_file.replace("/", "\\")
 
