@@ -28,7 +28,7 @@ class Waifu2xConverterCpp(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_converter_cpp_dir = context.waifu2x_converter_cpp_dir
+        self.waifu2x_converter_cpp_dir = context.waifu2x_converter_cpp_file_path
         self.waifu2x_converter_cpp_path = context.waifu2x_converter_cpp_path
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
@@ -179,7 +179,7 @@ class Waifu2xConverterCpp(threading.Thread):
             logger.info(len(names))
 
             console_output.write(str(exec))
-            subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+            subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
 
             for name in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):

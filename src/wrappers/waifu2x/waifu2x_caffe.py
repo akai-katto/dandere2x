@@ -67,7 +67,7 @@ class Waifu2xCaffe(threading.Thread):
 
         console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
         console_output.write(str(exec))
-        subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+        subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
 
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial

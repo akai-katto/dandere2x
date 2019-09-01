@@ -50,10 +50,14 @@ class Context:
         # side note - for vulkan and converter, we need to know the path of the file in order for it to run correctly,
         # hence why we have two variables for them
         self.waifu2x_converter_cpp_path = self.config_json['waifu2x_converter']['waifu2x_converter_path']
-        self.waifu2x_converter_cpp_dir = os.path.join(self.waifu2x_converter_cpp_path, "waifu2x-converter-cpp.exe")
+        self.waifu2x_converter_file_name = self.config_json['waifu2x_converter']['waifu2x_converter_file_name']
+        self.waifu2x_converter_cpp_file_path = os.path.join(self.waifu2x_converter_cpp_path,
+                                                            self.waifu2x_converter_file_name)
 
-        self.waifu2x_vulkan_path = self.config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
-        self.waifu2x_vulkan_dir = os.path.join(self.waifu2x_vulkan_path, "waifu2x-ncnn-vulkan.exe")
+        self.waifu2x_ncnn_vulkan_path = self.config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
+        self.waifu2x_ncnn_vulkan_file_name = self.config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_file_name']
+        self.waifu2x_ncnn_vulkan_file_path = os.path.join(self.waifu2x_ncnn_vulkan_path,
+                                                          self.waifu2x_ncnn_vulkan_file_name)
 
         self.waifu2x_caffe_cui_dir = pathlib.Path(self.config_json['waifu2x_caffe']['waifu2x_caffe_path'])
 

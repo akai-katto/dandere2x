@@ -28,8 +28,8 @@ class Waifu2xVulkan(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_vulkan_dir = context.waifu2x_vulkan_dir
-        self.waifu2x_vulkan_path = context.waifu2x_vulkan_path
+        self.waifu2x_vulkan_dir = context.waifu2x_ncnn_vulkan_file_path
+        self.waifu2x_vulkan_path = context.waifu2x_ncnn_vulkan_path
         self.differences_dir = context.differences_dir
         self.upscaled_dir = context.upscaled_dir
         self.noise_level = context.noise_level
@@ -57,7 +57,7 @@ class Waifu2xVulkan(threading.Thread):
     # manually upscale a single file
     def upscale_file(self, input_file: str, output_file: str):
         # load context
-        waifu2x_vulkan_dir_dir = self.context.waifu2x_vulkan_path
+        waifu2x_vulkan_dir_dir = self.context.waifu2x_ncnn_vulkan_path
         exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
         logger = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ class Waifu2xVulkan(threading.Thread):
 
         console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
         console_output.write(str(exec))
-        subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+        subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()
 
     # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
@@ -194,7 +194,7 @@ class Waifu2xVulkan(threading.Thread):
             logger.info(len(upscaled_names))
 
             console_output.write(str(exec))
-            subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+            subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
 
             for name in upscaled_names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
