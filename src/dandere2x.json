@@ -6,8 +6,8 @@
       "waifu2x_type": "vulkan",
       "denoise_level": 3,
       "scale_factor": 2,
-      "input_file": "..\\workspace\\30secondstwig.mkv",
-      "output_file": "..\\workspace\\twig_thirty_seconds.mkv"
+      "input_file": "..\\workspace\\7secondstwig.mkv",
+      "output_file": "..\\workspace\\7secondstwigd.mkv"
     },
     "developer_settings": {
       "realtime_encoding": {
@@ -22,7 +22,7 @@
       "debug": true,
       "workspace_use_temp": false,
       "gui_delete_workspace_after": false,
-      "workspace": "..\\workspace\\thirty_seconds_workspace\\",
+      "workspace": "..\\workspace\\7secondstwig_folder\\",
       "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },
@@ -41,6 +41,7 @@
   },
   "waifu2x_converter": {
     "waifu2x_converter_path": "..\\externals\\waifu2x-converter-cpp",
+    "waifu2x_converter_file_name": "waifu2x-converter-cpp.exe",
     "output_options": {
       "--output-format": null,
       "--png-compression": null,
@@ -57,6 +58,7 @@
   },
   "waifu2x_ncnn_vulkan": {
     "waifu2x_ncnn_vulkan_path": "..\\externals\\waifu2x-ncnn-vulkan",
+    "waifu2x_ncnn_vulkan_file_name": "waifu2x-ncnn-vulkan.exe",
     "output_options": {
       "-tile-size": 200,
       "-model-path": "..\\externals\\waifu2x-ncnn-vulkan\\models-upconv_7_anime_style_art_rgb",

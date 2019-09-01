@@ -40,7 +40,7 @@ def trim_video(context: Context, output_file: str):
 
     console_output = open(context.log_dir + "ffmpeg_trim_video_command.txt", "w")
     console_output.write(str(trim_video_command))
-    subprocess.call(trim_video_command, shell=True, stderr=console_output, stdout=console_output)
+    subprocess.call(trim_video_command, shell=False, stderr=console_output, stdout=console_output)
 
 
 # Extract frames from a video
@@ -71,7 +71,7 @@ def extract_frames(context: Context, input_file: str):
 
     console_output = open(context.log_dir + "ffmpeg_extract_frames_console.txt", "w")
     console_output.write(str(extract_frames_command))
-    subprocess.call(extract_frames_command, shell=True, stderr=console_output, stdout=console_output)
+    subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
 
 
 # we create about 'n' amount of videos during runtime, and we need to re-encode those videos into
@@ -95,7 +95,7 @@ def concat_encoded_vids(context: Context, output_file: str):
 
     console_output = open(context.log_dir + "ffmpeg_concat_videos_command.txt", "w")
     console_output.write((str(concat_videos_command)))
-    subprocess.call(concat_videos_command, shell=True, stderr=console_output, stdout=console_output)
+    subprocess.call(concat_videos_command, shell=False, stderr=console_output, stdout=console_output)
 
 
 # 'file_dir' refers to the file in the config file, aka the 'input_video'.
@@ -120,7 +120,7 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
 
     console_output = open(context.log_dir + "migrate_tracks_command.txt", "w")
     console_output.write(str(migrate_tracks_command))
-    subprocess.call(migrate_tracks_command, shell=True, stderr=console_output, stdout=console_output)
+    subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
 
 
 # Given the file prefixes, the starting frame, and how many frames should fit in a video
@@ -151,4 +151,4 @@ def create_video_from_specific_frames(context: Context, file_prefix, output_file
 
     console_output = open(context.log_dir + "video_from_frames_command.txt", "w")
     console_output.write(str(video_from_frames_command))
-    subprocess.call(video_from_frames_command, shell=True, stderr=console_output, stdout=console_output)
+    subprocess.call(video_from_frames_command, shell=False, stderr=console_output, stdout=console_output)

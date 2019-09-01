@@ -8,10 +8,10 @@
 
 
 char dandere2x::separator() {
-#ifdef __MINGW__
+#ifdef __CYGWIN__
     return '\\';
 #else
-    return '\\';
+    return '/';
 #endif
 }
 
