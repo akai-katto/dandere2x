@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 
     //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
-    string workspace = "C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\idunnowhattest\\";
+    string workspace = "/home/linux/Documents/github_projects/dandere2x/src/workspace/7secondstwig_folder/";
     int frame_count = 43;
     int block_size = 20;
     int step_size = 8;

@@ -10,7 +10,14 @@ Last Modified: April 2, 2019
 import logging
 import os
 import time
+from sys import platform
 
+
+def get_operating_system():
+    if platform == "linux" or platform == "linux2":
+        return 'linux'
+    elif platform == "win32":
+        return 'win32'
 
 # if the value in the key value pair exists, add it.
 # if the key is just 'true', only add the key
@@ -18,6 +25,8 @@ import time
 # THis doesnt work with multiple keys and import warnings
 
 # returns a list given a text file (representing a string)
+
+
 def get_list_from_file(text_file: str):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)

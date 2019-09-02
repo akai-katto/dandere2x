@@ -36,14 +36,14 @@ from dandere2xlib.core.difference import difference_loop, difference_loop_resume
 from dandere2xlib.core.merge import merge_loop, merge_loop_resume
 from dandere2xlib.realtime_encoding import run_realtime_encoding
 from dandere2xlib.status import print_status
-from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
+from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists, get_operating_system
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
 from wrappers.frame.frame_compressor import compress_frames
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
-
+from wrappers.waifu2x.waifu2x_vulkan_linux import Waifu2xVulkanLinux
 
 class Dandere2x:
 
@@ -186,13 +186,18 @@ class Dandere2x:
     # What the function does based off what it's passed.
     def get_waifu2x_class(self, name: str):
 
+
         if name == "caffe":
             return Waifu2xCaffe(self.context)
 
         elif name == "converter_cpp":
             return Waifu2xConverterCpp(self.context)
 
+        # for the time being linux and vulkan have seperate classes
         elif name == "vulkan":
+            if get_operating_system() == 'linux':
+                return Waifu2xVulkanLinux(self.context)
+
             return Waifu2xVulkan(self.context)
 
         else:
