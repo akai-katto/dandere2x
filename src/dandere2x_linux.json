@@ -12,7 +12,7 @@
     "developer_settings": {
       "realtime_encoding": {
         "realtime_encoding_enabled": true,
-        "realtime_encoding_delete_files": true,
+        "realtime_encoding_delete_files": false,
         "realtime_encoding_seconds_per_video": 1
       },
       "step_size": 8,
