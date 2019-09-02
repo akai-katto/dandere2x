@@ -1,5 +1,9 @@
 # Dandere2x - Fast Waifu2x Video Upscaling
 
+## What is Dandere2x
+
+Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes live-action) videos by applying compression techniques. Just as Netflix uses compression to quickly stream videos to your home, Dandere2x uses compression to expedite the waifu2x upscaling process.
+
 
 ## Links 
 
@@ -18,10 +22,6 @@ https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 Patreon:
 
 https://www.patreon.com/dandere2x
-
-## What is Dandere2x
-
-Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes live-action) videos by applying compression techniques. Just as Netflix uses compression to quickly stream videos to your home, Dandere2x uses compression to expedite the waifu2x upscaling process.
 
 ## Current Features
 
