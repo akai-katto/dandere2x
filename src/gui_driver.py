@@ -44,6 +44,10 @@ class AppWindow(QMainWindow):
             self.this_folder = os.path.dirname(sys.executable) + os.path.sep
         elif __file__:
             self.this_folder = os.path.dirname(__file__) + os.path.sep
+            
+        # lazy hack_around for linux build (im not sure why the previous statement doesnt work on venv linux)
+        if get_operating_system() == "linux":
+            self.this_folder = os.getcwd()
 
         self.input_file = ''
         self.output_file = ''
