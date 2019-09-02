@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
 //    benchmark();
 
-    bool debug = true; //debug flag
+    bool debug = false; //debug flag
 
     //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
