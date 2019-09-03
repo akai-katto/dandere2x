@@ -24,7 +24,7 @@ from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, r
 from dandere2xlib.utils.json_utils import get_options_from_section
 
 
-class Waifu2xVulkanLinux(threading.Thread):
+class Waifu2xVulkanLegacy(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count

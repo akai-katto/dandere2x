@@ -76,7 +76,7 @@ class Waifu2xConverterCpp(threading.Thread):
 
         console_output = open(self.context.log_dir + "waifu2x_conv_upscale_frame_single.txt", "w")
         console_output.write(str(exec))
-        subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+        subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
 
     # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
     # this function just renames the files so Dandere2x can interpret them correctly.
