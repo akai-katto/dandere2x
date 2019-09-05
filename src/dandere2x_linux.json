@@ -6,8 +6,8 @@
       "waifu2x_type": "vulkan",
       "denoise_level": 3,
       "scale_factor": 2,
-      "input_file": "../workspace/2seconds.mkv",
-      "output_file": "../workspace/2second_upscaled.mkv"
+      "input_file": "../workspace/yn_moving.mkv",
+      "output_file": "../workspace/yn_moving_upscaled.mkv"
     },
     "developer_settings": {
       "realtime_encoding": {
@@ -57,11 +57,11 @@
     }
   },
   "waifu2x_ncnn_vulkan": {
-    "waifu2x_ncnn_vulkan_path": "/snap/waifu2x-ncnn-vulkan/86/bin",
-    "waifu2x_ncnn_vulkan_file_name": "waifu2x",
+    "waifu2x_ncnn_vulkan_path": "/home/linux/devbuild/waifu2x-ncnn-vulkan-git/pkg/waifu2x-ncnn-vulkan-git/usr/bin",
+    "waifu2x_ncnn_vulkan_file_name": "waifu2x-ncnn-vulkan",
     "output_options": {
-      "-tile-size": 200,
-      "-model-path": "..\\externals\\waifu2x-ncnn-vulkan\\models-upconv_7_anime_style_art_rgb",
+      "-t": 200,
+      "-m": "models-upconv_7_anime_style_art_rgb",
       "-gpu": null,
       "-load-proc-save_threads": null,
       "-verbose": null

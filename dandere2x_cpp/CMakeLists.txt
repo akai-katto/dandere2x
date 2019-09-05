@@ -28,7 +28,7 @@ include_directories(src/Image)
 include_directories(src/Image/DebugImage)
 include_directories(src/PFrame)
 include_directories(src/Plugins/Correction)
-include_directories(src/Plugins/PFrame/Difference)
+include_directories(src/Plugins/PFrame/Residual)
 
 add_executable(dandere2x_cpp
         src/BlockMatch/Block.h
@@ -44,9 +44,9 @@ add_executable(dandere2x_cpp
         src/Image/stb_image.h
         src/Plugins/Correction/Correction.cpp
         src/Plugins/Correction/Correction.h
-        src/Plugins/PFrame/Difference/DifferenceBlocks.h
-        src/Plugins/PFrame/Difference/Differences.cpp
-        src/Plugins/PFrame/Difference/Differences.h
+        src/Plugins/PFrame/Residual/ResidualBlocks.h
+        src/Plugins/PFrame/Residual/Residual.cpp
+        src/Plugins/PFrame/Residual/Residual.h
         src/Plugins/PFrame/PFrame.cpp
         src/Plugins/PFrame/PFrame.h
         src/Driver.h

@@ -15,7 +15,7 @@
 
 PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed_static,
                std::shared_ptr<Image> image2_compressed_moving,
-               unsigned int block_size, std::string p_frame_file, std::string difference_file,
+               unsigned int block_size, std::string p_frame_file, std::string residual_file,
                int step_size) {
 
     this->image1 = image1;
@@ -27,9 +27,9 @@ PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std
     this->block_size = block_size;
     this->width = image1->width;
     this->height = image1->height;
-    this->dif = nullptr;
+    this->res = nullptr;
     this->p_frame_file = p_frame_file;
-    this->difference_file = difference_file;
+    this->residual_file = residual_file;
     this->matched_blocks.resize(this->width / block_size, std::vector<Block>(this->height / block_size));
     this->matched_blocks_count = 0;
     this->moving_blocks_count = 0;
@@ -86,20 +86,20 @@ void PFrame::run() {
 
 void PFrame::save() {
     if (this->matched_blocks_count != 0) {
-        create_difference();
-        this->dif->write(difference_file);
+        create_residual();
+        this->res->write(residual_file);
         this->write(p_frame_file);
     }
     else { //if parts of frame2 cannot be made from frame1, just copy frame2.
-        dandere2x::write_empty(difference_file);
+        dandere2x::write_empty(residual_file);
         dandere2x::write_empty(p_frame_file);
     }
 }
 
 
-void PFrame::create_difference() {
-    this->dif = std::make_shared<Differences>(matched_blocks, block_size, image2);
-    this->dif->run();
+void PFrame::create_residual() {
+    this->res = std::make_shared<Residual>(matched_blocks, block_size, image2);
+    this->res->run();
 }
 
 // After computations are all done, we need to draw over every match from matching image_1 -> image_2.

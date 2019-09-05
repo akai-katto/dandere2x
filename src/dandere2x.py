@@ -32,8 +32,8 @@ import sys
 import threading
 import time
 
-from dandere2xlib.core.difference import difference_loop, difference_loop_resume
-from dandere2xlib.core.merge import merge_loop, merge_loop_resume
+from dandere2xlib.core.difference import difference_loop
+from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.realtime_encoding import run_realtime_encoding
 from dandere2xlib.status import print_status
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
@@ -130,58 +130,6 @@ class Dandere2x:
 
         self.context.logger.info("Threaded Processes Finished succcesfully")
 
-    # Resume a Dandere2x Session
-    # Consider merging this into one function, but for the time being I prefer it seperate
-    # to-do this this work?
-
-    def resume_concurrent(self):
-        self.context.update_frame_count()  # we need to count how many outputs there are after ffmpeg extracted stuff
-        self.context.set_logger()
-
-        if self.context.realtime_encoding_delete_files:
-            print("CANNOT RESUME RUN ON DELETE FILES TYPED SESSION")
-            sys.exit(1)
-
-        if self.context.user_trim_video:
-            trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
-            self.context.input_file = trimed_video
-
-        # get whatever waifu2x class we're using
-        waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
-
-        dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=True)
-        merge_thread = threading.Thread(target=merge_loop_resume, args=(self.context,))
-        difference_thread = threading.Thread(target=difference_loop_resume, args=(self.context,))
-        status_thread = threading.Thread(target=print_status, args=(self.context,))
-        compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
-
-        output_file = self.context.workspace + 'output.mkv'
-        realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
-
-        self.context.logger.info("Starting Threaded Processes..")
-
-        waifu2x.start()
-        merge_thread.start()
-        difference_thread.start()
-        dandere2xcpp_thread.start()
-        status_thread.start()
-        compress_frames_thread.start()
-
-        # these can obviously be combined  but leaving them separate for readiability
-        if self.context.realtime_encoding == 1:
-            realtime_encode_thread.start()
-
-        if self.context.realtime_encoding == 1:
-            realtime_encode_thread.join()
-
-        compress_frames_thread.join()
-        merge_thread.join()
-        dandere2xcpp_thread.join()
-        difference_thread.join()
-        waifu2x.join()
-        status_thread.join()
-
-        self.context.logger.info("Threaded Processes Finished successfully")
 
     def get_waifu2x_class(self, name: str):
 
@@ -215,25 +163,6 @@ class Dandere2x:
         self.context.config_json['ffmpeg']['video_to_frames']['output_options']['-vf'] \
             .append("scale=" + str(self.context.width) + ":" + str(self.context.height))
 
-    def difference_only(self):
-        self.pre_setup()
-
-        dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
-        difference_thread = threading.Thread(target=difference_loop, args=(self.context, 1))
-
-        self.context.logger.info("Starting Threaded Processes..")
-
-        difference_thread.start()
-        dandere2xcpp_thread.start()
-
-        dandere2xcpp_thread.join()
-        difference_thread.join()
-
-    def merge_only(self):
-        merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
-        merge_thread.start()
-        merge_thread.join()
-
     # delete every folder except the log file in the workspace
     # This because the log file doesn't want to get deleted + having the log
     # stay alive even after everything finishes is useful to know
@@ -262,12 +191,10 @@ class Dandere2x:
         # create a list of directories we need to create
         self.directories = {self.context.input_frames_dir,
                             self.context.correction_data_dir,
-                            self.context.differences_dir,
-                            self.context.upscaled_dir,
+                            self.context.residual_images_dir,
+                            self.context.residual_upscaled_dir,
                             self.context.merged_dir,
-                            self.context.upscaled_dir,
-                            self.context.merged_dir,
-                            self.context.inversion_data_dir,
+                            self.context.residual_data_dir,
                             self.context.pframe_data_dir,
                             self.context.debug_dir,
                             self.context.log_dir,

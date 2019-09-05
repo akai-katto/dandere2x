@@ -30,8 +30,8 @@ class Waifu2xVulkan(threading.Thread):
         self.frame_count = context.frame_count
         self.waifu2x_vulkan_dir = context.waifu2x_ncnn_vulkan_file_path
         self.waifu2x_vulkan_path = context.waifu2x_ncnn_vulkan_path
-        self.differences_dir = context.differences_dir
-        self.upscaled_dir = context.upscaled_dir
+        self.differences_dir = context.residual_images_dir
+        self.upscaled_dir = context.residual_upscaled_dir
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
@@ -139,8 +139,8 @@ class Waifu2xVulkan(threading.Thread):
     def run(self):
         logger = logging.getLogger(__name__)
 
-        differences_dir = self.context.differences_dir
-        upscaled_dir = self.context.upscaled_dir
+        differences_dir = self.context.residual_images_dir
+        upscaled_dir = self.context.residual_upscaled_dir
         exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
         console_output = open(self.context.log_dir + "vulkan_upscale_frames.txt", "w")

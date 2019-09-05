@@ -15,9 +15,9 @@ from wrappers.frame.frame import Frame
 def merge_loop(context: Context, start_frame: int):
     # load variables from context
     workspace = context.workspace
-    upscaled_dir = context.upscaled_dir
+    upscaled_dir = context.residual_upscaled_dir
     merged_dir = context.merged_dir
-    inversion_data_dir = context.inversion_data_dir
+    residual_data_dir = context.residual_data_dir
     pframe_data_dir = context.pframe_data_dir
     correction_data_dir = context.correction_data_dir
     fade_data_dir = context.fade_data_dir
@@ -50,14 +50,14 @@ def merge_loop(context: Context, start_frame: int):
 
         # load vectors needed to piece image back together
         prediction_data_list = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
-        difference_data_list = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")
+        residual_data_list = get_list_from_file(residual_data_dir + "residual_" + str(x) + ".txt")
         correction_data_list = get_list_from_file(correction_data_dir + "correction_" + str(x) + ".txt")
         fade_data_list = get_list_from_file(fade_data_dir + "fade_" + str(x) + ".txt")
 
         output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
 
         new_base = make_merge_image(context, f1, base,
-                                    prediction_data_list, difference_data_list, correction_data_list, fade_data_list)
+                                    prediction_data_list, residual_data_list, correction_data_list, fade_data_list)
 
         # Write the image in the background for the preformance increase
         background_frame_write = AsyncFrameWrite(new_base, output_file)
@@ -76,31 +76,8 @@ def merge_loop(context: Context, start_frame: int):
         base = new_base
 
 
-# find the last photo to be merged, then start the loop from there
-def merge_loop_resume(context: Context):
-    workspace = context.workspace
-    frame_count = context.frame_count
-
-    logger = logging.getLogger(__name__)
-    last_found = frame_count
-
-    # to-do, replace this file with the actual variable for merged
-    while last_found > 1:
-        exists = os.path.isfile(workspace + os.path.sep + "merged" + os.path.sep + "merged_" + str(last_found) + ".jpg")
-        logging.info(workspace + os.path.sep + "merged" + os.path.sep + "merged_" + str(last_found) + ".jpg")
-
-        if not exists:
-            last_found -= 1
-
-        elif exists:
-            break
-
-    logger.info("resume info: last found: " + str(last_found))
-    merge_loop(context, start_frame=last_found)
-
-
-def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame,
-                     list_predictive: list, list_differences: list, list_corrections: list, list_fade: list):
+def make_merge_image(context: Context, frame_residual: Frame, frame_base: Frame,
+                     list_predictive: list, list_residual: list, list_corrections: list, list_fade: list):
     # Load context
     logger = logging.getLogger(__name__)
 
@@ -108,11 +85,11 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image.create_new(frame_base.width, frame_base.height)
 
     # assess the two cases where out images are either duplicates or a new frame completely
-    if not list_predictive and not list_differences:
-        out_image.copy_image(frame_inversion)
+    if not list_predictive and not list_residual:
+        out_image.copy_image(frame_residual)
         return out_image
 
-    if list_predictive and not list_differences:
+    if list_predictive and not list_residual:
         out_image.copy_image(frame_base)
         return out_image
 
@@ -121,7 +98,7 @@ def make_merge_image(context: Context, frame_inversion: Frame, frame_base: Frame
     out_image.copy_image(frame_base)
 
     # run the image through the same plugins IN ORDER it was ran in d2x_cpp
-    out_image = pframe_image(context, out_image, frame_base, frame_inversion, list_differences, list_predictive)
+    out_image = pframe_image(context, out_image, frame_base, frame_residual, list_residual, list_predictive)
     out_image = fade_image(context, out_image, list_fade)
     out_image = correct_image(context, out_image, list_corrections)
 

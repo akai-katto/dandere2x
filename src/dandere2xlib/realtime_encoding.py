@@ -32,7 +32,7 @@ def run_realtime_encoding(context: Context, output_file: str):
 
     # directories
     merged_files_prefix = context.merged_dir + "merged_"
-    upscaled_files_prefix = context.upscaled_dir + "output_"
+    upscaled_files_prefix = context.residual_upscaled_dir + "output_"
     compressed_files_prefix = context.compressed_static_dir + "compressed_"
     input_frames_prefix = context.input_frames_dir + "frame"
 

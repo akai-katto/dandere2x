@@ -70,11 +70,11 @@ class Context:
 
         # setup directories
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
-        self.differences_dir = self.workspace + "differences" + os.path.sep
-        self.upscaled_dir = self.workspace + "upscaled" + os.path.sep
+        self.residual_images_dir = self.workspace + "residual_images" + os.path.sep
+        self.residual_upscaled_dir = self.workspace + "residual_upscaled" + os.path.sep
         self.correction_data_dir = self.workspace + "correction_data" + os.path.sep
         self.merged_dir = self.workspace + "merged" + os.path.sep
-        self.inversion_data_dir = self.workspace + "inversion_data" + os.path.sep
+        self.residual_data_dir = self.workspace + "residual_data" + os.path.sep
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
         self.fade_data_dir = self.workspace + "fade_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep

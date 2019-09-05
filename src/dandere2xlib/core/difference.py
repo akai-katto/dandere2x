@@ -13,8 +13,8 @@ from wrappers.frame.frame import DisplacementVector, Frame
 def difference_loop(context, start_frame: int):
     # load variables from context
     workspace = context.workspace
-    differences_dir = context.differences_dir
-    inversion_data_dir = context.inversion_data_dir
+    residual_images_dir = context.residual_images_dir
+    residual_data_dir = context.residual_data_dir
     pframe_data_dir = context.pframe_data_dir
     input_frames_dir = context.input_frames_dir
     frame_count = context.frame_count
@@ -33,12 +33,12 @@ def difference_loop(context, start_frame: int):
         f1.load_from_string_wait(input_frames_dir + "frame" + str(x + 1) + extension_type)
 
         # Load the neccecary lists to compute this iteration of difference making
-        difference_data = get_list_from_file(inversion_data_dir + "inversion_" + str(x) + ".txt")
+        difference_data = get_list_from_file(residual_data_dir + "residual_" + str(x) + ".txt")
         prediction_data = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
 
         # Create the output files..
         debug_output_file = workspace + "debug/debug" + str(x + 1) + extension_type
-        output_file = differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
+        output_file = residual_images_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
 
         # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
         out_image = make_difference_image(context, f1, difference_data, prediction_data)
@@ -46,32 +46,6 @@ def difference_loop(context, start_frame: int):
 
         if debug == 1:
             debug_image(block_size, f1, prediction_data, difference_data, debug_output_file)
-
-
-# find the last difference_frame, and start from there.
-
-def difference_loop_resume(context):
-    # load variables from context
-    frame_count = context.frame_count
-    upscaled_dir = context.upscaled_dir
-
-    logger = logging.getLogger(__name__)
-
-    last_found = frame_count
-
-    while last_found > 1:
-        upscaled_exists = os.path.isfile(upscaled_dir + "output_" + get_lexicon_value(6, last_found) + ".png")
-
-        if not upscaled_exists:
-            last_found -= 1
-
-        elif upscaled_exists:
-            break
-
-    last_found -= 1
-    logger.info("difference loop last frame found: " + str(last_found))
-
-    difference_loop(context, start_frame=last_found)
 
 
 def make_difference_image(context: Context, raw_frame: Frame, list_difference: list, list_predictive: list):
