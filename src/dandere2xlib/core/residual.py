@@ -10,7 +10,7 @@ from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_
 from wrappers.frame.frame import DisplacementVector, Frame
 
 
-def difference_loop(context, start_frame: int):
+def residual_loop(context, start_frame: int):
     # load variables from context
     workspace = context.workspace
     residual_images_dir = context.residual_images_dir
@@ -41,14 +41,14 @@ def difference_loop(context, start_frame: int):
         output_file = residual_images_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
 
         # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
-        out_image = make_difference_image(context, f1, difference_data, prediction_data)
+        out_image = make_residual_image(context, f1, difference_data, prediction_data)
         out_image.save_image_temp(output_file, temp_image)
 
         if debug == 1:
             debug_image(block_size, f1, prediction_data, difference_data, debug_output_file)
 
 
-def make_difference_image(context: Context, raw_frame: Frame, list_difference: list, list_predictive: list):
+def make_residual_image(context: Context, raw_frame: Frame, list_difference: list, list_predictive: list):
     difference_vectors = []
     buffer = 5
     block_size = context.block_size

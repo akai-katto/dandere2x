@@ -32,7 +32,7 @@ import sys
 import threading
 import time
 
-from dandere2xlib.core.difference import difference_loop
+from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.realtime_encoding import run_realtime_encoding
 from dandere2xlib.status import print_status
@@ -115,7 +115,7 @@ class Dandere2x:
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
         merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
-        difference_thread = threading.Thread(target=difference_loop, args=(self.context, 1))
+        residual_thread = threading.Thread(target=residual_loop, args=(self.context, 1))
         status_thread = threading.Thread(target=print_status, args=(self.context,))
         realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
 
@@ -123,7 +123,7 @@ class Dandere2x:
         waifu2x.start()
 
         merge_thread.start()
-        difference_thread.start()
+        residual_thread.start()
         dandere2xcpp_thread.start()
         status_thread.start()
         compress_frames_thread.start()
@@ -134,7 +134,7 @@ class Dandere2x:
         compress_frames_thread.join()
         merge_thread.join()
         dandere2xcpp_thread.join()
-        difference_thread.join()
+        residual_thread.join()
         waifu2x.join()
         status_thread.join()
 
