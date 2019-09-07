@@ -20,6 +20,10 @@ class Context:
     """
 
     def __init__(self, config_json_unparsed: json):
+        """
+        Create a list of needed values that will be used in various parts of dandere2x. A lot of these values
+        are derived from external files, such as the json, ffmpeg and ffprobe.
+        """
 
         self.this_folder = None
 

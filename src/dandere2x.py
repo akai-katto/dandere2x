@@ -59,18 +59,28 @@ class Dandere2x:
         Starts the dandere2x_python process at large.
 
         Inputs:
-        - self
+        - context
 
-        Outputs:
+        Pre-Reqs:
+        'This is all the stuff that needs to be done before dandere2x can officially start'
+
         - creates workspaces needed for dandere2x to work
-        - edits the file if it's needed to be trimmed or needs to be resized.
+        - edits the video if it's needed to be trimmed or needs resolution needs to be resized.
         - extracts all the frames in the video into it's own folder.
+        - upscales the first frame using waifu2x and ensuring the genesis image upscaled correctly.
+
+        Threading Area:
+
         - calls a series of threads for dandere2x_python to work
           (residuals, merging, waifu2x, dandere2xcpp, realtime-encoding)
         """
 
         # load context
         output_file = self.context.output_file
+
+        ############
+        # PRE REQS #
+        ############
 
         # The first thing to do is create the dirs we will need during runtime
         create_directories(self.context.directories)
@@ -108,6 +118,10 @@ class Dandere2x:
             sys.exit(1)
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
+
+        ####################
+        #  THREADING AREA  #
+        ####################
 
         # This is where Dandere2x's core functions start. Each core function is divided into a series of threads,
         # All with their own segregated tasks and goals. Dandere2x starts all the threads, and lets it go from there.
