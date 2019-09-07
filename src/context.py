@@ -84,6 +84,24 @@ class Context:
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
         self.temp_image_folder = self.workspace + "temp_image_folder" + os.path.sep
 
+        # put all the directories that need to be created into a list for creation / deleting.
+        self.directories = {self.workspace,
+                            self.input_frames_dir,
+                            self.correction_data_dir,
+                            self.residual_images_dir,
+                            self.residual_upscaled_dir,
+                            self.merged_dir,
+                            self.residual_data_dir,
+                            self.pframe_data_dir,
+                            self.debug_dir,
+                            self.log_dir,
+                            self.compressed_static_dir,
+                            self.compressed_moving_dir,
+                            self.fade_data_dir,
+                            self.encoded_dir,
+                            self.temp_image_folder}
+
+
         self.ffmpeg_dir = self.config_json['ffmpeg']['ffmpeg_path']
         self.ffprobe_dir = self.config_json['ffmpeg']['ffprobe_path']
         self.hwaccel = self.config_json['ffmpeg']['-hwaccel']

@@ -27,15 +27,15 @@ smooth and edges sharp.
 
 import logging
 import os
-import shutil
 import sys
 import threading
 import time
 
-from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.core.merge import merge_loop
+from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.realtime_encoding import run_realtime_encoding
 from dandere2xlib.status import print_status
+from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
@@ -73,7 +73,7 @@ class Dandere2x:
         output_file = self.context.output_file
 
         # The first thing to do is create the dirs we will need during runtime
-        self.create_dirs()
+        create_directories(self.context.directories)
         self.context.set_logger()
         self.write_merge_commands()
 
@@ -185,15 +185,8 @@ class Dandere2x:
     # This because the log file doesn't want to get deleted + having the log
     # stay alive even after everything finishes is useful to know
     def delete_workspace_files(self):
-        # create each directory
-        for subdirectory in self.directories:
-            try:
-                shutil.rmtree(subdirectory)
-            except OSError:
-                print("Deletion of the directory %s failed" % subdirectory)
-            else:
-                print("Successfully deleted the directory %s " % subdirectory)
 
+        delete_directories(self.context.directories)
         no_sound = os.path.join(self.context.workspace, "nosound.mkv")
 
         try:
@@ -204,41 +197,6 @@ class Dandere2x:
             print(OSError.strerror)
         else:
             print("Successfully deleted the file %s " % no_sound)
-
-    def create_dirs(self):
-        """create a list of directories we need to create"""
-
-        self.directories = {self.context.input_frames_dir,
-                            self.context.correction_data_dir,
-                            self.context.residual_images_dir,
-                            self.context.residual_upscaled_dir,
-                            self.context.merged_dir,
-                            self.context.residual_data_dir,
-                            self.context.pframe_data_dir,
-                            self.context.debug_dir,
-                            self.context.log_dir,
-                            self.context.compressed_static_dir,
-                            self.context.compressed_moving_dir,
-                            self.context.fade_data_dir,
-                            self.context.encoded_dir,
-                            self.context.temp_image_folder}
-
-        # need to create workspace before anything else
-        try:
-            os.mkdir(self.context.workspace)
-        except OSError:
-            print("Creation of the directory %s failed" % self.context.workspace)
-        else:
-            print("Successfully created the directory %s " % self.context.workspace)
-
-        # create each directory
-        for subdirectory in self.directories:
-            try:
-                os.mkdir(subdirectory)
-            except OSError:
-                print("Creation of the directory %s failed" % subdirectory)
-            else:
-                print("Successfully created the directory %s " % subdirectory)
 
     # This is almost legacy code and is being left in for
     # A very small demographic of people who want to manually encode the video after runtime
