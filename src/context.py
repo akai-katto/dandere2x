@@ -1,12 +1,3 @@
-"""
-
-Description:
-
-Rather than feed functions stuff like block_size, ffmpeg_dir each time, all the variables needed for every
-Dandere2x sub-function call is within
-
-"""
-
 import json
 import logging
 import os
@@ -21,16 +12,18 @@ from wrappers.ffmpeg.videosettings import VideoSettings
 
 
 class Context:
-
-    # This is probably the most disorganized part of Dandere2x - everything else is fine.
-    # If you don't want to read through the init, essentially creates all the variables we need
-    # from the json and puts them into an object we can pass around Dandere2x pretty liberally
+    """
+    This class is a mega-structure like file to house all the variables and directories needed for dandere2x to work.
+    Rather than passing around the needed variables for dandere2x related functions, we simply put everything
+    Dandere2x related in here and are loaded in various methods. You'll see this class become used a lot during
+    D2x's development - keep this file clean and nice, as it'll be used more than anything else!
+    """
 
     def __init__(self, config_json_unparsed: json):
 
-        # load 'this folder' in a pyinstaller friendly way
         self.this_folder = None
 
+        # load 'this folder' in a pyinstaller friendly way
         if getattr(sys, 'frozen', False):
             self.this_folder = os.path.dirname(sys.executable)
         elif __file__:
@@ -38,9 +31,7 @@ class Context:
 
         self.this_folder = pathlib.Path(self.this_folder)
 
-        # We need the json to be absolute, meaning ".." --> this.folder
-        # This allows Dandere2x to be somewhat portable on different systems
-
+        # Parse the unparsed config into a parsed (../externals -> C:/this_folder/externals)
         self.config_json = absolutify_json(config_json_unparsed, str(self.this_folder.absolute()), absolutify_key="..")
 
         ################################
@@ -120,7 +111,6 @@ class Context:
         self.output_file = self.config_json['dandere2x']['usersettings']['output_file']
 
         # Developer Settings
-
         self.quality_moving_ratio = self.config_json['dandere2x']['developer_settings']['quality_moving_ratio']
         self.step_size = self.config_json['dandere2x']['developer_settings']['step_size']
         self.bleed = self.config_json['dandere2x']['developer_settings']['bleed']
@@ -130,7 +120,6 @@ class Context:
         self.correction_block_size = 2
 
         # Real Time Encoding
-
         self.realtime_encoding_enabled = self.config_json['dandere2x']['developer_settings']['realtime_encoding'][
             'realtime_encoding_enabled']
         self.realtime_encoding_delete_files = self.config_json['dandere2x']['developer_settings']['realtime_encoding'][
@@ -150,6 +139,7 @@ class Context:
         if find_out_if_trim:
             self.user_trim_video = True
 
+        # load the needed video settings
         self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
 
         self.frame_rate = math.ceil(self.video_settings.frame_rate)
@@ -165,7 +155,11 @@ class Context:
     def close_logger(self):
         logging.shutdown()
 
-    # this can be done with fprobe I guess, but why change things, you feel
     def update_frame_count(self):
+        """
+        Count how many frames exist in the 'inputs_frames_dir' to signal to dandere2x how many frames
+        will be needed during runtime. Observe that we don't use ffprobe's 'frame_count' function,
+        as we we apply various filters which may affect total frame count.
+        """
         self.frame_count = len([name for name in os.listdir(self.input_frames_dir)
                                 if os.path.isfile(os.path.join(self.input_frames_dir, name))])
