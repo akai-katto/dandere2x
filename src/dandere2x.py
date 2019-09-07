@@ -75,7 +75,6 @@ class Dandere2x:
         # The first thing to do is create the dirs we will need during runtime
         create_directories(self.context.directories)
         self.context.set_logger()
-        self.write_merge_commands()
 
         # If the user wishes to trim the video, trim the video, then rename the file_dir to point to the trimmed video
         if self.context.user_trim_video:
@@ -181,9 +180,6 @@ class Dandere2x:
         self.context.config_json['ffmpeg']['video_to_frames']['output_options']['-vf'] \
             .append("scale=" + str(self.context.width) + ":" + str(self.context.height))
 
-    # delete every folder except the log file in the workspace
-    # This because the log file doesn't want to get deleted + having the log
-    # stay alive even after everything finishes is useful to know
     def delete_workspace_files(self):
 
         delete_directories(self.context.directories)
@@ -198,38 +194,3 @@ class Dandere2x:
         else:
             print("Successfully deleted the file %s " % no_sound)
 
-    # This is almost legacy code and is being left in for
-    # A very small demographic of people who want to manually encode the video after runtime
-
-    def write_merge_commands(self):
-
-        no_audio_video = self.context.workspace + "nosound.mkv"
-        finished_video = self.context.workspace + "finished.mkv"
-
-        merged_frames = self.context.merged_dir + "merged_%d.jpg"
-
-        migrate_tracks_command = "[ffmpeg_dir] -i [no_audio] -i [file_dir]" \
-                                 " -t 00:00:10 -map 0:v:0 -map 1? -c copy -map -1:v? [output_file]"
-
-        migrate_tracks_command = migrate_tracks_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
-        migrate_tracks_command = migrate_tracks_command.replace("[no_audio]", no_audio_video)
-        migrate_tracks_command = migrate_tracks_command.replace("[file_dir]", self.context.input_file)
-        migrate_tracks_command = migrate_tracks_command.replace("[output_file]", finished_video)
-
-        video_from_frames_command = "[ffmpeg_dir] -loglevel 0 -nostats -framerate [frame_rate]" \
-                                    " -start_number [start_number] -i [input_frames] -vframes [end_number]" \
-                                    " -vf deband=blur=false:range=22 [output_file]"
-
-        video_from_frames_command = video_from_frames_command.replace("[ffmpeg_dir]", self.context.ffmpeg_dir)
-        video_from_frames_command = video_from_frames_command.replace("[frame_rate]", str(self.context.frame_rate))
-        video_from_frames_command = video_from_frames_command.replace("[start_number]", str(0))
-        video_from_frames_command = video_from_frames_command.replace("[input_frames]", merged_frames)
-        video_from_frames_command = video_from_frames_command.replace("[end_number]", "")
-        video_from_frames_command = video_from_frames_command.replace("-vframes", "")
-        video_from_frames_command = video_from_frames_command.replace("[output_file]", no_audio_video)
-
-        with open(self.context.workspace + os.path.sep + 'commands.txt', 'w') as f:
-            f.write(video_from_frames_command + "\n")
-            f.write(migrate_tracks_command + "\n")
-
-        f.close()
