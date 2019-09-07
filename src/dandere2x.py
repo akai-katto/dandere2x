@@ -54,8 +54,21 @@ class Dandere2x:
     # This is the main driver for Dandere2x_Python.
     # Essentially we need to call a bunch of different subprocesses to run concurrent with one another
     # To achieve maximum performance.
-
     def run_concurrent(self):
+        """
+        Starts the dandere2x_python process at large.
+
+        Inputs:
+        - self
+
+        Outputs:
+        - creates workspaces needed for dandere2x to work
+        - edits the file if it's needed to be trimmed or needs to be resized.
+        - extracts all the frames in the video into it's own folder.
+        - calls a series of threads for dandere2x_python to work
+          (residuals, merging, waifu2x, dandere2xcpp, realtime-encoding)
+        """
+
         # load context
         output_file = self.context.output_file
 
@@ -130,7 +143,6 @@ class Dandere2x:
 
         self.context.logger.info("Threaded Processes Finished succcesfully")
 
-
     def get_waifu2x_class(self, name: str):
 
         if name == "caffe":
@@ -151,6 +163,12 @@ class Dandere2x:
             exit(1)
 
     def append_video_resize_filter(self):
+        """
+        For ffmpeg, there's a video filter to resize a video to a given resolution.
+        For dandere2x, we need a very specific set of video resolutions to work with.  This method applies that filter
+        to the video in order for it to work correctly.
+        """
+
         print("Forcing Resizing to match blocksize..")
         width, height = get_a_valid_input_resolution(self.context.width, self.context.height, self.context.block_size)
 
@@ -188,7 +206,8 @@ class Dandere2x:
             print("Successfully deleted the file %s " % no_sound)
 
     def create_dirs(self):
-        # create a list of directories we need to create
+        """create a list of directories we need to create"""
+
         self.directories = {self.context.input_frames_dir,
                             self.context.correction_data_dir,
                             self.context.residual_images_dir,
