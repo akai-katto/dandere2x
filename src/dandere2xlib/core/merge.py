@@ -129,12 +129,6 @@ def make_merge_image(context: Context, frame_residual: Frame, frame_base: Frame,
         out_image.copy_image(frame_residual)
         return out_image
 
-    # If list_predictive isn't empty but list_predictive, then the next frame can be made entirely
-    # Out of the previous frame.
-    if list_predictive and not list_residual:
-        out_image.copy_image(frame_base)
-        return out_image
-
     # by copying the image first as the first step, all the predictive elements like
     # (0,0) -> (0,0) are also coppied
     out_image.copy_image(frame_base)

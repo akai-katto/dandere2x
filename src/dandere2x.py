@@ -129,8 +129,8 @@ class Dandere2x:
         # All with their own segregated tasks and goals. Dandere2x starts all the threads, and lets it go from there.
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
         dandere2xcpp_thread = Dandere2xCppWrapper(self.context)
-        merge_thread = threading.Thread(target=merge_loop, args=(self.context))
-        residual_thread = threading.Thread(target=residual_loop, args=(self.context, 1))
+        merge_thread = threading.Thread(target=merge_loop, args=(self.context,))
+        residual_thread = threading.Thread(target=residual_loop, args=(self.context,))
         status_thread = threading.Thread(target=print_status, args=(self.context,))
         realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
 
