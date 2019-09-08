@@ -41,8 +41,8 @@ def merge_loop(context: Context):
     logger = logging.getLogger(__name__)
 
     # Load the genesis image + the first upscaled image.
-    base = Frame()
-    base.load_from_string_wait(merged_dir + "merged_" + str(1) + extension_type)
+    frame_previous = Frame()
+    frame_previous.load_from_string_wait(merged_dir + "merged_" + str(1) + extension_type)
 
     f1 = Frame()
     f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, 1) + ".png")
@@ -77,11 +77,11 @@ def merge_loop(context: Context):
 
         output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
 
-        new_base = make_merge_image(context, f1, base,
+        frame_next = make_merge_image(context, f1, frame_previous,
                                     prediction_data_list, residual_data_list, correction_data_list, fade_data_list)
 
         # Write the image in the background for the preformance increase
-        background_frame_write = AsyncFrameWrite(new_base, output_file)
+        background_frame_write = AsyncFrameWrite(frame_next, output_file)
         background_frame_write.start()
 
         #######################################
@@ -96,10 +96,10 @@ def merge_loop(context: Context):
 
             f1 = background_frame_load.loaded_image
 
-        base = new_base
+        frame_previous = frame_next
 
 
-def make_merge_image(context: Context, frame_residual: Frame, frame_base: Frame,
+def make_merge_image(context: Context, frame_residual: Frame, frame_previous: Frame,
                      list_predictive: list, list_residual: list, list_corrections: list, list_fade: list):
     """
     This section can best be explained through pictures. A visual way of expressing what 'merging'
@@ -121,7 +121,7 @@ def make_merge_image(context: Context, frame_residual: Frame, frame_base: Frame,
     logger = logging.getLogger(__name__)
 
     out_image = Frame()
-    out_image.create_new(frame_base.width, frame_base.height)
+    out_image.create_new(frame_previous.width, frame_previous.height)
 
     # If list_predictive and list_predictive are both empty, then the residual frame
     # is simply the new image.
@@ -131,10 +131,10 @@ def make_merge_image(context: Context, frame_residual: Frame, frame_base: Frame,
 
     # by copying the image first as the first step, all the predictive elements like
     # (0,0) -> (0,0) are also coppied
-    out_image.copy_image(frame_base)
+    out_image.copy_image(frame_previous)
 
     # run the image through the same plugins IN ORDER it was ran in d2x_cpp
-    out_image = pframe_image(context, out_image, frame_base, frame_residual, list_residual, list_predictive)
+    out_image = pframe_image(context, out_image, frame_previous, frame_residual, list_residual, list_predictive)
     out_image = fade_image(context, out_image, list_fade)
     out_image = correct_image(context, out_image, list_corrections)
 
