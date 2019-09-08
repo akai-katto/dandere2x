@@ -33,13 +33,13 @@ import time
 
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.residual import residual_loop
+from dandere2xlib.frame_compressor import compress_frames
 from dandere2xlib.realtime_encoding import run_realtime_encoding
 from dandere2xlib.status import print_status
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
-from dandere2xlib.frame_compressor import compress_frames
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
@@ -47,13 +47,15 @@ from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
 
 
 class Dandere2x:
+    """
+    The main driver that can be called in a various level of circumstances - for example, dandere2x can be started
+    from dandere2x_gui_wrapper.py, json_driver.py, or json_gui_driver.py. In each scenario, this is the
+    class that is called when Dandere2x ultimately needs to start.
+    """
 
     def __init__(self, context):
         self.context = context
 
-    # This is the main driver for Dandere2x_Python.
-    # Essentially we need to call a bunch of different subprocesses to run concurrent with one another
-    # To achieve maximum performance.
     def run_concurrent(self):
         """
         Starts the dandere2x_python process at large.
@@ -126,8 +128,8 @@ class Dandere2x:
         # This is where Dandere2x's core functions start. Each core function is divided into a series of threads,
         # All with their own segregated tasks and goals. Dandere2x starts all the threads, and lets it go from there.
         compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
-        dandere2xcpp_thread = Dandere2xCppWrapper(self.context, resume=False)
-        merge_thread = threading.Thread(target=merge_loop, args=(self.context, 1))
+        dandere2xcpp_thread = Dandere2xCppWrapper(self.context)
+        merge_thread = threading.Thread(target=merge_loop, args=(self.context))
         residual_thread = threading.Thread(target=residual_loop, args=(self.context, 1))
         status_thread = threading.Thread(target=print_status, args=(self.context,))
         realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))

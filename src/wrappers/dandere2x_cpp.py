@@ -1,23 +1,18 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Name: Dandere2X CPP
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
-"""
 import logging
 import os
 import subprocess
 import threading
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_operating_system
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
 
 
 class Dandere2xCppWrapper(threading.Thread):
+    """
+    A wrapper for the dandere2x_cpp module. It simply calls the module using information used from the context.
+    """
 
-    def __init__(self, context: Context, resume: bool):
+    def __init__(self, context: Context):
         # load stuff from context
         self.workspace = context.workspace
         self.dandere2x_cpp_dir = context.dandere2x_cpp_dir
@@ -28,18 +23,9 @@ class Dandere2xCppWrapper(threading.Thread):
         self.residual_images_dir = context.residual_images_dir
         self.log_dir = context.log_dir
 
-        self.resume = resume
         threading.Thread.__init__(self)
 
     def run(self):
-        if not self.resume:
-            self.new_run()
-
-        elif self.resume:
-            self.resume_run()
-
-    # start a new dandere2x cpp session
-    def new_run(self):
         logger = logging.getLogger(__name__)
 
         exec = [self.dandere2x_cpp_dir,

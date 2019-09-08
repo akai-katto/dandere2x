@@ -15,7 +15,7 @@ def compress_frames(context: Context):
 
     Output:
         - All the images in 'input_frames' compressed into two different folders, each with their own
-          level of compression. 
+          level of compression.
     """
 
     inputs_dir = context.input_frames_dir
@@ -26,6 +26,7 @@ def compress_frames(context: Context):
     quality_minimum = context.quality_minimum
     extension_type = context.extension_type
 
+    # start from 1 because ffmpeg's extracted frames starts from 1
     for x in range(1, frame_count + 1):
 
         # if the compressed frame already exists, don't compress it

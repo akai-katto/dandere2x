@@ -12,7 +12,22 @@ from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 from wrappers.frame.frame import Frame
 
 
-def merge_loop(context: Context, start_frame: int):
+def merge_loop(context: Context):
+    """
+    Call the 'make_merge_image' method for every image that needs to be upscaled.
+
+    This method is sort of the driver for that, and has tasks needed to keep merging running smoothly.
+
+    This method became a bit messy due to optimization-hunting, but the most important calls of the loop can be read in
+    the 'Loop-iteration Core' area.
+
+    Method Tasks:
+
+        - Read / Write files that are used by merge asynchronously.
+        - Load the text files containing the vectors needed for 'make_merge_image'
+
+    """
+
     # load variables from context
     workspace = context.workspace
     upscaled_dir = context.residual_upscaled_dir
@@ -26,9 +41,8 @@ def merge_loop(context: Context, start_frame: int):
     logger = logging.getLogger(__name__)
 
     # Load the genesis image + the first upscaled image.
-
     base = Frame()
-    base.load_from_string_wait(merged_dir + "merged_" + str(start_frame) + extension_type)
+    base.load_from_string_wait(merged_dir + "merged_" + str(1) + extension_type)
 
     f1 = Frame()
     f1.load_from_string_wait(upscaled_dir + "output_" + get_lexicon_value(6, 1) + ".png")
@@ -36,8 +50,10 @@ def merge_loop(context: Context, start_frame: int):
     # When upscaling every frame between start_frame to frame_count, there's obviously no x + 1 at frame_count - 1 .
     # So just make a small note not to load that image. Pretty much load images concurrently until we get to x - 1
     last_frame = False
-    for x in range(start_frame, frame_count):
-        logger.info("Upscaling frame " + str(x))
+    for x in range(1, frame_count):
+        ###################################
+        # Loop-iteration pre-requirements #
+        ###################################
 
         # Check if we're at the last image
         if x == frame_count - 1:
@@ -48,7 +64,12 @@ def merge_loop(context: Context, start_frame: int):
             background_frame_load = AsyncFrameRead(upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
             background_frame_load.start()
 
-        # load vectors needed to piece image back together
+        #######################
+        # Loop-iteration Core #
+        #######################
+
+        logger.info("Upscaling frame " + str(x))
+
         prediction_data_list = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
         residual_data_list = get_list_from_file(residual_data_dir + "residual_" + str(x) + ".txt")
         correction_data_list = get_list_from_file(correction_data_dir + "correction_" + str(x) + ".txt")
@@ -63,7 +84,9 @@ def merge_loop(context: Context, start_frame: int):
         background_frame_write = AsyncFrameWrite(new_base, output_file)
         background_frame_write.start()
 
-        # Assign variables for next iteration
+        #######################################
+        # Assign variables for next iteration #
+        #######################################
 
         # Ensure the file is loaded for background_frame_load. If we're on the last frame, simply ignore this section
         # Because the frame_count + 1 does not exist.
@@ -78,17 +101,36 @@ def merge_loop(context: Context, start_frame: int):
 
 def make_merge_image(context: Context, frame_residual: Frame, frame_base: Frame,
                      list_predictive: list, list_residual: list, list_corrections: list, list_fade: list):
+    """
+    This section can best be explained through pictures. A visual way of expressing what 'merging'
+    is doing is this section in the wiki.
+
+    https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works#part-2-using-observations-to-save-time
+
+    Inputs:
+        - frame(x)
+        - frame(x+1)_residual
+        - Residual vectors mapping frame(x+1)_residual -> frame(x+1)
+        - Predictive vectors mapping frame(x) -> frame(x+1)
+
+    Output:
+        - frame(x+1)
+    """
+
     # Load context
     logger = logging.getLogger(__name__)
 
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
 
-    # assess the two cases where out images are either duplicates or a new frame completely
-    if not list_predictive and not list_residual:
+    # If list_predictive and list_predictive are both empty, then the residual frame
+    # is simply the new image.
+    if not list_predictive and not list_predictive:
         out_image.copy_image(frame_residual)
         return out_image
 
+    # If list_predictive isn't empty but list_predictive, then the next frame can be made entirely
+    # Out of the previous frame.
     if list_predictive and not list_residual:
         out_image.copy_image(frame_base)
         return out_image
