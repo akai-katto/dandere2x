@@ -244,7 +244,7 @@ class AppWindow(QMainWindow):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
             self.waifu2x_type = 'vulkan'
 
-        if self.ui.waifu2x_type_combo_box.currentText() == '"Waifu2x-Vulkan-Legacy"':
+        if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan-Legacy':
             self.waifu2x_type = 'vulkan_legacy'
 
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Converter-Cpp':
