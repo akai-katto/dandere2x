@@ -9,9 +9,18 @@ from wrappers.frame.frame import Frame
 
 # See "corrections.cpp" in dandere2x_cpp for more in depth documentation.
 
-# correction size needs to be added to config file
+# todo- correction size needs to be added to config file
 
 def correct_image(context, frame_base: Frame, list_correction: list):
+    """
+    Try and fix some artifact-residuals by using the same image as reference.
+
+
+    Method Tasks:
+        - Load all the vectors for blocks pointing to a block with lower MSE
+        - Apply all the vectors to the image to produce a more 'correct' image
+    """
+
     logger = logging.getLogger(__name__)
 
     # load context
