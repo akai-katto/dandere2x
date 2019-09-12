@@ -53,21 +53,21 @@ class Waifu2xCaffe(threading.Thread):
 
     def upscale_file(self, input_file: str, output_file: str):
 
-        exec = copy.copy(self.waifu2x_caffe_upscale_frame)
+        exec_command = copy.copy(self.waifu2x_caffe_upscale_frame)
 
         # replace the exec command withthe files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = input_file
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = input_file
 
-            if exec[x] == "[output_file]":
-                exec[x] = output_file
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = output_file
 
-        print(exec)
+        print(exec_command)
 
         console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
-        console_output.write(str(exec))
-        subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
+        console_output.write(str(exec_command))
+        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -82,17 +82,17 @@ class Waifu2xCaffe(threading.Thread):
         logger = logging.getLogger(__name__)
         console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_all.txt", "w")
 
-        differences_dir = self.context.residual_images_dir
-        upscaled_dir = self.context.residual_upscaled_dir
-        exec = copy.copy(self.waifu2x_caffe_upscale_frame)
+        residual_images_dir = self.context.residual_images_dir
+        residual_upscaled_dir = self.context.residual_upscaled_dir
+        exec_command = copy.copy(self.waifu2x_caffe_upscale_frame)
 
         # replace the exec command withthe files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = differences_dir
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = residual_images_dir
 
-            if exec[x] == "[output_file]":
-                exec[x] = upscaled_dir
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = residual_upscaled_dir
 
         # make a list of names that will eventually (past or future) be upscaled
         names = []
@@ -115,8 +115,8 @@ class Waifu2xCaffe(threading.Thread):
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
 
-            console_output.write(str(exec))
-            subprocess.call(exec, shell=True, stderr=console_output, stdout=console_output)
+            console_output.write(str(exec_command))
+            subprocess.call(exec_command, shell=True, stderr=console_output, stdout=console_output)
 
             for name in names[::-1]:
                 if os.path.isfile(self.upscaled_dir + name):
