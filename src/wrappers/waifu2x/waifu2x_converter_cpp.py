@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X waifu2x-converter-cpp
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
 
-Description: # A pretty hacky wrapper for Waifu2x-Conveter-Cpp.
-Behaves pretty similar to waifu2x-caffe, except directory must be
-set  (for subprocess call, waifu2x-converter-cpp keeps this variable) and arguments are slightly different.
-Furthermore, waifu2x-converter-cpp saves files in an annoying way,
-so we need to correct those odd namings.
-"""
 
 import copy
 import logging
@@ -25,19 +14,24 @@ from dandere2xlib.utils.json_utils import get_options_from_section
 
 
 class Waifu2xConverterCpp(threading.Thread):
+    """
+    Note: This is legacy at the moment, it may or may still work, but the class isn't up to standards.
+
+    Let me know if you have intentions to use this so I can update it.
+    """
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_converter_cpp_dir = context.waifu2x_converter_cpp_file_path
+        self.waifu2x_converter_cpp_file_path = context.waifu2x_converter_cpp_file_path
         self.waifu2x_converter_cpp_path = context.waifu2x_converter_cpp_path
-        self.differences_dir = context.differences_dir
-        self.upscaled_dir = context.upscaled_dir
+        self.residual_images_dir = context.residual_images_dir
+        self.residual_upscaled_dir = context.residual_upscaled_dir
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
 
-        self.waifu2x_conv_upscale_frame = [self.waifu2x_converter_cpp_dir,
+        self.waifu2x_conv_upscale_frame = [self.waifu2x_converter_cpp_file_path,
                                            "-i", "[input_file]",
                                            "--noise-level", str(self.noise_level),
                                            "--scale-ratio", str(self.scale_factor)]
@@ -82,11 +76,11 @@ class Waifu2xConverterCpp(threading.Thread):
     # this function just renames the files so Dandere2x can interpret them correctly.
     def fix_names(self):
 
-        list_of_names = os.listdir(self.upscaled_dir)
+        list_of_names = os.listdir(self.residual_upscaled_dir)
         for name in list_of_names:
             if '[NS-L3][x' + self.scale_factor + '.000000]' in name:
-                rename_file(self.upscaled_dir + name,
-                            self.upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
+                rename_file(self.residual_upscaled_dir + name,
+                            self.residual_upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
 
     # This function is tricky. Essentially we do multiple things in one function
     # Because of 'gotchas'
@@ -106,9 +100,9 @@ class Waifu2xConverterCpp(threading.Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.upscaled_dir + file + '_[NS-L' + str(self.noise_level) + '][x' + str(
+            dirty_name = self.residual_upscaled_dir + file + '_[NS-L' + str(self.noise_level) + '][x' + str(
                 self.scale_factor) + '.000000]' + ".png"
-            clean_name = self.upscaled_dir + file + ".png"
+            clean_name = self.residual_upscaled_dir + file + ".png"
 
             wait_on_either_file(clean_name, dirty_name)
 
@@ -144,18 +138,18 @@ class Waifu2xConverterCpp(threading.Thread):
         # we need to os.chdir or else waifu2x-conveter won't work.
         os.chdir(self.waifu2x_converter_cpp_path)
 
-        exec = copy.copy(self.waifu2x_conv_upscale_frame)
+        exec_command = copy.copy(self.waifu2x_conv_upscale_frame)
 
         # replace the exec command withthe files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = self.differences_dir
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = self.residual_images_dir
 
-            if exec[x] == "[output_file]":
-                exec[x] = self.upscaled_dir
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = self.residual_upscaled_dir
 
         logger.info("waifu2xconv session")
-        logger.info(exec)
+        logger.info(exec_command)
 
         # make a list of names that will eventually (past or future) be upscaled
         names = []
@@ -166,7 +160,7 @@ class Waifu2xConverterCpp(threading.Thread):
 
         # remove from the list images that have already been upscaled
         for name in names[::-1]:
-            if os.path.isfile(self.upscaled_dir + name):
+            if os.path.isfile(self.residual_upscaled_dir + name):
                 names.remove(name)
                 count_removed += 1
 
@@ -178,10 +172,10 @@ class Waifu2xConverterCpp(threading.Thread):
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
 
-            console_output.write(str(exec))
-            subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
+            console_output.write(str(exec_command))
+            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
             for name in names[::-1]:
-                if os.path.isfile(self.upscaled_dir + name):
-                    os.remove(self.differences_dir + name.replace(".png", ".jpg"))
+                if os.path.isfile(self.residual_upscaled_dir + name):
+                    os.remove(self.residual_images_dir + name.replace(".png", ".jpg"))
                     names.remove(name)

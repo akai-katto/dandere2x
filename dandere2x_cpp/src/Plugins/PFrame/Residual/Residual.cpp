@@ -4,11 +4,11 @@
 //Licensed under the GNU General Public License Version 3 (GNU GPL v3),
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
-#include "Differences.h"
-#include "DifferenceBlocks.h"
+#include "Residual.h"
+#include "ResidualBlocks.h"
 
 
-void Differences::run() {
+void Residual::run() {
 
     //flag all the pixels that were able to be copied
     flag_pixels();
@@ -27,7 +27,7 @@ void Differences::run() {
     add_missing_blocks_to_differences_blocks();
 }
 
-void Differences::write(std::string output_file) {
+void Residual::write(std::string output_file) {
     //create a temp file
     std::ofstream out(output_file + ".temp");
 
@@ -45,7 +45,7 @@ void Differences::write(std::string output_file) {
 
 //private
 
-void Differences::flag_pixels() {
+void Residual::flag_pixels() {
     this->occupied_pixel.resize(this->width, std::vector<bool>(this->height));
 
     for (int i = 0; i < width / block_size; i++) {
@@ -68,7 +68,7 @@ void Differences::flag_pixels() {
 }
 
 
-int Differences::count_empty_pixels() {
+int Residual::count_empty_pixels() {
     int count = 0;
     for (int x = 0; x < frame2->width; x++) {
         for (int y = 0; y < frame2->height; y++) {
@@ -79,10 +79,10 @@ int Differences::count_empty_pixels() {
     return count;
 }
 
-void Differences::add_missing_blocks_to_differences_blocks() {
-    difference_blocks = std::make_unique<DifferenceBlocks>(dimensions * (block_size),
+void Residual::add_missing_blocks_to_differences_blocks() {
+    difference_blocks = std::make_unique<ResidualBlocks>(dimensions * (block_size),
                                                            dimensions * (block_size),
-                                                           block_size);
+                                                         block_size);
 
     /**
      * Going into this foor loop, we know every pixel that is missing from frame_2,

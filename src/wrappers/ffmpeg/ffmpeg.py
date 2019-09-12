@@ -1,13 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X FFMmpeg
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
-
-Description: temp ffmpeg wrapper, terrible implementation fix later
-"""
 import logging
 import subprocess
 import os
@@ -16,8 +8,10 @@ from context import Context
 from dandere2xlib.utils.json_utils import get_options_from_section
 
 
-# Create a trimmed video using -ss and -to commands from FFMPEG. The trimmed video will be named output_file
 def trim_video(context: Context, output_file: str):
+    """
+    Create a trimmed video using -ss and -to commands from FFMPEG. The trimmed video will be named 'output_file'
+    """
     # load context
 
     input_file = context.input_file
@@ -44,8 +38,10 @@ def trim_video(context: Context, output_file: str):
     subprocess.call(trim_video_command, shell=False, stderr=console_output, stdout=console_output)
 
 
-# Extract frames from a video
 def extract_frames(context: Context, input_file: str):
+    """
+    Extract frames from a video using ffmpeg.
+    """
     input_frames_dir = context.input_frames_dir
     extension_type = context.extension_type
     output_file = input_frames_dir + "frame%01d" + extension_type
@@ -74,11 +70,14 @@ def extract_frames(context: Context, input_file: str):
     console_output.write(str(extract_frames_command))
     subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
 
-
-# we create about 'n' amount of videos during runtime, and we need to re-encode those videos into
-# one whole video. If we don't re-encode it, we get black frames whenever two videos are spliced together,
-# so the whole thing needs to be quickly re-encoded at the very end.
 def concat_encoded_vids(context: Context, output_file: str):
+    """
+    Concatonate a video using 2) in this stackoverflow post.
+    https://stackoverflow.com/questions/7333232/how-to-concatenate-two-mp4-files-using-ffmpeg
+
+    The 'list.txt' should already exist, as it's produced in realtime_encoding.py
+    """
+
     encoded_dir = context.encoded_dir
 
     text_file = encoded_dir + "list.txt"
@@ -101,9 +100,10 @@ def concat_encoded_vids(context: Context, output_file: str):
     subprocess.call(concat_videos_command, shell=False, stderr=console_output, stdout=console_output)
 
 
-# 'file_dir' refers to the file in the config file, aka the 'input_video'.
-
 def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str):
+    """
+    Add the audio tracks from the original video to the output video.
+    """
     migrate_tracks_command = [context.ffmpeg_dir,
                               "-i", no_audio,
                               "-i", file_dir,
@@ -125,10 +125,12 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
     console_output.write(str(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
 
-
-# Given the file prefixes, the starting frame, and how many frames should fit in a video
-# Create a short video using those values.
 def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
+    """
+    Create a video using the 'start_number' ffmpeg flag and the 'vframes' input flag to create a video
+    using frames for a range of output images.
+    """
+
     # load context
     logger = context.logger
     extension_type = context.extension_type

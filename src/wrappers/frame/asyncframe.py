@@ -4,7 +4,9 @@ from wrappers.frame.frame import Frame
 
 
 class AsyncFrameRead(threading.Thread):
-
+    """
+    Read an image asynchronously
+    """
     def __init__(self, input_image: str):
         # calling superclass init
         threading.Thread.__init__(self)
@@ -18,7 +20,9 @@ class AsyncFrameRead(threading.Thread):
 
 
 class AsyncFrameWrite(threading.Thread):
-
+    """
+    Write an image asynchronously
+    """
     def __init__(self, image: Frame, output_image: str):
         # calling superclass init
         threading.Thread.__init__(self)

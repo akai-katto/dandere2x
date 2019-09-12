@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X waifu2x-vulkan)
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
-
-Description: # A pretty hacky wrapper for Waifu2x-Vulkan
-Behaves pretty similar to waifu2x-caffe, except directory must be
-set  (for subprocess call, waifu2x_vulkan_dir_dir keeps this variable) and arguments are slightly different.
-Furthermore, waifu2x-vulkan saves files in an annoying way, i.e it becomes image.png.png when saving in batches.
-so we need to correct those odd namings.
-"""
 
 import copy
 import logging
@@ -25,19 +13,23 @@ from dandere2xlib.utils.json_utils import get_options_from_section
 
 
 class Waifu2xVulkan(threading.Thread):
+    """
+    The waifu2x-vulkan wrapper, with custom functions written that are specific for dandere2x to work.
+    """
+
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_vulkan_dir = context.waifu2x_ncnn_vulkan_file_path
-        self.waifu2x_vulkan_path = context.waifu2x_ncnn_vulkan_path
-        self.differences_dir = context.differences_dir
-        self.upscaled_dir = context.upscaled_dir
+        self.waifu2x_ncnn_vulkan_file_path = context.waifu2x_ncnn_vulkan_file_path
+        self.waifu2x_ncnn_vulkan_path = context.waifu2x_ncnn_vulkan_path
+        self.residual_images_dir = context.residual_images_dir
+        self.residual_upscaled_dir = context.residual_upscaled_dir
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
 
-        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_vulkan_dir,
+        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_ncnn_vulkan_file_path,
                                              "-i", "[input_file]",
                                              "-n", str(self.noise_level),
                                              "-s", str(self.scale_factor)]
@@ -54,65 +46,54 @@ class Waifu2xVulkan(threading.Thread):
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
-    # manually upscale a single file
     def upscale_file(self, input_file: str, output_file: str):
+        """
+        Manually upscale a file using the wrapper.
+        """
+
         # load context
-        waifu2x_vulkan_dir_dir = self.context.waifu2x_ncnn_vulkan_path
-        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
-        logger = logging.getLogger(__name__)
+        waifu2x_ncnn_vulkan_path = self.context.waifu2x_ncnn_vulkan_path
+        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
-        # replace the exec command withthe files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = input_file
+        # replace the exec command with the files we're concerned with
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = input_file
 
-            if exec[x] == "[output_file]":
-                exec[x] = output_file
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = output_file
 
-        logger.info("Vulkan Exec")
-        logger.info(str(exec))
-
-        logger.info("Changind Dirs")
-        logger.info(str(waifu2x_vulkan_dir_dir))
-
-        os.chdir(waifu2x_vulkan_dir_dir)
-
-        logger.info("manually upscaling file")
-        logger.info(exec)
+        # waifu2x-ncnn-vulkan requires the directory to be local when running, so use os.chir to work out of that dir.
+        os.chdir(waifu2x_ncnn_vulkan_path)
 
         console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
-        console_output.write(str(exec))
-        subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
+        console_output.write(str(exec_command))
+        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()
 
-    # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
-    # this function just renames the files so Dandere2x can interpret them correctly.
-    def fix_names(self):
-
-        list_of_names = os.listdir(self.upscaled_dir)
-        for name in list_of_names:
-            if '.jpg.jpg' in name:
-                rename_file(self.upscaled_dir + name,
-                            self.upscaled_dir + name.replace('.jpg.png', '.png'))
-
-    # This function is tricky. Essentially we do multiple things in one function
-    # Because of 'gotchas'
-
-    # First, we make a list of prefixes. Both the desired file name and the produced file name
-    # Will start with the same prefix (i.e all the stuff in file_names).
-
-    # Then, we have to specify what the dirty name will end in. in Vulkan's case, it'll have a ".png.png"
-    # We then have to do a try / except to try to rename it back to it's clean name, since it may still be
-    # being written / used by another program and not safe to edit yet.
     def fix_names_all(self):
+        """
+        Waifu2x-ncnn-vulkan will accept a file as "file.jpg" and output as "file.jpg.png".
+
+        Unfortunately, dandere2x wouldn't recognize this, so this function renames each name to the correct naming
+        convention. This function will iteratiate through every file needing to be upscaled waifu2x-ncnn-vulkan,
+        and change it's name after it's done saving
+
+        Comments:
+
+        - There's a really complicated try / except that exists because, even though a file may exist,
+          the file handle may still be used by waifu2x-ncnn-vulkan (it hasn't released it yet). As a result,
+          we need to try / except it until it's released, allowing us to rename it.
+
+        """
 
         file_names = []
         for x in range(1, self.frame_count):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.upscaled_dir + file + ".jpg.png"
-            clean_name = self.upscaled_dir + file + ".png"
+            dirty_name = self.residual_upscaled_dir + file + ".jpg.png"
+            clean_name = self.residual_upscaled_dir + file + ".png"
 
             wait_on_either_file(clean_name, dirty_name)
 
@@ -126,47 +107,52 @@ class Waifu2xVulkan(threading.Thread):
                     except PermissionError:
                         pass
 
-    # (description from waifu2x_caffe)
-    # The current Dandere2x implementation requires files to be removed from the folder
-    # During runtime. As files produced by Dandere2x don't all exist during the initial
-    # Waifu2x call, various work arounds are in place to allow Dandere2x and Waifu2x to work in real time.
-
-    # Briefly, 1) Create a list of names that will be upscaled by waifu2x,
-    #          2) Call waifu2x to upscale whatever images are in 'differences' folder
-    #          3) After waifu2x call is finished, delete whatever files were upscaled, and remove those names from list.
-    #             (this is to prevent Waifu2x from re-upscaling the same image again)
-    #          4) Repeat this process until all the names are removed.
     def run(self):
+        """
+        Input:
+            - Files made by residuals.py appearing in the /residual_images/ folder.
+
+        Output:
+            - Files upscaled in /residual_upscaled/
+
+        Code Description:
+
+        The current Dandere2x implementation requires files to be removed from the 'residual_images' folder
+        during runtime. When waifu2x-ncnn-vulkan calls 'upscale folder', it will only upscale what's in the folder
+        at that moment, and it'll re-upscale the images that it already upscaled in a previous iteration.
+
+        Considering that residual_images produced by Dandere2x don't all exist during the initial
+        Waifu2x call, we need to call the 'upscale folder' command multiple times. To prevent waifu2x from re-upscaling
+        the same image twice, various work arounds are in place to allow Dandere2x and Waifu2x to work in real time.
+
+        Briefly, 1) Create a list of names that will be upscaled by waifu2x,
+                 2) Call waifu2x to upscale whatever images are in 'differences' folder
+                 3) After waifu2x call is finished, delete whatever files were upscaled, and remove those names from list.
+                   (this is to prevent Waifu2x from re-upscaling the same image again)
+                 4) Repeat this process until all the names are removed.
+        """
+
         logger = logging.getLogger(__name__)
 
-        differences_dir = self.context.differences_dir
-        upscaled_dir = self.context.upscaled_dir
-        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        residual_images_dir = self.context.residual_images_dir
+        residual_upscaled_dir = self.context.residual_upscaled_dir
+        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
         console_output = open(self.context.log_dir + "vulkan_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = differences_dir
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = residual_images_dir
 
-            if exec[x] == "[output_file]":
-                exec[x] = upscaled_dir
-
-        logger.info("Vulkan Exec")
-        logger.info(str(exec))
-
-        logger.info("Changind Dirs")
-        logger.info(str(self.waifu2x_vulkan_path))
-
-        # if there are pre-existing files, fix them (this occurs during a resume session)
-        self.fix_names()
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = residual_upscaled_dir
 
         # we need to os.chdir to set the directory or else waifu2x-vulkan won't work.
-        os.chdir(self.waifu2x_vulkan_path)
+        os.chdir(self.waifu2x_ncnn_vulkan_path)
 
         logger.info("waifu2x_vulkan session")
-        logger.info(exec)
+        logger.info(exec_command)
 
         # make a list of names that will eventually (past or future) be upscaled
         upscaled_names = []
@@ -180,7 +166,7 @@ class Waifu2xVulkan(threading.Thread):
 
         # remove from the list images that have already been upscaled
         for name in upscaled_names[::-1]:
-            if os.path.isfile(self.upscaled_dir + name):
+            if os.path.isfile(self.residual_upscaled_dir + name):
                 upscaled_names.remove(name)
                 count_removed += 1
 
@@ -193,12 +179,12 @@ class Waifu2xVulkan(threading.Thread):
             logger.info("Frames remaining before batch: ")
             logger.info(len(upscaled_names))
 
-            console_output.write(str(exec))
-            subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
+            console_output.write(str(exec_command))
+            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
             for name in upscaled_names[::-1]:
-                if os.path.isfile(self.upscaled_dir + name):
-                    os.remove(self.differences_dir + name.replace(".png", ".jpg"))
+                if os.path.isfile(self.residual_upscaled_dir + name):
+                    os.remove(self.residual_images_dir + name.replace(".png", ".jpg"))
                     upscaled_names.remove(name)
 
         console_output.close()

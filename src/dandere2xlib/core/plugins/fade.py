@@ -3,9 +3,6 @@ from dataclasses import dataclass
 
 from wrappers.frame.frame import Frame
 
-
-# See "fade.cpp" in dandere2x_cpp for more in depth documentation.
-
 # A simple struct to hold the data to produce a fade.
 @dataclass
 class FadeData:
@@ -14,7 +11,20 @@ class FadeData:
     scalar: int
 
 
-def fade_image(context, out_image: Frame, list_correction: list):
+def fade_image(context, frame_base: Frame, list_correction: list):
+    """
+    Apply a flat scalar to the respective blocks in the image. See "fade.cpp" in dandere2x_cpp for more in depth
+    documentation. Roughly
+
+        frame_next = frame_next + scalar
+
+    Although frame_residuals needs to also be transformed
+
+    Method Tasks:
+        - Load all the vectors and their scalars into a list
+        - Apply the scalar to all the vectors in the image
+    """
+
     # load context
     scale_factor = int(context.scale_factor)
     logger = logging.getLogger(__name__)
@@ -31,11 +41,11 @@ def fade_image(context, out_image: Frame, list_correction: list):
 
     # copy over predictive vectors into new image
     for vector in fade_list:
-        out_image.fade_block(vector.x * scale_factor,
-                             vector.y * scale_factor,
-                             block_size * scale_factor,
-                             vector.scalar)
+        frame_base.fade_block(vector.x * scale_factor,
+                              vector.y * scale_factor,
+                              block_size * scale_factor,
+                              vector.scalar)
 
     # out_image.frame = np.clip(out_image.frame, 0, 255)
 
-    return out_image
+    return frame_base

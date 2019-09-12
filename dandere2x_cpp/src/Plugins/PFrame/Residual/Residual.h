@@ -4,8 +4,8 @@
 //Licensed under the GNU General Public License Version 3 (GNU GPL v3),
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
-#ifndef DANDERE2X_DIFFERENCES_H
-#define DANDERE2X_DIFFERENCES_H
+#ifndef DANDERE2X_RESIDUAL_H
+#define DANDERE2X_RESIDUAL_H
 
 
 #include <memory> //smart pointers
@@ -16,7 +16,7 @@
 
 #include "Image/Image.h"
 #include "BlockMatch/Block.h"
-#include "DifferenceBlocks.h"
+#include "ResidualBlocks.h"
 
 
 /**
@@ -57,9 +57,9 @@
  */
 
 
-class Differences {
+class Residual {
 public:
-    Differences(std::vector<std::vector<Block>> &matched_blocks, int block_size, std::shared_ptr<Image> frame2) {
+    Residual(std::vector<std::vector<Block>> &matched_blocks, int block_size, std::shared_ptr<Image> frame2) {
         this->matched_blocks = matched_blocks;
         this->block_size = block_size;
         this->frame2 = frame2;
@@ -75,7 +75,7 @@ private:
 
     std::vector<std::vector<bool>> occupied_pixel;
     std::vector<std::vector<Block>> matched_blocks;
-    std::shared_ptr<DifferenceBlocks> difference_blocks;
+    std::shared_ptr<ResidualBlocks> difference_blocks;
     std::shared_ptr<Image> frame2;
 
     int block_size;
@@ -91,4 +91,4 @@ private:
 };
 
 
-#endif //DANDERE2X_DIFFERENCES_H
+#endif //DANDERE2X_RESIDUAL_H

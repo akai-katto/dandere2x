@@ -10,6 +10,7 @@ Last Modified: April 2, 2019
 import logging
 import os
 import time
+import shutil
 from sys import platform
 
 
@@ -160,6 +161,30 @@ def get_valid_block_sizes(width: int, height: int, minimum=1):
 
 def valid_input_resolution(width: int, height: int, block_size: int):
     return width % block_size == 0 and height % block_size == 0
+
+
+def create_directories(directories_list: list):
+    """
+    In dandere2x's context file, there's a list of directories"""
+
+    # create each directory
+    for subdirectory in directories_list:
+        try:
+            os.mkdir(subdirectory)
+        except OSError:
+            print("Creation of the directory %s failed" % subdirectory)
+        else:
+            print("Successfully created the directory %s " % subdirectory)
+
+def delete_directories(directories_list: list):
+    # create each directory
+    for subdirectory in directories_list:
+        try:
+            shutil.rmtree(subdirectory)
+        except OSError:
+            print("Deletion of the directory %s failed" % subdirectory)
+        else:
+            print("Successfully deleted the directory %s " % subdirectory)
 
 
 def get_a_valid_input_resolution(width: int, height: int, block_size: int):
