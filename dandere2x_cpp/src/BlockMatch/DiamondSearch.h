@@ -37,12 +37,12 @@ class DiamondSearch {
 public:
 
     //Flags the points that are out of bounds / not within the scope of the image.
-    static bool flag_invalid_points(int x_bounds, int y_bounds, Block::Point points[], int size, bool flagged[]) {
+    static bool flag_invalid_points(int x_bounds, int y_bounds, Block::Point points[], int size, int block_size, bool flagged[]) {
 
         int count = 0;
         for (int i = 0; i < size; i++) {
-            if ((points[i].x > x_bounds) || (points[i].x < 0) ||
-                (points[i].y > y_bounds) || (points[i].y < 0)) {
+            if ((points[i].x + block_size > x_bounds) || (points[i].x < 0) ||
+                (points[i].y + block_size > y_bounds)  || (points[i].y < 0)) {
                 flagged[i] = true;
                 count++;
             }
@@ -145,7 +145,7 @@ public:
             //In other words, we need to know the index of an array is allowed or not.
 
             bool flag_array[16] = {true};
-            bool any_legal_points = flag_invalid_points(x_bounds, y_bounds, point_array, TOTAL_CHECKS, flag_array);
+            bool any_legal_points = flag_invalid_points(x_bounds, y_bounds, point_array, TOTAL_CHECKS, box_size, flag_array);
 
             //flag invalid points returns a boolean if there are no valid points for diamond search to visit
             //therfore, return a 'null' block, (a block with a really high PSNR (peak signal to noise ratio), so it
