@@ -10,7 +10,10 @@ from dandere2xlib.utils.dandere2x_utils import dir_exists, wait_on_delete_dir
 
 
 class Dandere2x_Gui_Wrapper:
-
+    """
+    A wrapper to call dandere2x.py from the GUI. The extra-added faetures are clearing the workspace ahead of time
+    and deleting the files after run-time, if gui_delete_workspace_after json is set to true.
+    """
     def __init__(self, config_json):
         self.config_json = config_json
         self.context = Context(config_json)

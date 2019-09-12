@@ -19,16 +19,16 @@ class Waifu2xVulkan(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_vulkan_dir = context.waifu2x_ncnn_vulkan_file_path
-        self.waifu2x_vulkan_path = context.waifu2x_ncnn_vulkan_path
-        self.differences_dir = context.residual_images_dir
-        self.upscaled_dir = context.residual_upscaled_dir
+        self.waifu2x_ncnn_vulkan_file_path = context.waifu2x_ncnn_vulkan_file_path
+        self.waifu2x_ncnn_vulkan_path = context.waifu2x_ncnn_vulkan_path
+        self.residual_images_dir = context.residual_images_dir
+        self.residual_upscaled_dir = context.residual_upscaled_dir
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
 
-        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_vulkan_dir,
+        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_ncnn_vulkan_file_path,
                                              "-i", "[input_file]",
                                              "-n", str(self.noise_level),
                                              "-s", str(self.scale_factor)]
@@ -75,11 +75,11 @@ class Waifu2xVulkan(threading.Thread):
     # this function just renames the files so Dandere2x can interpret them correctly.
     def fix_names(self):
 
-        list_of_names = os.listdir(self.upscaled_dir)
+        list_of_names = os.listdir(self.residual_upscaled_dir)
         for name in list_of_names:
             if '.jpg.jpg' in name:
-                rename_file(self.upscaled_dir + name,
-                            self.upscaled_dir + name.replace('.jpg.png', '.png'))
+                rename_file(self.residual_upscaled_dir + name,
+                            self.residual_upscaled_dir + name.replace('.jpg.png', '.png'))
 
 
     def fix_names_all(self):
@@ -103,8 +103,8 @@ class Waifu2xVulkan(threading.Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.upscaled_dir + file + ".jpg.png"
-            clean_name = self.upscaled_dir + file + ".png"
+            dirty_name = self.residual_upscaled_dir + file + ".jpg.png"
+            clean_name = self.residual_upscaled_dir + file + ".png"
 
             wait_on_either_file(clean_name, dirty_name)
 
@@ -163,7 +163,7 @@ class Waifu2xVulkan(threading.Thread):
         self.fix_names()
 
         # we need to os.chdir to set the directory or else waifu2x-vulkan won't work.
-        os.chdir(self.waifu2x_vulkan_path)
+        os.chdir(self.waifu2x_ncnn_vulkan_path)
 
         logger.info("waifu2x_vulkan session")
         logger.info(exec)
@@ -180,7 +180,7 @@ class Waifu2xVulkan(threading.Thread):
 
         # remove from the list images that have already been upscaled
         for name in upscaled_names[::-1]:
-            if os.path.isfile(self.upscaled_dir + name):
+            if os.path.isfile(self.residual_upscaled_dir + name):
                 upscaled_names.remove(name)
                 count_removed += 1
 
@@ -197,8 +197,8 @@ class Waifu2xVulkan(threading.Thread):
             subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
 
             for name in upscaled_names[::-1]:
-                if os.path.isfile(self.upscaled_dir + name):
-                    os.remove(self.differences_dir + name.replace(".png", ".jpg"))
+                if os.path.isfile(self.residual_upscaled_dir + name):
+                    os.remove(self.residual_images_dir + name.replace(".png", ".jpg"))
                     upscaled_names.remove(name)
 
         console_output.close()
