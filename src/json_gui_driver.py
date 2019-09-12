@@ -1,3 +1,8 @@
+"""
+Start the dandere2x_gui_wrapper class using the .json. Essentially, use this if you want to
+simulate d2x being started from the gui w/o having to actually use the GUI.
+"""
+
 import json
 
 from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper

@@ -1,3 +1,7 @@
+"""
+Use this if you want to start d2x raw from the dandere2x.py driver. Doesn't delete or verify settings. b
+"""
+
 import json
 import time
 
