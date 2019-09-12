@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X waifu2x-caffe
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
-"""
 import copy
 import logging
 import os
@@ -17,19 +11,17 @@ from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 from dandere2xlib.utils.json_utils import get_options_from_section
 
 
-# temporary implementation of waifu2x-caffe wrapper
-# note to self - add listener to delete files in real time(maybe?) for resume.
-# Not sure if Video2x wants that as a feature, though.
-
-# workspace, frame_count, waifu2x_caffe_dir, model_dir, output_dir, upscaled_dir, p_setting,
-#                  noise_level, scale_factor
-
 class Waifu2xCaffe(threading.Thread):
+    """
+    Note: This is legacy at the moment, it may or may still work, but the class isn't up to standards.
+
+    Let me know if you have intentions to use this so I can update it.
+    """
     def __init__(self, context: Context):
         self.frame_count = context.frame_count
         self.waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir
-        self.differences_dir = context.residual_images_dir
-        self.upscaled_dir = context.residual_upscaled_dir
+        self.residual_images_dir = context.residual_images_dir
+        self.residual_upscaled_dir = context.residual_upscaled_dir
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
@@ -103,7 +95,7 @@ class Waifu2xCaffe(threading.Thread):
 
         # remove from the list images that have already been upscaled
         for name in names[::-1]:
-            if os.path.isfile(self.upscaled_dir + name):
+            if os.path.isfile(self.residual_upscaled_dir + name):
                 names.remove(name)
                 count_removed += 1
 
@@ -119,6 +111,6 @@ class Waifu2xCaffe(threading.Thread):
             subprocess.call(exec_command, shell=True, stderr=console_output, stdout=console_output)
 
             for name in names[::-1]:
-                if os.path.isfile(self.upscaled_dir + name):
-                    os.remove(self.differences_dir + name.replace(".png", ".jpg"))
+                if os.path.isfile(self.residual_upscaled_dir + name):
+                    os.remove(self.residual_images_dir + name.replace(".png", ".jpg"))
                     names.remove(name)

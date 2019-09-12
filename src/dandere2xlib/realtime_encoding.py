@@ -4,9 +4,14 @@ from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, wait_on_file
 from wrappers.ffmpeg.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, migrate_tracks
 
+# todo - seperate realtime_encoding and realtime_deleting into seperate classes.
+# The functions are really messy as is and definitely needs to be organized a bit more.
 
-# Delete files that come in the form filename_1, filename_2.... filename_end.
 def delete_digit_files_in_range(context: Context, file_prefix, extension, lexiconic_digits, start, end):
+    """
+    Delete files that come in the form filename_1.png, filename_2.png .... filename_3.png
+    """
+
     logger = context.logger
     logger.info("Deleting files " + file_prefix + extension + " from " + str(start) + " to " + str(end))
 

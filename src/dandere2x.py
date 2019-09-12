@@ -197,7 +197,9 @@ class Dandere2x:
             .append("scale=" + str(self.context.width) + ":" + str(self.context.height))
 
     def delete_workspace_files(self):
-
+        """
+        Delete the files produced by dandere2x (beside logs) if this method is called.
+        """
         delete_directories(self.context.directories)
         no_sound = os.path.join(self.context.workspace, "nosound.mkv")
 

@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X waifu2x-converter-cpp
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: April 2, 2019
 
-Description: # A pretty hacky wrapper for Waifu2x-Conveter-Cpp.
-Behaves pretty similar to waifu2x-caffe, except directory must be
-set  (for subprocess call, waifu2x-converter-cpp keeps this variable) and arguments are slightly different.
-Furthermore, waifu2x-converter-cpp saves files in an annoying way,
-so we need to correct those odd namings.
-"""
 
 import copy
 import logging
@@ -25,6 +14,11 @@ from dandere2xlib.utils.json_utils import get_options_from_section
 
 
 class Waifu2xConverterCpp(threading.Thread):
+    """
+    Note: This is legacy at the moment, it may or may still work, but the class isn't up to standards.
+
+    Let me know if you have intentions to use this so I can update it.
+    """
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
