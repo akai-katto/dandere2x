@@ -16,6 +16,7 @@ class Waifu2xVulkan(threading.Thread):
     """
     The waifu2x-vulkan wrapper, with custom functions written that are specific for dandere2x to work.
     """
+
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
@@ -51,36 +52,24 @@ class Waifu2xVulkan(threading.Thread):
         """
 
         # load context
-        waifu2x_vulkan_dir_dir = self.context.waifu2x_ncnn_vulkan_path
-        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
-
+        waifu2x_ncnn_vulkan_path = self.context.waifu2x_ncnn_vulkan_path
+        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
         # replace the exec command with the files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = input_file
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = input_file
 
-            if exec[x] == "[output_file]":
-                exec[x] = output_file
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = output_file
 
         # waifu2x-ncnn-vulkan requires the directory to be local when running, so use os.chir to work out of that dir.
-        os.chdir(waifu2x_vulkan_dir_dir)
+        os.chdir(waifu2x_ncnn_vulkan_path)
 
         console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
-        console_output.write(str(exec))
-        subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
+        console_output.write(str(exec_command))
+        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()
-
-    # Waifu2x-Converter-Cpp adds this ugly '[NS-L3][x2.000000]' to files, so
-    # this function just renames the files so Dandere2x can interpret them correctly.
-    def fix_names(self):
-
-        list_of_names = os.listdir(self.residual_upscaled_dir)
-        for name in list_of_names:
-            if '.jpg.jpg' in name:
-                rename_file(self.residual_upscaled_dir + name,
-                            self.residual_upscaled_dir + name.replace('.jpg.png', '.png'))
-
 
     def fix_names_all(self):
         """
@@ -145,28 +134,25 @@ class Waifu2xVulkan(threading.Thread):
 
         logger = logging.getLogger(__name__)
 
-        differences_dir = self.context.residual_images_dir
-        upscaled_dir = self.context.residual_upscaled_dir
-        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        residual_images_dir = self.context.residual_images_dir
+        residual_upscaled_dir = self.context.residual_upscaled_dir
+        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
         console_output = open(self.context.log_dir + "vulkan_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = differences_dir
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = residual_images_dir
 
-            if exec[x] == "[output_file]":
-                exec[x] = upscaled_dir
-
-        # if there are pre-existing files, fix them (this occurs during a resume session)
-        self.fix_names()
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = residual_upscaled_dir
 
         # we need to os.chdir to set the directory or else waifu2x-vulkan won't work.
         os.chdir(self.waifu2x_ncnn_vulkan_path)
 
         logger.info("waifu2x_vulkan session")
-        logger.info(exec)
+        logger.info(exec_command)
 
         # make a list of names that will eventually (past or future) be upscaled
         upscaled_names = []
@@ -193,8 +179,8 @@ class Waifu2xVulkan(threading.Thread):
             logger.info("Frames remaining before batch: ")
             logger.info(len(upscaled_names))
 
-            console_output.write(str(exec))
-            subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
+            console_output.write(str(exec_command))
+            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
             for name in upscaled_names[::-1]:
                 if os.path.isfile(self.residual_upscaled_dir + name):
