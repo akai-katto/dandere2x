@@ -144,18 +144,18 @@ class Waifu2xConverterCpp(threading.Thread):
         # we need to os.chdir or else waifu2x-conveter won't work.
         os.chdir(self.waifu2x_converter_cpp_path)
 
-        exec = copy.copy(self.waifu2x_conv_upscale_frame)
+        exec_command = copy.copy(self.waifu2x_conv_upscale_frame)
 
         # replace the exec command withthe files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = self.residual_images_dir
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = self.residual_images_dir
 
-            if exec[x] == "[output_file]":
-                exec[x] = self.residual_upscaled_dir
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = self.residual_upscaled_dir
 
         logger.info("waifu2xconv session")
-        logger.info(exec)
+        logger.info(exec_command)
 
         # make a list of names that will eventually (past or future) be upscaled
         names = []
@@ -178,8 +178,8 @@ class Waifu2xConverterCpp(threading.Thread):
             logger.info("Frames remaining before batch: ")
             logger.info(len(names))
 
-            console_output.write(str(exec))
-            subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
+            console_output.write(str(exec_command))
+            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
             for name in names[::-1]:
                 if os.path.isfile(self.residual_upscaled_dir + name):

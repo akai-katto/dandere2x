@@ -44,32 +44,32 @@ class Waifu2xVulkanLegacy(threading.Thread):
 
     def upscale_file(self, input_file: str, output_file: str):
         # load context
-        waifu2x_vulkan_dir_dir = self.context.waifu2x_ncnn_vulkan_path
-        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        waifu2x_ncnn_vulkan_path = self.context.waifu2x_ncnn_vulkan_path
+        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
         logger = logging.getLogger(__name__)
 
         # replace the exec command withthe files we're concerned with
-        for x in range(len(exec)):
-            if exec[x] == "[input_file]":
-                exec[x] = input_file
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = input_file
 
-            if exec[x] == "[output_file]":
-                exec[x] = output_file
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = output_file
 
         logger.info("Vulkan Exec")
-        logger.info(str(exec))
+        logger.info(str(exec_command))
 
         logger.info("Changind Dirs")
-        logger.info(str(waifu2x_vulkan_dir_dir))
+        logger.info(str(waifu2x_ncnn_vulkan_path))
 
-        os.chdir(waifu2x_vulkan_dir_dir)
+        os.chdir(waifu2x_ncnn_vulkan_path)
 
         logger.info("manually upscaling file")
-        logger.info(exec)
+        logger.info(exec_command)
 
         console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
-        console_output.write(str(exec))
-        subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
+        console_output.write(str(exec_command))
+        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()
 
     def run(self):
