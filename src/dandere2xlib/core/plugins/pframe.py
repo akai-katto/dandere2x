@@ -36,11 +36,13 @@ def pframe_image(context,
                                         and \
            int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
 
+            # load the vector
             vector = DisplacementVector(int(list_predictive[x * 4 + 0]),
                                         int(list_predictive[x * 4 + 1]),
                                         int(list_predictive[x * 4 + 2]),
                                         int(list_predictive[x * 4 + 3]))
 
+            # apply the vector
             frame_next.copy_block(frame_previous, block_size * scale_factor,
                                   vector.x_2 * scale_factor,
                                   vector.y_2 * scale_factor,
