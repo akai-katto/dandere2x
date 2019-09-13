@@ -83,23 +83,23 @@ def make_residual_image(context: Context, raw_frame: Frame, list_residual: list,
     # if there are no items in 'list_residuals' but have list_predictives
     # then the two frames are identical, so no residual image needed.
     if not list_residual and list_predictive:
-        out_image = Frame()
-        out_image.create_new(1, 1)
-        return out_image
+        residual_image = Frame()
+        residual_image.create_new(1, 1)
+        return residual_image
 
     # if there are neither any predictive or inversions
     # then the frame is a brand new frame with no resemblence to previous frame.
     # in this case copy the entire frame over
     if not list_residual and not list_predictive:
-        out_image = Frame()
-        out_image.create_new(raw_frame.width, raw_frame.height)
-        out_image.copy_image(raw_frame)
-        return out_image
+        residual_image = Frame()
+        residual_image.create_new(raw_frame.width, raw_frame.height)
+        residual_image.copy_image(raw_frame)
+        return residual_image
 
     # size of output image is determined based off how many residuals there are
     image_size = int(math.sqrt(len(list_residual) / 4) + 1) * (block_size + bleed * 2)
-    out_image = Frame()
-    out_image.create_new(image_size, image_size)
+    residual_image = Frame()
+    residual_image.create_new(image_size, image_size)
 
     for x in range(int(len(list_residual) / 4)):
         # load every element in the list into a vector
@@ -109,11 +109,11 @@ def make_residual_image(context: Context, raw_frame: Frame, list_residual: list,
                                     int(list_residual[x * 4 + 3]))
 
         # apply that vector to the image
-        out_image.copy_block(bleed_frame, block_size + bleed * 2,
+        residual_image.copy_block(bleed_frame, block_size + bleed * 2,
                              vector.x_1 + buffer - bleed, vector.y_1 + buffer + - bleed,
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
-    return out_image
+    return residual_image
 
 
 def debug_image(block_size, frame_base, list_predictive, list_differences, output_location):
