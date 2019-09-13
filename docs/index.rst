@@ -11,4 +11,5 @@ Dandere2x Overview
     :caption: Contents:
 
     overview
+    json_settings
     linux_build_instructions

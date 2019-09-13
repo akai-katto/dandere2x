@@ -1,20 +1,12 @@
-Building dandere2x on linux
+Building Dandere2x On Linux
 ===========================
-Dandere upscales a video using Waifu2x with many techniques to speed up this process like only upscaling roughly the parts that change from a frame to another, image compression and multiprocessing, doing many things in the same time.
 
 
-
-
-For users
-#########
-
-Linux Operating System
-**********************
 
 We from Dandere2x primarily recommend using an Arch-based distribution or as a second option any other distro with Snap installed and working - Ubuntu to be short. We will give you the instructions on how to install the dependencies and running Dandere2x in a moment.
 
 Installing dependencies
-=======================
+***********************
 
 Waifu2x with Snap
 -----------------
@@ -84,7 +76,7 @@ That should do it for the Python package manager, now open a terminal inside the
 
 
 Compiling the CPP binary
-========================
+************************
 
 
 Using our simple script
