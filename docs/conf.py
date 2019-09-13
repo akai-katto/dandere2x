@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Manim'
-copyright = '2019, EulerTour'
-author = 'EulerTour'
+project = 'Dandere2x'
+copyright = '2019, aka_katto'
+author = 'aka_katto'
 
 
 # -- General configuration ---------------------------------------------------
