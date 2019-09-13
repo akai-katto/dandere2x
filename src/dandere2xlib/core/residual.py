@@ -110,8 +110,8 @@ def make_residual_image(context: Context, raw_frame: Frame, list_residual: list,
 
         # apply that vector to the image
         residual_image.copy_block(bleed_frame, block_size + bleed * 2,
-                             vector.x_1 + buffer - bleed, vector.y_1 + buffer + - bleed,
-                             vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
+                                  vector.x_1 + buffer - bleed, vector.y_1 + buffer + - bleed,
+                                  vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
 
     return residual_image
 
