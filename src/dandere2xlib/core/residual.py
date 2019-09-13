@@ -101,13 +101,14 @@ def make_residual_image(context: Context, raw_frame: Frame, list_residual: list,
     out_image = Frame()
     out_image.create_new(image_size, image_size)
 
-
     for x in range(int(len(list_residual) / 4)):
+        # load every element in the list into a vector
         vector = DisplacementVector(int(list_residual[x * 4 + 0]),
                                     int(list_residual[x * 4 + 1]),
                                     int(list_residual[x * 4 + 2]),
                                     int(list_residual[x * 4 + 3]))
 
+        # apply that vector to the image
         out_image.copy_block(bleed_frame, block_size + bleed * 2,
                              vector.x_1 + buffer - bleed, vector.y_1 + buffer + - bleed,
                              vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))
