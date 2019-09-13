@@ -1,6 +1,5 @@
-Dandere2x - Fast Waifu2x Video Upscaling
-########################################
-
+Building dandere2x on linux
+===========================
 Dandere upscales a video using Waifu2x with many techniques to speed up this process like only upscaling roughly the parts that change from a frame to another, image compression and multiprocessing, doing many things in the same time.
 
 
