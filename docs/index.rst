@@ -7,8 +7,8 @@ Dandere2x Overview
 
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
+    :caption: Contents:
 
-   overview
-   linux_build_instructions
-
+    overview
+    linux_build_instructions
