@@ -33,8 +33,8 @@ def get_list_from_file(text_file: str):
     exists = exists = os.path.isfile(text_file)
     count = 0
     while not exists:
-        if count % 10000 == 0:
-            logger.info(text_file + "dne, waiting")
+        if count / 500 == 0:
+            logger.info(text_file + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
