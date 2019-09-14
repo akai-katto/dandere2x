@@ -14,7 +14,7 @@
 #include "BlockMatch/DiamondSearch.h"
 #include "Image/Image.h"
 #include "Dandere2xUtils/Dandere2xUtils.h"
-#include "Difference/Differences.h"
+#include "Plugins/PFrame/Residual/Residual.h"
 
 
 /**
@@ -57,7 +57,7 @@ class PFrame {
 public:
     PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed_static,
            std::shared_ptr<Image> image2_compressed_moving,
-           unsigned int block_size, std::string p_frame_file, std::string difference_file, int step_size = 4);
+           unsigned int block_size, std::string p_frame_file, std::string residual_file, int step_size = 4);
 
     void run();
 
@@ -74,18 +74,18 @@ private:
     int bleed;
 
     std::string p_frame_file;
-    std::string difference_file;
+    std::string residual_file;
 
     std::vector<std::vector<Block>> matched_blocks;
     std::shared_ptr<Image> image1;
     std::shared_ptr<Image> image2;
     std::shared_ptr<Image> image2_compressed_static;
     std::shared_ptr<Image> image2_compressed_moving;
-    std::shared_ptr<Differences> dif;
+    std::shared_ptr<Residual> res;
 
     void force_copy();
 
-    void create_difference();
+    void create_residual();
 
     void draw_over();
 

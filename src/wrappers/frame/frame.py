@@ -1,21 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Name: Dandere2X Frame
-Author: CardinalPanda
-Date Created: March 22, 2019
-Last Modified: 6-3-19
-
-Description: Simplify the Dandere2x by not having to interact with numpy itself.
-             All operations on images ideally should be done through the functions here.
-
-             Current Tools:
-             - New Image
-             - Load Image (can wait on file)
-             - Copy Block
-             - Copy Image
-             - Saving (can overwrite)
-"""
 import logging
 import os
 import time
@@ -27,8 +11,7 @@ import numpy as np
 from PIL import Image
 from scipy import misc  # pip install Pillow
 
-from dandere2xlib.utils.dandere2x_utils import rename_file
-from dandere2xlib.utils.dandere2x_utils import wait_on_file
+from dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file
 
 
 # fuck this function, lmao. Credits to
@@ -84,15 +67,19 @@ class DisplacementVector:
     y_2: int
 
 
-# usage:
-# frame = Frame()
-# frame.load_from_string("input.png")
-# frame2 = Frame()
-# frame2.copy_image(frame)
-# frame3 = frame()
-# frame3.create_new(1920,1080)
-
 class Frame:
+    """
+    An image class for Dandere2x that wraps around the numpy library.
+
+    usage:
+    frame = Frame()
+    frame.load_from_string("input.png")
+    frame2 = Frame()
+    frame2.copy_image(frame)
+    frame3 = frame()
+    frame3.create_new(1920,1080)
+    """
+
     def __init__(self):
         self.frame = ''
         self.width = ''
@@ -101,6 +88,7 @@ class Frame:
         self.logger = logging.getLogger(__name__)
 
     def create_new(self, width, height):
+
         self.frame = np.zeros([height, width, 3], dtype=np.uint8)
         self.width = width
         self.height = height
@@ -135,11 +123,10 @@ class Frame:
                 logger.info("Permission Error")
                 loaded = False
 
-    # Save an image, then rename it. This prevents other parts of Dandere2x
-    # from accessing an image file that hasn't finished saving.
-    # Have to convert image using Pillow before saving to get Quality = 100
-    # for jpeg output
     def save_image(self, out_location):
+        """
+        Save an image with specific instructions depending on it's extension type.
+        """
         extension = os.path.splitext(os.path.basename(out_location))[1]
 
         if 'jpg' in extension:
@@ -155,12 +142,23 @@ class Frame:
             rename_file(out_location + "temp" + extension, out_location)
 
     def save_image_temp(self, out_location, temp_location):
+        """
+        Save an image in the "temp_location" folder to prevent another program from accessing the file
+        until it's done writing.
+
+        This is done to prevent other parts from using an image until it's entirely done writing.
+        """
+
         self.save_image(temp_location)
         wait_on_file(temp_location)
         rename_file(temp_location, out_location)
 
-    # save the picture given a specific quality setting
     def save_image_quality(self, out_location, quality_per):
+        """
+        Save an image with JPEG using the JPEG quality-compression ratio. 100 will be the best, while 0 will
+        be the worst.
+        """
+
         extension = os.path.splitext(os.path.basename(out_location))[1]
 
         if 'jpg' in extension:
@@ -173,12 +171,16 @@ class Frame:
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
-    # This function exists because the act of numpy processing an image
-    # changes the overall look of an image. (I guess?). In the case
-    # where Dandere2x needs to just load an image and save it somewhere else,
-    # Dandere2x needs to copy the image using numpy to maintain visual aesthetic.
-
     def copy_image(self, frame_other):
+        """
+        Copy another image into this image using the copy_from numpy command. It seems that numpy affects
+        the RGB contents of an image, so when another image needs to be copied, rather than copying the file itself,
+        load it into a Frame, copy the Frame, then save the Frame, as opposed to copying the file itself.
+
+        This ensure the images stay consistent temporally.
+
+        """
+
         if self.height != frame_other.height or self.width != frame_other.width:
             self.logger.error('copy images are not equal')
             self.logger.error(str(self.width) + ' !=? ' + str(frame_other.width))
@@ -188,15 +190,11 @@ class Frame:
         copy_from(frame_other.frame, self.frame, (0, 0), (0, 0),
                   (frame_other.frame.shape[1], frame_other.frame[1].shape[0]))
 
-    # this uses the 'copy_from' function I found on stackoverflow.
-    # We have to use this function because using ' for x in range(...) ' is too
-    # slow for python, so we have to use specialized functions to copy blocks en masse.
-
-    # This function exists as a wrapper mostly to give detailed errors if something goes wrong,
-    # as copy_from won't give any meaningful errors.
-
     def copy_block(self, frame_other, block_size, other_x, other_y, this_x, this_y):
-
+        """
+        Check that we can validly copy a block before calling the numpy copy_from method. This way, detailed
+        errors are given, rather than numpy just throwing an un-informative error.
+        """
         # Check if inputs are valid before calling numpy copy_from
         self.check_if_valid(frame_other, block_size, other_x, other_y, this_x, this_y)
 
@@ -204,19 +202,21 @@ class Frame:
                   (other_y, other_x), (this_y, this_x),
                   (this_y + block_size - 1, this_x + block_size - 1))
 
-    # Similar to copy_block, fade_block applies some scalar value to every
-    # pixel within a block range.
-
     def fade_block(self, this_x, this_y, block_size, scalar):
+        """
+        Apply a scalar value to the RGB values for a given block. The values are then clipped to ensure
+        they don't overflow.
+        """
 
         copy_from_fade(self.frame, self.frame,
                        (this_y, this_x), (this_y, this_x),
                        (this_y + block_size - 1, this_x + block_size - 1), scalar)
 
-    # For the sake of code maintance, do the error checking to ensure numpy copy will work here.
-    # Numpy won't give detailed errors, so this is my custom errors for debugging!
-
     def check_if_valid(self, frame_other, block_size, other_x, other_y, this_x, this_y):
+        """
+        Provide detailed reasons why a copy_block will not work before it's called. This method should access
+        every edge case that could prevent copy_block from successfully working.
+        """
 
         if this_x + block_size - 1 > self.width or this_y + block_size - 1 > self.height:
             self.logger.error('Input Dimensions Invalid for Copy Block Function, printing variables. Send Tyler this!')
@@ -252,12 +252,35 @@ class Frame:
         if other_x < 0 or other_y < 0:
             raise ValueError('Input dimensions invalid for copy block')
 
-    # Sometimes we need to copy a block + some bleed as a result of Waifu2x Bleeding. (see documentation).
-    # Sometimes this bleed may or may not actually exist, in which case just put a color like black or something.
-    # This function creates an image 'bleed' pixels larger than the original image, as to avoid
-    # accessing pixels that may not exist.
-
     def create_bleeded_image(self, bleed):
+        """
+        For residuals processing, pixels may or may not exist when trying to create an residual image based
+        off the residual blocks, because of padding. This function will make a larger image, and place the same image
+        within the larger image, effectively creating a black bleed around the image itself.
+
+        For example, pretend the series of 1's is a static image
+
+        111
+        111
+        111
+
+        And we need to get the top left most block, with image padding of one pixel. However, no pixels exist. So we
+        create a bleeded image,
+
+        00000
+        01110
+        01110
+        01110
+        00000
+
+        Then we can create a residual image of the top left pixel with a padding of one pixel, which would yield
+
+        000
+        011
+        011
+
+        """
+
         shape = self.frame.shape
         x = shape[0] + bleed + bleed
         y = shape[1] + bleed + bleed

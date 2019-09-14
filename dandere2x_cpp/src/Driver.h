@@ -46,7 +46,7 @@ void driver_difference(string workspace, int resume_count, int frame_count,
 
     string image_prefix = workspace + separator() + "inputs" + separator() + "frame";
     string p_data_prefix = workspace + separator() + "pframe_data" + separator() + "pframe_";
-    string difference_prefix = workspace + separator() + "inversion_data" + separator() + "inversion_";
+    string residual_data_prefix = workspace + separator() + "residual_data" + separator() + "residual_";
     string correction_prefix = workspace + separator() + "correction_data" + separator() + "correction_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
     string compressed_static_prefix = workspace + separator() + "compressed_static" + separator() + "compressed_";
@@ -66,12 +66,12 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         shared_ptr<Image> im2 = make_shared<Image>(image_prefix + to_string(resume_count + 1) + extension_type);
 
         string p_data_file = p_data_prefix + to_string(resume_count) + ".txt";
-        string difference_file = difference_prefix + to_string(resume_count) + ".txt";
+        string residual_file = residual_data_prefix + to_string(resume_count) + ".txt";
         string correction_file = correction_prefix + to_string(resume_count) + ".txt";
         string fade_file = fade_prefix + to_string(resume_count) + ".txt";
 
         write_empty(p_data_file);
-        write_empty(difference_file);
+        write_empty(residual_file);
         write_empty(correction_file);
         write_empty(fade_file);
 
@@ -112,7 +112,7 @@ void driver_difference(string workspace, int resume_count, int frame_count,
 
         // Create strings for the files we need to save for this computation iteration
         string p_data_file = p_data_prefix + to_string(x) + ".txt";
-        string difference_file = difference_prefix + to_string(x) + ".txt";
+        string residual_file = residual_data_prefix + to_string(x) + ".txt";
         string correction_file = correction_prefix + to_string(x) + ".txt";
         string fade_file = fade_prefix + to_string(x) + ".txt";
 
@@ -129,8 +129,8 @@ void driver_difference(string workspace, int resume_count, int frame_count,
         fade.run();
 
         // Find similar blocks between image_1 and image_2 and match them, and document which matched (p_data_file).
-        // Document which blocks we could not find a match for, and add them to a list of missing blocks (difference_file)
-        PFrame pframe = PFrame(image_1, image_2, image_2_compressed_static, image_2_compressed_moving, block_size, p_data_file, difference_file, step_size);
+        // Document which blocks we could not find a match for, and add them to a list of missing blocks (residual_file)
+        PFrame pframe = PFrame(image_1, image_2, image_2_compressed_static, image_2_compressed_moving, block_size, p_data_file, residual_file, step_size);
         pframe.run();
 
         // When finding similar blocks, there may be small blemishes left in as a result. Try our best

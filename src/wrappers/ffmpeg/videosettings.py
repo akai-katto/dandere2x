@@ -8,6 +8,10 @@ from wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_
 class VideoSettings:
 
     def __init__(self, ffprobe_dir, video_file: str):
+        """
+        A simple class to get the video settings needed for dandere2x using ffprobe.
+        """
+
         self.ffprobe_dir = ffprobe_dir
         self.settings_json = get_video_info(self.ffprobe_dir, video_file)
 

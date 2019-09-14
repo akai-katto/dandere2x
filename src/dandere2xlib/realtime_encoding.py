@@ -4,9 +4,14 @@ from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, wait_on_file
 from wrappers.ffmpeg.ffmpeg import create_video_from_specific_frames, concat_encoded_vids, migrate_tracks
 
+# todo - seperate realtime_encoding and realtime_deleting into seperate classes.
+# The functions are really messy as is and definitely needs to be organized a bit more.
 
-# Delete files that come in the form filename_1, filename_2.... filename_end.
 def delete_digit_files_in_range(context: Context, file_prefix, extension, lexiconic_digits, start, end):
+    """
+    Delete files that come in the form filename_1.png, filename_2.png .... filename_3.png
+    """
+
     logger = context.logger
     logger.info("Deleting files " + file_prefix + extension + " from " + str(start) + " to " + str(end))
 
@@ -14,11 +19,13 @@ def delete_digit_files_in_range(context: Context, file_prefix, extension, lexico
         os.remove(file_prefix + str(get_lexicon_value(lexiconic_digits, x)) + extension)
 
 
-# This function allows Dandere2x to apply filters to the Dandere2x created images while waifu2x upscales frames
-# The filters dandere2x requires are really computationally heavy - having it encode during runtime allows us to reduce
-# Overall runtime, since encoding all the frames after could waste a lot of time for the user.
-
 def run_realtime_encoding(context: Context, output_file: str):
+    """
+    This function allows Dandere2x to apply filters to the Dandere2x created images while waifu2x upscales frames.
+    The filters in ffmpeg dandere2x requires are really computationally heavy -
+    realtime_encoding encode during runtime allows us to reduce overall runtime experienced by the user.
+    """
+
     logger = context.logger
     logger.info("Real time encoding process started")
 
@@ -32,13 +39,15 @@ def run_realtime_encoding(context: Context, output_file: str):
 
     # directories
     merged_files_prefix = context.merged_dir + "merged_"
-    upscaled_files_prefix = context.upscaled_dir + "output_"
+    upscaled_files_prefix = context.residual_upscaled_dir + "output_"
     compressed_files_prefix = context.compressed_static_dir + "compressed_"
     input_frames_prefix = context.input_frames_dir + "frame"
 
     # Create an encoded every frame_rate seconds.
     for x in range(0, int(frame_count / frames_per_video)):
-        text_file = open(workspace + "encoded" + os.path.sep + "list.txt", 'a+')  # text file for ffmpeg to use to concat vids together
+
+        # write the videos to a textfile for ffmpeg to use when concatenating the vids later.
+        text_file = open(workspace + "encoded" + os.path.sep + "list.txt", 'a+')
         encoded_vid = workspace + "encoded" + os.path.sep + "encoded_" + str(x) + ".mkv"
 
         if file_exists(encoded_vid):

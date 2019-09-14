@@ -10,7 +10,7 @@
 #include <vector>
 #include "BlockMatch/Block.h"
 
-class DifferenceBlocks {
+class ResidualBlocks {
 
 public:
     int size;
@@ -23,7 +23,7 @@ public:
     std::vector<Block> list = std::vector<Block>();
 
 
-    DifferenceBlocks(int xDimension, int yDimension, int size) {
+    ResidualBlocks(int xDimension, int yDimension, int size) {
         this->xDimension = xDimension;
         this->yDimension = yDimension;
         this->xMax = xDimension / size;

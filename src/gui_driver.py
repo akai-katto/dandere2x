@@ -31,7 +31,9 @@ class QtDandere2xThread(QtCore.QThread):
 
 
 class AppWindow(QMainWindow):
-
+    """
+    Note; I don't maintain this class. It's half assed in the grand scheme of things, and it'd probably be re-made later.
+    """
     def __init__(self):
         super().__init__()
         self.ui = Ui_Dandere2xGUI()
@@ -244,7 +246,7 @@ class AppWindow(QMainWindow):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
             self.waifu2x_type = 'vulkan'
 
-        if self.ui.waifu2x_type_combo_box.currentText() == '"Waifu2x-Vulkan-Legacy"':
+        if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan-Legacy':
             self.waifu2x_type = 'vulkan_legacy'
 
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Converter-Cpp':
