@@ -26,7 +26,6 @@ def correct_image(context, frame_base: Frame, list_correction: list):
     # load context
     scale_factor = context.scale_factor
 
-    predictive_vectors = []
     out_image = Frame()
     out_image.create_new(frame_base.width, frame_base.height)
     out_image.copy_image(frame_base)
@@ -34,12 +33,11 @@ def correct_image(context, frame_base: Frame, list_correction: list):
     block_size = context.correction_block_size
 
     for x in range(int(len(list_correction) / 4)):  # / 4 because each there's 4 data points per block
-        predictive_vectors.append(DisplacementVector(int(list_correction[x * 4 + 0]),
-                                                     int(list_correction[x * 4 + 1]),
-                                                     int(list_correction[x * 4 + 2]),
-                                                     int(list_correction[x * 4 + 3])))
-    # copy over predictive vectors into new image
-    for vector in predictive_vectors:
+        vector = DisplacementVector(int(list_correction[x * 4 + 0]),
+                                    int(list_correction[x * 4 + 1]),
+                                    int(list_correction[x * 4 + 2]),
+                                    int(list_correction[x * 4 + 3]))
+
         out_image.copy_block(frame_base, block_size * scale_factor,
                              vector.x_2 * scale_factor,
                              vector.y_2 * scale_factor,
