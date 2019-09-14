@@ -128,13 +128,7 @@ def rename_file(file1, file2):
 # Both waifu2x-Caffe and waifu2x-conv read images in lexiconic order, so in order
 # to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.
 def get_lexicon_value(digits: int, val: int):
-    string = str(val)
-
-    while (len(string) < digits):
-        string = '0' + string
-
-    return string
-
+    return str(val).zfill(digits)
 
 # get frame count from a string input
 def get_seconds_from_time(time_frame: int):
