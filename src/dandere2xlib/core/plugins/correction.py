@@ -33,11 +33,14 @@ def correct_image(context, frame_base: Frame, list_correction: list):
     block_size = context.correction_block_size
 
     for x in range(int(len(list_correction) / 4)):  # / 4 because each there's 4 data points per block
+
+        # load vector
         vector = DisplacementVector(int(list_correction[x * 4 + 0]),
                                     int(list_correction[x * 4 + 1]),
                                     int(list_correction[x * 4 + 2]),
                                     int(list_correction[x * 4 + 3]))
 
+        # apply vector
         out_image.copy_block(frame_base, block_size * scale_factor,
                              vector.x_2 * scale_factor,
                              vector.y_2 * scale_factor,
