@@ -16,25 +16,32 @@ void benchmark(){
 #include "Plugins/PFrame/PFrame.h"
 
 #include "BlockMatch/ExhaustiveSearch.h"
+#include "Image/SSIM/SSIM.h"
 
-    Image im1 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame120.jpg");
-    Image im2 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame121.jpg");
+    Image im1 = Image("C:\\Users\\windwoz\\Pictures\\test_images\\test_image.png");
+    Image im2 = Image("C:\\Users\\windwoz\\Pictures\\test_images\\reallybad.png");
 
-    Block b = ExhaustiveSearch::exhaustive_search(im1, im2, 500, 500, 20);
+    Image im3 = Image(im1);
 
-    std::cout << b.x_start << " -> " << b.x_end << b.y_start << " -> " << b.y_end << std::endl;
+
+
+    double ssim = SSIM::ssim(im1, im2, 0,0,0,0,30);
+    double ssim_copy = SSIM::ssim(im3, im2, 0,0,0,0,30);
+
+    std::cout << "ssim: " << ssim << std::endl;
+    std::cout << "ssim copy : " << ssim_copy << std::endl;
 }
 
 int main(int argc, char **argv) {
 
 //    benchmark();
-
-    bool debug = false; //debug flag
+//
+    bool debug = true; //debug flag
 
     //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
-    string workspace = "/home/linux/Documents/github_projects/dandere2x/src/workspace/7secondstwig_folder/";
-    int frame_count = 43;
+    string workspace = "C:\\Users\\windwoz\\Documents\\sublime_merge\\dandere2x\\src\\workspace\\30_no_fade\\";
+    int frame_count = 240;
     int block_size = 20;
     int step_size = 8;
     string run_type = "n";// 'n' or 'r'

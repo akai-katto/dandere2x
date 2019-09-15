@@ -42,11 +42,17 @@ Image::Image(std::string file_name) {
             this->image_colors[x][y] = this->construct_color(x,y);
         }
     }
-}
-
-Image::~Image() {
     stbi_image_free(this->stb_image);
 }
+
+Image::Image(const Image &other) {
+    this->width = other.width;
+    this->height = other.height;
+
+    copy(other.image_colors.begin(), other.image_colors.end(), back_inserter(this->image_colors));
+}
+
+Image::~Image() {}
 
 
 Image::Color &Image::get_color(int x, int y) {

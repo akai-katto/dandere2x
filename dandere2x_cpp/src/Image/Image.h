@@ -15,6 +15,8 @@
 #include <stdexcept>
 #include "../Dandere2xUtils/Dandere2xUtils.h"
 #include "stb_image.h"
+#include <algorithm> // for copy() and assign()
+
 #define STB_IMAGE_IMPLEMENTATION
 
 
@@ -58,6 +60,8 @@ public:
     int width;
 
     Image(std::string file_name);
+
+    Image(const Image &other);
 
     ~Image();
 

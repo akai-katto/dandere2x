@@ -2,12 +2,12 @@
   "dandere2x": {
     "usersettings": {
       "block_size": 20,
-      "quality_minimum": 80,
+      "quality_minimum": 30,
       "waifu2x_type": "vulkan",
       "denoise_level": 3,
       "scale_factor": 2,
-      "input_file": "..\\workspace\\7secondstwig.mkv",
-      "output_file": "..\\workspace\\7secondstwigd.mkv"
+      "input_file": "..\\workspace\\yn_moving.mkv",
+      "output_file": "..\\workspace\\yn_distance.mkv"
     },
     "developer_settings": {
       "realtime_encoding": {
@@ -17,12 +17,12 @@
       },
       "step_size": 8,
       "bleed": 1,
-      "quality_moving_ratio": 0.55,
+      "quality_moving_ratio": 0.9,
       "extension_type": ".jpg",
       "debug": true,
       "workspace_use_temp": false,
       "gui_delete_workspace_after": false,
-      "workspace": "..\\workspace\\7secondstwig_folder\\",
+      "workspace": "..\\workspace\\30_no_fade\\",
       "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
     }
   },
@@ -86,7 +86,7 @@
         "-qscale:v": 2,
         "-pix_fmt": null,
         "-vf": [
-          "noise=c1s=8:c0f=u"
+          "null"
         ]
       }
     },

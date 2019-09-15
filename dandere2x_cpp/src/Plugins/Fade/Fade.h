@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include <Image/ImageUtils.h>
+#include "Image/SSIM/SSIM.h"
 
 using namespace std;
 
@@ -57,6 +58,7 @@ public:
          int block_size, std::string fade_file) {
 
         this->image1 = image1;
+        this->image1_copy = make_shared<Image>(*image1);
         this->image2 = image2;
         this->image2_compressed = image2_compressed;
         this->block_size = block_size;
@@ -70,6 +72,7 @@ public:
 private:
 
     std::shared_ptr<Image> image1;
+    std::shared_ptr<Image> image1_copy;
     std::shared_ptr<Image> image2;
     std::shared_ptr<Image> image2_compressed;
     int block_size;
@@ -84,6 +87,8 @@ private:
     double get_scalar_for_block(int x, int y);
 
     void draw_over(int x_start, int y_start, int scalar);
+
+    void add_scalar_to_copy(int x_start, int y_start, int scalar);
 
     int bound_integer(int min, int max, int val);
 
