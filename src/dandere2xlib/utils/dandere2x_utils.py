@@ -33,8 +33,8 @@ def get_list_from_file(text_file: str):
     exists = exists = os.path.isfile(text_file)
     count = 0
     while not exists:
-        if count % 10000 == 0:
-            logger.info(text_file + "dne, waiting")
+        if count / 500 == 0:
+            logger.info(text_file + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
@@ -67,8 +67,8 @@ def wait_on_file(file_string: str):
     exists = os.path.isfile(file_string)
     count = 0
     while not exists:
-        if count % 1000000 == 0:
-            logger.info(file_string + "dne, waiting")
+        if count / 500 == 0:
+            logger.info(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
         count += 1
         time.sleep(.001)
@@ -81,8 +81,8 @@ def wait_on_either_file(file_1: str, file_2: str):
     exists_2 = os.path.isfile(file_2)
     count = 0
     while not (exists_1 or exists_2):
-        if count % 1000000 == 0:
-            logger.info(file_1 + "dne, waiting")
+        if count / 500 == 0:
+            logger.info(file_1 + " does not exist, waiting")
         exists_1 = os.path.isfile(file_1)
         exists_2 = os.path.isfile(file_2)
 
@@ -97,8 +97,8 @@ def wait_on_delete_dir(dir: str):
     exists = dir_exists(dir)
     count = 0
     while exists:
-        if count % 1000000 == 0:
-            logger.info(dir + "dne, waiting")
+        if count / 500 == 0:
+            logger.info(dir + " does not exist, waiting")
         exists = os.path.isfile(dir)
         count += 1
         time.sleep(.001)
@@ -128,13 +128,7 @@ def rename_file(file1, file2):
 # Both waifu2x-Caffe and waifu2x-conv read images in lexiconic order, so in order
 # to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.
 def get_lexicon_value(digits: int, val: int):
-    string = str(val)
-
-    while (len(string) < digits):
-        string = '0' + string
-
-    return string
-
+    return str(val).zfill(digits)
 
 # get frame count from a string input
 def get_seconds_from_time(time_frame: int):
