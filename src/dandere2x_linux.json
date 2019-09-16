@@ -2,12 +2,12 @@
   "dandere2x": {
     "usersettings": {
       "block_size": 20,
-      "quality_minimum": 85,
+      "quality_minimum": 80,
       "waifu2x_type": "vulkan",
-      "denoise_level": 3,
+      "denoise_level": 0,
       "scale_factor": 2,
-      "input_file": "../workspace/yn_moving.mkv",
-      "output_file": "../workspace/yn_moving_upscaled.mkv"
+      "input_file": "../workspace/5sec.mkv",
+      "output_file": "../workspace/5sec2x.mkv"
     },
     "developer_settings": {
       "realtime_encoding": {
@@ -22,21 +22,8 @@
       "debug": true,
       "workspace_use_temp": false,
       "gui_delete_workspace_after": false,
-      "workspace": "../workspace/2_seconds/",
+      "workspace": "../workspace/default/",
       "dandere2x_cpp_dir": "../externals/dandere2x_cpp"
-    }
-  },
-  "waifu2x_caffe": {
-    "waifu2x_caffe_path": "..\\externals\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
-    "output_options": {
-      "-process": "gpu",
-      "-crop_size": null,
-      "-output_quality": null,
-      "-output_depth": null,
-      "-batch_size": null,
-      "-gpu": null,
-      "-tta": null,
-      "-model_dir": null
     }
   },
   "waifu2x_converter": {
@@ -57,16 +44,16 @@
     }
   },
   "waifu2x_ncnn_vulkan": {
-    "waifu2x_ncnn_vulkan_path": "/home/linux/devbuild/waifu2x-ncnn-vulkan-git/pkg/waifu2x-ncnn-vulkan-git/usr/bin",
+    "waifu2x_ncnn_vulkan_path": "/usr/bin/",
     "waifu2x_ncnn_vulkan_file_name": "waifu2x-ncnn-vulkan",
     "output_options": {
-      "-t": 200,
-      "-m": "models-upconv_7_anime_style_art_rgb",
-      "-gpu": null,
-      "-load-proc-save_threads": null,
-      "-verbose": null
+        "-t": 256,
+        "-model-path": null,
+        "-gpu": null,
+        "-load-proc-save_threads": null,
+        "-verbose": null
     }
-  },
+},
   "ffmpeg": {
     "ffmpeg_path": "ffmpeg",
     "ffprobe_path": "ffprobe",
