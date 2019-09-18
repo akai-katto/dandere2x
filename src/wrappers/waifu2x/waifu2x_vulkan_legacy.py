@@ -83,6 +83,10 @@ class Waifu2xVulkanLegacy(threading.Thread):
         exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
         for x in range(1, self.frame_count):
+            
+            # The 2x2 block hack might not work here.
+            # Will fix this next time I boot up a Linux machine and erase this comment.
+            
             wait_on_file(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg")
 
             self.upscale_file(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg",

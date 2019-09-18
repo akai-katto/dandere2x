@@ -123,6 +123,10 @@ class Frame:
                 logger.info("Permission Error")
                 loaded = False
 
+    def getres(self):
+        img = Image.fromarray(self.frame.astype(np.uint8))
+        return img.size
+
     def save_image(self, out_location):
         """
         Save an image with specific instructions depending on it's extension type.

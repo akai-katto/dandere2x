@@ -111,6 +111,14 @@ class Waifu2xCaffe(threading.Thread):
             subprocess.call(exec_command, shell=True, stderr=console_output, stdout=console_output)
 
             for name in names[::-1]:
-                if os.path.isfile(self.residual_upscaled_dir + name):
-                    os.remove(self.residual_images_dir + name.replace(".png", ".jpg"))
-                    names.remove(name)
+                if os.path.exists(self.residual_upscaled_dir + name):
+                    
+                    diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
+
+                    # Since we're generating 2x2 black images for non "differentiable" frames in residuals.py
+                    # We must not delete a non existing file otherwise will raise errors
+
+                    if os.path.exists(diff_file):
+                        os.remove(diff_file)
+
+                    upscaled_names.remove(name)

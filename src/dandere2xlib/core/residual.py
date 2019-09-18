@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import logging
-
+import numpy as np
 import math
 
+from PIL import Image
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
 from wrappers.frame.frame import DisplacementVector, Frame
@@ -20,6 +21,7 @@ def residual_loop(context):
 
     # load variables from context
     workspace = context.workspace
+    residual_upscaled_dir = context.residual_upscaled_dir
     residual_images_dir = context.residual_images_dir
     residual_data_dir = context.residual_data_dir
     pframe_data_dir = context.pframe_data_dir
@@ -50,8 +52,27 @@ def residual_loop(context):
 
         # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
         out_image = make_residual_image(context, f1, residual_data, prediction_data)
-        out_image.save_image_temp(output_file, temp_image)
+        
 
+        # Since the out_image can return a 1x1 black image (no differences between frames)
+        # a little hacky solution is to detect whenever these happen and instead of upscaling it
+        # with waifu2x just create a 2x2 black image and save it in the upscaled dir!
+
+        # Note: the 2x2 block will work the best with a good block matching algorithm
+        
+        if out_image.getres() == (1, 1):
+            # The hacky upscaled file path (redirect output_file)
+            output_file = residual_upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"
+            
+            # Create 2x2 black pixel image and save to the upscale dir
+            img = Image.fromarray(np.zeros((2, 2, 3), dtype=np.uint8), 'RGB').save(output_file)
+
+        else:
+            # This image has things to upscale, continue normally
+            out_image.save_image_temp(output_file, temp_image)
+        
+        # With this change the wrappers must be modified to not try deleting the non existing residual file
+    
         if debug == 1:
             debug_image(block_size, f1, prediction_data, residual_data, debug_output_file)
 
