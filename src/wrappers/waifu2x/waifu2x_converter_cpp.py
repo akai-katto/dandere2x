@@ -36,7 +36,7 @@ class Waifu2xConverterCpp(threading.Thread):
                                            "--noise-level", str(self.noise_level),
                                            "--scale-ratio", str(self.scale_factor)]
 
-        waifu2x_conv_options = get_options_from_section(self.context.config_json["waifu2x_converter"]["output_options"])
+        waifu2x_conv_options = get_options_from_section(self.context.config_file["waifu2x_converter"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_conv_options:

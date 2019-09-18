@@ -33,7 +33,7 @@ class Waifu2xCaffe(threading.Thread):
                                             "-n", str(self.noise_level),
                                             "-s", str(self.scale_factor)]
 
-        waifu2x_caffe_options = get_options_from_section(context.config_json["waifu2x_caffe"]["output_options"])
+        waifu2x_caffe_options = get_options_from_section(context.config_file["waifu2x_caffe"]["output_options"])
 
         for element in waifu2x_caffe_options:
             self.waifu2x_caffe_upscale_frame.append(element)

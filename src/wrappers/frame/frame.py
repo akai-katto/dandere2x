@@ -124,8 +124,11 @@ class Frame:
                 loaded = False
 
     def getres(self):
-        img = Image.fromarray(self.frame.astype(np.uint8))
+        img = Image.fromarray(self.frame.astype(np.uint8), "RGB")
         return img.size
+    
+    def get_pil_image(self):
+        return Image.fromarray(self.frame)
 
     def save_image(self, out_location):
         """

@@ -12,13 +12,13 @@ from dandere2xlib.utils.dandere2x_utils import get_operating_system
 class QtDandere2xThread(QtCore.QThread):
     finished = QtCore.pyqtSignal()
 
-    def __init__(self, parent, config_json):
+    def __init__(self, parent, config_file):
         super(QtDandere2xThread, self).__init__(parent)
-        self.config_json = config_json
+        self.config_file = config_file
 
 
     def run(self):
-        d = Dandere2x_Gui_Wrapper(self.config_json)
+        d = Dandere2x_Gui_Wrapper(self.config_file)
 
         try:
             d.start()
@@ -149,18 +149,18 @@ class AppWindow(QMainWindow):
 
         if get_operating_system() == 'win32':
             with open(os.path.join(self.this_folder, "dandere2x_win32.json"), "r") as read_file:
-                config_json = json.load(read_file)
+                config_file = json.load(read_file)
 
         elif get_operating_system() == 'linux':
             with open(os.path.join(self.this_folder, "dandere2x_linux.json"), "r") as read_file:
-                config_json = json.load(read_file)
+                config_file = json.load(read_file)
 
-        config_json['dandere2x']['usersettings']['output_file'] = self.output_file
-        config_json['dandere2x']['usersettings']['input_file'] = self.input_file
-        config_json['dandere2x']['usersettings']['block_size'] = self.block_size
-        config_json['dandere2x']['usersettings']['image_quality'] = self.image_quality
-        config_json['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
-        config_json['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
+        config_file['dandere2x']['usersettings']['output_file'] = self.output_file
+        config_file['dandere2x']['usersettings']['input_file'] = self.input_file
+        config_file['dandere2x']['usersettings']['block_size'] = self.block_size
+        config_file['dandere2x']['usersettings']['image_quality'] = self.image_quality
+        config_file['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
+        config_file['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
 
         print("output_file = " + self.output_file)
         print("input_file = " + self.input_file)
@@ -168,7 +168,7 @@ class AppWindow(QMainWindow):
         print("image_quality = " + str(self.image_quality))
         print("waifu2x_type = " + self.waifu2x_type)
 
-        self.thread = QtDandere2xThread(self, config_json)
+        self.thread = QtDandere2xThread(self, config_file)
         self.thread.finished.connect(self.update)
 
         self.disable_buttons()

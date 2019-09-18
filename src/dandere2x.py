@@ -193,7 +193,7 @@ class Dandere2x:
         self.context.width = width
         self.context.height = height
 
-        self.context.config_json['ffmpeg']['video_to_frames']['output_options']['-vf'] \
+        self.context.config_file['ffmpeg']['video_to_frames']['output_options']['-vf'] \
             .append("scale=" + str(self.context.width) + ":" + str(self.context.height))
 
     def delete_workspace_files(self):
