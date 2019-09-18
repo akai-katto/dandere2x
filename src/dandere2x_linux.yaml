@@ -1,0 +1,92 @@
+dandere2x:
+    developer_settings:
+        bleed: 1
+        dandere2x_cpp_dir: ../externals/dandere2x_cpp
+        debug: true
+        extension_type: .jpg
+        gui_delete_workspace_after: false
+        quality_moving_ratio: 0.55
+        realtime_encoding:
+            realtime_encoding_delete_files: false
+            realtime_encoding_enabled: true
+            realtime_encoding_seconds_per_video: 1
+        step_size: 8
+        workspace: ../workspace/default/
+        workspace_use_temp: false
+    usersettings:
+        block_size: 20
+        denoise_level: 0
+        input_file: ../workspace/5sec.mkv
+        output_file: ../workspace/5sec2x.mkv
+        quality_minimum: 80
+        scale_factor: 2
+        waifu2x_type: vulkan
+ffmpeg:
+    -hwaccel: none
+    concat_videos:
+        output_options:
+            -c: copy
+            -codec: copy
+    ffmpeg_path: ffmpeg
+    ffprobe_path: ffprobe
+    frames_to_video:
+        -y: true
+        output_options:
+            -b:v: null
+            -crf: 17
+            -pix_fmt: null
+            -vcodec: libx264
+            -vf:
+            - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+    migrating_tracks:
+        output_options:
+            -pix_fmt: null
+            -y: true
+    trim_video:
+        output_options:
+            -c: null
+            -map: 0
+        time:
+            -ss: null
+            -to: null
+    video_to_frames:
+        output_options:
+            -pix_fmt: null
+            -qscale:v: 2
+            -vf:
+            - noise=c1s=8:c0f=u
+waifu2x_caffe:
+    output_options:
+        -batch_size: null
+        -crop_size: null
+        -gpu: null
+        -model_dir: null
+        -output_depth: null
+        -output_quality: null
+        -process: gpu
+        -tta: null
+    waifu2x_caffe_path: ..\externals\waifu2x-caffe\waifu2x-caffe-cui.exe
+waifu2x_converter:
+    output_options:
+        --block-size: null
+        --disable-gpu: null
+        --force-OpenCL: true
+        --image-quality: null
+        --jobs: null
+        --mode: null
+        --model-dir: null
+        --output-format: null
+        --png-compression: null
+        --processor: null
+        --silent: true
+    waifu2x_converter_file_name: waifu2x-converter-cpp.exe
+    waifu2x_converter_path: ..\externals\waifu2x-converter-cpp
+waifu2x_ncnn_vulkan:
+    output_options:
+        -gpu: null
+        -load-proc-save_threads: null
+        -model-path: null
+        -t: 256
+        -verbose: null
+    waifu2x_ncnn_vulkan_file_name: waifu2x-ncnn-vulkan
+    waifu2x_ncnn_vulkan_path: /usr/bin/
