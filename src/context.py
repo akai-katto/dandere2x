@@ -56,6 +56,11 @@ class Context:
         self.waifu2x_ncnn_vulkan_file_path = os.path.join(self.waifu2x_ncnn_vulkan_path,
                                                           self.waifu2x_ncnn_vulkan_file_name)
 
+        self.waifu2x_ncnn_vulkan_legacy_path = self.config_json['waifu2x_ncnn_vulkan_legacy']['waifu2x_ncnn_vulkan_legacy_path']
+        self.waifu2x_ncnn_vulkan_legacy_file_name = self.config_json['waifu2x_ncnn_vulkan_legacy']['waifu2x_ncnn_vulkan_legacy_file_name']
+        self.waifu2x_ncnn_vulkan_legacy_file_path = os.path.join(self.waifu2x_ncnn_vulkan_legacy_path,
+                                                          self.waifu2x_ncnn_vulkan_legacy_file_name)
+
         self.waifu2x_caffe_cui_dir = self.config_json['waifu2x_caffe']['waifu2x_caffe_path']
 
         self.workspace = self.config_json['dandere2x']['developer_settings']['workspace']

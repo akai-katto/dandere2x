@@ -20,7 +20,7 @@ dandere2x:
         output_file: ../workspace/5sec2x.mkv
         quality_minimum: 80
         scale_factor: 2
-        waifu2x_type: vulkan
+        waifu2x_type: vulkan_legacy
 ffmpeg:
     -hwaccel: none
     concat_videos:
@@ -90,3 +90,12 @@ waifu2x_ncnn_vulkan:
         -verbose: null
     waifu2x_ncnn_vulkan_file_name: waifu2x-ncnn-vulkan
     waifu2x_ncnn_vulkan_path: /usr/bin/
+waifu2x_ncnn_vulkan_legacy:
+    output_options:
+        -gpu: null
+        -load-proc-save_threads: null
+        -model-path: null
+        -t: 256
+        -verbose: null
+    waifu2x_ncnn_vulkan_legacy_file_name: waifu2x-ncnn-vulkan
+    waifu2x_ncnn_vulkan_legacy_path: /var/lib/snapd/snap/bin/

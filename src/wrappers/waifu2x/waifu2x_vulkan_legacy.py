@@ -23,8 +23,8 @@ class Waifu2xVulkanLegacy(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_ncnn_vulkan_file_path = context.waifu2x_ncnn_vulkan_file_path
-        self.waifu2x_vulkan_path = context.waifu2x_ncnn_vulkan_path
+        self.waifu2x_ncnn_vulkan_legacy_file_path = context.waifu2x_ncnn_vulkan_legacy_file_path
+        self.waifu2x_vulkan_legacy_path = context.waifu2x_ncnn_vulkan_legacy_path
         self.differences_dir = context.residual_images_dir
         self.upscaled_dir = context.residual_upscaled_dir
         self.noise_level = context.noise_level
@@ -32,7 +32,7 @@ class Waifu2xVulkanLegacy(threading.Thread):
         self.workspace = context.workspace
         self.context = context
 
-        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_ncnn_vulkan_file_path,
+        self.waifu2x_vulkan_legacy_upscale_frame = [self.waifu2x_ncnn_vulkan_legacy_file_path,
                                              "[input_file]",
                                              "[output_file]",
                                              str(self.noise_level),
@@ -44,8 +44,8 @@ class Waifu2xVulkanLegacy(threading.Thread):
 
     def upscale_file(self, input_file: str, output_file: str):
         # load context
-        waifu2x_ncnn_vulkan_path = self.context.waifu2x_ncnn_vulkan_path
-        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        waifu2x_ncnn_vulkan_legacy_path = self.context.waifu2x_ncnn_vulkan_legacy_path
+        exec_command = copy.copy(self.waifu2x_vulkan_legacy_upscale_frame)
         logger = logging.getLogger(__name__)
 
         # replace the exec command withthe files we're concerned with
@@ -60,14 +60,14 @@ class Waifu2xVulkanLegacy(threading.Thread):
         logger.info(str(exec_command))
 
         logger.info("Changind Dirs")
-        logger.info(str(waifu2x_ncnn_vulkan_path))
+        logger.info(str(waifu2x_ncnn_vulkan_legacy_path))
 
-        os.chdir(waifu2x_ncnn_vulkan_path)
+        os.chdir(waifu2x_ncnn_vulkan_legacy_path)
 
         logger.info("manually upscaling file")
         logger.info(exec_command)
 
-        console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
+        console_output = open(self.context.log_dir + "vulkan_legacy_upscale_frame.txt", "w")
         console_output.write(str(exec_command))
         subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()
@@ -80,16 +80,19 @@ class Waifu2xVulkanLegacy(threading.Thread):
 
         differences_dir = self.context.residual_images_dir
         upscaled_dir = self.context.residual_upscaled_dir
-        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        exec = copy.copy(self.waifu2x_vulkan_legacy_upscale_frame)
 
         for x in range(1, self.frame_count):
             
             # The 2x2 block hack might not work here.
             # Will fix this next time I boot up a Linux machine and erase this comment.
-            
-            wait_on_file(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg")
 
-            self.upscale_file(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg",
-                              upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
+            diff_file = differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
+            upscaled_file = upscaled_dir +    "output_" + get_lexicon_value(6, x) + ".png"
+            
+            wait_on_either_file(diff_file, upscaled_file)
+
+            if not os.path.exists(upscaled_file):
+                self.upscale_file(diff_file, upscaled_file)
 
 
