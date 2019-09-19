@@ -73,8 +73,10 @@ def merge_loop(context: Context):
 
         ffmpegpipe = subprocess.Popen([ffmpeg_dir, "-loglevel", "panic", '-y', '-f', 
                                        'image2pipe', '-vcodec', vcodec, '-r', frame_rate, 
-                                       '-i', '-', '-vcodec', 'libx264', '-preset', 'medium', 
-                                       '-qscale', '5', '-crf', '17', '-r', frame_rate, nosound_file], 
+                                       '-i', '-', '-vcodec', 'libx264', '-preset', 'medium',
+                                       '-qscale', '5', '-crf', '17',
+                                       '-vf', ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false',
+                                       '-r', frame_rate, nosound_file], 
                                        stdin=subprocess.PIPE)
 
         # pipe the first merged image as it will not be done afterwards
