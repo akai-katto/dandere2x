@@ -138,7 +138,7 @@ class Context:
         # FFMPEG Pipe Encoding, NOTE: THIS OVERRIDES REALTIME ENCODING
         self.ffmpeg_pipe_encoding = self.config_file['dandere2x']['developer_settings']['ffmpeg_pipe_encoding']
         self.ffmpeg_pipe_encoding_type = self.config_file['dandere2x']['developer_settings']['ffmpeg_pipe_encoding_type']
-        self.nosound_file = os.path.join(self.workspace, "nosound.mkv")
+        self.nosound_file = os.path.join(self.workspace, "nosound.mp4")
 
         if not self.ffmpeg_pipe_encoding:
             # Real Time Encoding
