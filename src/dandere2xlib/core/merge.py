@@ -53,6 +53,7 @@ def merge_loop(context: Context):
         frame_rate = str(context.frame_rate)
         input_file = context.input_file
         output_file = context.output_file
+        ffmpeg_dir = context.ffmpeg_dir
         ffmpeg_pipe_encoding_type = context.ffmpeg_pipe_encoding_type
 
         if ffmpeg_pipe_encoding_type in ["jpeg", "jpg"]:
@@ -70,7 +71,7 @@ def merge_loop(context: Context):
 
         print("\n    WARNING: EXPERIMENTAL FFMPEG PIPING IS ENABLED\n")
 
-        ffmpegpipe = subprocess.Popen(['ffmpeg', "-loglevel", "panic", '-y', '-f', 
+        ffmpegpipe = subprocess.Popen([ffmpeg_dir, "-loglevel", "panic", '-y', '-f', 
                                        'image2pipe', '-vcodec', vcodec, '-r', frame_rate, 
                                        '-i', '-', '-vcodec', 'libx264', '-preset', 'medium', 
                                        '-qscale', '5', '-crf', '17', '-r', frame_rate, nosound_file], 
