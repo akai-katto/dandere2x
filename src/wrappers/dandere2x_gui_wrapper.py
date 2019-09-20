@@ -31,8 +31,6 @@ class Dandere2x_Gui_Wrapper:
         except OSError:
             print("Creation of directory failed")
 
-        start = time.time()
-
         # starting shit
         print("Starting Dandere2x")
         d = Dandere2x(self.context)
@@ -43,8 +41,3 @@ class Dandere2x_Gui_Wrapper:
             d.delete_workspace_files()
 
         print("Dandere2x GUI Run Finished Successfully")
-
-        end = time.time()
-
-        print("\n "
-              "duration: " + str(time.time() - start))

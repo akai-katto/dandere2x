@@ -29,7 +29,13 @@ import logging
 import os
 import sys
 import threading
+import multiprocessing
 import time
+
+# multiprocessing paths and running outside src dir workaround
+# update: looks like we don't need this for multiprocessing working on the files they are called, that simple os.chdir fixed it
+#import os, sys; sys.path.append("../" * (sum([os.path.dirname(os.path.abspath(__file__)).split("src")[-1:][0].count(c) for c in ["/", "\\"]])))
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.residual import residual_loop
@@ -121,42 +127,36 @@ class Dandere2x:
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
 
-        ####################
-        #  THREADING AREA  #
-        ####################
+        ######################################
+        #  THREADING / MULTIPROCESSING AREA  #
+        ######################################
 
         # This is where Dandere2x's core functions start. Each core function is divided into a series of threads,
         # All with their own segregated tasks and goals. Dandere2x starts all the threads, and lets it go from there.
-        compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
-        dandere2xcpp_thread = Dandere2xCppWrapper(self.context)
-        merge_thread = threading.Thread(target=merge_loop, args=(self.context,))
-        residual_thread = threading.Thread(target=residual_loop, args=(self.context,))
-        status_thread = threading.Thread(target=print_status, args=(self.context,))
-        realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
+ 
+        jobs = []
+
+        jobs.append(multiprocessing.Process(target=compress_frames, args=(self.context,))) # compress_frames_thread
+        jobs.append(Dandere2xCppWrapper(self.context)) # dandere2xcpp_thread
+        jobs.append(multiprocessing.Process(target=merge_loop, args=(self.context,))) # merge_thread
+        jobs.append(multiprocessing.Process(target=residual_loop, args=(self.context,))) # residual_thread
+        jobs.append(threading.Thread(target=print_status, args=(self.context,))) # status_thread
+
+        if self.context.realtime_encoding_enabled:
+            jobs.append(multiprocessing.Process(target=run_realtime_encoding, args=(self.context, output_file))) # realtime_encode_thread
 
         logging.info("starting new d2x process")
+
         waifu2x.start()
 
-        merge_thread.start()
-        residual_thread.start()
-        dandere2xcpp_thread.start()
-        status_thread.start()
-        compress_frames_thread.start()
+        for job in jobs:
+            job.start()
 
-        if self.context.realtime_encoding_enabled:
-            realtime_encode_thread.start()
-
-        compress_frames_thread.join()
-        merge_thread.join()
-        dandere2xcpp_thread.join()
-        residual_thread.join()
-        waifu2x.join()
-        status_thread.join()
-
-        if self.context.realtime_encoding_enabled:
-            realtime_encode_thread.join()
+        for job in jobs:
+            job.join()
 
         self.context.logger.info("Threaded Processes Finished succcesfully")
+
 
     def get_waifu2x_class(self, name: str):
 

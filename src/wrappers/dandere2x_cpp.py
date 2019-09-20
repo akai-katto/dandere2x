@@ -28,7 +28,7 @@ class Dandere2xCppWrapper(threading.Thread):
     def run(self):
         logger = logging.getLogger(__name__)
 
-        exec = [self.dandere2x_cpp_dir,
+        d2x_cpp_exec = [self.dandere2x_cpp_dir,
                 self.workspace,
                 str(self.frame_count),
                 str(self.block_size),
@@ -37,17 +37,17 @@ class Dandere2xCppWrapper(threading.Thread):
                 str(1),
                 self.extension_type]
 
-        logger.info(exec)
+        logger.info(d2x_cpp_exec)
 
         # On linux, we can't use subprocess.create_new_console, so we just write
         # The dandere2x_cpp output to a text file.
         if get_operating_system() == 'win32':
-            return_val = subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE).returncode
+            return_val = subprocess.run(d2x_cpp_exec, creationflags=subprocess.CREATE_NEW_CONSOLE).returncode
 
         elif get_operating_system() == 'linux':
             console_output = open(self.log_dir + "dandere2x_cpp.txt", "w")
-            console_output.write(str(exec))
-            return_val = subprocess.run(exec, shell=False, stderr=console_output, stdout=console_output).returncode
+            console_output.write(str(d2x_cpp_exec))
+            return_val = subprocess.run(d2x_cpp_exec, shell=False, stderr=console_output, stdout=console_output).returncode
 
         if return_val == 0:
             logger.info("d2xcpp finished correctly")

@@ -43,7 +43,7 @@ dandere2x:
     # we recommend not changing anything but the paths to the file_name and _path configs
     # only if nothing works at first
 
-    # let's say you just installed waifux-converte-cpp from AUR or waifu2x-ncnn-vulkan from AUR/Snap
+    # let's say you just installed waifux-converter-cpp from AUR or waifu2x-ncnn-vulkan from AUR/Snap
     # type "whereis waifu2x-converter-cpp" or "whereis waifu2x-ncnn-vulkan" based on your installation
     
     # note: for the snap version you must reboot the machine after enabling the snapd.socket in systemd

@@ -1,5 +1,5 @@
 """
-Start the dandere2x_gui_wrapper class using the .json. Essentially, use this if you want to
+Start the dandere2x_gui_wrapper class using the .yaml. Essentially, use this if you want to
 simulate d2x being started from the gui w/o having to actually use the GUI.
 """
 
