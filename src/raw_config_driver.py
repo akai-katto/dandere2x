@@ -2,8 +2,10 @@
 Use this if you want to start d2x raw from the dandere2x.py driver. Doesn't delete or verify settings.
 """
 
+import shutil
 import json
 import time
+import os
 
 from context import Context
 from dandere2x import Dandere2x
@@ -29,13 +31,13 @@ config = configwrapper.getdata()
 context = Context(config)
 
 # recreate workspace dir if it's there
-if dir_exists(self.context.workspace):
+if dir_exists(context.workspace):
     print("Deleted Folder")
-    shutil.rmtree(self.context.workspace)
-    wait_on_delete_dir(self.context.workspace)
+    shutil.rmtree(context.workspace)
+    wait_on_delete_dir(context.workspace)
 
 try:
-    os.mkdir(self.context.workspace)
+    os.mkdir(context.workspace)
 except OSError:
     print("\n  Creation of workspace directory failed")
     exit()
