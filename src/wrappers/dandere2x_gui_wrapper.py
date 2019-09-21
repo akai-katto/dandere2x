@@ -1,12 +1,12 @@
 # For the GUI to work around
 
-import os
+from dandere2xlib.utils.dandere2x_utils import dir_exists, wait_on_delete_dir
+from dandere2x import Dandere2x
+from context import Context
+
 import shutil
 import time
-
-from context import Context
-from dandere2x import Dandere2x
-from dandere2xlib.utils.dandere2x_utils import dir_exists, wait_on_delete_dir
+import os
 
 
 class Dandere2x_Gui_Wrapper:

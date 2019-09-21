@@ -1,16 +1,12 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-
-import copy
-import logging
-import os
-import subprocess
-import threading
-
-from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists, rename_file
 from dandere2xlib.utils.json_utils import get_options_from_section
+from context import Context
+
+import subprocess
+import threading
+import logging
+import copy
+import os
 
 
 class Waifu2xConverterCpp(threading.Thread):

@@ -29,13 +29,13 @@ class Dandere2xCppWrapper(threading.Thread):
         logger = logging.getLogger(__name__)
 
         d2x_cpp_exec = [self.dandere2x_cpp_dir,
-                self.workspace,
-                str(self.frame_count),
-                str(self.block_size),
-                str(self.step_size),
-                "n",
-                str(1),
-                self.extension_type]
+                        self.workspace,
+                        str(self.frame_count),
+                        str(self.block_size),
+                        str(self.step_size),
+                        "n",
+                        str(1),
+                        self.extension_type]
 
         logger.info(d2x_cpp_exec)
 
@@ -53,3 +53,6 @@ class Dandere2xCppWrapper(threading.Thread):
             logger.info("d2xcpp finished correctly")
         else:
             logger.info("d2xcpp ended unexpectedly")
+        
+    def running(self):
+        return self.isAlive()

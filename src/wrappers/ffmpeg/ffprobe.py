@@ -1,7 +1,6 @@
 import json
 import subprocess
 
-
 # Credit: https://github.com/k4yt3x/video2x
 # Changes: Not much, just got it to work with d2x.
 

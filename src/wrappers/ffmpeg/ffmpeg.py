@@ -1,18 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-import logging
-import subprocess
-import os
-
-from context import Context
 from dandere2xlib.utils.json_utils import get_options_from_section
+from context import Context
+
+import subprocess
+import logging
+import os
 
 
 def trim_video(context: Context, output_file: str):
     """
     Create a trimmed video using -ss and -to commands from FFMPEG. The trimmed video will be named 'output_file'
     """
-    # load context
 
     input_file = context.input_file
 

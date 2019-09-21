@@ -3,28 +3,31 @@ Start the dandere2x_gui_wrapper class using the .yaml. Essentially, use this if 
 simulate d2x being started from the gui w/o having to actually use the GUI.
 """
 
+from dandere2xlib.utils.dandere2x_utils import get_operating_system, jsonyaml
+from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
+
 import time
 
-from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
-from dandere2xlib.utils.dandere2x_utils import get_operating_system, jsonyaml
 
-start = time.time()
+def main():
 
-# get config based on OS
-if get_operating_system() == "linux":
-    configfile = "dandere2x_linux.yaml"    
-else:
-    configfile = "dandere2x_win32.yaml"
+    start = time.time()
 
-# json-yaml wrapper
-configwrapper = jsonyaml()
+    # get config based on OS
+    configfile = "dandere2x_%s.yaml" % get_operating_system()
 
-# load the config and get its data
-configwrapper.load(configfile)
-config = configwrapper.getdata()
+    # json-yaml wrapper
+    configwrapper = jsonyaml()
 
-#continue d2x
-d = Dandere2x_Gui_Wrapper(config)
-d.start()
+    # load the config and get its data
+    configwrapper.load(configfile)
+    config = configwrapper.getdata()
 
-print("\n duration: ", time.time() - start)
+    #continue d2x
+    d2x = Dandere2x_Gui_Wrapper(config)
+    d2x.start()
+
+    print("\n Total runtime duration:", time.time() - start)
+
+if __name__ == "__main__":
+    main()
