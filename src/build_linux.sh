@@ -19,9 +19,13 @@
 # so you can run this from outside paths
 # without any problem and it should work
 
+# to run this script "sh build_linux.sh"
+
 DIRECTORY=$(cd `dirname $0` && pwd)
 
 cd $DIRECTORY
+
+mkdir -p externals
 
 cd ../dandere2x_cpp
 

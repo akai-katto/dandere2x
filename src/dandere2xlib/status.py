@@ -4,6 +4,7 @@ from context import Context
 
 import threading
 import colorama
+import datetime
 import time
 import sys
 import os
@@ -23,6 +24,7 @@ runs_list_size = None
 average_1 = 0
 average_2 = 0
 average_all = 0
+estimated_finish = 0
 
 
 class ClearScreen():
@@ -34,7 +36,7 @@ class ClearScreen():
 
 
 def watch_frame():
-    global context, lexiconx, lexiconframe, percent, runs_list_size, average_1, average_2, average_all
+    global context, lexiconx, lexiconframe, percent, runs_list_size, average_1, average_2, average_all, estimated_finish
 
     runs_list_size = 20
 
@@ -68,6 +70,8 @@ def watch_frame():
         average_2 = round(sum(last_runs_2) / len(last_runs_2), 2)
         average_all = round(sum(every_runs) / len(every_runs), 2)
 
+        estimated_finish = str(datetime.timedelta(seconds=round((frame_count-x-1)*average_all)))
+
         lexiconx = get_lexicon_value(frame_count_max_char, x + 2) # + 2 because we ignore frame 2 and 1 is upscaled separately
         lexiconframe = get_lexicon_value(frame_count_max_char, frame_count)
 
@@ -85,7 +89,7 @@ def watch_frame():
 
 
 def print_status(ctx: Context, d2x_main):
-    global context, lexiconx, lexiconframe, percent, runs_list_size, average_1, average_2, average_all
+    global context, lexiconx, lexiconframe, percent, runs_list_size, average_1, average_2, average_all, estimated_finish
 
     started = time.strftime('%X %x')
 
@@ -98,11 +102,10 @@ def print_status(ctx: Context, d2x_main):
 
     running = no = ' '
     finished = yes = 'x'
-    
-    stop = False
 
     ffmpeg_pipe_encoding = yes if context.ffmpeg_pipe_encoding else no
-    ffmpeg_pipe_encoding_type = context.ffmpeg_pipe_encoding_type
+    
+    ffmpeg_pipe_encoding_type = context.ffmpeg_pipe_encoding_type if context.ffmpeg_pipe_encoding else "-"
 
     #                     merge thread
     while WF.isAlive() or d2x_main.jobs[2].is_alive():
@@ -115,20 +118,36 @@ def print_status(ctx: Context, d2x_main):
         merge_thread = running if d2x_main.jobs[2].is_alive() else finished
         residual_thread = running if d2x_main.jobs[3].is_alive() else finished
 
-        statement = """
+        module_header = """
       [ # ] Dandere2x Work in Progress Status CLI [ # ]
-                                              v. [1.0.1]
+                                              v. [1.0.2]
 
+"""
+        module_general = """
   General::
-      Frame: [{}/{}] {} %
+      Frame:  [{}/{}] {} %
+      Finish: [{}] est.
 
 
+""".format(lexiconx, lexiconframe, percent,
+           estimated_finish)
+
+
+
+        module_average = """
   Averages::
-      Last {} frames: [{}] seconds/frame
-      Last {} frames: [{}] seconds/frame
-      Total runtime : [{}] seconds/frame
+      Last {} frames: [{}] sec/frame
+      Last {} frames: [{}] sec/frame
+      Total runtime:   [{}] sec/frame
 
 
+""".format(get_lexicon_value(3, runs_list_size),   average_1,
+           get_lexicon_value(3, runs_list_size*5), average_2,
+           average_all)
+
+    
+    
+        module_main_monitor = """
   Dandere2x Main Monitor::
       Compress Thread Finished: [{}]
       Dandere2x CPP Finished:   [{}]
@@ -137,27 +156,35 @@ def print_status(ctx: Context, d2x_main):
       Merge & Encode Finished:  [{}]
 
 
+""".format(compress,
+           dandere2xcpp_thread,
+           residual_thread,
+           waifu2xthread,
+           merge_thread)
+
+    
+    
+        module_modules = """
   Modules enabled::
       Experimental/FFmpeg pipe encode: [{}]    Type: [{}]
 
 
+""".format(ffmpeg_pipe_encoding, ffmpeg_pipe_encoding_type)
+
+    
+    
+        module_time = """
   Started: [{}]    Now: [{}]
-      
-""".format(lexiconx, lexiconframe, percent,
+""".format(started, time.strftime('%X %x'))
+        
 
-           get_lexicon_value(3, runs_list_size),   average_1,
-           get_lexicon_value(3, runs_list_size*5), average_2,
-           average_all,
-                             
-           compress,
-           dandere2xcpp_thread,
-           residual_thread,
-           waifu2xthread,
-           merge_thread,
 
-           ffmpeg_pipe_encoding, ffmpeg_pipe_encoding_type,
-           
-           started, time.strftime('%X %x'))
+        statement = module_header + module_general + module_average
+
+        if True: # if minimal_disk enabled         # shhh! future thing
+            statement += module_main_monitor
+        
+        statement += module_modules + module_time
 
 
         clearscreen.clear()
