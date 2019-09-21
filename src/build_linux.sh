@@ -21,7 +21,7 @@
 
 DIRECTORY=$(cd `dirname $0` && pwd)
 
-echo $DIRECTORY
+cd $DIRECTORY
 
 cd ../dandere2x_cpp
 
