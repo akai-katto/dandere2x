@@ -125,7 +125,7 @@ class Dandere2x:
         print("\n  Upscaling the first frame.. We literally cannot continue if it doesn't")
         one_frame_time = time.time()
         self.waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                             output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+                                  output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         # Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
         if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):

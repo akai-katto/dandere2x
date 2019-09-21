@@ -81,7 +81,7 @@ def wait_on_file(file_string: str):
             logger.info(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
         count += 1
-        time.sleep(.001)
+        time.sleep(.1)
 
 
 # for renaming function, break when either file exists
@@ -97,7 +97,7 @@ def wait_on_either_file(file_1: str, file_2: str):
         exists_2 = os.path.isfile(file_2)
 
         count += 1
-        time.sleep(.001)
+        time.sleep(.01)
 
 
 # Sometimes dandere2x is offsync with window's handlers, and a directory might be deleted after
@@ -111,7 +111,7 @@ def wait_on_delete_dir(dir: str):
             logger.info(dir + " does not exist, waiting")
         exists = os.path.isfile(dir)
         count += 1
-        time.sleep(.001)
+        time.sleep(.01)
 
 
 # many times a file may not exist yet, so just have this function

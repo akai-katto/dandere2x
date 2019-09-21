@@ -92,15 +92,17 @@ def print_status(ctx: Context, d2x_main):
     context = ctx
 
     WF = threading.Thread(target=watch_frame)
-    WF.start() #; print("  Watch Frame thread started")
+    WF.start() # Watch Frame thread
     
     clearscreen = ClearScreen()
 
-    running = ' '
-    finished = 'x'
+    running = no = ' '
+    finished = yes = 'x'
     
     stop = False
-    merge_thread = True
+
+    ffmpeg_pipe_encoding = yes if context.ffmpeg_pipe_encoding else no
+    ffmpeg_pipe_encoding_type = context.ffmpeg_pipe_encoding_type
 
     #                     merge thread
     while WF.isAlive() or d2x_main.jobs[2].is_alive():
@@ -115,16 +117,16 @@ def print_status(ctx: Context, d2x_main):
 
         statement = """
       [ # ] Dandere2x Work in Progress Status CLI [ # ]
-
+                                              v. [1.0.1]
 
   General::
       Frame: [{}/{}] {} %
 
 
   Averages::
-      Last {} frames: {} seconds/frame
-      Last {} frames: {} seconds/frame
-      All runtime:    {} seconds/frame
+      Last {} frames: [{}] seconds/frame
+      Last {} frames: [{}] seconds/frame
+      Total runtime : [{}] seconds/frame
 
 
   Dandere2x Main Monitor::
@@ -135,11 +137,11 @@ def print_status(ctx: Context, d2x_main):
       Merge & Encode Finished:  [{}]
 
 
+  Modules enabled::
+      Experimental/FFmpeg pipe encode: [{}]    Type: [{}]
+
+
   Started: [{}]    Now: [{}]
-
-
-  Experimental / Modules enabled::
-      WIP
       
 """.format(lexiconx, lexiconframe, percent,
 
@@ -152,6 +154,8 @@ def print_status(ctx: Context, d2x_main):
            residual_thread,
            waifu2xthread,
            merge_thread,
+
+           ffmpeg_pipe_encoding, ffmpeg_pipe_encoding_type,
            
            started, time.strftime('%X %x'))
 
