@@ -5,17 +5,19 @@ import json
 # return a list in the shape "hi, bye, kyle"
 # This is because ffmpeg expects it in this format
 def list_to_string(list_input: list):
-    return_str = ''
-    for item in list_input:
-        return_str += item + ","
-
-    return return_str[:-1]
+    return ','.join(list_input)
 
 
-# This is a pretty messy function, but if it's an ffmpeg command we
-# need to be cognizant if an element ia  list or not.
-# If it's a list, we need to add it in a very peculiar way so that ffmpeg can recognize the input
+
 def get_options_from_section(section: json, ffmpeg_command=False):
+    """
+    This is a pretty messy function, but if it's an ffmpeg
+    command we need to be cognizant if an element ia  list or not.
+    
+    If it's a list, we need to add it in a very
+    peculiar way so that ffmpeg can recognize the input
+    """
+    
     execute = []
 
     for item in section:

@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import logging
-import os
-import time
-from dataclasses import dataclass
-
-import imageio
-import numpy
-import numpy as np
-from PIL import Image
-from scipy import misc  # pip install Pillow
 
 from dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file
+from dataclasses import dataclass
+from scipy import misc
+from PIL import Image
+
+import numpy as np
+import logging
+import imageio
+import numpy
+import time
+import os
 
 
 # fuck this function, lmao. Credits to
@@ -22,21 +22,24 @@ def copy_from(A, B, A_start, B_start, B_end):
     B_start is the index with respect to B of the upper left corner of the overlap
     B_end is the index of with respect to B of the lower right corner of the overlap
     """
-    try:
-        A_start, B_start, B_end = map(np.asarray, [A_start, B_start, B_end])
-        shape = B_end - B_start
-        B_slices = tuple(map(slice, B_start, B_end + 1))
-        A_slices = tuple(map(slice, A_start, A_start + shape + 1))
-        B[B_slices] = A[A_slices]
 
-    except ValueError:
-        logging.info("fatal error copying block")
-        raise ValueError
+    # I'm going to suppose this will never raise an exception (question mark)
+
+    #try:
+    A_start, B_start, B_end = map(np.asarray, [A_start, B_start, B_end])
+    shape = B_end - B_start
+    B_slices = tuple(map(slice, B_start, B_end + 1))
+    A_slices = tuple(map(slice, A_start, A_start + shape + 1))
+    B[B_slices] = A[A_slices]
+
+    #except ValueError:
+    #    logging.info("fatal error copying block")
+    #    raise ValueError
 
 
 # we need to parse the new input into a non uint8 format so it doesnt overflow,
 # then parse it back to an integer using np.clip to make it fit within [0,255]
-# If we don't do this,  numpy will overflow it for us and give us bad results.
+# If we don't do this, numpy will overflow it for us and give us bad results.
 
 def copy_from_fade(A, B, A_start, B_start, B_end, scalar):
     """
@@ -87,19 +90,20 @@ class Frame:
         self.string_name = ''
         self.logger = logging.getLogger(__name__)
 
-    def create_new(self, width, height):
 
+    def create_new(self, width, height):
         self.frame = np.zeros([height, width, 3], dtype=np.uint8)
         self.width = width
         self.height = height
         self.string_name = ''
 
-    def load_from_string(self, input_string):
 
+    def load_from_string(self, input_string):
         self.frame = imageio.imread(input_string).astype(np.uint8)
         self.height = self.frame.shape[0]
         self.width = self.frame.shape[1]
         self.string_name = input_string
+
 
     # Wait on a file if it does not exist yet.
 
@@ -108,7 +112,7 @@ class Frame:
         exists = exists = os.path.isfile(input_string)
         count = 0
         while not exists:
-            if count % 10000 == 0:
+            if count / 40 == 0:
                 logger.info(input_string + " dne")
             exists = os.path.isfile(input_string)
             count += 1
@@ -123,12 +127,15 @@ class Frame:
                 logger.info("Permission Error")
                 loaded = False
 
+
     def getres(self):
         img = Image.fromarray(self.frame.astype(np.uint8), "RGB")
         return img.size
     
+
     def get_pil_image(self):
         return Image.fromarray(self.frame)
+
 
     def save_image(self, out_location):
         """
@@ -138,7 +145,7 @@ class Frame:
 
         if 'jpg' in extension:
             jpegsave = Image.fromarray(self.frame.astype(np.uint8))
-            jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=100)
+            jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=95)
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
@@ -147,6 +154,7 @@ class Frame:
             save_image.save(out_location + "temp" + extension, format='PNG')
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
+
 
     def save_image_temp(self, out_location, temp_location):
         """
@@ -159,6 +167,7 @@ class Frame:
         self.save_image(temp_location)
         wait_on_file(temp_location)
         rename_file(temp_location, out_location)
+
 
     def save_image_quality(self, out_location, quality_per):
         """
@@ -178,6 +187,7 @@ class Frame:
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
+
     def copy_image(self, frame_other):
         """
         Copy another image into this image using the copy_from numpy command. It seems that numpy affects
@@ -188,6 +198,7 @@ class Frame:
 
         """
 
+
         if self.height != frame_other.height or self.width != frame_other.width:
             self.logger.error('copy images are not equal')
             self.logger.error(str(self.width) + ' !=? ' + str(frame_other.width))
@@ -196,6 +207,7 @@ class Frame:
 
         copy_from(frame_other.frame, self.frame, (0, 0), (0, 0),
                   (frame_other.frame.shape[1], frame_other.frame[1].shape[0]))
+
 
     def copy_block(self, frame_other, block_size, other_x, other_y, this_x, this_y):
         """
@@ -209,6 +221,7 @@ class Frame:
                   (other_y, other_x), (this_y, this_x),
                   (this_y + block_size - 1, this_x + block_size - 1))
 
+
     def fade_block(self, this_x, this_y, block_size, scalar):
         """
         Apply a scalar value to the RGB values for a given block. The values are then clipped to ensure
@@ -218,6 +231,7 @@ class Frame:
         copy_from_fade(self.frame, self.frame,
                        (this_y, this_x), (this_y, this_x),
                        (this_y + block_size - 1, this_x + block_size - 1), scalar)
+
 
     def check_if_valid(self, frame_other, block_size, other_x, other_y, this_x, this_y):
         """
@@ -258,6 +272,7 @@ class Frame:
 
         if other_x < 0 or other_y < 0:
             raise ValueError('Input dimensions invalid for copy block')
+
 
     def create_bleeded_image(self, bleed):
         """

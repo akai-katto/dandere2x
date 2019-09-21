@@ -25,31 +25,34 @@ number of times without losing any details or quality, keeping lines
 smooth and edges sharp.
 """
 
-import logging
-import os
-import sys
-import threading
-import multiprocessing
-import time
 
 # multiprocessing paths and running outside src dir workaround
 # update: looks like we don't need this for multiprocessing working on the files they are called, that simple os.chdir fixed it
-#import os, sys; sys.path.append("../" * (sum([os.path.dirname(os.path.abspath(__file__)).split("src")[-1:][0].count(c) for c in ["/", "\\"]])))
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+# import os, sys; sys.path.append("../" * (sum([os.path.dirname(os.path.abspath(__file__)).split("src")[-1:][0].count(c) for c in ["/", "\\"]])))
+# this last line appends to path for every file the src directory of dandere2x
+# if things don't work on paths we can use this on the file it got an error?
 
-from dandere2xlib.core.merge import merge_loop
-from dandere2xlib.core.residual import residual_loop
-from dandere2xlib.frame_compressor import compress_frames
-from dandere2xlib.realtime_encoding import run_realtime_encoding
-from dandere2xlib.status import print_status
-from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
-from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
-from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
-from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
+import os; os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
-from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
 from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
+from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
+from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
+from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
+from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
+from dandere2xlib.realtime_encoding import run_realtime_encoding
+from dandere2xlib.frame_compressor import compress_frames
+from dandere2xlib.core.residual import residual_loop
+from dandere2xlib.core.merge import merge_loop
+from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
+from wrappers.dandere2x_cpp import Dandere2xCppWrapper
+from dandere2xlib.status import print_status
+
+import multiprocessing
+import threading
+import logging
+import time
+import sys
 
 
 class Dandere2x:
@@ -83,7 +86,8 @@ class Dandere2x:
           (residuals, merging, waifu2x, dandere2xcpp, realtime-encoding)
         """
 
-        # load context
+        # # LOAD CONTEXT # #
+        
         output_file = self.context.output_file
 
         ############
@@ -94,66 +98,82 @@ class Dandere2x:
         create_directories(self.context.directories)
         self.context.set_logger()
 
-        # If the user wishes to trim the video, trim the video, then rename the file_dir to point to the trimmed video
+        # If the user wishes to trim the video, trim the video,
+        # then rename the file_dir to point to the trimmed video
         if self.context.user_trim_video:
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
             self.context.input_file = trimed_video
 
-        # Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video
+        # Before we extract all the frames, we need to ensure
+        # the settings are valid. If not, resize the video
         # To make the settings valid somehow.
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
             self.append_video_resize_filter()
 
-        # Extract all the frames
-        print("extracting frames from video... this might take a while..")
+        # TODO: check every setting valid? any waifu2x client configured?
+
+        # Extract all the frames from source video
+        print("\n  Extracting the frames from source video.. this might take a while..")
         extract_frames(self.context, self.context.input_file)
         self.context.update_frame_count()
 
         # Assign the waifu2x object to whatever waifu2x we're using
-        waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
+        self.waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
 
         # Upscale the first file (the genesis file is treated different in Dandere2x)
-        one_frame_time = time.time()  # This timer prints out how long it takes to upscale one frame
-        waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+        print("\n  Upscaling the first frame.. We literally cannot continue if it doesn't")
+        one_frame_time = time.time()
+        self.waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         # Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
         if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
-            print("Could not upscale first file.. check logs file to see what's wrong")
+            print("    ERROR: Could not upscale first file.. check logs file to see what's wrong")
             logging.info("Could not upscale first file.. check logs file to see what's wrong")
             logging.info("Exiting Dandere2x...")
             sys.exit(1)
 
-        print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
+        print("\n  Time to upscale an uncompressed frame:", str(round(time.time() - one_frame_time, 2)), "\n")
+        
 
         ######################################
         #  THREADING / MULTIPROCESSING AREA  #
         ######################################
 
-        # This is where Dandere2x's core functions start. Each core function is divided into a series of threads,
-        # All with their own segregated tasks and goals. Dandere2x starts all the threads, and lets it go from there.
+        # This is where Dandere2x's core functions start.
+        # Each core function is divided into a series of threads and processes,
+        # All with their own segregated tasks and goals.
+        # Dandere2x starts all the threads, and lets it go from there.
  
-        jobs = []
+        # the daemon=True is for quitting the process when the main thread quits
+        # KeyboardInterrupt to be short
 
-        jobs.append(multiprocessing.Process(target=compress_frames, args=(self.context,))) # compress_frames_thread
-        jobs.append(Dandere2xCppWrapper(self.context)) # dandere2xcpp_thread
-        jobs.append(multiprocessing.Process(target=merge_loop, args=(self.context,))) # merge_thread
-        jobs.append(multiprocessing.Process(target=residual_loop, args=(self.context,))) # residual_thread
-        jobs.append(threading.Thread(target=print_status, args=(self.context,))) # status_thread
+        # must not change this order or will mess up with stats thread
+        # perhaps use a dictionary to store the threads by name?
+
+        self.jobs = []
+
+        self.jobs.append(multiprocessing.Process(target=compress_frames, args=(self.context,), daemon=True)) # compress_frames_thread
+        self.jobs.append(Dandere2xCppWrapper(self.context)) # dandere2xcpp_thread
+        self.jobs.append(multiprocessing.Process(target=merge_loop, args=(self.context,), daemon=True)) # merge_thread
+        self.jobs.append(multiprocessing.Process(target=residual_loop, args=(self.context,), daemon=True)) # residual_thread
+        self.jobs.append(threading.Thread(target=print_status, args=(self.context, self))) # status_thread
 
         if self.context.realtime_encoding_enabled:
-            jobs.append(multiprocessing.Process(target=run_realtime_encoding, args=(self.context, output_file))) # realtime_encode_thread
+            self.jobs.append(multiprocessing.Process(target=run_realtime_encoding, args=(self.context, output_file), daemon=True)) # realtime_encode_thread
 
         logging.info("starting new d2x process")
 
-        waifu2x.start()
+        self.waifu2x.start()
 
-        for job in jobs:
+        for job in self.jobs:
             job.start()
 
-        for job in jobs:
+        for job in self.jobs:
             job.join()
+
+        self.waifu2x.join()
 
         self.context.logger.info("Threaded Processes Finished succcesfully")
 
@@ -174,21 +194,21 @@ class Dandere2x:
 
         else:
             logging.info("no valid waifu2x selected")
-            print("no valid waifu2x selected")
+            print("\n  ERROR: No valid waifu2x selected")
             exit(1)
 
     def append_video_resize_filter(self):
         """
-        For ffmpeg, there's a video filter to resize a video to a given resolution.
+        For FFmpeg, there's a video filter to resize a video to a given resolution.
         For dandere2x, we need a very specific set of video resolutions to work with.  This method applies that filter
         to the video in order for it to work correctly.
         """
 
-        print("Forcing Resizing to match blocksize..")
+        print("\nForcing Resizing to match blocksize..\n")
         width, height = get_a_valid_input_resolution(self.context.width, self.context.height, self.context.block_size)
 
-        print("New width -> " + str(width))
-        print("New height -> " + str(height))
+        print("  New width -> " + str(width))
+        print("  New height -> " + str(height))
 
         self.context.width = width
         self.context.height = height
@@ -200,6 +220,7 @@ class Dandere2x:
         """
         Delete the files produced by dandere2x (beside logs) if this method is called.
         """
+        
         delete_directories(self.context.directories)
         no_sound = os.path.join(self.context.workspace, "nosound.mkv")
 

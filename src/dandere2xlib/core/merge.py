@@ -47,7 +47,6 @@ def merge_loop(context: Context):
 
     ffmpeg_pipe_encoding = context.ffmpeg_pipe_encoding
 
-
     if ffmpeg_pipe_encoding:
         nosound_file = context.nosound_file
         frame_rate = str(context.frame_rate)

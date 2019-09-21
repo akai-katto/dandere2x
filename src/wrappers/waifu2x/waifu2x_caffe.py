@@ -1,14 +1,12 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-import copy
-import logging
-import os
+from dandere2xlib.utils.json_utils import get_options_from_section
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from context import Context
+
 import subprocess
 import threading
-
-from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2xlib.utils.json_utils import get_options_from_section
+import logging
+import copy
+import os
 
 
 class Waifu2xCaffe(threading.Thread):

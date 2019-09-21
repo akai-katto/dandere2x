@@ -1,7 +1,7 @@
-import os
-
-from context import Context
 from wrappers.frame.frame import Frame
+from context import Context
+
+import os
 
 
 def compress_frames(context: Context):
@@ -29,13 +29,13 @@ def compress_frames(context: Context):
     # start from 1 because ffmpeg's extracted frames starts from 1
     for x in range(1, frame_count + 1):
 
+        ordinal_frame = "compressed_" + str(x) + ".jpg"
+
         # if the compressed frame already exists, don't compress it
-        if os.path.exists(compressed_static_dir + "compressed_" + str(x) + ".jpg"):
+        if os.path.exists(compressed_static_dir + ordinal_frame):
             continue
 
         frame = Frame()
         frame.load_from_string(inputs_dir + "frame" + str(x) + extension_type)
-        frame.save_image_quality(compressed_static_dir + "compressed_" + str(x) + ".jpg",
-                                 quality_minimum)
-        frame.save_image_quality(compressed_moving_dir + "compressed_" + str(x) + ".jpg",
-                                 int(quality_minimum * quality_moving_ratio))
+        frame.save_image_quality(compressed_static_dir + ordinal_frame, quality_minimum)
+        frame.save_image_quality(compressed_moving_dir + ordinal_frame, int(quality_minimum * quality_moving_ratio))

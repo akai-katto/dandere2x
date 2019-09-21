@@ -1,16 +1,40 @@
-import os
-import sys
-import time
-
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, wait_on_file, get_operating_system
+from termcolor import colored
 from context import Context
 
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, wait_on_file
+import threading
+import colorama
+import time
+import sys
+import os
+
+colorama.init(convert=True)
 
 # TODO
-# This could probably be improved visually for the user.. it's not the most pleasing to look at
+# ~This-could-probably-be-improved-visually-for-the-user..-it's-not-the-most-pleasing-to-look-at~ Fixed?
 # Also, in a very niche case the GUI didn't catch up with the deletion of files, so it ceased updating
 
-def print_status(context: Context):
+
+context = None
+lexiconx = None
+lexiconframe = None
+percent = 0
+runs_list_size = None
+average_1 = 0
+average_2 = 0
+average_all = 0
+
+
+class ClearScreen():
+    def __init__(self):
+        self.command = 'clear' if get_operating_system() == 'linux' else 'cls'
+
+    def clear(self):
+        os.system(self.command)
+
+
+def watch_frame():
+    global context, lexiconx, lexiconframe, percent, runs_list_size, average_1, average_2, average_all
 
     runs_list_size = 20
 
@@ -18,15 +42,34 @@ def print_status(context: Context):
     extension_type = context.extension_type
     frame_count = context.frame_count
 
-    last_runs = [0 for _ in range(runs_list_size)]
+    frame_count_max_char = len(str(frame_count))
 
-    for x in range(1, frame_count - 1): # Not sure why but "-1" is necessary for ffmpeg_pipe_encoding to work properly
+    # _ is a dummy var, creating a runs zeros list
+    last_runs_1 = [0 for _ in range(runs_list_size)]
+    last_runs_2 = [0 for _ in range(runs_list_size*5)]
+    every_runs = [0.00001] # low value to don't get division by zero
+
+    
+    # Not sure why but "-1" is necessary for ffmpeg_pipe_encoding to work properly
+    
+    # makes sense tho, say we got a 1 frame video, range(2,0) returns nothing 
+    # (only one frame, the first that gets upscaled when d2x starts running)
+
+    # say we got a 2 frames file, the stats ought only print the second frame
+    # when it's already a merged/upsacaled file
+
+    # and for a N video file, we'll print N - 1 updates frames since we're starting from the number 1 
+    
+    # don't start in one, will mess up some printings before starting status thread
+    for x in range(1, frame_count - 1):
+
         percent = int((x / (frame_count - 2)) * 100)
+        average_1 = round(sum(last_runs_1) / len(last_runs_1), 2)
+        average_2 = round(sum(last_runs_2) / len(last_runs_2), 2)
+        average_all = round(sum(every_runs) / len(every_runs), 2)
 
-        average = round(sum(last_runs) / len(last_runs), 2)
-
-        sys.stdout.write('\r')
-        sys.stdout.write("Frame: [%s] %i%%    Average of Last %s Frames: %s sec / frame" % (x, percent, runs_list_size, average))
+        lexiconx = get_lexicon_value(frame_count_max_char, x + 2) # + 2 because we ignore frame 2 and 1 is upscaled separately
+        lexiconframe = get_lexicon_value(frame_count_max_char, frame_count)
 
         merged_file = workspace + "merged/merged_" + str(x + 1) + extension_type
         upscaled_file = workspace + "residual_upscaled/output_" + get_lexicon_value(6, x) + ".png"
@@ -35,32 +78,82 @@ def print_status(context: Context):
 
         wait_on_either_file(merged_file, upscaled_file)
 
-        # insert new run times on remainder of the iteration and runs_list_size
-        
-        last_runs[x % runs_list_size] = time.time() - start
-        
-        #works like this:
-        """
-        >>> for i in range(20):
-        >>>     print(i, i%10)
-        
-        0 0
-        1 1
-        2 2
-        3 3
-        4 4
-        5 5
-        6 6
-        7 7
-        8 8
-        9 9
-        10 0
-        11 1
-        12 2
-        13 3
-        ...
-        
-        """
-        
+        # smart loop to store new values, loops from 0 to runs_file_size - 1     
+        last_runs_1[x % runs_list_size] = time.time() - start
+        last_runs_2[x % (runs_list_size*5)] = time.time() - start
+        every_runs.append(time.time() - start)
+
+
+def print_status(ctx: Context, d2x_main):
+    global context, lexiconx, lexiconframe, percent, runs_list_size, average_1, average_2, average_all
+
+    started = time.strftime('%X %x')
+
+    context = ctx
+
+    WF = threading.Thread(target=watch_frame)
+    WF.start() #; print("  Watch Frame thread started")
     
-    print("\n\n Finishing up Dandere2x stuff like migrating audio track or finishing encoding if ffmpeg_pipe_encoding is enabled\n")
+    clearscreen = ClearScreen()
+
+    running = ' '
+    finished = 'x'
+    
+    stop = False
+    merge_thread = True
+
+    #                     merge thread
+    while WF.isAlive() or d2x_main.jobs[2].is_alive():
+
+        time.sleep(1)
+
+        waifu2xthread = running if d2x_main.waifu2x.is_alive() else finished
+        compress = running if d2x_main.jobs[0].is_alive() else finished
+        dandere2xcpp_thread = running if d2x_main.jobs[1].running() else finished
+        merge_thread = running if d2x_main.jobs[2].is_alive() else finished
+        residual_thread = running if d2x_main.jobs[3].is_alive() else finished
+
+        statement = """
+      [ # ] Dandere2x Work in Progress Status CLI [ # ]
+
+
+  General::
+      Frame: [{}/{}] {} %
+
+
+  Averages::
+      Last {} frames: {} seconds/frame
+      Last {} frames: {} seconds/frame
+      All runtime:    {} seconds/frame
+
+
+  Dandere2x Main Monitor::
+      Compress Thread Finished: [{}]
+      Dandere2x CPP Finished:   [{}]
+      Residual Thread Finished: [{}]
+      Waifu2x Thread Finished:  [{}]
+      Merge & Encode Finished:  [{}]
+
+
+ Started: [{}]    Now: [{}]
+      
+""".format(lexiconx, lexiconframe, percent,
+
+           get_lexicon_value(3, runs_list_size),   average_1,
+           get_lexicon_value(3, runs_list_size*5), average_2,
+           average_all,
+                             
+           compress,
+           dandere2xcpp_thread,
+           residual_thread,
+           waifu2xthread,
+           merge_thread,
+           
+           started, time.strftime('%X %x'))
+
+
+        clearscreen.clear()
+        print(statement, end='\r')
+
+
+    #print("\n\n Finishing up Dandere2x stuff like migrating audio track, finishing encoding if ffmpeg_pipe_encoding is enabled / final concatenation if not.\n")

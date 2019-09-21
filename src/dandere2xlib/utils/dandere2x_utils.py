@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Name: Dandere2X Utils
 Author: CardinalPanda
@@ -7,21 +5,31 @@ Date Created: March 22, 2019
 Last Modified: April 2, 2019
 """
 
+from sys import platform
+
 import logging
-import os
-import io
+import shutil
 import json
 import yaml
 import time
-import shutil
-from sys import platform
+import os
+import io
 
 
 def get_operating_system():
-    if platform == "linux" or platform == "linux2":
+    if platform in ['linux', 'linux2']: # returns linux2 only for Python < 3.3
         return 'linux'
     elif platform == "win32":
         return 'win32'
+
+    # potential fail safe for MAC?
+    # I mean, it's POSIX compliant so it should just
+    # work with the linux config file with a valid waifu2x client?
+    # can help Solaris and BSD as well?
+    else: 
+        if os.name == "posix":
+            return 'linux'
+
 
 # if the value in the key value pair exists, add it.
 # if the key is just 'true', only add the key
@@ -29,7 +37,6 @@ def get_operating_system():
 # THis doesnt work with multiple keys and import warnings
 
 # returns a list given a text file (representing a string)
-
 
 def get_list_from_file(text_file: str):
     logger = logging.getLogger(__name__)
@@ -162,14 +169,15 @@ def valid_input_resolution(width: int, height: int, block_size: int):
 
 def create_directories(directories_list: list):
     """
-    In dandere2x's context file, there's a list of directories"""
+    In dandere2x's context file, there's a list of directories
+    """
 
     # create each directory
     for subdirectory in directories_list:
         try:
             os.mkdir(subdirectory)
         except OSError:
-            print("Creation of the directory %s failed" % subdirectory)
+            print("Creation of the directory %s failed, already exists?" % subdirectory)
         else:
             print("Successfully created the directory %s " % subdirectory)
 
@@ -248,14 +256,6 @@ def verify_user_settings(context):
         context.block_size = new_block_size
 
 
-def main():
-    text = get_list_from_file("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
-
-
-if __name__ == "__main__":
-    main()
-
-
 
 # A wrapper on loading / converting json and / to yaml
 # the argument for substituting jsons is that the yaml
@@ -286,14 +286,14 @@ class jsonyaml():
                     json.dump(self.data, out, indent=4)
 
         else:
-            print("jsonyaml: No file loaded."); exit()
+            print("jsonyaml: No file loaded."); exit(1)
 
     def getdata(self):
         if not self.datatype == None:
             return self.data
             
         else:
-            print("jsonyaml: No file loaded."); exit()
+            print("jsonyaml: No file loaded."); exit(1)
 
     def convert(self, infile, outfile):
         self.load(infile)

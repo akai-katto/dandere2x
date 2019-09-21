@@ -1,14 +1,14 @@
-import json
-import logging
-import os
-import pathlib
-import sys
-import tempfile
-
-import math
-
 from dandere2xlib.utils.json_utils import get_options_from_section, absolutify_json
 from wrappers.ffmpeg.videosettings import VideoSettings
+
+import tempfile
+import logging
+import pathlib
+import json
+import math
+import sys
+import os
+
 
 
 class Context:
@@ -44,8 +44,8 @@ class Context:
         #  setup all the directories.. #
         ################################
 
-        # side note - for vulkan and converter, we need to know the path of the file in order for it to run correctly,
-        # hence why we have two variables for them
+        # TODO: since this is a fail-safe method on loading the waifu2x clients
+        # we gotta check at least one is ok before running dandere2x?
 
         if "waifu2x_converter" in self.config_file:
             self.waifu2x_converter_cpp_path = self.config_file['waifu2x_converter']['waifu2x_converter_path']
@@ -79,10 +79,10 @@ class Context:
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
         self.residual_images_dir = self.workspace + "residual_images" + os.path.sep
         self.residual_upscaled_dir = self.workspace + "residual_upscaled" + os.path.sep
-        self.correction_data_dir = self.workspace + "correction_data" + os.path.sep
-        self.merged_dir = self.workspace + "merged" + os.path.sep
         self.residual_data_dir = self.workspace + "residual_data" + os.path.sep
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
+        self.correction_data_dir = self.workspace + "correction_data" + os.path.sep
+        self.merged_dir = self.workspace + "merged" + os.path.sep
         self.fade_data_dir = self.workspace + "fade_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
@@ -138,21 +138,35 @@ class Context:
         # FFMPEG Pipe Encoding, NOTE: THIS OVERRIDES REALTIME ENCODING
         self.ffmpeg_pipe_encoding = self.config_file['dandere2x']['developer_settings']['ffmpeg_pipe_encoding']
         self.ffmpeg_pipe_encoding_type = self.config_file['dandere2x']['developer_settings']['ffmpeg_pipe_encoding_type']
-        self.nosound_file = os.path.join(self.workspace, "nosound.mp4")
+        self.nosound_file = os.path.join(self.workspace, "nosound") # missing an extension, will set it in a few
 
         if not self.ffmpeg_pipe_encoding:
-            # Real Time Encoding
+            # Real Time Encoding, traditional way
             self.realtime_encoding_enabled = self.config_file['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_enabled']
             self.realtime_encoding_delete_files = self.config_file['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_delete_files']
             self.realtime_encoding_seconds_per_video = \
             self.config_file['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_seconds_per_video']
 
         else:
-            self.realtime_encoding_enabled = False
 
-        ################################
-        #       Video Settings         #
-        ################################
+            # disable traditional "RTE" because we're piping
+            self.realtime_encoding_enabled = False
+            
+            # get the substring after the last dot in the output_file "asd/aert/asd.mkv" --> "mkv"
+            # but "important/rapgod" will default to rapgod.mp4 because we'll get
+            # pipe_ext equals to the string itself "important/rapgod" and that's not an format :P
+
+            supported_formats = [".mkv", ".mp4", ".avi"]
+
+            pipe_ext = "." + self.output_file.split(".")[-1]
+
+            # add the extension to nosound file
+            self.nosound_file += ".mp4" if not pipe_ext in supported_formats else pipe_ext
+
+
+        ##################
+        # Video Settings #
+        ##################
 
         # find out if the user trimmed a video by checking the time part of the json. IF theres nothing there,
         # then the user didn't trim anything
@@ -166,8 +180,7 @@ class Context:
         self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
 
         self.frame_rate = math.ceil(self.video_settings.frame_rate)
-        self.width = self.video_settings.width
-        self.height = self.video_settings.height
+        self.width, self.height = self.video_settings.width, self.video_settings.height
         self.frame_count = 0
 
     # the workspace folder needs to exist before creating the log file, hence the method
