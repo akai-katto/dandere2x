@@ -169,10 +169,10 @@ class Waifu2xConverterCpp(threading.Thread):
             for name in upscaled_names[::-1]:
                 if os.path.exists(self.residual_upscaled_dir + name):
 
-                    diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
+                    residual_file = self.residual_images_dir + name
 
-                    if os.path.exists(diff_file):
-                        os.remove(diff_file)
+                    if os.path.exists(residual_file):
+                        os.remove(residual_file)
                     else:
                         '''
                         In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
