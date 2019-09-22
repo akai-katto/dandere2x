@@ -65,6 +65,7 @@ def residual_loop(context):
             """
 
             # Location of the 'fake' upscaled image.
+            out_image = Frame().create_new(2, 2)
             output_file = residual_upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"
             out_image.save_image(output_file)
 
