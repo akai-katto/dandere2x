@@ -164,22 +164,20 @@ class Waifu2xConverterCpp(threading.Thread):
             logger.info("Already have " + str(count_removed) + " upscaled")
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
-        while names:
-            logger.info("Frames remaining before batch: ")
-            logger.info(len(names))
 
-            console_output.write(str(exec_command))
-            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
+        for name in upscaled_names[::-1]:
+            if os.path.exists(self.residual_upscaled_dir + name):
 
-            for name in names[::-1]:
-                if os.path.exists(self.residual_upscaled_dir + name):
-                    
-                    diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
+                diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
 
-                    # Since we're generating 2x2 black images for non "differentiable" frames in residuals.py
-                    # We must not delete a non existing file otherwise will raise errors
+                if os.path.exists(diff_file):
+                    os.remove(diff_file)
+                else:
+                    '''
+                    In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
+                    and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
+                    since 'residuals' never existed. 
+                    '''
+                    pass
 
-                    if os.path.exists(diff_file):
-                        os.remove(diff_file)
-
-                    upscaled_names.remove(name)
+                upscaled_names.remove(name)

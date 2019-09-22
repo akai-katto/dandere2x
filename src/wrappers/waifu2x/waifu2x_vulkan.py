@@ -181,14 +181,18 @@ class Waifu2xVulkan(threading.Thread):
 
             for name in upscaled_names[::-1]:
                 if os.path.exists(self.residual_upscaled_dir + name):
-                    
-                    diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
 
-                    # Since we're generating 2x2 black images for non "differentiable" frames in residuals.py
-                    # We must not delete a non existing file otherwise will raise errors
+                    diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
 
                     if os.path.exists(diff_file):
                         os.remove(diff_file)
+                    else:
+                        '''
+                        In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
+                        and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
+                        since 'residuals' never existed. 
+                        '''
+                        pass
 
                     upscaled_names.remove(name)
 
