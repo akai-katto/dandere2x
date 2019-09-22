@@ -22,10 +22,6 @@ def get_operating_system():
     elif platform == "win32":
         return 'win32'
 
-    # potential fail safe for MAC?
-    # I mean, it's POSIX compliant so it should just
-    # work with the linux config file with a valid waifu2x client?
-    # can help Solaris and BSD as well?
     else: 
         if os.name == "posix":
             return 'linux'
