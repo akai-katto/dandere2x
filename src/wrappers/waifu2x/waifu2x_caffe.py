@@ -85,35 +85,37 @@ class Waifu2xCaffe(threading.Thread):
                 exec_command[x] = residual_upscaled_dir
 
         # make a list of names that will eventually (past or future) be upscaled
-        names = []
+        upscaled_names = []
         for x in range(1, self.frame_count):
-            names.append("output_" + get_lexicon_value(6, x) + ".png")
+            upscaled_names.append("output_" + get_lexicon_value(6, x) + ".png")
 
         count_removed = 0
 
         # remove from the list images that have already been upscaled
-        for name in names[::-1]:
+        for name in upscaled_names[::-1]:
             if os.path.isfile(self.residual_upscaled_dir + name):
-                names.remove(name)
+                upscaled_names.remove(name)
                 count_removed += 1
 
         if count_removed:
             logger.info("Already have " + str(count_removed) + " upscaled")
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
-        for name in upscaled_names[::-1]:
-            if os.path.exists(self.residual_upscaled_dir + name):
 
-                diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
+        while upscaled_names:
+            for name in upscaled_names[::-1]:
+                if os.path.exists(self.residual_upscaled_dir + name):
 
-                if os.path.exists(diff_file):
-                    os.remove(diff_file)
-                else:
-                    '''
-                    In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
-                    and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
-                    since 'residuals' never existed. 
-                    '''
-                    pass
+                    diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
 
-                upscaled_names.remove(name)
+                    if os.path.exists(diff_file):
+                        os.remove(diff_file)
+                    else:
+                        '''
+                        In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
+                        and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
+                        since 'residuals' never existed. 
+                        '''
+                        pass
+
+                    upscaled_names.remove(name)

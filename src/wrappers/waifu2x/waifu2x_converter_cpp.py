@@ -155,9 +155,9 @@ class Waifu2xConverterCpp(threading.Thread):
         count_removed = 0
 
         # remove from the list images that have already been upscaled
-        for name in names[::-1]:
-            if os.path.isfile(self.residual_upscaled_dir + name):
-                names.remove(name)
+        for upscaled_names in names[::-1]:
+            if os.path.isfile(self.residual_upscaled_dir + upscaled_names):
+                names.remove(upscaled_names)
                 count_removed += 1
 
         if count_removed:
@@ -165,19 +165,20 @@ class Waifu2xConverterCpp(threading.Thread):
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
 
-        for name in upscaled_names[::-1]:
-            if os.path.exists(self.residual_upscaled_dir + name):
+        while upscaled_names:
+            for name in upscaled_names[::-1]:
+                if os.path.exists(self.residual_upscaled_dir + name):
 
-                diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
+                    diff_file = self.residual_images_dir + name.replace(".png", ".jpg")
 
-                if os.path.exists(diff_file):
-                    os.remove(diff_file)
-                else:
-                    '''
-                    In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
-                    and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
-                    since 'residuals' never existed. 
-                    '''
-                    pass
+                    if os.path.exists(diff_file):
+                        os.remove(diff_file)
+                    else:
+                        '''
+                        In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
+                        and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
+                        since 'residuals' never existed. 
+                        '''
+                        pass
 
-                upscaled_names.remove(name)
+                    upscaled_names.remove(name)
