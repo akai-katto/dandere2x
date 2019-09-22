@@ -1,15 +1,12 @@
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, wait_on_file, get_operating_system
-from termcolor import colored
 from context import Context
 
 import threading
-import colorama
 import datetime
 import time
 import sys
 import os
 
-colorama.init(convert=True)
 
 # TODO
 # ~This-could-probably-be-improved-visually-for-the-user..-it's-not-the-most-pleasing-to-look-at~ Fixed?
