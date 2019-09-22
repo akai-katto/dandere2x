@@ -23,18 +23,16 @@ def copy_from(A, B, A_start, B_start, B_end):
     B_end is the index of with respect to B of the lower right corner of the overlap
     """
 
-    # I'm going to suppose this will never raise an exception (question mark)
+    try:
+        A_start, B_start, B_end = map(np.asarray, [A_start, B_start, B_end])
+        shape = B_end - B_start
+        B_slices = tuple(map(slice, B_start, B_end + 1))
+        A_slices = tuple(map(slice, A_start, A_start + shape + 1))
+        B[B_slices] = A[A_slices]
 
-    #try:
-    A_start, B_start, B_end = map(np.asarray, [A_start, B_start, B_end])
-    shape = B_end - B_start
-    B_slices = tuple(map(slice, B_start, B_end + 1))
-    A_slices = tuple(map(slice, A_start, A_start + shape + 1))
-    B[B_slices] = A[A_slices]
-
-    #except ValueError:
-    #    logging.info("fatal error copying block")
-    #    raise ValueError
+    except ValueError:
+       logging.info("fatal error copying block")
+       raise ValueError
 
 
 # we need to parse the new input into a non uint8 format so it doesnt overflow,
