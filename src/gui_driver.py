@@ -3,6 +3,7 @@ from dandere2xlib.utils.dandere2x_utils import get_operating_system
 from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 from PyQt5 import QtCore, QtGui
+from dandere2xlib.utils.dandere2x_utils import jsonyaml, get_operating_system
 
 import json
 import os
@@ -147,13 +148,13 @@ class AppWindow(QMainWindow):
 
         print(os.getcwd())
 
-        if get_operating_system() == 'win32':
-            with open(os.path.join(self.this_folder, "dandere2x_win32.json"), "r") as read_file:
-                config_file = json.load(read_file)
+        configfile = os.path.join(self.this_folder, "dandere2x_%s.yaml" % get_operating_system()) 
+        configwrapper = jsonyaml()
+        
+        configwrapper.load(configfile)
+        config_file = configwrapper.getdata()
 
-        elif get_operating_system() == 'linux':
-            with open(os.path.join(self.this_folder, "dandere2x_linux.json"), "r") as read_file:
-                config_file = json.load(read_file)
+        print(config_file)
 
         config_file['dandere2x']['usersettings']['output_file'] = self.output_file
         config_file['dandere2x']['usersettings']['input_file'] = self.input_file
