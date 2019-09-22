@@ -52,20 +52,22 @@ def residual_loop(context):
 
         # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
         out_image = make_residual_image(context, f1, residual_data, prediction_data)
-        
 
-        # Since the out_image can return a 1x1 black image (no differences between frames)
-        # a little hacky solution is to detect whenever these happen and instead of upscaling it
-        # with waifu2x just create a 2x2 black image and save it in the upscaled dir!
-
-        # Note: the 2x2 block will work the best with a good block matching algorithm
-        
         if out_image.getres() == (1, 1):
-            # The hacky upscaled file path (redirect output_file)
+            """
+            If out_image is (1,1) in size, then frame_x and frame_x+1 are identical.
+
+            We still need to save an outimage for sake of having N output images for N input images, so we
+            save these meaningless files anyways.
+
+            However, these 1x1 can slow whatever waifu2x implementation down, so we 'cheat' d2x 
+            but 'fake' upscaling them, so that they don't need to be processed by waifu2x.
+            """
+
+            # Location of the 'fake' upscaled image.
+            out_image = Frame().create_new(2, 2)
             output_file = residual_upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"
-            
-            # Create 2x2 black pixel image and save to the upscale dir
-            img = Image.fromarray(np.zeros((2, 2, 3), dtype=np.uint8), 'RGB').save(output_file)
+            out_image.save_image(output_file)
 
         else:
             # This image has things to upscale, continue normally
