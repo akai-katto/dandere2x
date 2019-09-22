@@ -154,8 +154,6 @@ class AppWindow(QMainWindow):
         configwrapper.load(configfile)
         config_file = configwrapper.getdata()
 
-        print(config_file)
-
         config_file['dandere2x']['usersettings']['output_file'] = self.output_file
         config_file['dandere2x']['usersettings']['input_file'] = self.input_file
         config_file['dandere2x']['usersettings']['block_size'] = self.block_size
