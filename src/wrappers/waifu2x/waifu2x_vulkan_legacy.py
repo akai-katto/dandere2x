@@ -8,7 +8,8 @@ import subprocess
 import threading
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file, wait_on_file
+from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file, \
+    wait_on_file
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
@@ -20,32 +21,35 @@ class Waifu2xVulkanLegacy(threading.Thread):
 
     This file isn't maintained too much, as once the snap is updated, this class will be obsolete.
     """
+
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_ncnn_vulkan_file_path = context.waifu2x_ncnn_vulkan_file_path
-        self.waifu2x_vulkan_path = context.waifu2x_ncnn_vulkan_path
-        self.differences_dir = context.residual_images_dir
-        self.upscaled_dir = context.residual_upscaled_dir
+        self.waifu2x_ncnn_vulkan_legacy_file_name = context.waifu2x_ncnn_vulkan_legacy_file_name
+        self.waifu2x_ncnn_vulkan_legacy_path = context.waifu2x_ncnn_vulkan_legacy_path
+        self.residual_images_dir = context.residual_images_dir
+        self.residual_upscaled_dir = context.residual_upscaled_dir
         self.noise_level = context.noise_level
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
 
-        self.waifu2x_vulkan_upscale_frame = [self.waifu2x_ncnn_vulkan_file_path,
-                                             "[input_file]",
-                                             "[output_file]",
-                                             str(self.noise_level),
-                                             str(self.scale_factor),
-                                             str(200)]
+        self.waifu2x_vulkan_legacy_upscale_frame = [
+            os.path.join(self.waifu2x_ncnn_vulkan_legacy_path,
+                         self.waifu2x_ncnn_vulkan_legacy_file_name),
+            "[input_file]",
+            "[output_file]",
+            str(self.noise_level),
+            str(self.scale_factor),
+            str(200)]
 
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
     def upscale_file(self, input_file: str, output_file: str):
         # load context
-        waifu2x_ncnn_vulkan_path = self.context.waifu2x_ncnn_vulkan_path
-        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        waifu2x_ncnn_vulkan_legacy_path = self.context.waifu2x_ncnn_vulkan_legacy_path
+        exec_command = copy.copy(self.waifu2x_vulkan_legacy_upscale_frame)
         logger = logging.getLogger(__name__)
 
         # replace the exec command withthe files we're concerned with
@@ -60,9 +64,9 @@ class Waifu2xVulkanLegacy(threading.Thread):
         logger.info(str(exec_command))
 
         logger.info("Changind Dirs")
-        logger.info(str(waifu2x_ncnn_vulkan_path))
+        logger.info(str(waifu2x_ncnn_vulkan_legacy_path))
 
-        os.chdir(waifu2x_ncnn_vulkan_path)
+        os.chdir(waifu2x_ncnn_vulkan_legacy_path)
 
         logger.info("manually upscaling file")
         logger.info(exec_command)
@@ -80,12 +84,17 @@ class Waifu2xVulkanLegacy(threading.Thread):
 
         differences_dir = self.context.residual_images_dir
         upscaled_dir = self.context.residual_upscaled_dir
-        exec = copy.copy(self.waifu2x_vulkan_upscale_frame)
+        exec = copy.copy(self.waifu2x_vulkan_legacy_upscale_frame)
 
         for x in range(1, self.frame_count):
-            wait_on_file(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg")
+            wait_on_either_file(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg",
+                                upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
 
-            self.upscale_file(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg",
-                              upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
+            if file_exists(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg") \
+                    and not file_exists(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"):
+                self.upscale_file(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg",
+                                  upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png")
 
-
+            elif not file_exists(differences_dir + "output_" + get_lexicon_value(6, x) + ".jpg") \
+                    and file_exists(upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"):
+                continue

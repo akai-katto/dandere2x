@@ -1,15 +1,12 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import copy
-import logging
-import os
-import subprocess
-import threading
-
-from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
 from dandere2xlib.utils.yaml_utils import get_options_from_section
+from context import Context
+
+import subprocess
+import threading
+import logging
+import copy
+import os
 
 
 class Waifu2xVulkan(threading.Thread):
@@ -20,7 +17,7 @@ class Waifu2xVulkan(threading.Thread):
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
-        self.waifu2x_ncnn_vulkan_file_path = context.waifu2x_ncnn_vulkan_file_path
+        self.waifu2x_ncnn_vulkan_file_path = context.waifu2x_ncnn_vulkan_legacy_file_name
         self.waifu2x_ncnn_vulkan_path = context.waifu2x_ncnn_vulkan_path
         self.residual_images_dir = context.residual_images_dir
         self.residual_upscaled_dir = context.residual_upscaled_dir
@@ -35,7 +32,7 @@ class Waifu2xVulkan(threading.Thread):
                                              "-s", str(self.scale_factor)]
 
         waifu2x_vulkan_options = get_options_from_section(
-            self.context.config_file["waifu2x_ncnn_vulkan"]["output_options"])
+            self.context.config_yaml["waifu2x_ncnn_vulkan"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_vulkan_options:
@@ -183,8 +180,20 @@ class Waifu2xVulkan(threading.Thread):
             subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
             for name in upscaled_names[::-1]:
-                if os.path.isfile(self.residual_upscaled_dir + name):
-                    os.remove(self.residual_images_dir + name.replace(".png", ".jpg"))
+                if os.path.exists(self.residual_upscaled_dir + name):
+
+                    residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
+
+                    if os.path.exists(residual_file):
+                        os.remove(residual_file)
+                    else:
+                        '''
+                        In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
+                        and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
+                        since 'residuals' never existed. 
+                        '''
+                        pass
+
                     upscaled_names.remove(name)
 
         console_output.close()

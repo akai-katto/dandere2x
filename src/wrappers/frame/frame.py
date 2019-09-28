@@ -130,16 +130,22 @@ class Frame:
         extension = os.path.splitext(os.path.basename(out_location))[1]
 
         if 'jpg' in extension:
-            jpegsave = Image.fromarray(self.frame.astype(np.uint8))
+            jpegsave = self.get_pil_image()
             jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=100)
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
         else:
-            save_image = Image.fromarray(self.frame.astype(np.uint8))
+            save_image = self.get_pil_image()
             save_image.save(out_location + "temp" + extension, format='PNG')
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
+
+    def get_res(self):
+        return (self.width, self.height)
+
+    def get_pil_image(self):
+        return Image.fromarray(self.frame.astype(np.uint8))
 
     def save_image_temp(self, out_location, temp_location):
         """

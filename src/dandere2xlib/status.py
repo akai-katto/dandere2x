@@ -3,6 +3,7 @@ import sys
 import time
 
 from context import Context
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 
 
 # todo
@@ -28,7 +29,7 @@ def print_status(context: Context):
         sys.stdout.write('\r')
         sys.stdout.write("Frame: [%s] %i%%    Average of Last 10 Frames: %s sec / frame" % (x, percent, average))
 
-        file_dir = workspace + "merged/merged_" + str(x + 1) + extension_type
+        file_dir = workspace + "residual_upscaled/output_" + get_lexicon_value(6, x) + ".png"
         if len(last_10) == 10:
             last_10.pop(0)
 
