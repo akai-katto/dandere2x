@@ -1,118 +1,132 @@
-{
-  "dandere2x": {
-    "usersettings": {
-      "block_size": 20,
-      "quality_minimum": 80,
-      "waifu2x_type": "vulkan",
-      "denoise_level": 3,
-      "scale_factor": 2,
-      "input_file": "..\\workspace\\yn_moving.mkv",
-      "output_file": "..\\workspace\\7secondstwigd.mkv"
-    },
-    "developer_settings": {
-      "realtime_encoding": {
-        "realtime_encoding_enabled": true,
-        "realtime_encoding_delete_files": false,
-        "realtime_encoding_seconds_per_video": 3
-      },
-      "step_size": 8,
-      "bleed": 1,
-      "quality_moving_ratio": 0.55,
-      "extension_type": ".jpg",
-      "debug": true,
-      "workspace_use_temp": false,
-      "gui_delete_workspace_after": false,
-      "workspace": "..\\workspace\\moving_folder\\",
-      "dandere2x_cpp_dir": "..\\externals\\dandere2x_cpp.exe"
-    }
-  },
-  "waifu2x_caffe": {
-    "waifu2x_caffe_path": "..\\externals\\waifu2x-caffe\\waifu2x-caffe-cui.exe",
-    "output_options": {
-      "-process": "gpu",
-      "-crop_size": null,
-      "-output_quality": null,
-      "-output_depth": null,
-      "-batch_size": null,
-      "-gpu": null,
-      "-tta": null,
-      "-model_dir": null
-    }
-  },
-  "waifu2x_converter": {
-    "waifu2x_converter_path": "..\\externals\\waifu2x-converter-cpp",
-    "waifu2x_converter_file_name": "waifu2x-converter-cpp.exe",
-    "output_options": {
-      "--output-format": null,
-      "--png-compression": null,
-      "--image-quality": null,
-      "--block-size": null,
-      "--disable-gpu": null,
-      "--force-OpenCL": true,
-      "--processor": null,
-      "--jobs": null,
-      "--model-dir": null,
-      "--mode": null,
-      "--silent": true
-    }
-  },
-  "waifu2x_ncnn_vulkan": {
-    "waifu2x_ncnn_vulkan_path": "..\\externals\\waifu2x-ncnn-vulkan",
-    "waifu2x_ncnn_vulkan_file_name": "waifu2x-ncnn-vulkan.exe",
-    "output_options": {
-      "-tile-size": 200,
-      "-model-path": "..\\externals\\waifu2x-ncnn-vulkan\\models-upconv_7_anime_style_art_rgb",
-      "-gpu": null,
-      "-load-proc-save_threads": null,
-      "-verbose": null
-    }
-  },
-  "ffmpeg": {
-    "ffmpeg_path": "..\\externals\\ffmpeg.exe",
-    "ffprobe_path": "..\\externals\\ffprobe.exe",
-    "-hwaccel": "none",
-    "trim_video": {
-      "time": {
-        "-ss": null,
-        "-to": null
-      },
-      "output_options": {
-        "-map": 0,
-        "-c": null
-      }
-    },
-    "video_to_frames": {
-      "output_options": {
-        "-qscale:v": 2,
-        "-pix_fmt": null,
-        "-vf": [
-          "noise=c1s=8:c0f=u"
-        ]
-      }
-    },
-    "frames_to_video": {
-      "output_options": {
-        "-vcodec": "libx264",
-        "-crf": 17,
-        "-b:v": null,
-        "-pix_fmt": null,
-        "-vf": [
-          " pp=hb/vb/dr/fq|32, deband=range=22:blur=false"
-        ]
-      },
-      "-y": true
-    },
-    "concat_videos": {
-      "output_options": {
-        "-codec": "copy",
-        "-c": "copy"
-      }
-    },
-    "migrating_tracks": {
-      "output_options": {
-        "-y": true,
-        "-pix_fmt": null
-      }
-    }
-  }
-}
+dandere2x:
+    usersettings:
+
+        input_file: ..\workspace\5sec.mkv # the input file to upscale if ran on raw_config drivers
+        output_file: ..\workspace\5sec2x.mkv #the output ot the upscaled video file.
+
+        waifu2x_type: vulkan # the waifu2x client to use, since this is the Windows config file, the supported one are: vulkan, caffe and converter_cpp
+    
+        block_size: 20 # the heart of dandere2x, the size of the blocks in pixels, optimally being a common divisor of both video widht and height
+        denoise_level: 3 # waifu2x denoise level
+        quality_minimum: 80 # quality of the frame compressor, 80 is a good number
+        scale_factor: 2 # waifu2x scale factor, currently most only support 2 times, we recommend leaving it this way
+
+    
+    developer_settings:
+
+        debug: false # if d2x will write debug frames into workspace/debug, really fun to watch
+
+        workspace: ..\workspace\default\ # path to the workspace folder (lots of files will be written here)
+        dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
+        workspace_use_temp: false
+        
+
+        # WARNING: FFMPEG PIPE ENCODING DEFAULTS TO AN MP4 FILE FOR NOW, DON'T FORGET TO SET THE OUTPUT_FILE TO AN MP4!!!
+
+        ffmpeg_pipe_encoding: true # this overrides realtime_encoding, pipes merged images to ffmpeg directly instead of saving them to disk. huge disk space saving here if enabled (talking about GBs of data even in small files)
+        ffmpeg_pipe_encoding_type: "jpeg" # this can be jpeg or png. jpeg is much faster (about 55%) at cost of a minimal larger final video, will default to jpeg if not set
+
+        realtime_encoding: # this option each seconds_per_video encodes the merged images into a small video file for the final merge afterwards
+            realtime_encoding_delete_files: false
+            realtime_encoding_enabled: true
+            realtime_encoding_seconds_per_video: 1
+        
+        
+        gui_delete_workspace_after: false
+        extension_type: .jpg
+        bleed: 1 # extra spaces between blocks in ther waifu2x upscaling process for smoother edges, this exponentially increases runtine, 1 is good enough for most cases unless sub 480p video file
+        quality_moving_ratio: 0.55
+        step_size: 8
+
+
+
+    # configuration for the waifu2x clients, if you download an release you shouldn't need to change the paths here
+    # just the configs if
+
+
+ 
+waifu2x_caffe:
+
+    waifu2x_caffe_path: ..\externals\waifu2x-caffe\waifu2x-caffe-cui.exe
+    
+    output_options:
+        -batch_size: null
+        -crop_size: null
+        -gpu: null
+        -model_dir: null
+        -output_depth: null
+        -output_quality: null
+        -process: gpu
+        -tta: null
+    
+
+waifu2x_converter:
+
+    waifu2x_converter_file_name: waifu2x-converter-cpp.exe
+    waifu2x_converter_path: ..\externals\waifu2x-converter-cpp
+
+    output_options:
+        --block-size: null
+        --disable-gpu: null
+        --force-OpenCL: true
+        --image-quality: null
+        --jobs: null
+        --mode: null
+        --model-dir: null
+        --output-format: null
+        --png-compression: null
+        --processor: null
+        --silent: true
+    
+waifu2x_ncnn_vulkan:
+
+    waifu2x_ncnn_vulkan_file_name: waifu2x-ncnn-vulkan.exe
+    waifu2x_ncnn_vulkan_path: ..\externals\waifu2x-ncnn-vulkan
+
+    output_options:
+        -gpu: null
+        -load-proc-save_threads: null
+        -model-path: ..\externals\waifu2x-ncnn-vulkan\models-upconv_7_anime_style_art_rgb
+        -tile-size: 200  # note: if you get black images try lowering this tile argument to some lower value.
+        -verbose: null
+    
+
+
+    # past this point we recommend not changing anything unless you know what you are doing witth ffmpeg
+
+
+
+ffmpeg:
+    -hwaccel: none
+    concat_videos:
+        output_options:
+            -c: copy
+            -codec: copy
+    ffmpeg_path: ..\externals\ffmpeg.exe
+    ffprobe_path: ..\externals\ffprobe.exe
+    frames_to_video:
+        -y: true
+        output_options:
+            -b:v: null
+            -crf: 17
+            -pix_fmt: null
+            -vcodec: libx264
+            -vf:
+            - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+    migrating_tracks:
+        output_options:
+            -pix_fmt: null
+            -y: true
+    trim_video:
+        output_options:
+            -c: null
+            -map: 0
+        time:
+            -ss: null
+            -to: null
+    video_to_frames:
+        output_options:
+            -pix_fmt: null
+            -qscale:v: 2
+            -vf:
+            - noise=c1s=8:c0f=u

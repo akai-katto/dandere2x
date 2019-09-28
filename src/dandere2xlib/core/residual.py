@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import logging
-
+import numpy as np
 import math
 
+from PIL import Image
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
 from wrappers.frame.frame import DisplacementVector, Frame
@@ -20,6 +21,7 @@ def residual_loop(context):
 
     # load variables from context
     workspace = context.workspace
+    residual_upscaled_dir = context.residual_upscaled_dir
     residual_images_dir = context.residual_images_dir
     residual_data_dir = context.residual_data_dir
     pframe_data_dir = context.pframe_data_dir
@@ -50,7 +52,29 @@ def residual_loop(context):
 
         # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
         out_image = make_residual_image(context, f1, residual_data, prediction_data)
-        out_image.save_image_temp(output_file, temp_image)
+
+        if out_image.get_res() == (1, 1):
+            """
+            If out_image is (1,1) in size, then frame_x and frame_x+1 are identical.
+
+            We still need to save an outimage for sake of having N output images for N input images, so we
+            save these meaningless files anyways.
+
+            However, these 1x1 can slow whatever waifu2x implementation down, so we 'cheat' d2x 
+            but 'fake' upscaling them, so that they don't need to be processed by waifu2x.
+            """
+
+            # Location of the 'fake' upscaled image.
+            out_image = Frame()
+            out_image.create_new(2,2)
+            output_file = residual_upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"
+            out_image.save_image(output_file)
+
+        else:
+            # This image has things to upscale, continue normally
+            out_image.save_image_temp(output_file, temp_image)
+
+        # With this change the wrappers must be modified to not try deleting the non existing residual file
 
         if debug == 1:
             debug_image(block_size, f1, prediction_data, residual_data, debug_output_file)

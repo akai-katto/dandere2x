@@ -14,9 +14,9 @@ class Dandere2x_Gui_Wrapper:
     A wrapper to call dandere2x.py from the GUI. The extra-added faetures are clearing the workspace ahead of time
     and deleting the files after run-time, if gui_delete_workspace_after json is set to true.
     """
-    def __init__(self, config_json):
-        self.config_json = config_json
-        self.context = Context(config_json)
+    def __init__(self, config_yaml):
+        self.config_json = config_yaml
+        self.context = Context(config_yaml)
 
     def start(self):
         print(self.context.workspace)
@@ -39,7 +39,7 @@ class Dandere2x_Gui_Wrapper:
         d.run_concurrent()
         d.context.close_logger()
 
-        if d.context.config_json['dandere2x']['developer_settings']['gui_delete_workspace_after']:
+        if d.context.config_yaml['dandere2x']['developer_settings']['gui_delete_workspace_after']:
             d.delete_workspace_files()
 
         print("Dandere2x GUI Run Finished Successfully")

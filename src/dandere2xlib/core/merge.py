@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import subprocess
 import logging
 import os
 
+from PIL import Image
 from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file, wait_on_file
+from wrappers.ffmpeg.ffmpeg import migrate_tracks
 from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 from wrappers.frame.frame import Frame
 
@@ -39,6 +42,50 @@ def merge_loop(context: Context):
     frame_count = context.frame_count
     extension_type = context.extension_type
     logger = logging.getLogger(__name__)
+
+    # # # ffmpeg piping stuff # # #
+
+    ffmpeg_pipe_encoding = context.ffmpeg_pipe_encoding
+
+    if ffmpeg_pipe_encoding:
+        nosound_file = context.nosound_file
+        frame_rate = str(context.frame_rate)
+        input_file = context.input_file
+        output_file = context.output_file
+        ffmpeg_dir = context.ffmpeg_dir
+        ffmpeg_pipe_encoding_type = context.ffmpeg_pipe_encoding_type
+
+        if ffmpeg_pipe_encoding_type in ["jpeg", "jpg"]:
+            vcodec = "mjpeg"
+            pipe_format = "JPEG"
+
+        elif ffmpeg_pipe_encoding_type == "png":
+            vcodec = "png"
+            pipe_format = "PNG"
+
+        else:
+            print("  Error: no valid ffmpeg_pipe_encoding_type set. Using jpeg as default")
+            vcodec = "mjpeg"
+            pipe_format = "JPEG"
+
+        print("\n    WARNING: EXPERIMENTAL FFMPEG PIPING IS ENABLED\n")
+
+        ffmpegpipe = subprocess.Popen([ffmpeg_dir, "-loglevel", "panic", '-y', '-f',
+                                       'image2pipe', '-vcodec', vcodec, '-r', frame_rate,
+                                       '-i', '-', '-vcodec', 'libx264', '-preset', 'medium',
+                                       '-qscale', '5', '-crf', '17',
+                                       '-vf', ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false',
+                                       '-r', frame_rate, nosound_file],
+                                      stdin=subprocess.PIPE)
+
+        # pipe the first merged image as it will not be done afterwards
+        wait_on_file(merged_dir + "merged_" + str(1) + extension_type)
+        im = Image.open(merged_dir + "merged_" + str(1) + extension_type)
+
+        # best jpeg quality since we won't be saving up disk space
+        im.save(ffmpegpipe.stdin, format=pipe_format, quality=100)
+
+    # # #  # # #  # # #  # # #
 
     # Load the genesis image + the first upscaled image.
     frame_previous = Frame()
@@ -75,21 +122,27 @@ def merge_loop(context: Context):
         correction_data_list = get_list_from_file(correction_data_dir + "correction_" + str(x) + ".txt")
         fade_data_list = get_list_from_file(fade_data_dir + "fade_" + str(x) + ".txt")
 
-        output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
-
         frame_next = make_merge_image(context, f1, frame_previous,
-                                    prediction_data_list, residual_data_list, correction_data_list, fade_data_list)
+                                      prediction_data_list, residual_data_list,
+                                      correction_data_list, fade_data_list)
 
-        # Write the image in the background for the preformance increase
-        background_frame_write = AsyncFrameWrite(frame_next, output_file)
-        background_frame_write.start()
+        if not ffmpeg_pipe_encoding:  # ffmpeg piping is disabled, traditional way
+
+            # Write the image in the background for the preformance increase
+            output_file_merged = workspace + "merged/merged_" + str(x + 1) + extension_type
+            background_frame_write = AsyncFrameWrite(frame_next, output_file_merged)
+            background_frame_write.start()
+
+        else:  # ffmpeg piping is enabled
+
+            # Write the image directly into ffmpeg pipe
+            im = frame_next.get_pil_image()
+            im.save(ffmpegpipe.stdin, format=pipe_format, quality=95)
 
         #######################################
         # Assign variables for next iteration #
         #######################################
 
-        # Ensure the file is loaded for background_frame_load. If we're on the last frame, simply ignore this section
-        # Because the frame_count + 1 does not exist.
         if not last_frame:
             while not background_frame_load.load_complete:
                 wait_on_file(upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
@@ -97,6 +150,16 @@ def merge_loop(context: Context):
             f1 = background_frame_load.loaded_image
 
         frame_previous = frame_next
+
+        # Ensure the file is loaded for background_frame_load. If we're on the last frame, simply ignore this section
+        # Because the frame_count + 1 does not exist.
+
+    if ffmpeg_pipe_encoding:
+        ffmpegpipe.stdin.close()
+        ffmpegpipe.wait()
+
+        # add the original file audio to the nosound file
+        migrate_tracks(context, nosound_file, input_file, output_file)
 
 
 def make_merge_image(context: Context, frame_residual: Frame, frame_previous: Frame,

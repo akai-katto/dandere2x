@@ -2,13 +2,13 @@ dandere2x:
     usersettings:
 
         input_file: ../workspace/yn_moving.mkv # the input file to upscale if ran on raw_config drivers
-        output_file: ../workspace/5sec2x.mkv #the output ot the upscaled video file.
+        output_file: ../workspace/vulkan_test.mkv #the output ot the upscaled video file.
 
         waifu2x_type: vulkan # the waifu2x client to use, since this is the Linux config file, the supported one are: vulkan, vulkan_legacy (snap), converter_cpp
 
         block_size: 20 # the heart of dandere2x, the size of the blocks in pixels, optimally being a common divisor of both video widht and height
         denoise_level: 3 # waifu2x denoise level
-        quality_minimum: 80 # quality of the frame compressor, 80 is a good number
+        quality_minimum: 5 # quality of the frame compressor, 80 is a good number
         scale_factor: 2 # waifu2x scale factor, currently most only support 2 times, we recommend leaving it this way
 
 
@@ -97,8 +97,8 @@ waifu2x_ncnn_vulkan:
 
 waifu2x_ncnn_vulkan_legacy:
 
-    waifu2x_ncnn_vulkan_legacy_file_name: waifu2x-ncnn-vulkan
-    waifu2x_ncnn_vulkan_legacy_path: /var/lib/snapd/snap/bin/
+    waifu2x_ncnn_vulkan_legacy_file_name: waifu2x
+    waifu2x_ncnn_vulkan_legacy_path: /snap/waifu2x-ncnn-vulkan/86/bin/
 
     output_options:
         -gpu: null
