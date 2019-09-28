@@ -121,42 +121,49 @@ class Dandere2x:
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
 
-        ####################
-        #  THREADING AREA  #
-        ####################
+        ######################################
+        #  THREADING / MULTIPROCESSING AREA  #
+        ######################################
 
-        # This is where Dandere2x's core functions start. Each core function is divided into a series of threads,
-        # All with their own segregated tasks and goals. Dandere2x starts all the threads, and lets it go from there.
-        compress_frames_thread = threading.Thread(target=compress_frames, args=(self.context,))
-        dandere2xcpp_thread = Dandere2xCppWrapper(self.context)
-        merge_thread = threading.Thread(target=merge_loop, args=(self.context,))
-        residual_thread = threading.Thread(target=residual_loop, args=(self.context,))
-        status_thread = threading.Thread(target=print_status, args=(self.context,))
-        realtime_encode_thread = threading.Thread(target=run_realtime_encoding, args=(self.context, output_file))
+        # This is where Dandere2x's core functions start.
+        # Each core function is divided into a series of threads and processes,
+        # All with their own segregated tasks and goals.
+        # Dandere2x starts all the threads, and lets it go from there.
 
-        logging.info("starting new d2x process")
-        waifu2x.start()
+        # the daemon=True is for quitting the process when the main thread quits
+        # KeyboardInterrupt to be short
 
-        merge_thread.start()
-        residual_thread.start()
-        dandere2xcpp_thread.start()
-        status_thread.start()
-        compress_frames_thread.start()
+        # daemon=True for them to close when this main thread closes
 
-        if self.context.realtime_encoding_enabled:
-            realtime_encode_thread.start()
+        self.jobs = {}
 
-        compress_frames_thread.join()
-        merge_thread.join()
-        dandere2xcpp_thread.join()
-        residual_thread.join()
-        waifu2x.join()
-        status_thread.join()
+        self.jobs['compress_frames_thread'] = threading.Thread(target=compress_frames, args=(self.context,),
+                                                               daemon=True)
+        self.jobs['dandere2xcpp_thread'] = Dandere2xCppWrapper(self.context)
+        self.jobs['merge_thread'] = threading.Thread(target=merge_loop, args=(self.context, self, self.PFE),
+                                                     daemon=True)
+        self.jobs['residual_thread'] = threading.Thread(target=residual_loop, args=(self.context,), daemon=True)
+        self.jobs['waifu2x_thread'] = self.waifu2x
 
         if self.context.realtime_encoding_enabled:
-            realtime_encode_thread.join()
+            self.jobs['realtime_encode_thread'] = threading.Thread(target=run_realtime_encoding,
+                                                                   args=(self.context, output_file), daemon=True)
 
-        self.context.logger.info("Threaded Processes Finished succcesfully")
+        # start and join the jobs
+        for job in self.jobs:
+            self.jobs[job].start()
+            logging.info("Starting new %s process" % job)
+
+        for job in self.jobs:
+
+            self.jobs[job].join()
+
+            if job == "merge_thread":  # close w2x
+                self.context.upscaler_running = False
+
+            logging.info("%s process thread joined" % job)
+
+        self.context.logger.info("All threaded processes have finished")
 
     def get_waifu2x_class(self, name: str):
 
