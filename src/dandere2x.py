@@ -49,7 +49,7 @@ from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
 class Dandere2x:
     """
     The main driver that can be called in a various level of circumstances - for example, dandere2x can be started
-    from dandere2x_gui_wrapper.py, json_driver.py, or json_gui_driver.py. In each scenario, this is the
+    from dandere2x_gui_wrapper.py, raw_config_driver.py, or raw_config_gui_driver.py. In each scenario, this is the
     class that is called when Dandere2x ultimately needs to start.
     """
 

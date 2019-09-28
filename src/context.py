@@ -1,14 +1,13 @@
-import json
-import logging
-import os
-import pathlib
-import sys
-import tempfile
-
-import math
-
-from dandere2xlib.utils.json_utils import get_options_from_section, absolutify_json
+from dandere2xlib.utils.yaml_utils import get_options_from_section, absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
+
+import tempfile
+import logging
+import pathlib
+import json
+import math
+import sys
+import os
 
 
 class Context:
@@ -19,7 +18,7 @@ class Context:
     D2x's development - keep this file clean and nice, as it'll be used more than anything else!
     """
 
-    def __init__(self, config_json_unparsed: json):
+    def __init__(self, config_file_unparsed: json):
         """
         Create all the needed values that will be used in various parts of dandere2x. A lot of these values
         are derived from external files, such as the json, ffmpeg and ffprobe, or are joined from directories.
@@ -38,28 +37,40 @@ class Context:
         self.this_folder = pathlib.Path(self.this_folder)
 
         # Parse the unparsed config into a parsed (../externals -> C:/this_folder/externals)
-        self.config_json = absolutify_json(config_json_unparsed, str(self.this_folder.absolute()), absolutify_key="..")
-
+        self.config_file = absolutify_yaml(config_file_unparsed, str(self.this_folder.absolute()), absolutify_key="..")
         ################################
         #  setup all the directories.. #
         ################################
 
-        # side note - for vulkan and converter, we need to know the path of the file in order for it to run correctly,
-        # hence why we have two variables for them
-        self.waifu2x_converter_cpp_path = self.config_json['waifu2x_converter']['waifu2x_converter_path']
-        self.waifu2x_converter_file_name = self.config_json['waifu2x_converter']['waifu2x_converter_file_name']
-        self.waifu2x_converter_cpp_file_path = os.path.join(self.waifu2x_converter_cpp_path,
-                                                            self.waifu2x_converter_file_name)
+        # TODO: since this is a fail-safe method on loading the waifu2x clients
+        # we gotta check at least one is ok before running dandere2x?
 
-        self.waifu2x_ncnn_vulkan_path = self.config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
-        self.waifu2x_ncnn_vulkan_file_name = self.config_json['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_file_name']
-        self.waifu2x_ncnn_vulkan_file_path = os.path.join(self.waifu2x_ncnn_vulkan_path,
-                                                          self.waifu2x_ncnn_vulkan_file_name)
+        if "waifu2x_converter" in self.config_file:
+            self.waifu2x_converter_cpp_path = self.config_file['waifu2x_converter']['waifu2x_converter_path']
+            self.waifu2x_converter_file_name = self.config_file['waifu2x_converter']['waifu2x_converter_file_name']
+            self.waifu2x_converter_cpp_file_path = os.path.join(self.waifu2x_converter_cpp_path,
+                                                                self.waifu2x_converter_file_name)
 
-        self.waifu2x_caffe_cui_dir = pathlib.Path(self.config_json['waifu2x_caffe']['waifu2x_caffe_path'])
+        if "waifu2x_ncnn_vulkan" in self.config_file:
+            self.waifu2x_ncnn_vulkan_path = self.config_file['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
+            self.waifu2x_ncnn_vulkan_file_name = self.config_file['waifu2x_ncnn_vulkan'][
+                'waifu2x_ncnn_vulkan_file_name']
+            self.waifu2x_ncnn_vulkan_file_path = os.path.join(self.waifu2x_ncnn_vulkan_path,
+                                                              self.waifu2x_ncnn_vulkan_file_name)
 
-        self.workspace = self.config_json['dandere2x']['developer_settings']['workspace']
-        self.workspace_use_temp = self.config_json['dandere2x']['developer_settings']['workspace_use_temp']
+        if "waifu2x_ncnn_vulkan_legacy" in self.config_file:
+            self.waifu2x_ncnn_vulkan_legacy_path = self.config_file['waifu2x_ncnn_vulkan_legacy'][
+                'waifu2x_ncnn_vulkan_legacy_path']
+            self.waifu2x_ncnn_vulkan_legacy_file_name = self.config_file['waifu2x_ncnn_vulkan_legacy'][
+                'waifu2x_ncnn_vulkan_legacy_file_name']
+            self.waifu2x_ncnn_vulkan_legacy_file_path = os.path.join(self.waifu2x_ncnn_vulkan_legacy_path,
+                                                                     self.waifu2x_ncnn_vulkan_legacy_file_name)
+
+        if "waifu2x_caffe" in self.config_file:
+            self.waifu2x_caffe_cui_dir = self.config_file['waifu2x_caffe']['waifu2x_caffe_path']
+
+        self.workspace = self.config_file['dandere2x']['developer_settings']['workspace']
+        self.workspace_use_temp = self.config_file['dandere2x']['developer_settings']['workspace_use_temp']
 
         # if we're using a temporary workspace, assign workspace to be in the temp folder
         if self.workspace_use_temp:
@@ -69,10 +80,10 @@ class Context:
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
         self.residual_images_dir = self.workspace + "residual_images" + os.path.sep
         self.residual_upscaled_dir = self.workspace + "residual_upscaled" + os.path.sep
-        self.correction_data_dir = self.workspace + "correction_data" + os.path.sep
-        self.merged_dir = self.workspace + "merged" + os.path.sep
         self.residual_data_dir = self.workspace + "residual_data" + os.path.sep
         self.pframe_data_dir = self.workspace + "pframe_data" + os.path.sep
+        self.correction_data_dir = self.workspace + "correction_data" + os.path.sep
+        self.merged_dir = self.workspace + "merged" + os.path.sep
         self.fade_data_dir = self.workspace + "fade_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.log_dir = self.workspace + "logs" + os.path.sep
@@ -98,49 +109,72 @@ class Context:
                             self.encoded_dir,
                             self.temp_image_folder}
 
-
-        self.ffmpeg_dir = self.config_json['ffmpeg']['ffmpeg_path']
-        self.ffprobe_dir = self.config_json['ffmpeg']['ffprobe_path']
-        self.hwaccel = self.config_json['ffmpeg']['-hwaccel']
+        self.ffmpeg_dir = self.config_file['ffmpeg']['ffmpeg_path']
+        self.ffprobe_dir = self.config_file['ffmpeg']['ffprobe_path']
+        self.hwaccel = self.config_file['ffmpeg']['-hwaccel']
 
         ################################
         # Load Dandere2x User Settings #
         ################################
 
         # User Settings
-        self.block_size = self.config_json['dandere2x']['usersettings']['block_size']
-        self.quality_minimum = self.config_json['dandere2x']['usersettings']['quality_minimum']
-        self.waifu2x_type = self.config_json['dandere2x']['usersettings']['waifu2x_type']
-        self.noise_level = self.config_json['dandere2x']['usersettings']['denoise_level']
-        self.scale_factor = self.config_json['dandere2x']['usersettings']['scale_factor']
-        self.input_file = self.config_json['dandere2x']['usersettings']['input_file']
-        self.output_file = self.config_json['dandere2x']['usersettings']['output_file']
+        self.block_size = self.config_file['dandere2x']['usersettings']['block_size']
+        self.quality_minimum = self.config_file['dandere2x']['usersettings']['quality_minimum']
+        self.waifu2x_type = self.config_file['dandere2x']['usersettings']['waifu2x_type']
+        self.noise_level = self.config_file['dandere2x']['usersettings']['denoise_level']
+        self.scale_factor = self.config_file['dandere2x']['usersettings']['scale_factor']
+        self.input_file = self.config_file['dandere2x']['usersettings']['input_file']
+        self.output_file = self.config_file['dandere2x']['usersettings']['output_file']
 
         # Developer Settings
-        self.quality_moving_ratio = self.config_json['dandere2x']['developer_settings']['quality_moving_ratio']
-        self.step_size = self.config_json['dandere2x']['developer_settings']['step_size']
-        self.bleed = self.config_json['dandere2x']['developer_settings']['bleed']
-        self.extension_type = self.config_json['dandere2x']['developer_settings']['extension_type']
-        self.debug = self.config_json['dandere2x']['developer_settings']['debug']
-        self.dandere2x_cpp_dir = self.config_json['dandere2x']['developer_settings']['dandere2x_cpp_dir']
+        self.quality_moving_ratio = self.config_file['dandere2x']['developer_settings']['quality_moving_ratio']
+        self.step_size = self.config_file['dandere2x']['developer_settings']['step_size']
+        self.bleed = self.config_file['dandere2x']['developer_settings']['bleed']
+        self.extension_type = self.config_file['dandere2x']['developer_settings']['extension_type']
+        self.debug = self.config_file['dandere2x']['developer_settings']['debug']
+        self.dandere2x_cpp_dir = self.config_file['dandere2x']['developer_settings']['dandere2x_cpp_dir']
         self.correction_block_size = 2
 
-        # Real Time Encoding
-        self.realtime_encoding_enabled = self.config_json['dandere2x']['developer_settings']['realtime_encoding'][
-            'realtime_encoding_enabled']
-        self.realtime_encoding_delete_files = self.config_json['dandere2x']['developer_settings']['realtime_encoding'][
-            'realtime_encoding_delete_files']
-        self.realtime_encoding_seconds_per_video = \
-        self.config_json['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_seconds_per_video']
+        # FFMPEG Pipe Encoding, NOTE: THIS OVERRIDES REALTIME ENCODING
+        self.ffmpeg_pipe_encoding = self.config_file['dandere2x']['developer_settings']['ffmpeg_pipe_encoding']
+        self.ffmpeg_pipe_encoding_type = self.config_file['dandere2x']['developer_settings'][
+            'ffmpeg_pipe_encoding_type']
+        self.nosound_file = os.path.join(self.workspace, "nosound")  # missing an extension, will set it in a few
 
-        ################################
-        #       Video Settings         #
-        ################################
+        if not self.ffmpeg_pipe_encoding:
+            # Real Time Encoding, traditional way
+            self.realtime_encoding_enabled = self.config_file['dandere2x']['developer_settings']['realtime_encoding'][
+                'realtime_encoding_enabled']
+            self.realtime_encoding_delete_files = \
+            self.config_file['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_delete_files']
+            self.realtime_encoding_seconds_per_video = \
+                self.config_file['dandere2x']['developer_settings']['realtime_encoding'][
+                    'realtime_encoding_seconds_per_video']
+
+        else:
+
+            # disable traditional "RTE" because we're piping
+            self.realtime_encoding_enabled = False
+
+            # get the substring after the last dot in the output_file "asd/aert/asd.mkv" --> "mkv"
+            # but "important/rapgod" will default to rapgod.mp4 because we'll get
+            # pipe_ext equals to the string itself "important/rapgod" and that's not an format :P
+
+            supported_formats = [".mkv", ".mp4", ".avi"]
+
+            pipe_ext = "." + self.output_file.split(".")[-1]
+
+            # add the extension to nosound file
+            self.nosound_file += ".mp4" if not pipe_ext in supported_formats else pipe_ext
+
+        ##################
+        # Video Settings #
+        ##################
 
         # find out if the user trimmed a video by checking the time part of the json. IF theres nothing there,
         # then the user didn't trim anything
         self.user_trim_video = False
-        find_out_if_trim = get_options_from_section(self.config_json["ffmpeg"]["trim_video"]['time'])
+        find_out_if_trim = get_options_from_section(self.config_file["ffmpeg"]["trim_video"]['time'])
 
         if find_out_if_trim:
             self.user_trim_video = True
@@ -149,8 +183,7 @@ class Context:
         self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
 
         self.frame_rate = math.ceil(self.video_settings.frame_rate)
-        self.width = self.video_settings.width
-        self.height = self.video_settings.height
+        self.width, self.height = self.video_settings.width, self.video_settings.height
         self.frame_count = 0
 
     # the workspace folder needs to exist before creating the log file, hence the method

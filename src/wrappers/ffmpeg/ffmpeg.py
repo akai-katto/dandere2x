@@ -5,7 +5,7 @@ import subprocess
 import os
 
 from context import Context
-from dandere2xlib.utils.json_utils import get_options_from_section
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 def trim_video(context: Context, output_file: str):
@@ -20,13 +20,13 @@ def trim_video(context: Context, output_file: str):
                           "-hwaccel", context.hwaccel,
                           "-i", input_file]
 
-    trim_video_time = get_options_from_section(context.config_json["ffmpeg"]["trim_video"]["time"])
+    trim_video_time = get_options_from_section(context.config_file["ffmpeg"]["trim_video"]["time"])
 
     for element in trim_video_time:
         trim_video_command.append(element)
 
     trim_video_options = \
-        get_options_from_section(context.config_json["ffmpeg"]["trim_video"]["output_options"], ffmpeg_command=True)
+        get_options_from_section(context.config_file["ffmpeg"]["trim_video"]["output_options"], ffmpeg_command=True)
 
     for element in trim_video_options:
         trim_video_command.append(element)
@@ -53,7 +53,7 @@ def extract_frames(context: Context, input_file: str):
                               "-i", input_file]
 
     extract_frames_options = \
-        get_options_from_section(context.config_json["ffmpeg"]["video_to_frames"]['output_options'],
+        get_options_from_section(context.config_file["ffmpeg"]["video_to_frames"]['output_options'],
                                  ffmpeg_command=True)
 
     for element in extract_frames_options:
@@ -88,7 +88,7 @@ def concat_encoded_vids(context: Context, output_file: str):
                              "-i", text_file]
 
     concat_videos_option = \
-        get_options_from_section(context.config_json["ffmpeg"]["concat_videos"]['output_options'], ffmpeg_command=True)
+        get_options_from_section(context.config_file["ffmpeg"]["concat_videos"]['output_options'], ffmpeg_command=True)
 
     for element in concat_videos_option:
         concat_videos_command.append(element)
@@ -113,7 +113,7 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
                               "-map", "-1:v?"]
 
     migrate_tracks_options = \
-        get_options_from_section(context.config_json["ffmpeg"]["migrating_tracks"]['output_options'],
+        get_options_from_section(context.config_file["ffmpeg"]["migrating_tracks"]['output_options'],
                                  ffmpeg_command=True)
 
     for element in migrate_tracks_options:
@@ -144,7 +144,7 @@ def create_video_from_specific_frames(context: Context, file_prefix, output_file
                                  "-vframes", str(frames_per_video),
                                  "-r", str(context.frame_rate)]
 
-    frame_to_video_option = get_options_from_section(context.config_json["ffmpeg"]["frames_to_video"]['output_options']
+    frame_to_video_option = get_options_from_section(context.config_file["ffmpeg"]["frames_to_video"]['output_options']
                                                      , ffmpeg_command=True)
 
     for element in frame_to_video_option:
