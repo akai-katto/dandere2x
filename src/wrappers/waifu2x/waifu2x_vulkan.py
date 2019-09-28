@@ -9,7 +9,7 @@ import threading
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
-from dandere2xlib.utils.json_utils import get_options_from_section
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xVulkan(threading.Thread):
@@ -35,7 +35,7 @@ class Waifu2xVulkan(threading.Thread):
                                              "-s", str(self.scale_factor)]
 
         waifu2x_vulkan_options = get_options_from_section(
-            self.context.config_json["waifu2x_ncnn_vulkan"]["output_options"])
+            self.context.config_file["waifu2x_ncnn_vulkan"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_vulkan_options:

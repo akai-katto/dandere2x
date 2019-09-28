@@ -9,7 +9,7 @@ import threading
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file, wait_on_file
-from dandere2xlib.utils.json_utils import get_options_from_section
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xVulkanLegacy(threading.Thread):

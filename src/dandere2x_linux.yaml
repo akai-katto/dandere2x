@@ -1,0 +1,150 @@
+dandere2x:
+    usersettings:
+
+        input_file: ../workspace/yn_moving.mkv # the input file to upscale if ran on raw_config drivers
+        output_file: ../workspace/5sec2x.mkv #the output ot the upscaled video file.
+
+        waifu2x_type: vulkan # the waifu2x client to use, since this is the Linux config file, the supported one are: vulkan, vulkan_legacy (snap), converter_cpp
+
+        block_size: 20 # the heart of dandere2x, the size of the blocks in pixels, optimally being a common divisor of both video widht and height
+        denoise_level: 3 # waifu2x denoise level
+        quality_minimum: 80 # quality of the frame compressor, 80 is a good number
+        scale_factor: 2 # waifu2x scale factor, currently most only support 2 times, we recommend leaving it this way
+
+
+    developer_settings:
+
+        debug: false # if d2x will write debug frames into workspace/debug, really fun to watch
+
+        workspace: ../workspace/default/ # path to the workspace folder (lots of files will be written here)
+        dandere2x_cpp_dir: ../externals/dandere2x_cpp # path to dandere2x_cpp binary file
+        workspace_use_temp: false
+
+
+        # WARNING: FFMPEG PIPE ENCODING DEFAULTS TO AN MP4 FILE FOR NOW, DON'T FORGET TO SET THE OUTPUT_FILE TO AN MP4!!!
+
+        ffmpeg_pipe_encoding: true # this overrides realtime_encoding, pipes merged images to ffmpeg directly instead of saving them to disk. huge disk space saving here if enabled (talking about GBs of data even in small files)
+        ffmpeg_pipe_encoding_type: "jpeg" # this can be jpeg or png. jpeg is much faster (about 55%) at cost of a minimal larger final video, will default to jpeg if not set
+
+        realtime_encoding: # this option each seconds_per_video encodes the merged images into a small video file for the final merge afterwards
+            realtime_encoding_delete_files: false
+            realtime_encoding_enabled: true
+            realtime_encoding_seconds_per_video: 1
+
+
+        gui_delete_workspace_after: false
+        extension_type: .jpg
+        bleed: 1 # extra spaces between blocks in ther waifu2x upscaling process for smoother edges, this exponentially increases runtine, 1 is good enough for most cases unless sub 480p video file
+        quality_moving_ratio: 0.55
+        step_size: 8
+
+
+    # now this is the configuration of the waifu2x clients
+    # we recommend not changing anything but the paths to the file_name and _path configs
+    # only if nothing works at first
+
+    # let's say you just installed waifux-converter-cpp from AUR or waifu2x-ncnn-vulkan from AUR/Snap
+    # type "whereis waifu2x-converter-cpp" or "whereis waifu2x-ncnn-vulkan" based on your installation
+
+    # note: for the snap version you must reboot the machine after enabling the snapd.socket in systemd
+    # (sudo systemctl enable --now snapd.socket)
+    # otherwise the whereis command will not find the binaries
+
+    # after typing that, you'll get some outputs in the terminal giving the paths of the binaries
+    # let's say our waifu2x-converter-cpp bin is in the paths: /usr/bin/waifu2x-converter-cpp /usr/share/waifu2x-converter-cpp
+
+    # /usr/share will give permission errors, use the /usr/bin one or run dandere2x as sudo (not recommended)
+
+    # so the full path is: /usr/bin/waifu2x-converter-cpp, to configure it just replace the _file_name and _path
+    # in the config below like so: the path is the root dir, in this case, /usr/bin/ note the last slash is required
+    # and the file name is the name of the binary in this case waifu2x-converter-cpp
+
+
+
+waifu2x_converter:
+
+    waifu2x_converter_file_name: waifu2x-converter-cpp
+    waifu2x_converter_path: /usr/bin/
+
+    output_options:
+        --block-size: null
+        --disable-gpu: null
+        --force-OpenCL: true
+        --image-quality: null
+        --jobs: null
+        --mode: null
+        --model-dir: null
+        --output-format: null
+        --png-compression: null
+        --processor: null
+        --silent: true
+
+
+
+waifu2x_ncnn_vulkan:
+
+    waifu2x_ncnn_vulkan_file_name: waifu2x-ncnn-vulkan
+    waifu2x_ncnn_vulkan_path: /usr/bin/
+
+    output_options:
+        -gpu: null
+        -load-proc-save_threads: null
+        -model-path: null
+        -t: 256 # note: if you get black images try lowering this tile argument to some lower value.
+        -verbose: null
+
+
+
+waifu2x_ncnn_vulkan_legacy:
+
+    waifu2x_ncnn_vulkan_legacy_file_name: waifu2x-ncnn-vulkan
+    waifu2x_ncnn_vulkan_legacy_path: /var/lib/snapd/snap/bin/
+
+    output_options:
+        -gpu: null
+        -load-proc-save_threads: null
+        -model-path: null
+        -t: 256 # note: if you get black images try lowering this tile argument to some lower value.
+        -verbose: null
+
+
+
+
+    # past this point we recommend not changing anything unless you know what you are doing witth ffmpeg
+
+
+
+ffmpeg:
+    -hwaccel: none
+    concat_videos:
+        output_options:
+            -c: copy
+            -codec: copy
+    ffmpeg_path: ffmpeg
+    ffprobe_path: ffprobe
+    frames_to_video:
+        -y: true
+        output_options:
+            -b:v: null
+            -crf: 17
+            -pix_fmt: null
+            -vcodec: libx264
+            -vf:
+            - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+    migrating_tracks:
+        output_options:
+            -pix_fmt: null
+            -y: true
+    trim_video:
+        output_options:
+            -c: null
+            -map: 0
+        time:
+            -ss: null
+            -to: null
+    video_to_frames:
+        output_options:
+            -pix_fmt: null
+            -qscale:v: 2
+            -vf:
+            - noise=c1s=8:c0f=u

@@ -10,7 +10,7 @@ import threading
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists, rename_file
-from dandere2xlib.utils.json_utils import get_options_from_section
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xConverterCpp(threading.Thread):
@@ -36,7 +36,7 @@ class Waifu2xConverterCpp(threading.Thread):
                                            "--noise-level", str(self.noise_level),
                                            "--scale-ratio", str(self.scale_factor)]
 
-        waifu2x_conv_options = get_options_from_section(self.context.config_json["waifu2x_converter"]["output_options"])
+        waifu2x_conv_options = get_options_from_section(self.context.config_file["waifu2x_converter"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_conv_options:
