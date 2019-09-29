@@ -1,6 +1,5 @@
 from dandere2xlib.utils.yaml_utils import get_options_from_section, absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
-
 import tempfile
 import logging
 import pathlib
@@ -179,12 +178,29 @@ class Context:
         if find_out_if_trim:
             self.user_trim_video = True
 
+        #####################
+        # MIN DISK SETTINGS #
+        #####################
+
+        self.use_min_disk = self.config_yaml['dandere2x']['min_disk_settings']['use_min_disk']
+        self.max_frames_ahead = self.config_yaml['dandere2x']['min_disk_settings']['max_frames_ahead']
+
+        ####################
+        # Signal Variables #
+        ####################
+        """
+        These variables are used in between threads to communicate with one another.
+        """
+        self.signal_merged_count = 0
+
         # load the needed video settings
         self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
 
         self.frame_rate = math.ceil(self.video_settings.frame_rate)
         self.width, self.height = self.video_settings.width, self.video_settings.height
-        self.frame_count = 0
+
+        # self.frame_count = ffmpeg.count(frames)
+        self.frame_count = self.video_settings.frame_count
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
