@@ -59,7 +59,7 @@ class MinDiskUsage:
         """
         max_frames_ahead = self.context.max_frames_ahead
 
-        for x in range(60):
+        for x in range(max_frames_ahead):
             self.progressive_frame_extractor.next_frame()
 
 
