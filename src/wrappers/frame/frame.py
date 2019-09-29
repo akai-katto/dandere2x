@@ -122,6 +122,9 @@ class Frame:
             except PermissionError:
                 logger.info("Permission Error")
                 loaded = False
+            except ValueError:
+                logger.info("Value Error")
+                loaded = False
 
     def save_image(self, out_location):
         """
