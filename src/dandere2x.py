@@ -44,6 +44,7 @@ from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
 from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
+from dandere2xlib.mindiskusage import MinDiskUsage, ffmpeg_filters_workaround
 
 
 class Dandere2x:
@@ -99,13 +100,46 @@ class Dandere2x:
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
             self.append_video_resize_filter()
 
-        # Extract all the frames
-        print("extracting frames from video... this might take a while..")
-        extract_frames(self.context, self.context.input_file)
-        self.context.update_frame_count()
 
-        # Assign the waifu2x object to whatever waifu2x we're using
+        self.jobs = {}
+
+        self.jobs['compress_frames_thread'] = threading.Thread(target=compress_frames, args=([self.context]),
+                                                               daemon=True)
+        self.jobs['dandere2xcpp_thread'] = Dandere2xCppWrapper(self.context)
+        self.jobs['merge_thread'] = threading.Thread(target=merge_loop, args=([self.context]),
+                                                     daemon=True)
+        self.jobs['residual_thread'] = threading.Thread(target=residual_loop, args=([self.context]), daemon=True)
+
         waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
+
+        self.jobs['waifu2x_thread'] = waifu2x
+
+        if self.context.realtime_encoding_enabled:
+            self.jobs['realtime_encode_thread'] = threading.Thread(target=run_realtime_encoding,
+                                                                   args=(self.context, output_file), daemon=True)
+
+        if self.context.use_min_disk:
+            """
+            Add min disk the series of threads to be run by the d2x program, and extract the initial set
+            of "max_frames_ahead". 
+            """
+
+            #TODO
+            """
+            The current workaround for min_disk requires us to make a new video that applies the same filters
+            dandere2x would use to extract the frames. As it stands right now, I'm not sure how to apply
+            these same filters to an image.
+            """
+
+            self.context.input_file = ffmpeg_filters_workaround(self.context)
+
+            min_disk_usage = MinDiskUsage(self.context)
+            min_disk_usage.extract_initial_frames()
+            self.jobs['min_disk_thread'] = threading.Thread(target=min_disk_usage.run, daemon=True)
+
+        elif not self.context.use_min_disk:
+            """ If we're not using min disk, extract the frames all at once using ffmpeg """
+            extract_frames(self.context, self.context.input_file)
 
         # Upscale the first file (the genesis file is treated different in Dandere2x)
         one_frame_time = time.time()  # This timer prints out how long it takes to upscale one frame
@@ -135,19 +169,6 @@ class Dandere2x:
 
         # daemon=True for them to close when this main thread closes
 
-        self.jobs = {}
-
-        self.jobs['compress_frames_thread'] = threading.Thread(target=compress_frames, args=(self.context,),
-                                                               daemon=True)
-        self.jobs['dandere2xcpp_thread'] = Dandere2xCppWrapper(self.context)
-        self.jobs['merge_thread'] = threading.Thread(target=merge_loop, args=(self.context, self, self.PFE),
-                                                     daemon=True)
-        self.jobs['residual_thread'] = threading.Thread(target=residual_loop, args=(self.context,), daemon=True)
-        self.jobs['waifu2x_thread'] = self.waifu2x
-
-        if self.context.realtime_encoding_enabled:
-            self.jobs['realtime_encode_thread'] = threading.Thread(target=run_realtime_encoding,
-                                                                   args=(self.context, output_file), daemon=True)
 
         # start and join the jobs
         for job in self.jobs:

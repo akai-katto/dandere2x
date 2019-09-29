@@ -74,7 +74,7 @@ def merge_loop(context: Context):
                                        'image2pipe', '-vcodec', vcodec, '-r', frame_rate,
                                        '-i', '-', '-vcodec', 'libx264', '-preset', 'medium',
                                        '-qscale', '5', '-crf', '17',
-                                       '-vf', ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false',
+                                       #'-vf', ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false',
                                        '-r', frame_rate, nosound_file],
                                       stdin=subprocess.PIPE)
 
@@ -84,6 +84,7 @@ def merge_loop(context: Context):
 
         # best jpeg quality since we won't be saving up disk space
         im.save(ffmpegpipe.stdin, format=pipe_format, quality=100)
+
 
     # # #  # # #  # # #  # # #
 
@@ -137,7 +138,9 @@ def merge_loop(context: Context):
 
             # Write the image directly into ffmpeg pipe
             im = frame_next.get_pil_image()
+
             im.save(ffmpegpipe.stdin, format=pipe_format, quality=95)
+
 
         #######################################
         # Assign variables for next iteration #
@@ -150,6 +153,7 @@ def merge_loop(context: Context):
             f1 = background_frame_load.loaded_image
 
         frame_previous = frame_next
+        context.signal_merged_count = x
 
         # Ensure the file is loaded for background_frame_load. If we're on the last frame, simply ignore this section
         # Because the frame_count + 1 does not exist.

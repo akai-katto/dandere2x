@@ -1,6 +1,6 @@
 from fractions import Fraction
 
-from wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate
+from wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate, get_frame_count
 
 
 # A simple way to just have a class w/ the contents we need to operate dandere2x
@@ -14,6 +14,7 @@ class VideoSettings:
 
         self.ffprobe_dir = ffprobe_dir
         self.settings_json = get_video_info(self.ffprobe_dir, video_file)
+        self.frame_count = int(get_frame_count(self.ffprobe_dir, video_file))
 
         # todo: This entire class can be removed and simplified into the 'except' clause,
         # but having this try / except provides me a sense of security. Some file containers

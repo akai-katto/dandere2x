@@ -11,6 +11,9 @@ dandere2x:
         quality_minimum: 5 # quality of the frame compressor, 80 is a good number
         scale_factor: 2 # waifu2x scale factor, currently most only support 2 times, we recommend leaving it this way
 
+    min_disk_settings:
+        use_min_disk: True
+        max_frames_ahead: 20
 
     developer_settings:
 
