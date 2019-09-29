@@ -44,7 +44,7 @@ class MinDiskUsage:
 
         print("running inside min disk usage")
 
-        for x in range(1, self.frame_count):
+        for x in range(1, self.frame_count - 1):
 
             # wait for signal to get ahead of MinDiskUsage
             while x >= self.context.signal_merged_count:
