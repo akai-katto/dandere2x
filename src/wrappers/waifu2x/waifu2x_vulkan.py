@@ -7,6 +7,7 @@ import threading
 import logging
 import copy
 import os
+import time
 
 
 class Waifu2xVulkan(threading.Thread):
@@ -25,6 +26,7 @@ class Waifu2xVulkan(threading.Thread):
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
+        self.signal_upscale = True
 
         self.waifu2x_vulkan_upscale_frame = [self.waifu2x_ncnn_vulkan_file_path,
                                              "-i", "[input_file]",
@@ -67,6 +69,31 @@ class Waifu2xVulkan(threading.Thread):
         console_output.write(str(exec_command))
         subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()
+
+    def remove_once_upscaled(self):
+
+        # make a list of names that will eventually (past or future) be upscaled
+        list_of_names = []
+        for x in range(1, self.frame_count):
+            list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
+
+        for x in range(len(list_of_names)):
+
+            name = list_of_names[x]
+
+            residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
+            residual_upscaled_file = self.residual_upscaled_dir + name
+
+            while not file_exists(residual_upscaled_file):
+                time.sleep(.00001)
+
+            if os.path.exists(residual_file):
+                os.remove(residual_file)
+            else:
+                pass
+
+        self.signal_upscale = False
+
 
     def fix_names_all(self):
         """
@@ -151,49 +178,16 @@ class Waifu2xVulkan(threading.Thread):
         logger.info("waifu2x_vulkan session")
         logger.info(exec_command)
 
-        # make a list of names that will eventually (past or future) be upscaled
-        upscaled_names = []
-        for x in range(1, self.frame_count):
-            upscaled_names.append("output_" + get_lexicon_value(6, x) + ".png")
-
         fix_names_forever_thread = threading.Thread(target=self.fix_names_all)
         fix_names_forever_thread.start()
 
-        count_removed = 0
-
-        # remove from the list images that have already been upscaled
-        for name in upscaled_names[::-1]:
-            if os.path.isfile(self.residual_upscaled_dir + name):
-                upscaled_names.remove(name)
-                count_removed += 1
-
-        if count_removed:
-            logger.info("Already have " + str(count_removed) + " upscaled")
+        remove_when_upscaled_thread = threading.Thread(target=self.remove_once_upscaled)
+        remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
-        while upscaled_names:
-
-            logger.info("Frames remaining before batch: ")
-            logger.info(len(upscaled_names))
+        while self.signal_upscale:
 
             console_output.write(str(exec_command))
             subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
-
-            for name in upscaled_names[::-1]:
-                if os.path.exists(self.residual_upscaled_dir + name):
-
-                    residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
-
-                    if os.path.exists(residual_file):
-                        os.remove(residual_file)
-                    else:
-                        '''
-                        In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
-                        and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
-                        since 'residuals' never existed. 
-                        '''
-                        pass
-
-                    upscaled_names.remove(name)
 
         console_output.close()
