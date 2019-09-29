@@ -12,7 +12,7 @@ dandere2x:
         scale_factor: 2 # waifu2x scale factor, currently most only support 2 times, we recommend leaving it this way
 
     min_disk_settings:
-        use_min_disk: True
+        use_min_disk: False
         max_frames_ahead: 20
 
     developer_settings:

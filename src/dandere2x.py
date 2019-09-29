@@ -34,7 +34,6 @@ import time
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.frame_compressor import compress_frames
-from dandere2xlib.realtime_encoding import run_realtime_encoding
 from dandere2xlib.status import print_status
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
@@ -113,10 +112,6 @@ class Dandere2x:
         waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
 
         self.jobs['waifu2x_thread'] = waifu2x
-
-        if self.context.realtime_encoding_enabled:
-            self.jobs['realtime_encode_thread'] = threading.Thread(target=run_realtime_encoding,
-                                                                   args=(self.context, output_file), daemon=True)
 
         if self.context.use_min_disk:
             """
