@@ -23,8 +23,6 @@ class MinDiskUsage:
         Waits for signal_merged_count to change, then deletes the respective files before it.
         """
 
-        print("running inside min disk usage")
-
         for x in range(1, self.frame_count - 1):
 
             # wait for signal to get ahead of MinDiskUsage
