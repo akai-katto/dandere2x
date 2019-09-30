@@ -31,6 +31,7 @@ import sys
 import threading
 import time
 
+from context import Context
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.frame_compressor import compress_frames
@@ -96,7 +97,7 @@ class Dandere2x:
         # Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video
         # To make the settings valid somehow.
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
-            self.append_video_resize_filter()
+            self.append_video_resize_filter(self.context)
 
         self.jobs = {}
 
@@ -115,17 +116,14 @@ class Dandere2x:
             """
             Add min disk the series of threads to be run by the d2x program, and extract the initial set
             of "max_frames_ahead". 
+            
+            todo: We currently employ some work around where we apply the ffmpeg filters needed for dandere2x
+                  run into it's own video, so that progressive frame extraction can have the same filters. 
             """
 
-            # TODO
-            """
-            The current workaround for min_disk requires us to make a new video that applies the same filters
-            dandere2x would use to extract the frames. As it stands right now, I'm not sure how to apply
-            these same filters to an image.
-            """
-            noisey_video = self.context.workspace + "noisey.mkv"
-            create_video_from_extract_frames(self.context, noisey_video)
-            self.context.input_file = noisey_video
+            noisy_video = self.context.workspace + "noisy.mkv"
+            create_video_from_extract_frames(self.context, noisy_video)
+            self.context.input_file = noisy_video
 
             min_disk_usage = MinDiskUsage(self.context)
             min_disk_usage.extract_initial_frames()
@@ -152,16 +150,6 @@ class Dandere2x:
         ######################################
         #  THREADING / MULTIPROCESSING AREA  #
         ######################################
-
-        # This is where Dandere2x's core functions start.
-        # Each core function is divided into a series of threads and processes,
-        # All with their own segregated tasks and goals.
-        # Dandere2x starts all the threads, and lets it go from there.
-
-        # the daemon=True is for quitting the process when the main thread quits
-        # KeyboardInterrupt to be short
-
-        # daemon=True for them to close when this main thread closes
 
         # start and join the jobs
         for job in self.jobs:
@@ -198,7 +186,8 @@ class Dandere2x:
             print("no valid waifu2x selected")
             exit(1)
 
-    def append_video_resize_filter(self):
+    @staticmethod
+    def append_video_resize_filter(context: Context):
         """
         For ffmpeg, there's a video filter to resize a video to a given resolution.
         For dandere2x, we need a very specific set of video resolutions to work with.  This method applies that filter
@@ -206,16 +195,16 @@ class Dandere2x:
         """
 
         print("Forcing Resizing to match blocksize..")
-        width, height = get_a_valid_input_resolution(self.context.width, self.context.height, self.context.block_size)
+        width, height = get_a_valid_input_resolution(context.width, context.height, context.block_size)
 
         print("New width -> " + str(width))
         print("New height -> " + str(height))
 
-        self.context.width = width
-        self.context.height = height
+        context.width = width
+        context.height = height
 
-        self.context.config_json['ffmpeg']['video_to_frames']['output_options']['-vf'] \
-            .append("scale=" + str(self.context.width) + ":" + str(self.context.height))
+        context.config_json['ffmpeg']['video_to_frames']['output_options']['-vf'] \
+                            .append("scale=" + str(context.width) + ":" + str(context.height))
 
     def delete_workspace_files(self):
         """
