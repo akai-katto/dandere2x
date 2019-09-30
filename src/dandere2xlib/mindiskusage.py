@@ -1,5 +1,4 @@
 import os
-import subprocess
 import threading
 import time
 
@@ -9,6 +8,9 @@ from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractor
 
 
 class MinDiskUsage:
+    """
+    A class to facilitate the actions needed to operate min_disk_usage.
+    """
 
     def __init__(self, context: Context):
 
@@ -17,6 +19,9 @@ class MinDiskUsage:
         self.progressive_frame_extractor = ProgressiveFramesExtractorCV2(self.context)
 
     def run(self):
+        """
+        Waits for signal_merged_count to change, then deletes the respective files before it.
+        """
 
         print("running inside min disk usage")
 
@@ -28,7 +33,7 @@ class MinDiskUsage:
 
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
-            self.delete_used_files(x)
+            self.__delete_used_files(x)
 
     def extract_initial_frames(self):
         """
@@ -39,16 +44,9 @@ class MinDiskUsage:
         for x in range(max_frames_ahead):
             self.progressive_frame_extractor.next_frame()
 
-    def delete_used_files(self, remove_before):
+    def __delete_used_files(self, remove_before):
         """
-        Two main things:
-
-        Call next frame and remove the already used ones only
-        if the minimal-disk setting is enabled on the config
-
-        Delete the "already used" files (always index_to_remove behind)
-
-        This way we clean the workspace as we're moving on with the encode
+        Delete the files produced by dandere2x up to index_to_remove.
         """
 
         # load context
@@ -85,9 +83,13 @@ class MinDiskUsage:
         remove.append(upscaled_file_r)
 
         # remove
-        threading.Thread(target=self.remove_unused_list, args=(remove,), daemon=True).start()
+        threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True).start()
 
-    def remove_unused_list(self, files):
+    @staticmethod
+    def __delete_files_from_list(self, files):
+        """
+        Delete all the files in a given list
+        """
         for item in files:
             c = 0
             while True:
