@@ -134,6 +134,19 @@ ffmpeg:
             -vcodec: libx264
             -vf:
             - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+    pipe_video:
+        -y: true
+        output_options:
+            -loglevel: panic
+            -y: -f
+            image2pipe: True
+            -i: '-'
+            -vcodec: libx264
+            -preset: medium
+            -qscale: 5
+            -crf: 17
+            -vf:
+                - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
     migrating_tracks:
         output_options:
             -pix_fmt: null
