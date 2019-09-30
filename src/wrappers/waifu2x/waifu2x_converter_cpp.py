@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import threading
+import time
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists, rename_file
@@ -27,6 +28,7 @@ class Waifu2xConverterCpp(threading.Thread):
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
+        self.signal_upscale = True
 
         self.waifu2x_conv_upscale_frame = [self.waifu2x_converter_cpp_file_path,
                                            "-i", "[input_file]",
@@ -79,6 +81,32 @@ class Waifu2xConverterCpp(threading.Thread):
                 rename_file(self.residual_upscaled_dir + name,
                             self.residual_upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]',
                                                                       ''))
+
+    def remove_once_upscaled_then_stop(self):
+        self.__remove_once_upscaled()
+        self.signal_upscale = False
+
+    def __remove_once_upscaled(self):
+
+        # make a list of names that will eventually (past or future) be upscaled
+        list_of_names = []
+        for x in range(1, self.frame_count):
+            list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
+
+        for x in range(len(list_of_names)):
+
+            name = list_of_names[x]
+
+            residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
+            residual_upscaled_file = self.residual_upscaled_dir + name
+
+            while not file_exists(residual_upscaled_file):
+                time.sleep(.00001)
+
+            if os.path.exists(residual_file):
+                os.remove(residual_file)
+            else:
+                pass
 
     # This function is tricky. Essentially we do multiple things in one function
     # Because of 'gotchas'
@@ -149,38 +177,10 @@ class Waifu2xConverterCpp(threading.Thread):
         logger.info("waifu2xconv session")
         logger.info(exec_command)
 
-        # make a list of names that will eventually (past or future) be upscaled
-        names = []
-        for x in range(1, self.frame_count):
-            names.append("output_" + get_lexicon_value(6, x) + ".png")
-
-        count_removed = 0
-
-        # remove from the list images that have already been upscaled
-        for upscaled_names in names[::-1]:
-            if os.path.isfile(self.residual_upscaled_dir + upscaled_names):
-                names.remove(upscaled_names)
-                count_removed += 1
-
-        if count_removed:
-            logger.info("Already have " + str(count_removed) + " upscaled")
+        remove_when_upscaled_thread = threading.Thread(target=self.remove_once_upscaled_then_stop)
+        remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
-
-        while upscaled_names:
-            for name in upscaled_names[::-1]:
-                if os.path.exists(self.residual_upscaled_dir + name):
-
-                    residual_file = self.residual_images_dir + name
-
-                    if os.path.exists(residual_file):
-                        os.remove(residual_file)
-                    else:
-                        '''
-                        In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
-                        and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
-                        since 'residuals' never existed. 
-                        '''
-                        pass
-
-                    upscaled_names.remove(name)
+        while self.signal_upscale:
+            console_output.write(str(exec_command))
+            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)

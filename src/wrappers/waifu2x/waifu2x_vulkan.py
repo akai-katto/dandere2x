@@ -70,7 +70,11 @@ class Waifu2xVulkan(threading.Thread):
         subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()
 
-    def remove_once_upscaled(self):
+    def remove_once_upscaled_then_stop(self):
+        self.__remove_once_upscaled()
+        self.signal_upscale = False
+
+    def __remove_once_upscaled(self):
 
         # make a list of names that will eventually (past or future) be upscaled
         list_of_names = []
@@ -91,8 +95,6 @@ class Waifu2xVulkan(threading.Thread):
                 os.remove(residual_file)
             else:
                 pass
-
-        self.signal_upscale = False
 
     def fix_names_all(self):
         """
@@ -180,7 +182,7 @@ class Waifu2xVulkan(threading.Thread):
         fix_names_forever_thread = threading.Thread(target=self.fix_names_all)
         fix_names_forever_thread.start()
 
-        remove_when_upscaled_thread = threading.Thread(target=self.remove_once_upscaled)
+        remove_when_upscaled_thread = threading.Thread(target=self.remove_once_upscaled_then_stop)
         remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
