@@ -124,6 +124,9 @@ class Context:
         self.scale_factor = self.config_yaml['dandere2x']['usersettings']['scale_factor']
         self.input_file = self.config_yaml['dandere2x']['usersettings']['input_file']
         self.output_file = self.config_yaml['dandere2x']['usersettings']['output_file']
+        self.preserve_frames = self.config_yaml['dandere2x']['usersettings']['preserve_frames']
+
+        # derived
         self.output_extension = os.path.splitext(self.output_file)[1]
         print("output_extension is: " + self.output_extension)
 

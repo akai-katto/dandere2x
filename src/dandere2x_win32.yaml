@@ -5,7 +5,7 @@ dandere2x:
         output_file: ..\workspace\sectest.mp4 #the output ot the upscaled video file.
 
         waifu2x_type: vulkan # the waifu2x client to use, since this is the Windows config file, the supported one are: vulkan, caffe and converter_cpp
-    
+        preserve_frames: True
         block_size: 20 # the heart of dandere2x, the size of the blocks in pixels, optimally being a common divisor of both video widht and height
         denoise_level: 3 # waifu2x denoise level
         quality_minimum: 80 # quality of the frame compressor, 80 is a good number
@@ -14,6 +14,7 @@ dandere2x:
     min_disk_settings:
         use_min_disk: True
         max_frames_ahead: 20
+
     
     developer_settings:
 

@@ -92,6 +92,11 @@ def merge_loop(context: Context):
 
         pipe.save(frame_next)
 
+        if context.preserve_frames:
+            output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
+            background_frame_write = AsyncFrameWrite(frame_next, output_file)
+            background_frame_write.start()
+
         #######################################
         # Assign variables for next iteration #
         #######################################
