@@ -130,7 +130,9 @@ class Dandere2x:
             self.jobs['min_disk_thread'] = threading.Thread(target=min_disk_usage.run, daemon=True)
 
         elif not self.context.use_min_disk:
-            """ If we're not using min disk, extract the frames all at once using ffmpeg """
+            """
+            If we're not using min disk, extract the frames all at once using ffmpeg
+            """
             extract_frames(self.context, self.context.input_file)
 
         # Upscale the first file (the genesis file is treated different in Dandere2x)
@@ -138,8 +140,11 @@ class Dandere2x:
         waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
-        # Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
         if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
+            """ 
+            Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
+            """
+
             print("Could not upscale first file.. check logs file to see what's wrong")
             logging.info("Could not upscale first file.. check logs file to see what's wrong")
             logging.info("Exiting Dandere2x...")
@@ -151,17 +156,12 @@ class Dandere2x:
         #  THREADING / MULTIPROCESSING AREA  #
         ######################################
 
-        # start and join the jobs
         for job in self.jobs:
             self.jobs[job].start()
             logging.info("Starting new %s process" % job)
 
         for job in self.jobs:
-
             self.jobs[job].join()
-
-            if job == "merge_thread":  # close w2x
-                self.context.upscaler_running = False
 
             logging.info("%s process thread joined" % job)
 
