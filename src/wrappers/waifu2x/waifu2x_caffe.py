@@ -44,50 +44,6 @@ class Waifu2xCaffe(threading.Thread):
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
 
-    def upscale_file(self, input_file: str, output_file: str):
-
-        exec_command = copy.copy(self.waifu2x_caffe_upscale_frame)
-
-        # replace the exec command withthe files we're concerned with
-        for x in range(len(exec_command)):
-            if exec_command[x] == "[input_file]":
-                exec_command[x] = input_file
-
-            if exec_command[x] == "[output_file]":
-                exec_command[x] = output_file
-
-        print(exec_command)
-
-        console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
-        console_output.write(str(exec_command))
-        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
-
-    def remove_once_upscaled_then_stop(self):
-        self.__remove_once_upscaled()
-        self.signal_upscale = False
-
-    def __remove_once_upscaled(self):
-
-        # make a list of names that will eventually (past or future) be upscaled
-        list_of_names = []
-        for x in range(1, self.frame_count):
-            list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
-
-        for x in range(len(list_of_names)):
-
-            name = list_of_names[x]
-
-            residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
-            residual_upscaled_file = self.residual_upscaled_dir + name
-
-            while not file_exists(residual_upscaled_file):
-                time.sleep(.00001)
-
-            if os.path.exists(residual_file):
-                os.remove(residual_file)
-            else:
-                pass
-
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
     # Waifu2x call, various work arounds are in place to allow Dandere2x and Waifu2x to work in real time.
@@ -113,11 +69,57 @@ class Waifu2xCaffe(threading.Thread):
             if exec_command[x] == "[output_file]":
                 exec_command[x] = residual_upscaled_dir
 
-        remove_when_upscaled_thread = threading.Thread(target=self.remove_once_upscaled_then_stop)
+        remove_when_upscaled_thread = threading.Thread(target=self.__remove_once_upscaled_then_stop)
         remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
         while self.signal_upscale:
             console_output.write(str(exec_command))
             subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
+
+    def upscale_file(self, input_file: str, output_file: str):
+
+        exec_command = copy.copy(self.waifu2x_caffe_upscale_frame)
+
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = input_file
+
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = output_file
+
+        print(exec_command)
+
+        console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
+        console_output.write(str(exec_command))
+        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
+
+    def __remove_once_upscaled_then_stop(self):
+        self.__remove_once_upscaled()
+        self.signal_upscale = False
+
+    def __remove_once_upscaled(self):
+
+        # make a list of names that will eventually (past or future) be upscaled
+        list_of_names = []
+        for x in range(1, self.frame_count):
+            list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
+
+        for x in range(len(list_of_names)):
+
+            name = list_of_names[x]
+
+            residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
+            residual_upscaled_file = self.residual_upscaled_dir + name
+
+            while not file_exists(residual_upscaled_file):
+                time.sleep(.00001)
+
+            if os.path.exists(residual_file):
+                os.remove(residual_file)
+            else:
+                pass
+
+
 
