@@ -32,6 +32,7 @@ import threading
 import time
 
 from context import Context
+from dandere2xlib.status import print_status
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.frame_compressor import compress_frames
@@ -111,6 +112,8 @@ class Dandere2x:
         waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
 
         self.jobs['waifu2x_thread'] = waifu2x
+
+        self.jobs['status_thread'] = threading.Thread(target=print_status, args=([self.context]), daemon=True)
 
         if self.context.use_min_disk:
             """
