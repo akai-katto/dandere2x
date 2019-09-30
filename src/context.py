@@ -124,6 +124,8 @@ class Context:
         self.scale_factor = self.config_yaml['dandere2x']['usersettings']['scale_factor']
         self.input_file = self.config_yaml['dandere2x']['usersettings']['input_file']
         self.output_file = self.config_yaml['dandere2x']['usersettings']['output_file']
+        self.output_extension = os.path.splitext(self.output_file)[1]
+        print("output_extension is: " + self.output_extension)
 
         # Developer Settings
         self.quality_moving_ratio = self.config_yaml['dandere2x']['developer_settings']['quality_moving_ratio']
@@ -138,33 +140,7 @@ class Context:
         self.ffmpeg_pipe_encoding = self.config_yaml['dandere2x']['developer_settings']['ffmpeg_pipe_encoding']
         self.ffmpeg_pipe_encoding_type = self.config_yaml['dandere2x']['developer_settings'][
             'ffmpeg_pipe_encoding_type']
-        self.nosound_file = os.path.join(self.workspace, "nosound")  # missing an extension, will set it in a few
-
-        if not self.ffmpeg_pipe_encoding:
-            # Real Time Encoding, traditional way
-            self.realtime_encoding_enabled = self.config_yaml['dandere2x']['developer_settings']['realtime_encoding'][
-                'realtime_encoding_enabled']
-            self.realtime_encoding_delete_files = \
-            self.config_yaml['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_delete_files']
-            self.realtime_encoding_seconds_per_video = \
-                self.config_yaml['dandere2x']['developer_settings']['realtime_encoding'][
-                    'realtime_encoding_seconds_per_video']
-
-        else:
-
-            # disable traditional "RTE" because we're piping
-            self.realtime_encoding_enabled = False
-
-            # get the substring after the last dot in the output_file "asd/aert/asd.mkv" --> "mkv"
-            # but "important/rapgod" will default to rapgod.mp4 because we'll get
-            # pipe_ext equals to the string itself "important/rapgod" and that's not an format :P
-
-            supported_formats = [".mkv", ".mp4", ".avi"]
-
-            pipe_ext = "." + self.output_file.split(".")[-1]
-
-            # add the extension to nosound file
-            self.nosound_file += ".mp4" if not pipe_ext in supported_formats else pipe_ext
+        self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)  # missing an extension, will set it in a few
 
         ##################
         # Video Settings #
