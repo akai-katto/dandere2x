@@ -34,11 +34,11 @@ import time
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.frame_compressor import compress_frames
-from dandere2xlib.mindiskusage import MinDiskUsage, ffmpeg_filters_workaround
+from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video
+from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video, create_video_from_extract_frames
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
@@ -123,8 +123,9 @@ class Dandere2x:
             dandere2x would use to extract the frames. As it stands right now, I'm not sure how to apply
             these same filters to an image.
             """
-
-            self.context.input_file = ffmpeg_filters_workaround(self.context)
+            noisey_video = self.context.workspace + "noisey.mkv"
+            create_video_from_extract_frames(self.context, noisey_video)
+            self.context.input_file = noisey_video
 
             min_disk_usage = MinDiskUsage(self.context)
             min_disk_usage.extract_initial_frames()

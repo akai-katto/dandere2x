@@ -70,6 +70,33 @@ def extract_frames(context: Context, input_file: str):
     subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
 
 
+def create_video_from_extract_frames(context: Context, output_file: str):
+    """
+    Create a new video by applying the filters that d2x needs to work into it's own seperate video.
+    """
+    input_file = context.input_file
+    logger = logging.getLogger(__name__)
+
+    command = [context.ffmpeg_dir,
+                              "-hwaccel", context.hwaccel,
+                              "-i", input_file]
+
+    extract_frames_options = \
+        get_options_from_section(context.config_yaml["ffmpeg"]["video_to_frames"]['output_options'],
+                                 ffmpeg_command=True)
+
+    for element in extract_frames_options:
+        command.append(element)
+
+    command.extend([output_file])
+
+    logger.info("Applying filter to video...")
+
+    console_output = open(context.log_dir + "ffmpeg_create_video_from_extract_frame_filters.txt", "w")
+    console_output.write(str(command))
+    subprocess.call(command, shell=False, stderr=console_output, stdout=console_output)
+
+
 def concat_encoded_vids(context: Context, output_file: str):
     """
     Concatonate a video using 2) in this stackoverflow post.
