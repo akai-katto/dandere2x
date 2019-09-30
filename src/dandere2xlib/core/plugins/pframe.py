@@ -33,9 +33,8 @@ def pframe_image(context,
         # point to the same place. In merge.py we just need to load the previous frame into the current frame
         # to reach this optimization.
         if int(list_predictive[x * 4 + 0]) != int(list_predictive[x * 4 + 1]) \
-                                        and \
-           int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
-
+                and \
+                int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
             # load the vector
             vector = DisplacementVector(int(list_predictive[x * 4 + 0]),
                                         int(list_predictive[x * 4 + 1]),
@@ -50,7 +49,6 @@ def pframe_image(context,
                                   vector.y_1 * scale_factor)
 
     for x in range(int(len(list_residual) / 4)):
-
         # load every element in the list into a vector
         vector = DisplacementVector(int(list_residual[x * 4 + 0]),
                                     int(list_residual[x * 4 + 1]),

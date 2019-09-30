@@ -1,13 +1,13 @@
-from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from context import Context
-
+import copy
+import logging
+import os
 import subprocess
 import threading
-import logging
-import copy
-import os
 import time
+
+from context import Context
+from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xVulkan(threading.Thread):
@@ -93,7 +93,6 @@ class Waifu2xVulkan(threading.Thread):
                 pass
 
         self.signal_upscale = False
-
 
     def fix_names_all(self):
         """
@@ -186,7 +185,6 @@ class Waifu2xVulkan(threading.Thread):
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
         while self.signal_upscale:
-
             console_output.write(str(exec_command))
             subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 

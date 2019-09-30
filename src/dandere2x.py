@@ -34,7 +34,7 @@ import time
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.frame_compressor import compress_frames
-from dandere2xlib.status import print_status
+from dandere2xlib.mindiskusage import MinDiskUsage, ffmpeg_filters_workaround
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
@@ -43,7 +43,6 @@ from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
 from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
-from dandere2xlib.mindiskusage import MinDiskUsage, ffmpeg_filters_workaround
 
 
 class Dandere2x:
@@ -99,7 +98,6 @@ class Dandere2x:
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
             self.append_video_resize_filter()
 
-
         self.jobs = {}
 
         self.jobs['compress_frames_thread'] = threading.Thread(target=compress_frames, args=([self.context]),
@@ -119,7 +117,7 @@ class Dandere2x:
             of "max_frames_ahead". 
             """
 
-            #TODO
+            # TODO
             """
             The current workaround for min_disk requires us to make a new video that applies the same filters
             dandere2x would use to extract the frames. As it stands right now, I'm not sure how to apply
@@ -163,7 +161,6 @@ class Dandere2x:
         # KeyboardInterrupt to be short
 
         # daemon=True for them to close when this main thread closes
-
 
         # start and join the jobs
         for job in self.jobs:

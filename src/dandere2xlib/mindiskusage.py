@@ -1,11 +1,11 @@
-from context import Context
-from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
-import time
+import os
 import subprocess
 import threading
-import os
+import time
 
+from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
 
 
 # TODO
@@ -24,7 +24,7 @@ def ffmpeg_filters_workaround(context: Context):
 
     start = time.time()
 
-    subprocess.run([ context.ffmpeg_dir, '-i', original_video,
+    subprocess.run([context.ffmpeg_dir, '-i', original_video,
                     '-loglevel', 'panic',
                     '-threads', '4',
                     '-qscale:v:', '2',
@@ -35,6 +35,7 @@ def ffmpeg_filters_workaround(context: Context):
     context.input_file = noisy_video
 
     return context.input_file
+
 
 class MinDiskUsage:
 
@@ -130,5 +131,3 @@ class MinDiskUsage:
                 if c == 20:
                     break
                 time.sleep(0.1)
-
-

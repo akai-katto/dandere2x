@@ -9,8 +9,8 @@ Last Modified: April 2, 2019
 
 import logging
 import os
-import time
 import shutil
+import time
 from sys import platform
 
 
@@ -19,6 +19,7 @@ def get_operating_system():
         return 'linux'
     elif platform == "win32":
         return 'win32'
+
 
 # if the value in the key value pair exists, add it.
 # if the key is just 'true', only add the key
@@ -130,6 +131,7 @@ def rename_file(file1, file2):
 def get_lexicon_value(digits: int, val: int):
     return str(val).zfill(digits)
 
+
 # get frame count from a string input
 def get_seconds_from_time(time_frame: int):
     splitted = time_frame.split(":")
@@ -169,6 +171,7 @@ def create_directories(directories_list: list):
             print("Creation of the directory %s failed" % subdirectory)
         else:
             print("Successfully created the directory %s " % subdirectory)
+
 
 def delete_directories(directories_list: list):
     # create each directory

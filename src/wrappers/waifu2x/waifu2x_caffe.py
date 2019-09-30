@@ -1,12 +1,12 @@
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from context import Context
-
+import copy
+import logging
+import os
 import subprocess
 import threading
-import logging
-import copy
-import os
+
+from context import Context
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xCaffe(threading.Thread):
@@ -15,6 +15,7 @@ class Waifu2xCaffe(threading.Thread):
 
     Let me know if you have intentions to use this so I can update it.
     """
+
     def __init__(self, context: Context):
         self.frame_count = context.frame_count
         self.waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import subprocess
 import logging
-import os
+import subprocess
 
 from PIL import Image
+
 from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
@@ -74,7 +74,7 @@ def merge_loop(context: Context):
                                        'image2pipe', '-vcodec', vcodec, '-r', frame_rate,
                                        '-i', '-', '-vcodec', 'libx264', '-preset', 'medium',
                                        '-qscale', '5', '-crf', '17',
-                                       #'-vf', ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false',
+                                       # '-vf', ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false',
                                        '-r', frame_rate, nosound_file],
                                       stdin=subprocess.PIPE)
 
@@ -84,7 +84,6 @@ def merge_loop(context: Context):
 
         # best jpeg quality since we won't be saving up disk space
         im.save(ffmpegpipe.stdin, format=pipe_format, quality=100)
-
 
     # # #  # # #  # # #  # # #
 
@@ -140,7 +139,6 @@ def merge_loop(context: Context):
             im = frame_next.get_pil_image()
 
             im.save(ffmpegpipe.stdin, format=pipe_format, quality=95)
-
 
         #######################################
         # Assign variables for next iteration #

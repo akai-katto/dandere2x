@@ -1,12 +1,12 @@
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists, rename_file
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from context import Context
-
+import copy
+import logging
+import os
 import subprocess
 import threading
-import logging
-import copy
-import os
+
+from context import Context
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_either_file, file_exists, rename_file
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xConverterCpp(threading.Thread):
@@ -15,6 +15,7 @@ class Waifu2xConverterCpp(threading.Thread):
 
     Let me know if you have intentions to use this so I can update it.
     """
+
     def __init__(self, context: Context):
         # load context
         self.frame_count = context.frame_count
@@ -76,7 +77,8 @@ class Waifu2xConverterCpp(threading.Thread):
         for name in list_of_names:
             if '[NS-L3][x' + self.scale_factor + '.000000]' in name:
                 rename_file(self.residual_upscaled_dir + name,
-                            self.residual_upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]', ''))
+                            self.residual_upscaled_dir + name.replace('_[NS-L3][x' + self.scale_factor + '.000000]',
+                                                                      ''))
 
     # This function is tricky. Essentially we do multiple things in one function
     # Because of 'gotchas'

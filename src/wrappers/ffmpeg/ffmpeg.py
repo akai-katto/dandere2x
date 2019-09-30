@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import logging
 import subprocess
-import os
 
 from context import Context
 from dandere2xlib.utils.yaml_utils import get_options_from_section
@@ -70,6 +69,7 @@ def extract_frames(context: Context, input_file: str):
     console_output.write(str(extract_frames_command))
     subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
 
+
 def concat_encoded_vids(context: Context, output_file: str):
     """
     Concatonate a video using 2) in this stackoverflow post.
@@ -124,6 +124,7 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
     console_output = open(context.log_dir + "migrate_tracks_command.txt", "w")
     console_output.write(str(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
+
 
 def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
     """

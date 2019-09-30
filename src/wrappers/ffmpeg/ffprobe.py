@@ -97,8 +97,8 @@ def get_frame_rate(ffprobe_dir, input_video):
 
     return return_string
 
-def get_frame_count(ffprobe_dir, input_video):
 
+def get_frame_count(ffprobe_dir, input_video):
     # this execution command needs to be hard-coded
     # since video2x only strictly recignizes this one format
     execute = [

@@ -1,5 +1,6 @@
 import yaml
 
+
 # given a list like ["hi", "bye", "kyle"],
 # return a list in the shape "hi, bye, kyle"
 # This is because ffmpeg expects it in this format
