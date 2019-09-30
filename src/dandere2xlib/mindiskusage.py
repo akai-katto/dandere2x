@@ -84,7 +84,7 @@ class MinDiskUsage:
         threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True).start()
 
     @staticmethod
-    def __delete_files_from_list(self, files):
+    def __delete_files_from_list(files):
         """
         Delete all the files in a given list
         """
