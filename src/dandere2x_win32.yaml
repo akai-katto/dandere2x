@@ -3,12 +3,14 @@ dandere2x:
 
         input_file: ..\workspace\1second.mp4 # the input file to upscale if ran on raw_config drivers
         output_file: ..\workspace\sectest.mp4 #the output ot the upscaled video file.
+        input_folder: ..\workspace\multiple_videos\
+        output_folder: ..\workspace\multiple_videos_output\
 
         waifu2x_type: vulkan # the waifu2x client to use, since this is the Windows config file, the supported one are: vulkan, caffe and converter_cpp
-        preserve_frames: True
+        preserve_frames: false
         block_size: 20 # the heart of dandere2x, the size of the blocks in pixels, optimally being a common divisor of both video widht and height
         denoise_level: 3 # waifu2x denoise level
-        quality_minimum: 80 # quality of the frame compressor, 80 is a good number
+        quality_minimum: 2 # quality of the frame compressor, 80 is a good number
         scale_factor: 2 # waifu2x scale factor, currently most only support 2 times, we recommend leaving it this way
 
     min_disk_settings:

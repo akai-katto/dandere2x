@@ -3,6 +3,8 @@ dandere2x:
 
         input_file: ../workspace/yn_moving.mkv # the input file to upscale if ran on raw_config drivers
         output_file: ../workspace/vulkan_test.mkv #the output ot the upscaled video file.
+        input_folder: ../workspace/multiple_videos/
+        output_folder: ../workspace/multiple_videos_output/
 
         waifu2x_type: vulkan # the waifu2x client to use, since this is the Linux config file, the supported one are: vulkan, vulkan_legacy (snap), converter_cpp
 
