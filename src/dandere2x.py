@@ -40,7 +40,7 @@ from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video, create_video_from_extract_frames
+from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video, create_video_from_extract_frames, migrate_tracks
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
@@ -126,6 +126,8 @@ class Dandere2x:
 
             noisy_video = self.context.workspace + "noisy.mkv"
             create_video_from_extract_frames(self.context, noisy_video)
+            migrate_tracks(self.context, noisy_video, self.context.input_file, noisy_video)
+
             self.context.input_file = noisy_video
 
             min_disk_usage = MinDiskUsage(self.context)
