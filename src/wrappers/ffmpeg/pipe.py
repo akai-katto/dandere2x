@@ -10,9 +10,6 @@ import threading
 class Pipe():
 
     def __init__(self, context):
-
-        print("\n    WARNING: EXPERIMENTAL FFMPEG PIPING IS ENABLED\n")
-
         self.context = context
 
         # load variables from context
@@ -29,6 +26,7 @@ class Pipe():
         self.frame_count = self.context.frame_count
         self.extension_type = self.context.extension_type
         self.waifu2x_type = self.context.waifu2x_type
+        self.buffer_limit = 20
 
         # pipe stuff
         self.pipe_running = 1
@@ -40,29 +38,32 @@ class Pipe():
         self.output_file = self.context.output_file
         self.ffmpeg_dir = self.context.ffmpeg_dir
 
-        ffmpeg_pipe_command = [self.ffmpeg_dir, "-r", self.frame_rate]
+        self.ffmpeg_pipe_command = [self.ffmpeg_dir, "-r", self.frame_rate]
 
         options = get_options_from_section(context.config_yaml["ffmpeg"]["pipe_video"]['output_options'],
                                             ffmpeg_command=True)
 
         for item in options:
-            ffmpeg_pipe_command.append(item)
+            self.ffmpeg_pipe_command.append(item)
 
-        ffmpeg_pipe_command.append("-r")
-        ffmpeg_pipe_command.append(self.frame_rate)
-        ffmpeg_pipe_command.append(self.nosound_file)
+        self.ffmpeg_pipe_command.append("-r")
+        self.ffmpeg_pipe_command.append(self.frame_rate)
+        self.ffmpeg_pipe_command.append(self.nosound_file)
 
-        self.ffmpeg_pipe_subprocess = subprocess.Popen(ffmpeg_pipe_command, stdin=subprocess.PIPE)
+        self.ffmpeg_pipe_subprocess = None
+
+    def start_pipe_thread(self):
+        self.ffmpeg_pipe_subprocess = subprocess.Popen(self.ffmpeg_pipe_command, stdin=subprocess.PIPE)
         threading.Thread(target=self.__write_to_pipe).start()
 
-    def save(self, frame):  # '_' to ignore the "x" var needed in AsyncWrite on merge.py
-
-        # Write the image directly into ffmpeg pipe
-        # by adding image to image_to_pipe list
-        # kinda similar to AsyncFrameWrite
-
+    # todo: Implement this without a 'while true'
+    def save(self, frame):
+        """
+        Try to add an image to image_to_pipe buffer. If there's too many images in the buffer,
+        simply wait until the buffer clears.
+        """
         while True:
-            if len(self.images_to_pipe) < 10:  # buffer limit
+            if len(self.images_to_pipe) < self.buffer_limit:
                 self.images_to_pipe.append(frame)
                 break
             time.sleep(0.05)
@@ -72,19 +73,24 @@ class Pipe():
         self.ffmpeg_pipe_subprocess.wait()
 
     def __write_to_pipe(self):
+        """
+        Continually pop images from the buffer into the piped video while there are still images to be piped.
+        """
+
         while self.pipe_running:
             if len(self.images_to_pipe) > 0:
                 img = self.images_to_pipe.pop(0).get_pil_image()  # get the first image and remove it from list
                 img.save(self.ffmpeg_pipe_subprocess.stdin, format="jpeg", quality=100)
             time.sleep(0.05)
 
-        # close and finish audio file
-
         print("\n  Closing FFMPEG as encode finished...")
 
         self.__close()
 
     def wait_finish_stop_pipe(self):
+        """
+        Prevent another program from continuing until all the images have been written to the pipe.
+        """
 
         print("\n    Waiting for the ffmpeg-pipe-encode buffer list to end....")
 

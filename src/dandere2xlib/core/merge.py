@@ -46,7 +46,9 @@ def merge_loop(context: Context):
 
     # # #  # # #  # # #  # # #
 
+    # create the pipe that Dandere2x will use to store the outputs of the video.
     pipe = Pipe(context)
+    pipe.start_pipe_thread()
 
     # Load the genesis image + the first upscaled image.
     frame_previous = Frame()
