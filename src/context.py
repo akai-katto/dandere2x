@@ -137,12 +137,7 @@ class Context:
         self.debug = self.config_yaml['dandere2x']['developer_settings']['debug']
         self.dandere2x_cpp_dir = self.config_yaml['dandere2x']['developer_settings']['dandere2x_cpp_dir']
         self.correction_block_size = 2
-
-        # FFMPEG Pipe Encoding, NOTE: THIS OVERRIDES REALTIME ENCODING
-        self.ffmpeg_pipe_encoding = self.config_yaml['dandere2x']['developer_settings']['ffmpeg_pipe_encoding']
-        self.ffmpeg_pipe_encoding_type = self.config_yaml['dandere2x']['developer_settings'][
-            'ffmpeg_pipe_encoding_type']
-        self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)  # missing an extension, will set it in a few
+        self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
 
         ##################
         # Video Settings #

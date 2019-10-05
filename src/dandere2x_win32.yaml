@@ -53,26 +53,12 @@ dandere2x:
     developer_settings:
 
         debug: false
-
         workspace: ..\workspace\default\ # path to the workspace folder (lots of files will be written here)
         dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
         workspace_use_temp: false
-
-
-        # WARNING: FFMPEG PIPE ENCODING DEFAULTS TO AN MP4 FILE FOR NOW, DON'T FORGET TO SET THE OUTPUT_FILE TO AN MP4!!!
-
-        ffmpeg_pipe_encoding: true # this overrides realtime_encoding, pipes merged images to ffmpeg directly instead of saving them to disk. huge disk space saving here if enabled (talking about GBs of data even in small files)
-        ffmpeg_pipe_encoding_type: "jpeg" # this can be jpeg or png. jpeg is much faster (about 55%) at cost of a minimal larger final video, will default to jpeg if not set
-
-        realtime_encoding: # this option each seconds_per_video encodes the merged images into a small video file for the final merge afterwards
-            realtime_encoding_delete_files: false
-            realtime_encoding_enabled: true
-            realtime_encoding_seconds_per_video: 1
-
-
         gui_delete_workspace_after: false
         extension_type: .jpg
-        bleed: 1 
+        bleed: 1
         quality_moving_ratio: 0.55
         step_size: 8
 

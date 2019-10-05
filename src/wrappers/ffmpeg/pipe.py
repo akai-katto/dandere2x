@@ -24,7 +24,6 @@ class Pipe():
         self.correction_data_dir = self.context.correction_data_dir
         self.fade_data_dir = self.context.fade_data_dir
         self.frame_count = self.context.frame_count
-        self.extension_type = self.context.extension_type
         self.waifu2x_type = self.context.waifu2x_type
         self.buffer_limit = 20
 
