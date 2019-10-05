@@ -8,7 +8,7 @@ This is a variation of raw_config_gui_driver, but instead of only doing one file
 
 from dandere2xlib.utils.dandere2x_utils import get_operating_system
 from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
-from wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2x_Upscale_Folder
+from wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
 
 from context import Context
 import time
@@ -26,7 +26,7 @@ def main():
     with open(configfile, "r") as read_file:
         config = yaml.safe_load(read_file)
 
-    upscale_folder = Dandere2x_Upscale_Folder(config)
+    upscale_folder = Dandere2xUpscaleFolder(config)
     upscale_folder.start()
 
     print("\n Total runtime duration:", time.time() - start)
