@@ -1,13 +1,15 @@
-from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
-from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
-import os
-import yaml
-import glob
-import time
 import copy
+import glob
+import os
 
-class Dandere2x_Upscale_Folder:
+from context import Context
+from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
+
+
+class Dandere2xUpscaleFolder:
+    """
+    A wrapper that wraps around dandere2_gui_wrapper that upscales an entire folder.
+    """
 
     def __init__(self, config_yaml):
         self.config_yaml = config_yaml
@@ -24,18 +26,15 @@ class Dandere2x_Upscale_Folder:
             files_in_folder.append(os.path.basename(file))
 
         for x in range(len(files_in_folder)):
-
-            iteration_file = copy.copy(self.config_yaml)
+            iteration_yaml = copy.copy(self.config_yaml)
 
             file_name = os.path.join(self.input_folder, files_in_folder[x])
             output_name = os.path.join(self.output_folder, "upscaled_" + files_in_folder[x])
 
-            iteration_file['dandere2x']['usersettings']['input_file'] = file_name
-            iteration_file['dandere2x']['usersettings']['output_file'] = output_name
-            iteration_file['dandere2x']['developer_settings']['workspace'] = self.workspace + str(x) + os.path.sep
+            # change the yaml to contain the data for this iteration of dandere2x
+            iteration_yaml['dandere2x']['usersettings']['input_file'] = file_name
+            iteration_yaml['dandere2x']['usersettings']['output_file'] = output_name
+            iteration_yaml['dandere2x']['developer_settings']['workspace'] = self.workspace + str(x) + os.path.sep
 
-            print("iteration file is ")
-            print(iteration_file)
-
-            d2x = Dandere2x_Gui_Wrapper(iteration_file)
+            d2x = Dandere2x_Gui_Wrapper(iteration_yaml)
             d2x.start()
