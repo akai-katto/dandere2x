@@ -127,11 +127,7 @@ class Context:
         self.preserve_frames = self.config_yaml['dandere2x']['usersettings']['preserve_frames']
         self.input_folder = self.config_yaml['dandere2x']['usersettings']['input_folder']
         self.output_folder = self.config_yaml['dandere2x']['usersettings']['output_folder']
-
-
-        # derived
         self.output_extension = os.path.splitext(self.output_file)[1]
-        print("output_extension is: " + self.output_extension)
 
         # Developer Settings
         self.quality_moving_ratio = self.config_yaml['dandere2x']['developer_settings']['quality_moving_ratio']
