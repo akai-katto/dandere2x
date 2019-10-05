@@ -68,6 +68,16 @@ class Pipe():
                 break
             time.sleep(0.05)
 
+    def wait_finish_stop_pipe(self):
+        """
+        Prevent another program from continuing until all the images have been written to the pipe.
+        """
+
+        print("\n    Waiting for the ffmpeg-pipe-encode buffer list to end....")
+
+        while self.images_to_pipe:
+            time.sleep(0.05)
+
     def __close(self):
         self.ffmpeg_pipe_subprocess.stdin.close()
         self.ffmpeg_pipe_subprocess.wait()
@@ -86,14 +96,4 @@ class Pipe():
         print("\n  Closing FFMPEG as encode finished...")
 
         self.__close()
-
-    def wait_finish_stop_pipe(self):
-        """
-        Prevent another program from continuing until all the images have been written to the pipe.
-        """
-
-        print("\n    Waiting for the ffmpeg-pipe-encode buffer list to end....")
-
-        while self.images_to_pipe:
-            time.sleep(0.05)
 

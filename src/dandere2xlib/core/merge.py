@@ -16,6 +16,7 @@ from wrappers.frame.frame import Frame
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 from wrappers.ffmpeg.pipe import Pipe
 
+
 def merge_loop(context: Context):
     """
     Call the 'make_merge_image' method for every image that needs to be upscaled.
@@ -117,13 +118,13 @@ def merge_loop(context: Context):
 
     pipe.wait_finish_stop_pipe()
 
-    print("  Migrating audio tracks from the original video..")
+    logger.info("Migrating audio tracks from the original video..")
 
     # add the original file audio to the nosound file
     migrate_tracks(context, context.nosound_file,
                    context.input_file, context.output_file)
 
-    print("  Finished migrating tracks.")
+    logger.info("Finished migrating tracks.")
 
 
 def make_merge_image(context: Context, frame_residual: Frame, frame_previous: Frame,
@@ -156,8 +157,8 @@ def make_merge_image(context: Context, frame_residual: Frame, frame_previous: Fr
         out_image.copy_image(frame_residual)
         return out_image
 
-    # by copying the image first as the first step, all the predictive elements like
-    # (0,0) -> (0,0) are also coppied
+    # by copying the image first as the first step, all the predictive
+    # elements of the form (x,y) -> (x,y) are also copied
     out_image.copy_image(frame_previous)
 
     # run the image through the same plugins IN ORDER it was ran in d2x_cpp
