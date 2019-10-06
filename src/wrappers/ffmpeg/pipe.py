@@ -9,7 +9,7 @@ import threading
 
 class Pipe():
 
-    def __init__(self, context):
+    def __init__(self, context, output_no_sound: str):
         self.context = context
 
         # load variables from context
@@ -31,7 +31,7 @@ class Pipe():
         self.pipe_running = 1
         self.images_to_pipe = []
 
-        self.nosound_file = self.context.nosound_file
+        self.nosound_file = output_no_sound
         self.frame_rate = str(self.context.frame_rate)
         self.input_file = self.context.input_file
         self.output_file = self.context.output_file

@@ -43,12 +43,13 @@ def merge_loop(context: Context):
     fade_data_dir = context.fade_data_dir
     frame_count = context.frame_count
     extension_type = context.extension_type
+    nosound_file = context.nosound_file
     logger = logging.getLogger(__name__)
 
     # # #  # # #  # # #  # # #
 
     # create the pipe that Dandere2x will use to store the outputs of the video.
-    pipe = Pipe(context)
+    pipe = Pipe(context, nosound_file)
     pipe.start_pipe_thread()
 
     # Load the genesis image + the first upscaled image.
