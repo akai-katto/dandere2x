@@ -28,7 +28,7 @@ class Pipe():
         self.buffer_limit = 20
 
         # pipe stuff
-        self.pipe_running = 1
+        self.pipe_running = True
         self.images_to_pipe = []
 
         self.nosound_file = output_no_sound
@@ -74,8 +74,10 @@ class Pipe():
 
         print("\n    Waiting for the ffmpeg-pipe-encode buffer list to end....")
 
-        while self.images_to_pipe:
+        while len(self.images_to_pipe) > 0:
             time.sleep(0.05)
+
+        self.pipe_running = False
 
     def __close(self):
         self.ffmpeg_pipe_subprocess.stdin.close()
@@ -95,4 +97,5 @@ class Pipe():
         print("\n  Closing FFMPEG as encode finished...")
 
         self.__close()
+
 

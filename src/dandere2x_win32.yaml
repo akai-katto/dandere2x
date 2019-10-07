@@ -26,7 +26,7 @@ dandere2x:
 #                        converter_cpp: [1,2,3,4]
 
         input_file: ..\workspace\1second.mp4
-        output_file: ..\workspace\sectest.mp4
+        output_file: ..\workspace\1second_output.mp4
         input_folder: ..\workspace\multiple_videos\
         output_folder: ..\workspace\multiple_videos_output\
 

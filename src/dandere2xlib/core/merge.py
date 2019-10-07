@@ -9,7 +9,7 @@ from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file, wait_on_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file, wait_on_file, file_exists
 from wrappers.ffmpeg.ffmpeg import migrate_tracks
 from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 from wrappers.frame.frame import Frame
@@ -121,9 +121,10 @@ def merge_loop(context: Context):
 
     logger.info("Migrating audio tracks from the original video..")
 
-    # add the original file audio to the nosound file
-    migrate_tracks(context, context.nosound_file,
-                   context.input_file, context.output_file)
+    while not file_exists(context.output_file):
+        # add the original file audio to the nosound file
+        migrate_tracks(context, context.nosound_file,
+                       context.input_file, context.output_file)
 
     logger.info("Finished migrating tracks.")
 
