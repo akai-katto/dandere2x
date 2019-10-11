@@ -123,7 +123,7 @@ class AppWindow(QMainWindow):
                                                + "[s" + str(self.scale_factor) + "]"
                                                + "[n" + str(self.noise_level) + "]"
                                                + "[b" + str(self.block_size) + "]"
-                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
+                                               + "[q" + str(self.image_quality) + "]" + ".mp4"))
 
         self.set_output_file_name()
 
