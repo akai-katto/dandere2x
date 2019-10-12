@@ -24,7 +24,13 @@ class Dandere2x_Gui_Wrapper:
 
         if dir_exists(self.context.workspace):
             print("Deleted Folder")
-            shutil.rmtree(self.context.workspace)
+
+            # This is a recurring bug that seems to be popping up on other people's operating systems.
+            # I'm unsure if this will fix it, but it could provide a solution for people who can't even get d2x to work.
+            try:
+                shutil.rmtree(self.context.workspace)
+            except PermissionError:
+                print("Trying to delete workspace via RM tree threw PermissionError - Dandere2x may not work.")
 
         wait_on_delete_dir(self.context.workspace)
         try:
