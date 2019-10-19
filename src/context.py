@@ -169,7 +169,7 @@ class Context:
         # load the needed video settings
         self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
 
-        self.frame_rate = math.ceil(self.video_settings.frame_rate)
+        self.frame_rate = self.video_settings.frame_rate
         self.width, self.height = self.video_settings.width, self.video_settings.height
 
         # self.frame_count = ffmpeg.count(frames)
