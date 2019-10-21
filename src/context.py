@@ -154,9 +154,13 @@ class Context:
         #####################
         # MIN DISK SETTINGS #
         #####################
+        # - Side Note, sound_file is a work around for the time being, since the advent of min disk we need to use
+        #   noisey.mkv and have that be the primarly used video we need to refer back to the original
+        #   video file in order for audio track migrations to work properly.
 
         self.use_min_disk = self.config_yaml['dandere2x']['min_disk_settings']['use_min_disk']
         self.max_frames_ahead = self.config_yaml['dandere2x']['min_disk_settings']['max_frames_ahead']
+        self.sound_file = self.config_yaml['dandere2x']['usersettings']['input_file']
 
         ####################
         # Signal Variables #

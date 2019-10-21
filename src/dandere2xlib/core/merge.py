@@ -124,7 +124,7 @@ def merge_loop(context: Context):
     while not file_exists(context.output_file):
         # add the original file audio to the nosound file
         migrate_tracks(context, context.nosound_file,
-                       context.input_file, context.output_file)
+                       context.sound_file, context.output_file)
 
     logger.info("Finished migrating tracks.")
 
