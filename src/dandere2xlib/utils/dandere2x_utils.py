@@ -111,6 +111,10 @@ def file_exists(file_string: str):
     logger = logging.getLogger(__name__)
     return os.path.isfile(file_string)
 
+# many times a file may not exist yet, so just have this function
+# wait if it does not.
+def file_is_empty(file_string: str):
+    return os.path.getsize(file_string) == 0
 
 def dir_exists(file_string: str):
     logger = logging.getLogger(__name__)

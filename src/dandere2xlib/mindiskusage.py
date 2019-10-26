@@ -4,8 +4,9 @@ import time
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
-
+#from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
+from wrappers.ffmpeg.progressive_frame_extractor_ffmpeg import ProgressiveFramesExtractorFFMPEG
+import logging
 
 class MinDiskUsage:
     """
@@ -15,16 +16,17 @@ class MinDiskUsage:
     def __init__(self, context: Context):
 
         self.context = context
+        self.max_frames_ahead = self.context.max_frames_ahead
         self.frame_count = context.frame_count
-        self.progressive_frame_extractor = ProgressiveFramesExtractorCV2(self.context)
+        self.progressive_frame_extractor = ProgressiveFramesExtractorFFMPEG(self.context, self.context.input_file)
 
     def run(self):
         """
         Waits for signal_merged_count to change, then deletes the respective files before it.
         """
-
-        for x in range(1, self.frame_count - 1):
-
+        logger = logging.getLogger(__name__)
+        for x in range(1, self.frame_count - self.context.max_frames_ahead + 1):
+            logger.info("on frame x: " + str(x))
             # wait for signal to get ahead of MinDiskUsage
             while x >= self.context.signal_merged_count:
                 time.sleep(.00001)
@@ -32,6 +34,7 @@ class MinDiskUsage:
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
             self.__delete_used_files(x)
+
 
     def extract_initial_frames(self):
         """

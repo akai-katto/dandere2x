@@ -118,17 +118,8 @@ class Dandere2x:
         if self.context.use_min_disk:
             """
             Add min disk the series of threads to be run by the d2x program, and extract the initial set
-            of "max_frames_ahead". 
-            
-            todo: We currently employ some work around where we apply the ffmpeg filters needed for dandere2x
-                  run into it's own video, so that progressive frame extraction can have the same filters. 
+            of "max_frames_ahead" to start the frame buffer. 
             """
-
-            noisy_video = self.context.workspace + "noisy.mkv"
-            create_video_from_extract_frames(self.context, noisy_video)
-            migrate_tracks(self.context, noisy_video, self.context.input_file, noisy_video)
-
-            self.context.input_file = noisy_video
 
             min_disk_usage = MinDiskUsage(self.context)
             min_disk_usage.extract_initial_frames()
