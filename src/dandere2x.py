@@ -78,19 +78,21 @@ class Dandere2x:
           (residuals, merging, waifu2x, dandere2xcpp, realtime-encoding)
         """
 
-        # load context
-        output_file = self.context.output_file
-
         ############
         # PRE REQS #
         ############
 
-        # The first thing to do is create the dirs we will need during runtime
+        # Step 0 Setup: We need the directory to be made before we do anything (then the log file after).
         create_directories(self.context.directories)
         self.context.set_logger()
 
-        # If the user wishes to trim the video, trim the video, then rename the file_dir to point to the trimmed video
         if self.context.user_trim_video:
+            """
+            If the user wishes to trim the video, trim the video, then change the needed variables
+            for this to work. 
+        
+            I'm considering removing due to clutter / redundancy. 
+            """
             trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
             trim_video(self.context, trimed_video)
             self.context.input_file = trimed_video
@@ -102,6 +104,9 @@ class Dandere2x:
             """
             append_video_resize_filter(self.context)
 
+        # Create a series of 'job' threads to be ran mutli-threaded during runtime. Each thread
+        # has it's own unique and modular function.
+
         self.jobs = {}
 
         self.jobs['compress_frames_thread'] = threading.Thread(target=compress_frames, args=([self.context]),
@@ -109,13 +114,13 @@ class Dandere2x:
         self.jobs['dandere2xcpp_thread'] = Dandere2xCppWrapper(self.context)
         self.jobs['merge_thread'] = threading.Thread(target=merge_loop, args=([self.context]),
                                                      daemon=True)
-        self.jobs['residual_thread'] = threading.Thread(target=residual_loop, args=([self.context]), daemon=True)
+        self.jobs['residual_thread'] = threading.Thread(target=residual_loop, args=([self.context]),
+                                                        daemon=True)
 
-        waifu2x = self.get_waifu2x_class(self.context.waifu2x_type)
-
+        waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
         self.jobs['waifu2x_thread'] = waifu2x
-
-        self.jobs['status_thread'] = threading.Thread(target=print_status, args=([self.context]), daemon=True)
+        self.jobs['status_thread'] = threading.Thread(target=print_status, args=([self.context]),
+                                                      daemon=True)
 
         if self.context.use_min_disk:
             """
@@ -125,7 +130,8 @@ class Dandere2x:
 
             min_disk_usage = MinDiskUsage(self.context)
             min_disk_usage.extract_initial_frames()
-            self.jobs['min_disk_thread'] = threading.Thread(target=min_disk_usage.run, daemon=True)
+            self.jobs['min_disk_thread'] = threading.Thread(target=min_disk_usage.run,
+                                                            daemon=True)
 
         elif not self.context.use_min_disk:
             """
@@ -134,7 +140,9 @@ class Dandere2x:
             extract_frames(self.context, self.context.input_file)
 
         # Upscale the first file (the genesis file is treated different in Dandere2x)
-        one_frame_time = time.time()  # This timer prints out how long it takes to upscale one frame
+        # 'one_frame_time' timer prints out how long it takes to upscale one frame
+
+        one_frame_time = time.time()
         waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
                              output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
@@ -165,7 +173,7 @@ class Dandere2x:
 
         self.context.logger.info("All threaded processes have finished")
 
-    def get_waifu2x_class(self, name: str):
+    def _get_waifu2x_class(self, name: str):
 
         if name == "caffe":
             return Waifu2xCaffe(self.context)
