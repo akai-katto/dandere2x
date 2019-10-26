@@ -8,6 +8,10 @@ import threading
 
 
 class Pipe():
+    """
+    The pipe class allows images (Frame.py) to be processed into a video directly. It does this by "piping"
+    images to ffmpeg.
+    """
 
     def __init__(self, context, output_no_sound: str):
         self.context = context
@@ -25,9 +29,9 @@ class Pipe():
         self.fade_data_dir = self.context.fade_data_dir
         self.frame_count = self.context.frame_count
         self.waifu2x_type = self.context.waifu2x_type
-        self.buffer_limit = 20
 
-        # pipe stuff
+        # How many images to have maximum in a buffer at a given time.
+        self.buffer_limit = 20
         self.pipe_running = True
         self.images_to_pipe = []
 
@@ -37,6 +41,7 @@ class Pipe():
         self.output_file = self.context.output_file
         self.ffmpeg_dir = self.context.ffmpeg_dir
 
+        # Create the piping command
         self.ffmpeg_pipe_command = [self.ffmpeg_dir, "-r", self.frame_rate]
 
         options = get_options_from_section(context.config_yaml["ffmpeg"]["pipe_video"]['output_options'],
