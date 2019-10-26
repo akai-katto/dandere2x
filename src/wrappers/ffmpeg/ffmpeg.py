@@ -70,47 +70,6 @@ def extract_frames(context: Context, input_file: str):
     subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
 
 
-def extract_frames_wait_every_5(context: Context, input_file: str):
-    """
-    Extract frames from a video using ffmpeg.
-    """
-    input_frames_dir = context.input_frames_dir
-    extension_type = context.extension_type
-    output_file = input_frames_dir + "frame%01d" + extension_type
-    logger = logging.getLogger(__name__)
-    frame_rate = context.frame_rate
-
-    extract_frames_command = [context.ffmpeg_dir,
-                              "-hwaccel", context.hwaccel,
-                              "-i", input_file]
-
-    extract_frames_options = \
-        get_options_from_section(context.config_yaml["ffmpeg"]["video_to_frames"]['output_options'],
-                                 ffmpeg_command=True)
-
-    for element in extract_frames_options:
-        extract_frames_command.append(element)
-
-    extract_frames_command.append("-r")
-    extract_frames_command.append(str(frame_rate))
-
-    extract_frames_command.extend([output_file])
-
-    logger.info("extracting frames")
-
-    console_output = open(context.log_dir + "ffmpeg_extract_frames_console.txt", "w")
-    console_output.write(str(extract_frames_command))
-    P = subprocess.Popen(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
-
-    import time, os, signal
-    while True:
-        time.sleep(.2)
-        os.kill(P.pid, signal.SIGSTOP)
-        time.sleep(5)
-        print("doing something")
-        os.kill(P.pid, signal.SIGCONT)
-
-
 def create_video_from_extract_frames(context: Context, output_file: str):
     """
     Create a new video by applying the filters that d2x needs to work into it's own seperate video.
