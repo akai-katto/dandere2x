@@ -40,7 +40,7 @@ from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video, create_video_from_extract_frames, migrate_tracks
+from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video, append_video_resize_filter
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
@@ -95,10 +95,12 @@ class Dandere2x:
             trim_video(self.context, trimed_video)
             self.context.input_file = trimed_video
 
-        # Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video
-        # To make the settings valid somehow.
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
-            self.append_video_resize_filter(self.context)
+            """
+            Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video
+            to make the settings valid somehow by re-adjusting the resolution. 
+            """
+            append_video_resize_filter(self.context)
 
         self.jobs = {}
 
@@ -182,25 +184,6 @@ class Dandere2x:
             print("no valid waifu2x selected")
             exit(1)
 
-    @staticmethod
-    def append_video_resize_filter(context: Context):
-        """
-        For ffmpeg, there's a video filter to resize a video to a given resolution.
-        For dandere2x, we need a very specific set of video resolutions to work with.  This method applies that filter
-        to the video in order for it to work correctly.
-        """
-
-        print("Forcing Resizing to match blocksize..")
-        width, height = get_a_valid_input_resolution(context.width, context.height, context.block_size)
-
-        print("New width -> " + str(width))
-        print("New height -> " + str(height))
-
-        context.width = width
-        context.height = height
-
-        context.config_yaml['ffmpeg']['video_to_frames']['output_options']['-vf'] \
-                            .append("scale=" + str(context.width) + ":" + str(context.height))
 
     def delete_workspace_files(self):
         """

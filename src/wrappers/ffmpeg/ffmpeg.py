@@ -5,6 +5,7 @@ import subprocess
 
 from context import Context
 from dandere2xlib.utils.yaml_utils import get_options_from_section
+from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
 
 
 def trim_video(context: Context, output_file: str):
@@ -96,6 +97,25 @@ def create_video_from_extract_frames(context: Context, output_file: str):
     console_output.write(str(command))
     subprocess.call(command, shell=False, stderr=console_output, stdout=console_output)
 
+@staticmethod
+def append_video_resize_filter(context: Context):
+    """
+    For ffmpeg, there's a video filter to resize a video to a given resolution.
+    For dandere2x, we need a very specific set of video resolutions to work with.  This method applies that filter
+    to the video in order for it to work correctly.
+    """
+
+    print("Forcing Resizing to match blocksize..")
+    width, height = get_a_valid_input_resolution(context.width, context.height, context.block_size)
+
+    print("New width -> " + str(width))
+    print("New height -> " + str(height))
+
+    context.width = width
+    context.height = height
+
+    context.config_yaml['ffmpeg']['video_to_frames']['output_options']['-vf'] \
+                       .append("scale=" + str(context.width) + ":" + str(context.height))
 
 def concat_encoded_vids(context: Context, output_file: str):
     """
