@@ -3,8 +3,7 @@ import os
 import signal
 import subprocess
 import time
-
-import cv2
+import psutil
 
 from dandere2xlib.utils.dandere2x_utils import file_exists, file_is_empty
 from dandere2xlib.utils.yaml_utils import get_options_from_section
@@ -18,7 +17,6 @@ class ProgressiveFramesExtractorFFMPEG:
     """
 
     def __init__(self, context, input_file):
-        self.cap = cv2.VideoCapture(context.input_file)
         self.input_frames_dir = context.input_frames_dir
         self.count = 1
         self.input_frames_dir = context.input_frames_dir
@@ -49,6 +47,8 @@ class ProgressiveFramesExtractorFFMPEG:
         console_output = open(context.log_dir + "ffmpeg_extract_frames_console.txt", "w")
         console_output.write(str(extract_frames_command))
         self.P = subprocess.Popen(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
+        self.pause_resume = psutil.Process(self.P.pid)
+        self.pause_resume.suspend()
 
     def next_frame(self):
         """
@@ -62,7 +62,7 @@ class ProgressiveFramesExtractorFFMPEG:
             return
 
         # Resume the thread in order to produce a new frame.
-        os.kill(self.P.pid, signal.SIGCONT)
+        self.pause_resume.resume()
 
         # Although the file may exist, there are niche conditions in which the file on disk is
         # not processable. Make sure the image is proccessible before killing the signal.
@@ -78,6 +78,6 @@ class ProgressiveFramesExtractorFFMPEG:
         f.load_from_string_wait(self.input_frames_dir + "frame" + str(self.count) + self.extension_type)
 
         # Pause the thread.
-        os.kill(self.P.pid, signal.SIGSTOP)
+        self.pause_resume.suspend()
 
         self.count += 1
