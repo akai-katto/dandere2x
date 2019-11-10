@@ -10,7 +10,7 @@ import threading
 class Pipe():
     """
     The pipe class allows images (Frame.py) to be processed into a video directly. It does this by "piping"
-    images to ffmpeg.
+    images to ffmpeg, thus removing the need for storing the processed images onto the disk.
     """
 
     def __init__(self, context, output_no_sound: str):
