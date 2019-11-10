@@ -19,17 +19,20 @@ from wrappers.ffmpeg.pipe import Pipe
 
 def merge_loop(context: Context):
     """
-    Call the 'make_merge_image' method for every image that needs to be upscaled.
-
-    This method is sort of the driver for that, and has tasks needed to keep merging running smoothly.
-
-    This method became a bit messy due to optimization-hunting, but the most important calls of the loop can be read in
-    the 'Loop-iteration Core' area.
+    Description:
+        - This class is the driver for merging all the files that need to be merged together.
+          Essentially, it calls the 'make_merge_image' method for every image that needs to be upscaled.
+        - Other tasks are to ensure the files exist, async writing for optimizations, as well
+          as signalling to other parts of Dandere2x we've finished upscaling.
 
     Method Tasks:
 
         - Read / Write files that are used by merge asynchronously.
         - Load the text files containing the vectors needed for 'make_merge_image'
+        - Create upscaled images, and sends them to the FFMPEG pipe.
+        - Signal to the other parts of dandere2x what frame we've just upscaled through the
+          'context.signal_merged_count' variable.
+
 
     """
 
@@ -48,7 +51,8 @@ def merge_loop(context: Context):
 
     # # #  # # #  # # #  # # #
 
-    # create the pipe that Dandere2x will use to store the outputs of the video.
+    # Create the ffmpeg pipe that Dandere2x will be the output video (minus the sound, since that needs
+    # to get migrated separately).
     pipe = Pipe(context, nosound_file)
     pipe.start_pipe_thread()
 
@@ -70,11 +74,11 @@ def merge_loop(context: Context):
         # Loop-iteration pre-requirements #
         ###################################
 
-        # Check if we're at the last image
+        # Check if we're at the last image, which affects the behaviour of the loop.
         if x == frame_count - 1:
             last_frame = True
 
-        # load the next image ahead of time.
+        # Pre-load the next iteration of the loop image ahead of time, if we're not on the last frame.
         if not last_frame:
             background_frame_load = AsyncFrameRead(upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
             background_frame_load.start()
@@ -85,17 +89,25 @@ def merge_loop(context: Context):
 
         logger.info("Upscaling frame " + str(x))
 
+        # Load the needed vectors to create the merged image.
         prediction_data_list = get_list_from_file(pframe_data_dir + "pframe_" + str(x) + ".txt")
         residual_data_list = get_list_from_file(residual_data_dir + "residual_" + str(x) + ".txt")
         correction_data_list = get_list_from_file(correction_data_dir + "correction_" + str(x) + ".txt")
         fade_data_list = get_list_from_file(fade_data_dir + "fade_" + str(x) + ".txt")
 
+        # Create the actual image itself.
         frame_next = make_merge_image(context, f1, frame_previous,
                                       prediction_data_list, residual_data_list,
                                       correction_data_list, fade_data_list)
 
+        ###############
+        # Saving Area #
+        ###############
+
+        # Directly write the image to the ffmpeg pipe line.
         pipe.save(frame_next)
 
+        # Manually write the image if we're preserving frames (this is for enthusiasts / debugging).
         if context.preserve_frames:
             output_file = workspace + "merged/merged_" + str(x + 1) + extension_type
             background_frame_write = AsyncFrameWrite(frame_next, output_file)
@@ -105,22 +117,26 @@ def merge_loop(context: Context):
         # Assign variables for next iteration #
         #######################################
 
+        # last_frame + 1 does not exist, so don't load.
         if not last_frame:
+            # We need to wait until the next upscaled image exists before we move on.
             while not background_frame_load.load_complete:
                 wait_on_file(upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
 
             f1 = background_frame_load.loaded_image
 
         frame_previous = frame_next
-        context.signal_merged_count = x
 
-        # Ensure the file is loaded for background_frame_load. If we're on the last frame, simply ignore this section
-        # Because the frame_count + 1 does not exist.
+        # Signal to the rest of the dandere2x process we've finished upscaling frame 'x'.
+        context.signal_merged_count = x
 
     pipe.wait_finish_stop_pipe()
 
     logger.info("Migrating audio tracks from the original video..")
 
+    # todo:
+    # There's a bug currently where migrate tracks can fail, so the current work around is to
+    # keep trying until migration tracks succeeds. The source of the bug is unknown.
     while not file_exists(context.output_file):
         # add the original file audio to the nosound file
         migrate_tracks(context, context.nosound_file,
@@ -153,17 +169,21 @@ def make_merge_image(context: Context, frame_residual: Frame, frame_previous: Fr
     out_image = Frame()
     out_image.create_new(frame_previous.width, frame_previous.height)
 
-    # If list_predictive and list_predictive are both empty, then the residual frame
-    # is simply the new image.
+    # If list_predictive and list_predictive are both empty, then the residual frame is simply the newly produced image.
     if not list_predictive and not list_predictive:
         out_image.copy_image(frame_residual)
         return out_image
 
-    # by copying the image first as the first step, all the predictive
-    # elements of the form (x,y) -> (x,y) are also copied
+    # By copying the image first as the first step, all the predictive elements of the form (x,y) -> (x,y)
+    # are also copied. This allows us to ignore copying vectors (x,y) -> (x,y), which prevents redundant copying,
+    # thus saving valuable computational time.
     out_image.copy_image(frame_previous)
 
-    # run the image through the same plugins IN ORDER it was ran in d2x_cpp
+    ###################
+    # Plugins Section #
+    ###################
+
+    # Note: Run the plugins in the SAME order it was ran in dandere2x_cpp. If not, it won't work correctly.
     out_image = pframe_image(context, out_image, frame_previous, frame_residual, list_residual, list_predictive)
     out_image = fade_image(context, out_image, list_fade)
     out_image = correct_image(context, out_image, list_corrections)
