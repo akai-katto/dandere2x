@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 import logging
 import subprocess
-import os
 
 from context import Context
 from dandere2xlib.utils.yaml_utils import get_options_from_section
+from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
 
 
 def trim_video(context: Context, output_file: str):
@@ -70,6 +70,53 @@ def extract_frames(context: Context, input_file: str):
     console_output.write(str(extract_frames_command))
     subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
 
+
+def create_video_from_extract_frames(context: Context, output_file: str):
+    """
+    Create a new video by applying the filters that d2x needs to work into it's own seperate video.
+    """
+    input_file = context.input_file
+    logger = logging.getLogger(__name__)
+
+    command = [context.ffmpeg_dir,
+                              "-hwaccel", context.hwaccel,
+                              "-i", input_file]
+
+    extract_frames_options = \
+        get_options_from_section(context.config_yaml["ffmpeg"]["video_to_frames"]['output_options'],
+                                 ffmpeg_command=True)
+
+    for element in extract_frames_options:
+        command.append(element)
+
+    command.extend([output_file])
+
+    logger.info("Applying filter to video...")
+
+    console_output = open(context.log_dir + "ffmpeg_create_video_from_extract_frame_filters.txt", "w")
+    console_output.write(str(command))
+    subprocess.call(command, shell=False, stderr=console_output, stdout=console_output)
+
+@staticmethod
+def append_video_resize_filter(context: Context):
+    """
+    For ffmpeg, there's a video filter to resize a video to a given resolution.
+    For dandere2x, we need a very specific set of video resolutions to work with.  This method applies that filter
+    to the video in order for it to work correctly.
+    """
+
+    print("Forcing Resizing to match blocksize..")
+    width, height = get_a_valid_input_resolution(context.width, context.height, context.block_size)
+
+    print("New width -> " + str(width))
+    print("New height -> " + str(height))
+
+    context.width = width
+    context.height = height
+
+    context.config_yaml['ffmpeg']['video_to_frames']['output_options']['-vf'] \
+                       .append("scale=" + str(context.width) + ":" + str(context.height))
+
 def concat_encoded_vids(context: Context, output_file: str):
     """
     Concatonate a video using 2) in this stackoverflow post.
@@ -124,6 +171,7 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
     console_output = open(context.log_dir + "migrate_tracks_command.txt", "w")
     console_output.write(str(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
+
 
 def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
     """

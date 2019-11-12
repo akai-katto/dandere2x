@@ -17,7 +17,7 @@ def print_status(context: Context):
 
     last_10 = [0]
 
-    for x in range(1, frame_count):
+    for x in range(1, frame_count - 1):
         percent = int((x / frame_count) * 100)
 
         average = 0
@@ -29,16 +29,13 @@ def print_status(context: Context):
         sys.stdout.write('\r')
         sys.stdout.write("Frame: [%s] %i%%    Average of Last 10 Frames: %s sec / frame" % (x, percent, average))
 
-        file_dir = workspace + "residual_upscaled/output_" + get_lexicon_value(6, x) + ".png"
         if len(last_10) == 10:
             last_10.pop(0)
 
         now = time.time()
 
-        exists = os.path.isfile(file_dir)
-        while not exists:
-            exists = os.path.isfile(file_dir)
-            time.sleep(.01)
+        while x >= context.signal_merged_count:
+            time.sleep(.00001)
 
         later = time.time()
         difference = float(later - now)

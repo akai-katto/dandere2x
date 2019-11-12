@@ -1,12 +1,13 @@
-from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from context import Context
-
+import copy
+import logging
+import os
 import subprocess
 import threading
-import logging
-import copy
-import os
+import time
+
+from context import Context
+from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xVulkan(threading.Thread):
@@ -25,6 +26,7 @@ class Waifu2xVulkan(threading.Thread):
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
+        self.signal_upscale = True
 
         self.waifu2x_vulkan_upscale_frame = [self.waifu2x_ncnn_vulkan_file_path,
                                              "-i", "[input_file]",
@@ -42,67 +44,6 @@ class Waifu2xVulkan(threading.Thread):
 
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
-
-    def upscale_file(self, input_file: str, output_file: str):
-        """
-        Manually upscale a file using the wrapper.
-        """
-
-        # load context
-        waifu2x_ncnn_vulkan_path = self.context.waifu2x_ncnn_vulkan_path
-        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
-
-        # replace the exec command with the files we're concerned with
-        for x in range(len(exec_command)):
-            if exec_command[x] == "[input_file]":
-                exec_command[x] = input_file
-
-            if exec_command[x] == "[output_file]":
-                exec_command[x] = output_file
-
-        # waifu2x-ncnn-vulkan requires the directory to be local when running, so use os.chir to work out of that dir.
-        os.chdir(waifu2x_ncnn_vulkan_path)
-
-        console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
-        console_output.write(str(exec_command))
-        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
-        console_output.close()
-
-    def fix_names_all(self):
-        """
-        Waifu2x-ncnn-vulkan will accept a file as "file.jpg" and output as "file.jpg.png".
-
-        Unfortunately, dandere2x wouldn't recognize this, so this function renames each name to the correct naming
-        convention. This function will iteratiate through every file needing to be upscaled waifu2x-ncnn-vulkan,
-        and change it's name after it's done saving
-
-        Comments:
-
-        - There's a really complicated try / except that exists because, even though a file may exist,
-          the file handle may still be used by waifu2x-ncnn-vulkan (it hasn't released it yet). As a result,
-          we need to try / except it until it's released, allowing us to rename it.
-
-        """
-
-        file_names = []
-        for x in range(1, self.frame_count):
-            file_names.append("output_" + get_lexicon_value(6, x))
-
-        for file in file_names:
-            dirty_name = self.residual_upscaled_dir + file + ".jpg.png"
-            clean_name = self.residual_upscaled_dir + file + ".png"
-
-            wait_on_either_file(clean_name, dirty_name)
-
-            if file_exists(clean_name):
-                pass
-
-            elif file_exists(dirty_name):
-                while file_exists(dirty_name):
-                    try:
-                        rename_file(dirty_name, clean_name)
-                    except PermissionError:
-                        pass
 
     def run(self):
         """
@@ -151,49 +92,103 @@ class Waifu2xVulkan(threading.Thread):
         logger.info("waifu2x_vulkan session")
         logger.info(exec_command)
 
-        # make a list of names that will eventually (past or future) be upscaled
-        upscaled_names = []
-        for x in range(1, self.frame_count):
-            upscaled_names.append("output_" + get_lexicon_value(6, x) + ".png")
-
-        fix_names_forever_thread = threading.Thread(target=self.fix_names_all)
+        fix_names_forever_thread = threading.Thread(target=self.__fix_names_all)
         fix_names_forever_thread.start()
 
-        count_removed = 0
-
-        # remove from the list images that have already been upscaled
-        for name in upscaled_names[::-1]:
-            if os.path.isfile(self.residual_upscaled_dir + name):
-                upscaled_names.remove(name)
-                count_removed += 1
-
-        if count_removed:
-            logger.info("Already have " + str(count_removed) + " upscaled")
+        remove_when_upscaled_thread = threading.Thread(target=self.__remove_once_upscaled_then_stop)
+        remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
-        while upscaled_names:
-
-            logger.info("Frames remaining before batch: ")
-            logger.info(len(upscaled_names))
-
+        while self.signal_upscale:
             console_output.write(str(exec_command))
             subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
-            for name in upscaled_names[::-1]:
-                if os.path.exists(self.residual_upscaled_dir + name):
-
-                    residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
-
-                    if os.path.exists(residual_file):
-                        os.remove(residual_file)
-                    else:
-                        '''
-                        In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
-                        and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
-                        since 'residuals' never existed. 
-                        '''
-                        pass
-
-                    upscaled_names.remove(name)
-
         console_output.close()
+
+
+    def upscale_file(self, input_file: str, output_file: str):
+        """
+        Manually upscale a file using the wrapper.
+        """
+
+        # load context
+        waifu2x_ncnn_vulkan_path = self.context.waifu2x_ncnn_vulkan_path
+        exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
+
+        # replace the exec command with the files we're concerned with
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = input_file
+
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = output_file
+
+        # waifu2x-ncnn-vulkan requires the directory to be local when running, so use os.chir to work out of that dir.
+        os.chdir(waifu2x_ncnn_vulkan_path)
+
+        console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
+        console_output.write(str(exec_command))
+        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
+        console_output.close()
+
+    def __remove_once_upscaled_then_stop(self):
+        self.__remove_once_upscaled()
+        self.signal_upscale = False
+
+    def __remove_once_upscaled(self):
+
+        # make a list of names that will eventually (past or future) be upscaled
+        list_of_names = []
+        for x in range(1, self.frame_count):
+            list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
+
+        for x in range(len(list_of_names)):
+
+            name = list_of_names[x]
+
+            residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
+            residual_upscaled_file = self.residual_upscaled_dir + name
+
+            while not file_exists(residual_upscaled_file):
+                time.sleep(.00001)
+
+            if os.path.exists(residual_file):
+                os.remove(residual_file)
+            else:
+                pass
+
+    def __fix_names_all(self):
+        """
+        Waifu2x-ncnn-vulkan will accept a file as "file.jpg" and output as "file.jpg.png".
+
+        Unfortunately, dandere2x wouldn't recognize this, so this function renames each name to the correct naming
+        convention. This function will iteratiate through every file needing to be upscaled waifu2x-ncnn-vulkan,
+        and change it's name after it's done saving
+
+        Comments:
+
+        - There's a really complicated try / except that exists because, even though a file may exist,
+          the file handle may still be used by waifu2x-ncnn-vulkan (it hasn't released it yet). As a result,
+          we need to try / except it until it's released, allowing us to rename it.
+
+        """
+
+        file_names = []
+        for x in range(1, self.frame_count):
+            file_names.append("output_" + get_lexicon_value(6, x))
+
+        for file in file_names:
+            dirty_name = self.residual_upscaled_dir + file + ".jpg.png"
+            clean_name = self.residual_upscaled_dir + file + ".png"
+
+            wait_on_either_file(clean_name, dirty_name)
+
+            if file_exists(clean_name):
+                pass
+
+            elif file_exists(dirty_name):
+                while file_exists(dirty_name):
+                    try:
+                        rename_file(dirty_name, clean_name)
+                    except PermissionError:
+                        pass

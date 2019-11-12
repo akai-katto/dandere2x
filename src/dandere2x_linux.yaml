@@ -3,13 +3,21 @@ dandere2x:
 
         input_file: ../workspace/yn_moving.mkv # the input file to upscale if ran on raw_config drivers
         output_file: ../workspace/vulkan_test.mkv #the output ot the upscaled video file.
+        input_folder: ../workspace/multiple_videos/
+        output_folder: ../workspace/multiple_videos_output/
 
         waifu2x_type: vulkan # the waifu2x client to use, since this is the Linux config file, the supported one are: vulkan, vulkan_legacy (snap), converter_cpp
 
+        preserve_frames: True # save the frames instead of directly piping them.
         block_size: 20 # the heart of dandere2x, the size of the blocks in pixels, optimally being a common divisor of both video widht and height
         denoise_level: 3 # waifu2x denoise level
         quality_minimum: 5 # quality of the frame compressor, 80 is a good number
         scale_factor: 2 # waifu2x scale factor, currently most only support 2 times, we recommend leaving it this way
+
+    min_disk_settings:
+        use_min_disk: True
+        max_frames_ahead: 20
+
 
 
     developer_settings:
@@ -131,6 +139,19 @@ ffmpeg:
             -vcodec: libx264
             -vf:
             - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+    pipe_video:
+        -y: true
+        output_options:
+            -loglevel: panic
+            -y: -f
+            image2pipe: True
+            -i: '-'
+            -vcodec: libx264
+            -preset: medium
+            -qscale: 5
+            -crf: 17
+            -vf:
+                - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
     migrating_tracks:
         output_options:
             -pix_fmt: null

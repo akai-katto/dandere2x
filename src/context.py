@@ -1,6 +1,5 @@
 from dandere2xlib.utils.yaml_utils import get_options_from_section, absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
-
 import tempfile
 import logging
 import pathlib
@@ -125,6 +124,10 @@ class Context:
         self.scale_factor = self.config_yaml['dandere2x']['usersettings']['scale_factor']
         self.input_file = self.config_yaml['dandere2x']['usersettings']['input_file']
         self.output_file = self.config_yaml['dandere2x']['usersettings']['output_file']
+        self.preserve_frames = self.config_yaml['dandere2x']['usersettings']['preserve_frames']
+        self.input_folder = self.config_yaml['dandere2x']['usersettings']['input_folder']
+        self.output_folder = self.config_yaml['dandere2x']['usersettings']['output_folder']
+        self.output_extension = os.path.splitext(self.output_file)[1]
 
         # Developer Settings
         self.quality_moving_ratio = self.config_yaml['dandere2x']['developer_settings']['quality_moving_ratio']
@@ -134,38 +137,7 @@ class Context:
         self.debug = self.config_yaml['dandere2x']['developer_settings']['debug']
         self.dandere2x_cpp_dir = self.config_yaml['dandere2x']['developer_settings']['dandere2x_cpp_dir']
         self.correction_block_size = 2
-
-        # FFMPEG Pipe Encoding, NOTE: THIS OVERRIDES REALTIME ENCODING
-        self.ffmpeg_pipe_encoding = self.config_yaml['dandere2x']['developer_settings']['ffmpeg_pipe_encoding']
-        self.ffmpeg_pipe_encoding_type = self.config_yaml['dandere2x']['developer_settings'][
-            'ffmpeg_pipe_encoding_type']
-        self.nosound_file = os.path.join(self.workspace, "nosound")  # missing an extension, will set it in a few
-
-        if not self.ffmpeg_pipe_encoding:
-            # Real Time Encoding, traditional way
-            self.realtime_encoding_enabled = self.config_yaml['dandere2x']['developer_settings']['realtime_encoding'][
-                'realtime_encoding_enabled']
-            self.realtime_encoding_delete_files = \
-            self.config_yaml['dandere2x']['developer_settings']['realtime_encoding']['realtime_encoding_delete_files']
-            self.realtime_encoding_seconds_per_video = \
-                self.config_yaml['dandere2x']['developer_settings']['realtime_encoding'][
-                    'realtime_encoding_seconds_per_video']
-
-        else:
-
-            # disable traditional "RTE" because we're piping
-            self.realtime_encoding_enabled = False
-
-            # get the substring after the last dot in the output_file "asd/aert/asd.mkv" --> "mkv"
-            # but "important/rapgod" will default to rapgod.mp4 because we'll get
-            # pipe_ext equals to the string itself "important/rapgod" and that's not an format :P
-
-            supported_formats = [".mkv", ".mp4", ".avi"]
-
-            pipe_ext = "." + self.output_file.split(".")[-1]
-
-            # add the extension to nosound file
-            self.nosound_file += ".mp4" if not pipe_ext in supported_formats else pipe_ext
+        self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
 
         ##################
         # Video Settings #
@@ -179,12 +151,33 @@ class Context:
         if find_out_if_trim:
             self.user_trim_video = True
 
+        #####################
+        # MIN DISK SETTINGS #
+        #####################
+        # - Side Note, sound_file is a work around for the time being, since the advent of min disk we need to use
+        #   noisey.mkv and have that be the primarly used video we need to refer back to the original
+        #   video file in order for audio track migrations to work properly.
+
+        self.use_min_disk = self.config_yaml['dandere2x']['min_disk_settings']['use_min_disk']
+        self.max_frames_ahead = self.config_yaml['dandere2x']['min_disk_settings']['max_frames_ahead']
+        self.sound_file = self.config_yaml['dandere2x']['usersettings']['input_file']
+
+        ####################
+        # Signal Variables #
+        ####################
+        """
+        These variables are used in between threads to communicate with one another.
+        """
+        self.signal_merged_count = 0
+
         # load the needed video settings
         self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
 
-        self.frame_rate = math.ceil(self.video_settings.frame_rate)
+        self.frame_rate = self.video_settings.frame_rate
         self.width, self.height = self.video_settings.width, self.video_settings.height
-        self.frame_count = 0
+
+        # self.frame_count = ffmpeg.count(frames)
+        self.frame_count = self.video_settings.frame_count
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):

@@ -1,47 +1,67 @@
 dandere2x:
     usersettings:
+#        input_file: Input file for Dandere2x to use
+#        output_file:  Where to put the video produced by Dandere2x
+#        input_folder: Input folder to use when using raw_config_gui_upscale_folder_driver
+#        output_folder: Where to put the outputs for videos when using raw_config_gui_upscale_folder_driver
+#
+#        waifu2x_type: What waifu2x to use.
+#                       Options: [caffe, converter_cpp, converter_cpp, vulkan_legacy]
+#        preserve_frames: Preserve the frames produced.
+#                       Options: [True, False]
+#        block_size: Block size to use when producing block matches.
+#                       Options: [10,15,20,25,30,40,60]
+#        denoise_level: Waifu2x denoise level.
+#                       Options: [0-3]
+#
+#        quality_minimum: The minimum quality Dandere2x can lose when producing block matches. Note:
+#                         Note: The developer HIGHLY does not recommend using 100 for this setting.
+#                         Recommended: 80-85.
+#                         Options: [0-100]
+#
+#        scale_factor: How much to scale the video by.
+#                      Options:
+#                        vulkan: [1,2]
+#                        caffe: [1, 2, 3, 4]
+#                        converter_cpp: [1,2,3,4]
 
-        input_file: ..\workspace\5sec.mkv # the input file to upscale if ran on raw_config drivers
-        output_file: ..\workspace\5sec2x.mkv #the output ot the upscaled video file.
+        input_file: ..\workspace\1second.mp4
+        output_file: ..\workspace\1second_output.mp4
+        input_folder: ..\workspace\multiple_videos\
+        output_folder: ..\workspace\multiple_videos_output\
 
-        waifu2x_type: vulkan # the waifu2x client to use, since this is the Windows config file, the supported one are: vulkan, caffe and converter_cpp
-    
-        block_size: 20 # the heart of dandere2x, the size of the blocks in pixels, optimally being a common divisor of both video widht and height
-        denoise_level: 3 # waifu2x denoise level
-        quality_minimum: 80 # quality of the frame compressor, 80 is a good number
-        scale_factor: 2 # waifu2x scale factor, currently most only support 2 times, we recommend leaving it this way
+        waifu2x_type: vulkan
+        preserve_frames: false
+        block_size: 20
+        denoise_level: 3
+        quality_minimum: 2
+        scale_factor: 2
+
+    min_disk_settings:
+#        use_min_disk: Use min_disk or not.
+#                       Options: [True, False]
+
+#        max_frames_ahead: How many frames to have extracted at a given time. Keeping this value small decreases
+#                          maximum hard-drive usage but makes preformance slightly slower.
+#                          Options: [20,1000]
+
+
+        use_min_disk: True
+        max_frames_ahead: 20
 
     
     developer_settings:
 
-        debug: false # if d2x will write debug frames into workspace/debug, really fun to watch
-
+        debug: false
         workspace: ..\workspace\default\ # path to the workspace folder (lots of files will be written here)
         dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
         workspace_use_temp: false
-        
-
-        # WARNING: FFMPEG PIPE ENCODING DEFAULTS TO AN MP4 FILE FOR NOW, DON'T FORGET TO SET THE OUTPUT_FILE TO AN MP4!!!
-
-        ffmpeg_pipe_encoding: true # this overrides realtime_encoding, pipes merged images to ffmpeg directly instead of saving them to disk. huge disk space saving here if enabled (talking about GBs of data even in small files)
-        ffmpeg_pipe_encoding_type: "jpeg" # this can be jpeg or png. jpeg is much faster (about 55%) at cost of a minimal larger final video, will default to jpeg if not set
-
-        realtime_encoding: # this option each seconds_per_video encodes the merged images into a small video file for the final merge afterwards
-            realtime_encoding_delete_files: false
-            realtime_encoding_enabled: true
-            realtime_encoding_seconds_per_video: 1
-        
-        
         gui_delete_workspace_after: false
         extension_type: .jpg
-        bleed: 1 # extra spaces between blocks in ther waifu2x upscaling process for smoother edges, this exponentially increases runtine, 1 is good enough for most cases unless sub 480p video file
+        bleed: 1
         quality_moving_ratio: 0.55
         step_size: 8
 
-
-
-    # configuration for the waifu2x clients, if you download an release you shouldn't need to change the paths here
-    # just the configs if
 
 
  
@@ -113,6 +133,19 @@ ffmpeg:
             -vcodec: libx264
             -vf:
             - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+    pipe_video:
+        -y: true
+        output_options:
+            -loglevel: panic
+            -y: -f
+            image2pipe: True
+            -i: '-'
+            -vcodec: libx264
+            -preset: medium
+            -qscale: 5
+            -crf: 17
+            -vf:
+                - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
     migrating_tracks:
         output_options:
             -pix_fmt: null

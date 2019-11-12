@@ -29,7 +29,6 @@ def get_video_info(ffprobe_dir, input_video):
         input_video
     ]
 
-    print(execute)
 
     json_str = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
 
@@ -87,6 +86,29 @@ def get_frame_rate(ffprobe_dir, input_video):
         'v:0',
         '-show_entries',
         'stream=r_frame_rate',
+        '-of',
+        'csv=p=0',
+        input_video
+    ]
+
+    return_bytes = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
+    return_string = return_bytes.decode("utf-8")
+
+    return return_string
+
+
+def get_frame_count(ffprobe_dir, input_video):
+    # this execution command needs to be hard-coded
+    # since video2x only strictly recignizes this one format
+    execute = [
+        ffprobe_dir,
+        '-v',
+        'error',
+        '-count_frames',
+        '-select_streams',
+        'v:0',
+        '-show_entries',
+        'stream=nb_read_frames ',
         '-of',
         'csv=p=0',
         input_video

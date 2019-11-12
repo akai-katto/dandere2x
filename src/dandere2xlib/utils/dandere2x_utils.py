@@ -9,8 +9,8 @@ Last Modified: April 2, 2019
 
 import logging
 import os
-import time
 import shutil
+import time
 from sys import platform
 
 
@@ -19,6 +19,7 @@ def get_operating_system():
         return 'linux'
     elif platform == "win32":
         return 'win32'
+
 
 # if the value in the key value pair exists, add it.
 # if the key is just 'true', only add the key
@@ -110,6 +111,10 @@ def file_exists(file_string: str):
     logger = logging.getLogger(__name__)
     return os.path.isfile(file_string)
 
+# many times a file may not exist yet, so just have this function
+# wait if it does not.
+def file_is_empty(file_string: str):
+    return os.path.getsize(file_string) == 0
 
 def dir_exists(file_string: str):
     logger = logging.getLogger(__name__)
@@ -129,6 +134,7 @@ def rename_file(file1, file2):
 # to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.
 def get_lexicon_value(digits: int, val: int):
     return str(val).zfill(digits)
+
 
 # get frame count from a string input
 def get_seconds_from_time(time_frame: int):
@@ -169,6 +175,7 @@ def create_directories(directories_list: list):
             print("Creation of the directory %s failed" % subdirectory)
         else:
             print("Successfully created the directory %s " % subdirectory)
+
 
 def delete_directories(directories_list: list):
     # create each directory

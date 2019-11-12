@@ -1,12 +1,13 @@
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from context import Context
-
+import copy
+import logging
+import os
 import subprocess
 import threading
-import logging
-import copy
-import os
+import time
+
+from context import Context
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, file_exists
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xCaffe(threading.Thread):
@@ -15,6 +16,7 @@ class Waifu2xCaffe(threading.Thread):
 
     Let me know if you have intentions to use this so I can update it.
     """
+
     def __init__(self, context: Context):
         self.frame_count = context.frame_count
         self.waifu2x_caffe_cui_dir = context.waifu2x_caffe_cui_dir
@@ -24,6 +26,7 @@ class Waifu2xCaffe(threading.Thread):
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
+        self.signal_upscale = True
 
         # Create Caffe Command
         self.waifu2x_caffe_upscale_frame = [self.waifu2x_caffe_cui_dir,
@@ -40,24 +43,6 @@ class Waifu2xCaffe(threading.Thread):
 
         threading.Thread.__init__(self)
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
-
-    def upscale_file(self, input_file: str, output_file: str):
-
-        exec_command = copy.copy(self.waifu2x_caffe_upscale_frame)
-
-        # replace the exec command withthe files we're concerned with
-        for x in range(len(exec_command)):
-            if exec_command[x] == "[input_file]":
-                exec_command[x] = input_file
-
-            if exec_command[x] == "[output_file]":
-                exec_command[x] = output_file
-
-        print(exec_command)
-
-        console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
-        console_output.write(str(exec_command))
-        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -84,38 +69,57 @@ class Waifu2xCaffe(threading.Thread):
             if exec_command[x] == "[output_file]":
                 exec_command[x] = residual_upscaled_dir
 
-        # make a list of names that will eventually (past or future) be upscaled
-        upscaled_names = []
-        for x in range(1, self.frame_count):
-            upscaled_names.append("output_" + get_lexicon_value(6, x) + ".png")
-
-        count_removed = 0
-
-        # remove from the list images that have already been upscaled
-        for name in upscaled_names[::-1]:
-            if os.path.isfile(self.residual_upscaled_dir + name):
-                upscaled_names.remove(name)
-                count_removed += 1
-
-        if count_removed:
-            logger.info("Already have " + str(count_removed) + " upscaled")
+        remove_when_upscaled_thread = threading.Thread(target=self.__remove_once_upscaled_then_stop)
+        remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
+        while self.signal_upscale:
+            console_output.write(str(exec_command))
+            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 
-        while upscaled_names:
-            for name in upscaled_names[::-1]:
-                if os.path.exists(self.residual_upscaled_dir + name):
+    def upscale_file(self, input_file: str, output_file: str):
 
-                    residual_file = self.residual_images_dir + name
+        exec_command = copy.copy(self.waifu2x_caffe_upscale_frame)
 
-                    if os.path.exists(residual_file):
-                        os.remove(residual_file)
-                    else:
-                        '''
-                        In residuals.py we created fake 'upscaled' images by saving them to the 'residuals_upscaled', 
-                        and never saved the residuals file. In that case, only remove the 'residuals_upscaled' 
-                        since 'residuals' never existed. 
-                        '''
-                        pass
+        # replace the exec command withthe files we're concerned with
+        for x in range(len(exec_command)):
+            if exec_command[x] == "[input_file]":
+                exec_command[x] = input_file
 
-                    upscaled_names.remove(name)
+            if exec_command[x] == "[output_file]":
+                exec_command[x] = output_file
+
+        print(exec_command)
+
+        console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
+        console_output.write(str(exec_command))
+        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
+
+    def __remove_once_upscaled_then_stop(self):
+        self.__remove_once_upscaled()
+        self.signal_upscale = False
+
+    def __remove_once_upscaled(self):
+
+        # make a list of names that will eventually (past or future) be upscaled
+        list_of_names = []
+        for x in range(1, self.frame_count):
+            list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
+
+        for x in range(len(list_of_names)):
+
+            name = list_of_names[x]
+
+            residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
+            residual_upscaled_file = self.residual_upscaled_dir + name
+
+            while not file_exists(residual_upscaled_file):
+                time.sleep(.00001)
+
+            if os.path.exists(residual_file):
+                os.remove(residual_file)
+            else:
+                pass
+
+
+

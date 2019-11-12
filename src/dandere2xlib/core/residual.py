@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import logging
-import numpy as np
 import math
 
-from PIL import Image
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
 from wrappers.frame.frame import DisplacementVector, Frame
@@ -66,7 +64,7 @@ def residual_loop(context):
 
             # Location of the 'fake' upscaled image.
             out_image = Frame()
-            out_image.create_new(2,2)
+            out_image.create_new(2, 2)
             output_file = residual_upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"
             out_image.save_image(output_file)
 

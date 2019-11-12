@@ -123,7 +123,7 @@ class AppWindow(QMainWindow):
                                                + "[s" + str(self.scale_factor) + "]"
                                                + "[n" + str(self.noise_level) + "]"
                                                + "[b" + str(self.block_size) + "]"
-                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
+                                               + "[q" + str(self.image_quality) + "]" + ".mp4"))
 
         self.set_output_file_name()
 
@@ -158,7 +158,7 @@ class AppWindow(QMainWindow):
         config_yaml['dandere2x']['usersettings']['output_file'] = self.output_file
         config_yaml['dandere2x']['usersettings']['input_file'] = self.input_file
         config_yaml['dandere2x']['usersettings']['block_size'] = self.block_size
-        config_yaml['dandere2x']['usersettings']['image_quality'] = self.image_quality
+        config_yaml['dandere2x']['usersettings']['quality_minimum'] = self.image_quality
         config_yaml['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
         config_yaml['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
 
