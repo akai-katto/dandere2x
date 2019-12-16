@@ -42,10 +42,14 @@ class AppWindow(QMainWindow):
         # load 'this folder' in a pyinstaller friendly way
         self.this_folder = os.getcwd()
 
-        if getattr(sys, 'frozen', False):
-            self.this_folder = os.path.dirname(sys.executable) + os.path.sep
-        elif __file__:
-            self.this_folder = os.path.dirname(__file__) + os.path.sep
+        # Note: At the moment running d2x from venv on windows 10 is having issues with this
+        # segment of code. I've left it commented for the time being since I'm unsure if pyinstaller
+        # requires this part, but it may be removed all together once tested properly. 
+        #
+        # if getattr(sys, 'frozen', False):
+        #     self.this_folder = os.path.dirname(sys.executable) + os.path.sep
+        # elif __file__:
+        #     self.this_folder = os.path.dirname(__file__) + os.path.sep
             
         # lazy hack_around for linux build (im not sure why the previous statement doesnt work on venv linux)
         if get_operating_system() == "linux":
