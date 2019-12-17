@@ -6,8 +6,8 @@ dandere2x:
         input_folder: ../workspace/multiple_videos/
         output_folder: ../workspace/multiple_videos_output/
 
+        log_folder: ../workspace/log_folder/
         waifu2x_type: vulkan # the waifu2x client to use, since this is the Linux config file, the supported one are: vulkan, vulkan_legacy (snap), converter_cpp
-
         preserve_frames: True # save the frames instead of directly piping them.
         block_size: 20 # the heart of dandere2x, the size of the blocks in pixels, optimally being a common divisor of both video widht and height
         denoise_level: 3 # waifu2x denoise level

@@ -55,7 +55,7 @@ class Waifu2xCaffe(threading.Thread):
     #          4) Repeat this process until all the names are removed.
     def run(self):
         logger = logging.getLogger(__name__)
-        console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_all.txt", "w")
+        console_output = open(self.context.console_output_dir + "waifu2x_caffe_upscale_frame_all.txt", "w")
 
         residual_images_dir = self.context.residual_images_dir
         residual_upscaled_dir = self.context.residual_upscaled_dir
@@ -91,7 +91,7 @@ class Waifu2xCaffe(threading.Thread):
 
         print(exec_command)
 
-        console_output = open(self.context.log_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
+        console_output = open(self.context.console_output_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
         console_output.write(str(exec_command))
         subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
 

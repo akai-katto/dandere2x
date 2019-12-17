@@ -76,7 +76,7 @@ class Waifu2xVulkan(threading.Thread):
         residual_upscaled_dir = self.context.residual_upscaled_dir
         exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
 
-        console_output = open(self.context.log_dir + "vulkan_upscale_frames.txt", "w")
+        console_output = open(self.context.console_output_dir + "vulkan_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
@@ -126,7 +126,7 @@ class Waifu2xVulkan(threading.Thread):
         # waifu2x-ncnn-vulkan requires the directory to be local when running, so use os.chir to work out of that dir.
         os.chdir(waifu2x_ncnn_vulkan_path)
 
-        console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
+        console_output = open(self.context.console_output_dir + "vulkan_upscale_frame.txt", "w")
         console_output.write(str(exec_command))
         subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()

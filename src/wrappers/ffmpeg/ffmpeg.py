@@ -33,7 +33,7 @@ def trim_video(context: Context, output_file: str):
 
     trim_video_command.append(output_file)
 
-    console_output = open(context.log_dir + "ffmpeg_trim_video_command.txt", "w")
+    console_output = open(context.console_output_dir + "ffmpeg_trim_video_command.txt", "w")
     console_output.write(str(trim_video_command))
     subprocess.call(trim_video_command, shell=False, stderr=console_output, stdout=console_output)
 
@@ -64,9 +64,7 @@ def extract_frames(context: Context, input_file: str):
 
     extract_frames_command.extend([output_file])
 
-    logger.info("extracting frames")
-
-    console_output = open(context.log_dir + "ffmpeg_extract_frames_console.txt", "w")
+    console_output = open(context.console_output_dir + "ffmpeg_extract_frames_console.txt", "w")
     console_output.write(str(extract_frames_command))
     subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
 
@@ -93,7 +91,7 @@ def create_video_from_extract_frames(context: Context, output_file: str):
 
     logger.info("Applying filter to video...")
 
-    console_output = open(context.log_dir + "ffmpeg_create_video_from_extract_frame_filters.txt", "w")
+    console_output = open(context.console_output_dir + "ffmpeg_create_video_from_extract_frame_filters.txt", "w")
     console_output.write(str(command))
     subprocess.call(command, shell=False, stderr=console_output, stdout=console_output)
 
@@ -142,7 +140,7 @@ def concat_encoded_vids(context: Context, output_file: str):
 
     concat_videos_command.extend([output_file])
 
-    console_output = open(context.log_dir + "ffmpeg_concat_videos_command.txt", "w")
+    console_output = open(context.console_output_dir + "ffmpeg_concat_videos_command.txt", "w")
     console_output.write((str(concat_videos_command)))
     subprocess.call(concat_videos_command, shell=False, stderr=console_output, stdout=console_output)
 
@@ -168,7 +166,7 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
 
     migrate_tracks_command.extend([str(output_file)])
 
-    console_output = open(context.log_dir + "migrate_tracks_command.txt", "w")
+    console_output = open(context.console_output_dir + "migrate_tracks_command.txt", "w")
     console_output.write(str(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
 
@@ -202,6 +200,6 @@ def create_video_from_specific_frames(context: Context, file_prefix, output_file
 
     logger.info("running ffmpeg command: " + str(video_from_frames_command))
 
-    console_output = open(context.log_dir + "video_from_frames_command.txt", "w")
+    console_output = open(context.console_output_dir + "video_from_frames_command.txt", "w")
     console_output.write(str(video_from_frames_command))
     subprocess.call(video_from_frames_command, shell=False, stderr=console_output, stdout=console_output)

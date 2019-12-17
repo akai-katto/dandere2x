@@ -25,11 +25,12 @@ dandere2x:
 #                        caffe: [1, 2, 3, 4]
 #                        converter_cpp: [1,2,3,4]
 
-        input_file: ..\workspace\1second.mp4
+        input_file: ..\workspace\yn_moving.mkv
         output_file: ..\workspace\1second_output.mp4
         input_folder: ..\workspace\multiple_videos\
         output_folder: ..\workspace\multiple_videos_output\
 
+        log_folder: ..\workspace\log_folder\
         waifu2x_type: vulkan
         preserve_frames: false
         block_size: 20
