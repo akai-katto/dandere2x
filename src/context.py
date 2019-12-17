@@ -76,7 +76,7 @@ class Context:
             self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()), 'dandere2x') + os.path.sep
 
         # setup directories
-        self.log_folder = self.config_yaml['dandere2x']['usersettings']['log_folder']
+        self.log_folder_dir = self.config_yaml['dandere2x']['usersettings']['log_folder']
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
         self.residual_images_dir = self.workspace + "residual_images" + os.path.sep
         self.residual_upscaled_dir = self.workspace + "residual_upscaled" + os.path.sep
@@ -86,7 +86,7 @@ class Context:
         self.merged_dir = self.workspace + "merged" + os.path.sep
         self.fade_data_dir = self.workspace + "fade_data" + os.path.sep
         self.debug_dir = self.workspace + "debug" + os.path.sep
-        self.log_dir = self.workspace + "logs" + os.path.sep
+        self.console_output_dir = self.workspace + "console_output" + os.path.sep
         self.compressed_static_dir = self.workspace + "compressed_static" + os.path.sep
         self.compressed_moving_dir = self.workspace + "compressed_moving" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
@@ -102,7 +102,7 @@ class Context:
                             self.residual_data_dir,
                             self.pframe_data_dir,
                             self.debug_dir,
-                            self.log_dir,
+                            self.console_output_dir,
                             self.compressed_static_dir,
                             self.compressed_moving_dir,
                             self.fade_data_dir,
@@ -185,7 +185,7 @@ class Context:
         import time
 
         log_name = "dandere2x" +  str(time.time()) + ".log" # create logs using epoch time to denote them
-        logging.basicConfig(filename=os.path.join(self.log_folder, log_name), level=logging.INFO)
+        logging.basicConfig(filename=os.path.join(self.log_folder_dir, log_name), level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
     def close_logger(self):

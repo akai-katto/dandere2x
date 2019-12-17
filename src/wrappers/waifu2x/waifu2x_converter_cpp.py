@@ -57,7 +57,7 @@ class Waifu2xConverterCpp(threading.Thread):
     #             (this is to prevent Waifu2x from re-upscaling the same image again)
     #          4) Repeat this process until all the names are removed.
     def run(self):
-        console_output = open(self.context.log_dir + "waifu2x_upscale_frames_command.txt", "w")
+        console_output = open(self.context.console_output_dir + "waifu2x_upscale_frames_command.txt", "w")
         logger = logging.getLogger(__name__)
         # if there are pre-existing files, fix them (this occurs during a resume session)
         self.__fix_names()
@@ -110,7 +110,7 @@ class Waifu2xConverterCpp(threading.Thread):
         logger.info("manually upscaling file")
         logger.info(exec)
 
-        console_output = open(self.context.log_dir + "waifu2x_conv_upscale_frame_single.txt", "w")
+        console_output = open(self.context.console_output_dir + "waifu2x_conv_upscale_frame_single.txt", "w")
         console_output.write(str(exec))
         subprocess.call(exec, shell=False, stderr=console_output, stdout=console_output)
 

@@ -69,7 +69,7 @@ class Waifu2xVulkanLegacy(threading.Thread):
         logger.info("manually upscaling file")
         logger.info(exec_command)
 
-        console_output = open(self.context.log_dir + "vulkan_upscale_frame.txt", "w")
+        console_output = open(self.context.console_output_dir + "vulkan_upscale_frame.txt", "w")
         console_output.write(str(exec_command))
         subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
         console_output.close()

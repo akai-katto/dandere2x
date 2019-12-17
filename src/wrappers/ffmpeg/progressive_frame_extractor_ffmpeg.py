@@ -45,7 +45,7 @@ class ProgressiveFramesExtractorFFMPEG:
 
         logger.info("extracting frames")
 
-        console_output = open(context.log_dir + "ffmpeg_extract_frames_console.txt", "w")
+        console_output = open(context.console_output_dir + "ffmpeg_extract_frames_console.txt", "w")
         console_output.write(str(extract_frames_command))
         self.P = subprocess.Popen(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
         self.pause_resume = psutil.Process(self.P.pid)

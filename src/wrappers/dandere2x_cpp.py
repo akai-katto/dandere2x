@@ -20,7 +20,7 @@ class Dandere2xCppWrapper(threading.Thread):
         self.step_size = context.step_size
         self.extension_type = context.extension_type
         self.residual_images_dir = context.residual_images_dir
-        self.log_dir = context.log_dir
+        self.log_dir = context.console_output_dir
 
         threading.Thread.__init__(self)
 
