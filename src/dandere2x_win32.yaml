@@ -30,6 +30,7 @@ dandere2x:
         input_folder: ..\workspace\multiple_videos\
         output_folder: ..\workspace\multiple_videos_output\
 
+        log_folder: ..\workspace\log_folder\
         waifu2x_type: vulkan
         preserve_frames: false
         block_size: 20

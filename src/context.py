@@ -76,6 +76,7 @@ class Context:
             self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()), 'dandere2x') + os.path.sep
 
         # setup directories
+        self.log_folder = self.config_yaml['dandere2x']['usersettings']['log_folder']
         self.input_frames_dir = self.workspace + "inputs" + os.path.sep
         self.residual_images_dir = self.workspace + "residual_images" + os.path.sep
         self.residual_upscaled_dir = self.workspace + "residual_upscaled" + os.path.sep
@@ -181,7 +182,10 @@ class Context:
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
-        logging.basicConfig(filename=os.path.join(self.workspace, 'dandere2x.log'), level=logging.INFO)
+        import time
+
+        log_name = "dandere2x" +  str(time.time()) + ".log" # create logs using epoch time to denote them
+        logging.basicConfig(filename=os.path.join(self.log_folder, log_name), level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
     def close_logger(self):
