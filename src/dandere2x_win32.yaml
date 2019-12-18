@@ -151,13 +151,6 @@ ffmpeg:
         output_options:
             -pix_fmt: null
             -y: true
-    trim_video:
-        output_options:
-            -c: null
-            -map: 0
-        time:
-            -ss: null
-            -to: null
     video_to_frames:
         output_options:
             -pix_fmt: null

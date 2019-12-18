@@ -133,17 +133,6 @@ class Dandere2x:
         create_directories(self.context.directories)
         self.context.set_logger()
 
-        if self.context.user_trim_video:
-            """
-            If the user wishes to trim the video, trim the video, then change the needed variables
-            for this to work. 
-        
-            I'm considering removing due to clutter / redundancy. 
-            """
-            trimed_video = os.path.join(self.context.workspace, "trimmed.mkv")
-            trim_video(self.context, trimed_video)
-            self.context.input_file = trimed_video
-
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
             """
             Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video

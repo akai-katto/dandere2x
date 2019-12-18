@@ -140,18 +140,6 @@ class Context:
         self.correction_block_size = 2
         self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
 
-        ##################
-        # Video Settings #
-        ##################
-
-        # find out if the user trimmed a video by checking the time part of the json. IF theres nothing there,
-        # then the user didn't trim anything
-        self.user_trim_video = False
-        find_out_if_trim = get_options_from_section(self.config_yaml["ffmpeg"]["trim_video"]['time'])
-
-        if find_out_if_trim:
-            self.user_trim_video = True
-
         #####################
         # MIN DISK SETTINGS #
         #####################
