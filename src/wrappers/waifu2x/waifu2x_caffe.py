@@ -120,6 +120,3 @@ class Waifu2xCaffe(threading.Thread):
                 os.remove(residual_file)
             else:
                 pass
-
-
-

@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import logging
-import subprocess
-
-from PIL import Image
 
 from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
@@ -11,10 +8,9 @@ from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file, wait_on_file, file_exists
 from wrappers.ffmpeg.ffmpeg import migrate_tracks
+from wrappers.ffmpeg.pipe import Pipe
 from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 from wrappers.frame.frame import Frame
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from wrappers.ffmpeg.pipe import Pipe
 
 
 def merge_loop(context: Context):

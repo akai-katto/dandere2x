@@ -1,13 +1,14 @@
-import yaml
 import os
 import sys
 
+import yaml
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
+
 
 class QtDandere2xThread(QtCore.QThread):
     finished = QtCore.pyqtSignal()
@@ -15,7 +16,6 @@ class QtDandere2xThread(QtCore.QThread):
     def __init__(self, parent, config_yaml):
         super(QtDandere2xThread, self).__init__(parent)
         self.config_yaml = config_yaml
-
 
     def run(self):
         d = Dandere2x_Gui_Wrapper(self.config_yaml)
@@ -34,6 +34,7 @@ class AppWindow(QMainWindow):
     """
     Note; I don't maintain this class. It's half assed in the grand scheme of things, and it'd probably be re-made later.
     """
+
     def __init__(self):
         super().__init__()
         self.ui = Ui_Dandere2xGUI()
@@ -50,7 +51,7 @@ class AppWindow(QMainWindow):
         #     self.this_folder = os.path.dirname(sys.executable) + os.path.sep
         # elif __file__:
         #     self.this_folder = os.path.dirname(__file__) + os.path.sep
-            
+
         # lazy hack_around for linux build (im not sure why the previous statement doesnt work on venv linux)
         if get_operating_system() == "linux":
             self.this_folder = os.getcwd()

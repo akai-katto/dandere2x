@@ -1,10 +1,8 @@
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from dandere2xlib.utils.dandere2x_utils import wait_on_file
-from wrappers.ffmpeg.ffmpeg import migrate_tracks
-
-import time
 import subprocess
 import threading
+import time
+
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Pipe():
@@ -45,7 +43,7 @@ class Pipe():
         self.ffmpeg_pipe_command = [self.ffmpeg_dir, "-r", self.frame_rate]
 
         options = get_options_from_section(context.config_yaml["ffmpeg"]["pipe_video"]['output_options'],
-                                            ffmpeg_command=True)
+                                           ffmpeg_command=True)
 
         for item in options:
             self.ffmpeg_pipe_command.append(item)
@@ -102,5 +100,3 @@ class Pipe():
         print("\n  Closing FFMPEG as encode finished...")
 
         self.__close()
-
-

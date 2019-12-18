@@ -31,16 +31,15 @@ import sys
 import threading
 import time
 
-from context import Context
-from dandere2xlib.status import print_status
 from dandere2xlib.core.merge import merge_loop
 from dandere2xlib.core.residual import residual_loop
 from dandere2xlib.frame_compressor import compress_frames
 from dandere2xlib.mindiskusage import MinDiskUsage
+from dandere2xlib.status import print_status
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
-from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, get_a_valid_input_resolution, file_exists
+from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, file_exists
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import extract_frames, trim_video, append_video_resize_filter
+from wrappers.ffmpeg.ffmpeg import extract_frames, append_video_resize_filter
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
@@ -89,7 +88,7 @@ class Dandere2x:
 
         one_frame_time = time.time()
         self.waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                             output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+                                  output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
 
         if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
             """ 
@@ -102,7 +101,6 @@ class Dandere2x:
             sys.exit(1)
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
-
 
     def run_concurrent(self):
         """
@@ -157,7 +155,6 @@ class Dandere2x:
             logging.info("no valid waifu2x selected")
             print("no valid waifu2x selected")
             exit(1)
-
 
     def delete_workspace_files(self):
         """

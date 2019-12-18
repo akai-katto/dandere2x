@@ -1,159 +1,159 @@
 dandere2x:
-    usersettings:
-#        input_file: Input file for Dandere2x to use
-#        output_file:  Where to put the video produced by Dandere2x
-#        input_folder: Input folder to use when using raw_config_gui_upscale_folder_driver
-#        output_folder: Where to put the outputs for videos when using raw_config_gui_upscale_folder_driver
-#
-#        waifu2x_type: What waifu2x to use.
-#                       Options: [caffe, converter_cpp, converter_cpp, vulkan_legacy]
-#        preserve_frames: Preserve the frames produced.
-#                       Options: [True, False]
-#        block_size: Block size to use when producing block matches.
-#                       Options: [10,15,20,25,30,40,60]
-#        denoise_level: Waifu2x denoise level.
-#                       Options: [0-3]
-#
-#        quality_minimum: The minimum quality Dandere2x can lose when producing block matches. Note:
-#                         Note: The developer HIGHLY does not recommend using 100 for this setting.
-#                         Recommended: 80-85.
-#                         Options: [0-100]
-#
-#        scale_factor: How much to scale the video by.
-#                      Options:
-#                        vulkan: [1,2]
-#                        caffe: [1, 2, 3, 4]
-#                        converter_cpp: [1,2,3,4]
+  usersettings:
+    #        input_file: Input file for Dandere2x to use
+    #        output_file:  Where to put the video produced by Dandere2x
+    #        input_folder: Input folder to use when using raw_config_gui_upscale_folder_driver
+    #        output_folder: Where to put the outputs for videos when using raw_config_gui_upscale_folder_driver
+    #
+    #        waifu2x_type: What waifu2x to use.
+    #                       Options: [caffe, converter_cpp, converter_cpp, vulkan_legacy]
+    #        preserve_frames: Preserve the frames produced.
+    #                       Options: [True, False]
+    #        block_size: Block size to use when producing block matches.
+    #                       Options: [10,15,20,25,30,40,60]
+    #        denoise_level: Waifu2x denoise level.
+    #                       Options: [0-3]
+    #
+    #        quality_minimum: The minimum quality Dandere2x can lose when producing block matches. Note:
+    #                         Note: The developer HIGHLY does not recommend using 100 for this setting.
+    #                         Recommended: 80-85.
+    #                         Options: [0-100]
+    #
+    #        scale_factor: How much to scale the video by.
+    #                      Options:
+    #                        vulkan: [1,2]
+    #                        caffe: [1, 2, 3, 4]
+    #                        converter_cpp: [1,2,3,4]
 
-        input_file: ..\workspace\yn_moving.mkv
-        output_file: ..\workspace\1second_output.mp4
-        input_folder: ..\workspace\multiple_videos\
-        output_folder: ..\workspace\multiple_videos_output\
+    input_file: ..\workspace\yn_moving.mkv
+    output_file: ..\workspace\1second_output.mp4
+    input_folder: ..\workspace\multiple_videos\
+    output_folder: ..\workspace\multiple_videos_output\
 
-        log_folder: ..\workspace\log_folder\
-        waifu2x_type: vulkan
-        preserve_frames: false
-        block_size: 20
-        denoise_level: 3
-        quality_minimum: 2
-        scale_factor: 2
+    log_folder: ..\workspace\log_folder\
+    waifu2x_type: vulkan
+    preserve_frames: false
+    block_size: 20
+    denoise_level: 3
+    quality_minimum: 2
+    scale_factor: 2
 
-    min_disk_settings:
-#        use_min_disk: Use min_disk or not.
-#                       Options: [True, False]
+  min_disk_settings:
+    #        use_min_disk: Use min_disk or not.
+    #                       Options: [True, False]
 
-#        max_frames_ahead: How many frames to have extracted at a given time. Keeping this value small decreases
-#                          maximum hard-drive usage but makes preformance slightly slower.
-#                          Options: [20,1000]
-
-
-        use_min_disk: True
-        max_frames_ahead: 20
-
-    
-    developer_settings:
-
-        debug: false
-        workspace: ..\workspace\default\ # path to the workspace folder (lots of files will be written here)
-        dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
-        workspace_use_temp: false
-        gui_delete_workspace_after: false
-        extension_type: .jpg
-        bleed: 1
-        quality_moving_ratio: 0.55
-        step_size: 8
+    #        max_frames_ahead: How many frames to have extracted at a given time. Keeping this value small decreases
+    #                          maximum hard-drive usage but makes preformance slightly slower.
+    #                          Options: [20,1000]
 
 
+    use_min_disk: True
+    max_frames_ahead: 20
 
- 
+
+  developer_settings:
+
+    debug: false
+    workspace: ..\workspace\default\ # path to the workspace folder (lots of files will be written here)
+    dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
+    workspace_use_temp: false
+    gui_delete_workspace_after: false
+    extension_type: .jpg
+    bleed: 1
+    quality_moving_ratio: 0.55
+    step_size: 8
+
+
+
+
 waifu2x_caffe:
 
-    waifu2x_caffe_path: ..\externals\waifu2x-caffe\waifu2x-caffe-cui.exe
-    
-    output_options:
-        -batch_size: null
-        -crop_size: null
-        -gpu: null
-        -model_dir: null
-        -output_depth: null
-        -output_quality: null
-        -process: gpu
-        -tta: null
-    
+  waifu2x_caffe_path: ..\externals\waifu2x-caffe\waifu2x-caffe-cui.exe
+
+  output_options:
+    -batch_size: null
+    -crop_size: null
+    -gpu: null
+    -model_dir: null
+    -output_depth: null
+    -output_quality: null
+    -process: gpu
+    -tta: null
+
 
 waifu2x_converter:
 
-    waifu2x_converter_file_name: waifu2x-converter-cpp.exe
-    waifu2x_converter_path: ..\externals\waifu2x-converter-cpp
+  waifu2x_converter_file_name: waifu2x-converter-cpp.exe
+  waifu2x_converter_path: ..\externals\waifu2x-converter-cpp
 
-    output_options:
-        --block-size: null
-        --disable-gpu: null
-        --force-OpenCL: true
-        --image-quality: null
-        --jobs: null
-        --mode: null
-        --model-dir: null
-        --output-format: null
-        --png-compression: null
-        --processor: null
-        --silent: true
-    
+  output_options:
+    --block-size: null
+    --disable-gpu: null
+    --force-OpenCL: true
+    --image-quality: null
+    --jobs: null
+    --mode: null
+    --model-dir: null
+    --output-format: null
+    --png-compression: null
+    --processor: null
+    --silent: true
+
 waifu2x_ncnn_vulkan:
 
-    waifu2x_ncnn_vulkan_file_name: waifu2x-ncnn-vulkan.exe
-    waifu2x_ncnn_vulkan_path: ..\externals\waifu2x-ncnn-vulkan
+  waifu2x_ncnn_vulkan_file_name: waifu2x-ncnn-vulkan.exe
+  waifu2x_ncnn_vulkan_path: ..\externals\waifu2x-ncnn-vulkan
 
-    output_options:
-        -gpu: null
-        -load-proc-save_threads: null
-        -model-path: ..\externals\waifu2x-ncnn-vulkan\models-upconv_7_anime_style_art_rgb
-        -tile-size: 200  # note: if you get black images try lowering this tile argument to some lower value.
-        -verbose: null
-    
+  output_options:
+    -gpu: null
+    -load-proc-save_threads: null
+    -model-path: ..\externals\waifu2x-ncnn-vulkan\models-upconv_7_anime_style_art_rgb
+    -tile-size: 200  # note: if you get black images try lowering this tile argument to some lower value.
+    -verbose: null
 
 
-    # past this point we recommend not changing anything unless you know what you are doing witth ffmpeg
+
+  # past this point we recommend not changing anything unless you know what you are doing witth ffmpeg
 
 
 
 ffmpeg:
-    -hwaccel: none
-    concat_videos:
-        output_options:
-            -c: copy
-            -codec: copy
-    ffmpeg_path: ..\externals\ffmpeg.exe
-    ffprobe_path: ..\externals\ffprobe.exe
-    frames_to_video:
-        -y: true
-        output_options:
-            -b:v: null
-            -crf: 17
-            -pix_fmt: null
-            -vcodec: libx264
-            -vf:
-            - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
-    pipe_video:
-        -y: true
-        output_options:
-            -loglevel: panic
-            -y: -f
-            image2pipe: True
-            -i: '-'
-            -vcodec: libx264
-            -preset: medium
-            -qscale: 5
-            -crf: 17
-            -vf:
-                - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
-    migrating_tracks:
-        output_options:
-            -pix_fmt: null
-            -y: true
-    video_to_frames:
-        output_options:
-            -pix_fmt: null
-            -qscale:v: 2
-            -vf:
-            - noise=c1s=8:c0f=u
+  -hwaccel: none
+  concat_videos:
+    output_options:
+      -c: copy
+      -codec: copy
+  ffmpeg_path: ..\externals\ffmpeg.exe
+  ffprobe_path: ..\externals\ffprobe.exe
+  frames_to_video:
+    -y: true
+    output_options:
+      -b:v: null
+      -crf: 17
+      -pix_fmt: null
+      -vcodec: libx264
+      -vf:
+        - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+  pipe_video:
+    -y: true
+    output_options:
+      -loglevel: panic
+      -y: -f
+      image2pipe: True
+      -i: '-'
+      -vcodec: libx264
+      -preset: medium
+      -qscale: 5
+      -crf: 17
+      -vf:
+        - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+  migrating_tracks:
+    output_options:
+      -pix_fmt: null
+      -y: true
+  video_to_frames:
+    output_options:
+      -pix_fmt: null
+      -qscale:v: 2
+      -vf:
+        - noise=c1s=8:c0f=u

@@ -29,7 +29,6 @@ def get_video_info(ffprobe_dir, input_video):
         input_video
     ]
 
-
     json_str = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
 
     return json.loads(json_str.decode('utf-8'))

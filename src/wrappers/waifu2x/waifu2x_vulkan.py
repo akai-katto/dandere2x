@@ -105,7 +105,6 @@ class Waifu2xVulkan(threading.Thread):
 
         console_output.close()
 
-
     def upscale_file(self, input_file: str, output_file: str):
         """
         Manually upscale a file using the wrapper.

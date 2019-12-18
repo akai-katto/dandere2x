@@ -1,12 +1,12 @@
-from dandere2xlib.utils.yaml_utils import get_options_from_section, absolutify_yaml
-from wrappers.ffmpeg.videosettings import VideoSettings
-import tempfile
-import logging
-import pathlib
 import json
-import math
-import sys
+import logging
 import os
+import pathlib
+import sys
+import tempfile
+
+from dandere2xlib.utils.yaml_utils import absolutify_yaml
+from wrappers.ffmpeg.videosettings import VideoSettings
 
 
 class Context:
@@ -172,7 +172,7 @@ class Context:
     def set_logger(self):
         import time
 
-        log_name = "dandere2x" +  str(time.time()) + ".log" # create logs using epoch time to denote them
+        log_name = "dandere2x" + str(time.time()) + ".log"  # create logs using epoch time to denote them
         logging.basicConfig(filename=os.path.join(self.log_folder_dir, log_name), level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 

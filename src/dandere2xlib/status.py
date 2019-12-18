@@ -1,9 +1,7 @@
-import os
 import sys
 import time
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 
 
 # todo
