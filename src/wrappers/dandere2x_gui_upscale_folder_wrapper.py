@@ -30,7 +30,7 @@ class Dandere2xUpscaleFolder:
 
             file_name = os.path.join(self.input_folder, files_in_folder[x])
 
-            path, name = os.path.split( files_in_folder[x])
+            path, name = os.path.split(files_in_folder[x])
             name_only = name.split(".")[0]
 
             output_name = os.path.join(self.output_folder, "upscaled_" + name_only + ".mp4")

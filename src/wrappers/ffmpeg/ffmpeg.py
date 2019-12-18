@@ -4,8 +4,8 @@ import logging
 import subprocess
 
 from context import Context
-from dandere2xlib.utils.yaml_utils import get_options_from_section
 from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
+from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 def trim_video(context: Context, output_file: str):
@@ -77,8 +77,8 @@ def create_video_from_extract_frames(context: Context, output_file: str):
     logger = logging.getLogger(__name__)
 
     command = [context.ffmpeg_dir,
-                              "-hwaccel", context.hwaccel,
-                              "-i", input_file]
+               "-hwaccel", context.hwaccel,
+               "-i", input_file]
 
     extract_frames_options = \
         get_options_from_section(context.config_yaml["ffmpeg"]["video_to_frames"]['output_options'],
@@ -94,6 +94,7 @@ def create_video_from_extract_frames(context: Context, output_file: str):
     console_output = open(context.console_output_dir + "ffmpeg_create_video_from_extract_frame_filters.txt", "w")
     console_output.write(str(command))
     subprocess.call(command, shell=False, stderr=console_output, stdout=console_output)
+
 
 @staticmethod
 def append_video_resize_filter(context: Context):
@@ -113,7 +114,8 @@ def append_video_resize_filter(context: Context):
     context.height = height
 
     context.config_yaml['ffmpeg']['video_to_frames']['output_options']['-vf'] \
-                       .append("scale=" + str(context.width) + ":" + str(context.height))
+        .append("scale=" + str(context.width) + ":" + str(context.height))
+
 
 def concat_encoded_vids(context: Context, output_file: str):
     """

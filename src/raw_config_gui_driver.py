@@ -6,15 +6,15 @@ Starting from this driver will do stuff the GUI will do, such as delete the work
 if decided on by the user.
 """
 
+import time
+
+import yaml
+
 from dandere2xlib.utils.dandere2x_utils import get_operating_system
 from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
 
-import time
-import yaml
-
 
 def main():
-
     start = time.time()
 
     # get config based on OS
@@ -30,6 +30,7 @@ def main():
     d2x.start()
 
     print("\n Total runtime duration:", time.time() - start)
+
 
 if __name__ == "__main__":
     main()

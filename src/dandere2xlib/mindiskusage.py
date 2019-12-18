@@ -1,12 +1,13 @@
+import logging
 import os
 import threading
 import time
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-#from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
+# from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
 from wrappers.ffmpeg.progressive_frame_extractor_ffmpeg import ProgressiveFramesExtractorFFMPEG
-import logging
+
 
 class MinDiskUsage:
     """
@@ -31,6 +32,7 @@ class MinDiskUsage:
       1 frame. I conjecture this would lessen the amount of times these functions are called, which should
       increase performance.  
     """
+
     def run(self):
         """
         Waits on the 'signal_merged_count' to change, which originates from the merge.py class.
@@ -46,7 +48,6 @@ class MinDiskUsage:
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
             self.__delete_used_files(x)
-
 
     def extract_initial_frames(self):
         """

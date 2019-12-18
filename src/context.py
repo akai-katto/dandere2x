@@ -1,12 +1,12 @@
-from dandere2xlib.utils.yaml_utils import get_options_from_section, absolutify_yaml
-from wrappers.ffmpeg.videosettings import VideoSettings
-import tempfile
-import logging
-import pathlib
 import json
-import math
-import sys
+import logging
 import os
+import pathlib
+import sys
+import tempfile
+
+from dandere2xlib.utils.yaml_utils import absolutify_yaml
+from wrappers.ffmpeg.videosettings import VideoSettings
 
 
 class Context:
@@ -140,18 +140,6 @@ class Context:
         self.correction_block_size = 2
         self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
 
-        ##################
-        # Video Settings #
-        ##################
-
-        # find out if the user trimmed a video by checking the time part of the json. IF theres nothing there,
-        # then the user didn't trim anything
-        self.user_trim_video = False
-        find_out_if_trim = get_options_from_section(self.config_yaml["ffmpeg"]["trim_video"]['time'])
-
-        if find_out_if_trim:
-            self.user_trim_video = True
-
         #####################
         # MIN DISK SETTINGS #
         #####################
@@ -184,7 +172,7 @@ class Context:
     def set_logger(self):
         import time
 
-        log_name = "dandere2x" +  str(time.time()) + ".log" # create logs using epoch time to denote them
+        log_name = "dandere2x" + str(time.time()) + ".log"  # create logs using epoch time to denote them
         logging.basicConfig(filename=os.path.join(self.log_folder_dir, log_name), level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
