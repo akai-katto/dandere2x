@@ -56,6 +56,53 @@ class Dandere2x:
 
     def __init__(self, context):
         self.context = context
+        self.jobs = {}
+        self.min_disk_demon = None
+        self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
+
+    def __extract_frames(self):
+
+        if self.context.use_min_disk:
+            self.min_disk_demon.extract_initial_frames()
+        elif not self.context.use_min_disk:
+            extract_frames(self.context, self.context.input_file)
+
+    def __setup_jobs(self):
+        self.jobs['compress_frames_thread'] = threading.Thread(target=compress_frames, args=([self.context]),
+                                                               daemon=True)
+        self.jobs['dandere2xcpp_thread'] = Dandere2xCppWrapper(self.context)
+        self.jobs['merge_thread'] = threading.Thread(target=merge_loop, args=([self.context]),
+                                                     daemon=True)
+        self.jobs['residual_thread'] = threading.Thread(target=residual_loop, args=([self.context]),
+                                                        daemon=True)
+
+        self.jobs['waifu2x_thread'] = self.waifu2x
+        self.jobs['status_thread'] = threading.Thread(target=print_status, args=([self.context]),
+                                                      daemon=True)
+
+        if self.context.use_min_disk:
+            self.min_disk_demon = MinDiskUsage(self.context)
+            self.jobs['min_disk_thread'] = threading.Thread(target=self.min_disk_demon.run,
+                                                            daemon=True)
+
+    def __upscale_first_frame(self):
+
+        one_frame_time = time.time()
+        self.waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
+                             output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+
+        if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
+            """ 
+            Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
+            """
+
+            print("Could not upscale first file.. check logs file to see what's wrong")
+            logging.info("Could not upscale first file.. check logs file to see what's wrong")
+            logging.info("Exiting Dandere2x...")
+            sys.exit(1)
+
+        print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
+
 
     def run_concurrent(self):
         """
@@ -104,59 +151,9 @@ class Dandere2x:
             """
             append_video_resize_filter(self.context)
 
-        # Create a series of 'job' threads to be ran mutli-threaded during runtime. Each thread
-        # has it's own unique and modular function.
-
-        self.jobs = {}
-
-        self.jobs['compress_frames_thread'] = threading.Thread(target=compress_frames, args=([self.context]),
-                                                               daemon=True)
-        self.jobs['dandere2xcpp_thread'] = Dandere2xCppWrapper(self.context)
-        self.jobs['merge_thread'] = threading.Thread(target=merge_loop, args=([self.context]),
-                                                     daemon=True)
-        self.jobs['residual_thread'] = threading.Thread(target=residual_loop, args=([self.context]),
-                                                        daemon=True)
-
-        waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
-        self.jobs['waifu2x_thread'] = waifu2x
-        self.jobs['status_thread'] = threading.Thread(target=print_status, args=([self.context]),
-                                                      daemon=True)
-
-        if self.context.use_min_disk:
-            """
-            Add min disk the series of threads to be run by the d2x program, and extract the initial set
-            of "max_frames_ahead" to start the frame buffer. 
-            """
-
-            min_disk_usage = MinDiskUsage(self.context)
-            min_disk_usage.extract_initial_frames()
-            self.jobs['min_disk_thread'] = threading.Thread(target=min_disk_usage.run,
-                                                            daemon=True)
-
-        elif not self.context.use_min_disk:
-            """
-            If we're not using min disk, extract the frames all at once using ffmpeg
-            """
-            extract_frames(self.context, self.context.input_file)
-
-        # Upscale the first file (the genesis file is treated different in Dandere2x)
-        # 'one_frame_time' timer prints out how long it takes to upscale one frame
-
-        one_frame_time = time.time()
-        waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                             output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
-
-        if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
-            """ 
-            Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
-            """
-
-            print("Could not upscale first file.. check logs file to see what's wrong")
-            logging.info("Could not upscale first file.. check logs file to see what's wrong")
-            logging.info("Exiting Dandere2x...")
-            sys.exit(1)
-
-        print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
+        self.__setup_jobs()
+        self.__extract_frames()
+        self.__upscale_first_frame()
 
         ######################################
         #  THREADING / MULTIPROCESSING AREA  #
