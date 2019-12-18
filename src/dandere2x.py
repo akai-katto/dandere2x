@@ -107,47 +107,27 @@ class Dandere2x:
     def run_concurrent(self):
         """
         Starts the dandere2x_python process at large.
-
-        Inputs:
-        - context
-
-        Pre-Reqs:
-        'This is all the stuff that needs to be done before dandere2x can officially start'
-
-        - creates workspaces needed for dandere2x to work
-        - edits the video if it's needed to be trimmed or needs resolution needs to be resized.
-        - extracts all the frames in the video into it's own folder.
-        - upscales the first frame using waifu2x and ensuring the genesis image upscaled correctly.
-
-        Threading Area:
-
-        - calls a series of threads for dandere2x_python to work
-          (residuals, merging, waifu2x, dandere2xcpp, realtime-encoding)
         """
 
-        ############
-        # PRE REQS #
-        ############
-
-        # Step 0 Setup: We need the directory to be made before we do anything (then the log file after).
+        # directories need to be created before we do anything
         create_directories(self.context.directories)
         self.context.set_logger()
 
+        # dandere2x needs the width and height to be a share a common factor with the block size,
+        # so append a video filter if needed to make the size conform
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
-            """
-            Before we extract all the frames, we need to ensure the settings are valid. If not, resize the video
-            to make the settings valid somehow by re-adjusting the resolution. 
-            """
             append_video_resize_filter(self.context)
 
+        # create the list of threads to use for dandere2x
         self.__setup_jobs()
+
+        # extract the initial frames needed for execution depending on type (min_disk_usage / non min_disk_usage )
         self.__extract_frames()
+
+        # first frame needs to be upscaled manually before dandere2x process starts.
         self.__upscale_first_frame()
 
-        ######################################
-        #  THREADING / MULTIPROCESSING AREA  #
-        ######################################
-
+        # run and wait for all the dandere2x threads.
         for job in self.jobs:
             self.jobs[job].start()
             logging.info("Starting new %s process" % job)
