@@ -109,7 +109,6 @@ class Dandere2x:
 
         # directories need to be created before we do anything
         create_directories(self.context.directories)
-        self.context.set_logger()
 
         # dandere2x needs the width and height to be a share a common factor with the block size,
         # so append a video filter if needed to make the size conform

@@ -37,6 +37,7 @@ class Context:
 
         # Parse the unparsed config into a parsed (../externals -> C:/this_folder/externals)
         self.config_yaml = absolutify_yaml(config_file_unparsed, str(self.this_folder.absolute()), absolutify_key="..")
+
         ################################
         #  setup all the directories.. #
         ################################
@@ -159,6 +160,10 @@ class Context:
         """
         self.signal_merged_count = 0
 
+        ##################
+        # Video Settings #
+        ##################
+
         # load the needed video settings
         self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
 
@@ -168,12 +173,22 @@ class Context:
         # self.frame_count = ffmpeg.count(frames)
         self.frame_count = self.video_settings.frame_count
 
+        #########
+        # Other #
+        #########
+
+        # create and set the log file
+        self.set_logger()
+
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
         import time
 
         log_name = "dandere2x" + str(time.time()) + ".log"  # create logs using epoch time to denote them
-        logging.basicConfig(filename=os.path.join(self.log_folder_dir, log_name), level=logging.INFO)
+        log_file =os.path.join(self.log_folder_dir, log_name)
+
+        print("log file is: " + str(log_file))
+        logging.basicConfig(filename=log_file, level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
     def close_logger(self):
