@@ -55,7 +55,8 @@ class Pipe():
         self.ffmpeg_pipe_subprocess = None
 
     def start_pipe_thread(self):
-        self.ffmpeg_pipe_subprocess = subprocess.Popen(self.ffmpeg_pipe_command, stdin=subprocess.PIPE)
+        console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
+        self.ffmpeg_pipe_subprocess = subprocess.Popen(self.ffmpeg_pipe_command, stdin=subprocess.PIPE, stdout=console_output)
         threading.Thread(target=self.__write_to_pipe).start()
 
     # todo: Implement this without a 'while true'
