@@ -12,6 +12,7 @@ import os
 import shutil
 import time
 from sys import platform
+from dandere2xlib.utils.thread_utils import CancellationToken
 
 
 def get_operating_system():
@@ -63,11 +64,11 @@ def get_list_from_file(text_file: str):
 
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
-def wait_on_file(file_string: str):
+def wait_on_file(file_string: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
-    while not exists:
+    while not exists and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
@@ -76,12 +77,12 @@ def wait_on_file(file_string: str):
 
 
 # for renaming function, break when either file exists
-def wait_on_either_file(file_1: str, file_2: str):
+def wait_on_either_file(file_1: str, file_2: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)
     count = 0
-    while not (exists_1 or exists_2):
+    while not (exists_1 or exists_2) and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(file_1 + " does not exist, waiting")
         exists_1 = os.path.isfile(file_1)
