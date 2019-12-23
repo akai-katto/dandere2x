@@ -39,6 +39,10 @@ class CompressFrames(threading.Thread):
         # start from 1 because ffmpeg's extracted frames starts from 1
         for x in range(1, self.frame_count + 1):
 
+            # loading files area
+            frame = Frame()
+            frame.load_from_string_wait(self.inputs_dir + "frame" + str(x) + self.extension_type, self.cancel_token)
+
             # stop if thread was killed
             if not self.alive:
                 return
@@ -47,9 +51,6 @@ class CompressFrames(threading.Thread):
             if os.path.exists(self.compressed_static_dir + "compressed_" + str(x) + ".jpg"):
                 continue
 
-            frame = Frame()
-
-            frame.load_from_string_wait(self.inputs_dir + "frame" + str(x) + self.extension_type, self.cancel_token)
             frame.save_image_quality(self.compressed_static_dir + "compressed_" + str(x) + ".jpg",
                                      self.quality_minimum)
             frame.save_image_quality(self.compressed_moving_dir + "compressed_" + str(x) + ".jpg",

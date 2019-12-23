@@ -50,13 +50,15 @@ class Residual(threading.Thread):
         # for every frame in the video, create a residual_frame given the text files.
         for x in range(1, self.frame_count):
 
-            # stop if thread is killed
-            if not self.is_alive:
-                return
+            # loading files area
 
             f1 = Frame()
             f1.load_from_string_wait(self.input_frames_dir + "frame" + str(x + 1) + self.extension_type,
                                      self.cancel_token)
+
+            # stop if thread is killed
+            if not self.is_alive:
+                return
 
             # Load the neccecary lists to compute this iteration of residual making
             residual_data = get_list_from_file(self.residual_data_dir + "residual_" + str(x) + ".txt")
