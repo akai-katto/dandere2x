@@ -180,7 +180,8 @@ class Merge(threading.Thread):
             if not last_frame:
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
-                    wait_on_file(self.upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
+                    wait_on_file(self.upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
+                                 self.cancel_token)
 
                 f1 = background_frame_load.loaded_image
 
