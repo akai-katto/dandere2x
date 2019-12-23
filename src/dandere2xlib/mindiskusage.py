@@ -101,7 +101,7 @@ class MinDiskUsage:
         remove.append(upscaled_file_r)
 
         # remove
-        threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True).start()
+        threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True, name="mindiskusage").start()
 
     @staticmethod
     def __delete_files_from_list(files):

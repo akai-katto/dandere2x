@@ -10,7 +10,7 @@ class AsyncFrameRead(threading.Thread):
 
     def __init__(self, input_image: str):
         # calling superclass init
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name="asyncframeread")
         self.input_image = input_image
         self.loaded_image = Frame()
         self.load_complete = False
@@ -27,7 +27,7 @@ class AsyncFrameWrite(threading.Thread):
 
     def __init__(self, image: Frame, output_image: str):
         # calling superclass init
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name="asyncframewrite")
         self.image = image
         self.output_image = output_image
 

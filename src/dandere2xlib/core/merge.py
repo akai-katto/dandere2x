@@ -58,6 +58,7 @@ class Merge(threading.Thread):
 
     def kill(self):
         self.alive = False
+        self.pipe.kill_thread()
         self.cancel_token.cancel()
         self._stopevent.set()
 
