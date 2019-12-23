@@ -35,6 +35,7 @@ class Dandere2xCppWrapper(threading.Thread):
         threading.Thread.__init__(self, name="Dandere2xCpp")
 
     def join(self, timeout=None):
+        print("dandere2xcpp killed")
         threading.Thread.join(self, timeout)
 
     def kill(self):

@@ -57,7 +57,7 @@ class Residual(threading.Thread):
                                      self.cancel_token)
 
             # stop if thread is killed
-            if not self.is_alive:
+            if not self.alive:
                 return
 
             # Load the neccecary lists to compute this iteration of residual making
