@@ -1,9 +1,13 @@
 import logging
 import subprocess
 import threading
+import os
+import signal
+import psutil
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_operating_system
+from dandere2xlib.utils.thread_utils import CancellationToken
 
 
 class Dandere2xCppWrapper(threading.Thread):
@@ -21,8 +25,25 @@ class Dandere2xCppWrapper(threading.Thread):
         self.extension_type = context.extension_type
         self.residual_images_dir = context.residual_images_dir
         self.log_dir = context.console_output_dir
+        self.dandere2x_cpp_subprocess = None
 
-        threading.Thread.__init__(self)
+        # Threading Specific
+
+        self.alive = True
+        self.cancel_token = CancellationToken()
+        self._stopevent = threading.Event()
+        threading.Thread.__init__(self, name="Dandere2xCpp")
+
+    def join(self, timeout=None):
+        threading.Thread.join(self, timeout)
+
+    def kill(self):
+        self.alive = False
+        self.cancel_token.cancel()
+        self._stopevent.set()
+
+        d2xcpp_psutil = psutil.Process(self.dandere2x_cpp_subprocess.pid)
+        d2xcpp_psutil.kill()
 
     def run(self):
         logger = logging.getLogger(__name__)
@@ -41,14 +62,14 @@ class Dandere2xCppWrapper(threading.Thread):
         # On linux, we can't use subprocess.create_new_console, so we just write
         # The dandere2x_cpp output to a text file.
         if get_operating_system() == 'win32':
-            return_val = subprocess.run(exec, creationflags=subprocess.CREATE_NEW_CONSOLE).returncode
+            self.dandere2x_cpp_subprocess = subprocess.Popen(exec, creationflags=subprocess.CREATE_NEW_CONSOLE)
 
         elif get_operating_system() == 'linux':
             console_output = open(self.log_dir + "dandere2x_cpp.txt", "w")
             console_output.write(str(exec))
-            return_val = subprocess.run(exec, shell=False, stderr=console_output, stdout=console_output).returncode
+            self.dandere2x_cpp_subprocess = subprocess.Popen(exec, shell=False, stderr=console_output, stdout=console_output)
 
-        if return_val == 0:
+        if self.dandere2x_cpp_subprocess.returncode == 0:
             logger.info("d2xcpp finished correctly")
         else:
             logger.info("d2xcpp ended unexpectedly")
