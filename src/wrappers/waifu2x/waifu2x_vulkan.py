@@ -10,6 +10,7 @@ from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 from dandere2xlib.utils.thread_utils import CancellationToken
+from dandere2xlib.utils.dandere2x_utils import wait_on_file
 
 class Waifu2xVulkan(threading.Thread):
     """
@@ -166,13 +167,15 @@ class Waifu2xVulkan(threading.Thread):
 
         for x in range(len(list_of_names)):
 
+            if not self.alive:
+                return
+
             name = list_of_names[x]
 
             residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
             residual_upscaled_file = self.residual_upscaled_dir + name
 
-            while not file_exists(residual_upscaled_file):
-                time.sleep(.00001)
+            wait_on_file(residual_file, self.cancel_token)
 
             if os.path.exists(residual_file):
                 os.remove(residual_file)
