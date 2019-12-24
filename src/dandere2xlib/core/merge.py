@@ -39,8 +39,6 @@ class Merge(threading.Thread):
         self.nosound_file = context.nosound_file
         self.preserve_frames = context.preserve_frames
         self.logger = logging.getLogger(__name__)
-        self.is_alive = True
-        self._is_stopped = False
 
         # setup the pipe for merging
 
