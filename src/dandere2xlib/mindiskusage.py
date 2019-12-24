@@ -27,6 +27,7 @@ class MinDiskUsage(threading.Thread):
         self.frame_count = context.frame_count
         self.progressive_frame_extractor = ProgressiveFramesExtractorFFMPEG(self.context, self.context.input_file)
 
+        self.progressive_frame_extractor.start_task()
         # Threading Specific
 
         self.alive = True
@@ -39,6 +40,7 @@ class MinDiskUsage(threading.Thread):
 
     def kill(self):
         self.alive = False
+        self.progressive_frame_extractor.kill_task()
         self.cancel_token.cancel()
         self._stopevent.set()
 
