@@ -143,9 +143,9 @@ class Dandere2x:
         self.residual_thread.start()
         self.waifu2x.start()
         self.status_thread.start()
+        self.min_disk_demon.start()
 
-
-        time.sleep(5)
+        time.sleep(10)
 
 
         # print("killing da jobs")
@@ -159,30 +159,34 @@ class Dandere2x:
         # there's an issue where even if we call kill, there's wait_on_files inside of the
         # threads which are holding up a proper dandere2x closure.
 
+
         print("killing all da jobs")
+        #self.residual_thread.join()
+        self.min_disk_demon.kill()
+        self.min_disk_demon.join()
 
 
-        print('waiting on res')
+        # print('waiting on res')
         self.residual_thread.kill()
         self.residual_thread.join()
-
-        print('waiting on merge')
+        #
+        # print('waiting on merge')
         self.merge_thread.kill()
         self.merge_thread.join()
-
-        print('waiting on waifu2x')
+        #
+        # print('waiting on waifu2x')
         self.waifu2x.kill()
         self.waifu2x.join()
-
-        print('waiting on cpp')
+        #
+        # print('waiting on cpp')
         self.dandere2x_cpp_thread.kill()
         self.dandere2x_cpp_thread.join()
-
-        print('waiting on status')
+        #
+        # print('waiting on status')
         self.status_thread.kill()
         self.status_thread.join()
-
-        print('waiting on compress')
+        #
+        # print('waiting on compress')
         self.compress_frames_thread.kill()
         self.compress_frames_thread.join()
 
@@ -194,8 +198,6 @@ class Dandere2x:
         self.context.logger.info("All threaded processes have finished")
         print("everything finished")
 
-        print("threading after thread calls")
-        print(threading.enumerate())
 
 
     def _get_waifu2x_class(self, name: str):
