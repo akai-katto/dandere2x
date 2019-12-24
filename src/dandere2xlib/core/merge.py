@@ -191,6 +191,8 @@ class Merge(threading.Thread):
 
         self.pipe.wait_finish_stop_pipe()
 
+        # need to migrate tracks, but not in merge.
+
 
 # For debugging
 def main():
