@@ -175,7 +175,7 @@ class Waifu2xVulkan(threading.Thread):
             residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
             residual_upscaled_file = self.residual_upscaled_dir + name
 
-            wait_on_file(residual_file, self.cancel_token)
+            wait_on_file(residual_upscaled_file, self.cancel_token)
 
             if os.path.exists(residual_file):
                 os.remove(residual_file)
