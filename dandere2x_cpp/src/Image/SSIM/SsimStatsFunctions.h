@@ -60,7 +60,7 @@ public:
             }
         }
         variance /= (block_size * block_size - 1);
-        variance = pow(variance, .5);
+        //variance = pow(variance, .5);
         return variance;
     }
 

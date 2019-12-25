@@ -146,8 +146,8 @@ void driver_difference(string workspace, int resume_count, int frame_count,
 
        // For Debugging. Create a folder called 'debug_frames' in workspace when testing this -
        // Enabling this will allow you to see what Dandere2x_Cpp is seeing when it finishes processing a frame.
-//        DebugImage before = DebugImage::create_debug_from_image(*image_2);
-//        before.save(workspace + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
+        DebugImage before = DebugImage::create_debug_from_image(*image_2);
+        before.save(workspace + "debug_frames" + separator() + "before_" + to_string(x) + ".png");
 
 
         // For the next iteration, we simply let frame 'x' become frame 'x+1'.
