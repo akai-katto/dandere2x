@@ -38,6 +38,7 @@ from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, file_exists
+from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import extract_frames, append_video_resize_filter
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
@@ -46,7 +47,8 @@ from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
 from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
 
 
-class Dandere2x:
+
+class Dandere2x(threading.Thread):
     """
     The main driver that can be called in a various level of circumstances - for example, dandere2x can be started
     from dandere2x_gui_wrapper.py, raw_config_driver.py, or raw_config_gui_driver.py. In each scenario, this is the
@@ -63,6 +65,14 @@ class Dandere2x:
         self.compress_frames_thread = CompressFrames(self.context)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
         self.status_thread = Status(context)
+
+
+        # Threading Specific
+
+        self.alive = True
+        self.cancel_token = CancellationToken()
+        self._stopevent = threading.Event()
+        threading.Thread.__init__(self, name="ResidualThread")
 
     def __extract_frames(self):
 
@@ -104,7 +114,51 @@ class Dandere2x:
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
 
-    def run_concurrent(self):
+
+    def join(self, timeout=None):
+        print("joining min disk demon")
+        self.min_disk_demon.join()
+        print("joining residual")
+        self.residual_thread.join()
+        print("joining merge")
+        self.merge_thread.join()
+        print("joining waifu2x")
+        self.waifu2x.join()
+        print("joining dandere2x")
+        self.dandere2x_cpp_thread.join()
+        print("joining status")
+        self.status_thread.join()
+        print("joining compress")
+        self.compress_frames_thread.join()
+
+
+        self.context.logger.info("All threaded processes have finished")
+        print("everything finished")
+
+        print("threading at end of join")
+        print(threading.enumerate())
+
+        file1 = open(self.context.workspace + "death_folder.txt", "a")
+        file1.write(str(self.context.signal_merged_count))
+        file1.close()
+
+
+    def kill(self):
+        self.alive = False
+        self.cancel_token.cancel()
+        self._stopevent.set()
+
+        self.residual_thread.kill()
+        self.compress_frames_thread.kill()
+        self.min_disk_demon.kill()
+        self.merge_thread.kill()
+        self.waifu2x.kill()
+        self.dandere2x_cpp_thread.kill()
+        self.status_thread.kill()
+
+
+
+    def run(self):
         """
         Starts the dandere2x_python process at large.
         """
@@ -134,8 +188,6 @@ class Dandere2x:
         #     self.jobs[job].start()
         #     logging.info("Starting new %s process" % job)
 
-        print("threading before thread calls")
-        print(threading.enumerate())
 
         self.compress_frames_thread.start()
         self.dandere2x_cpp_thread.start()
@@ -145,58 +197,6 @@ class Dandere2x:
         self.status_thread.start()
         self.min_disk_demon.start()
 
-        time.sleep(10)
-
-
-        # print("killing da jobs")
-        # for job in self.jobs:
-        #     print("killing " + str(job))
-        #     self.jobs[job].kill()
-        #
-        #     logging.info("%s process thread joined" % job)
-
-
-        # there's an issue where even if we call kill, there's wait_on_files inside of the
-        # threads which are holding up a proper dandere2x closure.
-
-
-        print("killing all da jobs")
-        #self.residual_thread.join()
-        self.min_disk_demon.kill()
-        self.min_disk_demon.join()
-
-
-        # print('waiting on res')
-        self.residual_thread.kill()
-        self.residual_thread.join()
-        #
-        # print('waiting on merge')
-        self.merge_thread.kill()
-        self.merge_thread.join()
-        #
-        # print('waiting on waifu2x')
-        self.waifu2x.kill()
-        self.waifu2x.join()
-        #
-        # print('waiting on cpp')
-        self.dandere2x_cpp_thread.kill()
-        self.dandere2x_cpp_thread.join()
-        #
-        # print('waiting on status')
-        self.status_thread.kill()
-        self.status_thread.join()
-        #
-        # print('waiting on compress')
-        self.compress_frames_thread.kill()
-        self.compress_frames_thread.join()
-
-        # for job in self.jobs:
-        #     self.jobs[job].join()
-        #
-        #     logging.info("%s process thread joined" % job)
-
-        self.context.logger.info("All threaded processes have finished")
-        print("everything finished")
 
 
 

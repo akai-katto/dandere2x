@@ -7,7 +7,7 @@ from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file, wait_on_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait, wait_on_file
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.ffmpeg.pipe import Pipe
 from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
@@ -148,10 +148,10 @@ class Merge(threading.Thread):
             self.logger.info("Upscaling frame " + str(x))
 
             # Load the needed vectors to create the merged image.
-            prediction_data_list = get_list_from_file(self.pframe_data_dir + "pframe_" + str(x) + ".txt")
-            residual_data_list = get_list_from_file(self.residual_data_dir + "residual_" + str(x) + ".txt")
-            correction_data_list = get_list_from_file(self.correction_data_dir + "correction_" + str(x) + ".txt")
-            fade_data_list = get_list_from_file(self.fade_data_dir + "fade_" + str(x) + ".txt")
+            prediction_data_list = get_list_from_file_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt")
+            residual_data_list = get_list_from_file_wait(self.residual_data_dir + "residual_" + str(x) + ".txt")
+            correction_data_list = get_list_from_file_wait(self.correction_data_dir + "correction_" + str(x) + ".txt")
+            fade_data_list = get_list_from_file_wait(self.fade_data_dir + "fade_" + str(x) + ".txt")
 
             # Create the actual image itself.
             frame_next = self.make_merge_image(self.context, f1, frame_previous,

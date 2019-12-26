@@ -5,7 +5,7 @@ import math
 import threading
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.frame.frame import DisplacementVector, Frame
 
@@ -51,18 +51,24 @@ class Residual(threading.Thread):
         for x in range(1, self.frame_count):
 
             # loading files area
+            # stop if thread is killed
+            if not self.alive:
+                return
 
             f1 = Frame()
             f1.load_from_string_wait(self.input_frames_dir + "frame" + str(x + 1) + self.extension_type,
                                      self.cancel_token)
 
+
+            # Load the neccecary lists to compute this iteration of residual making
+            residual_data = get_list_from_file_wait(self.residual_data_dir + "residual_" + str(x) + ".txt",
+                                                    self.cancel_token)
+            prediction_data = get_list_from_file_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
+                                                      self.cancel_token)
+
             # stop if thread is killed
             if not self.alive:
                 return
-
-            # Load the neccecary lists to compute this iteration of residual making
-            residual_data = get_list_from_file(self.residual_data_dir + "residual_" + str(x) + ".txt")
-            prediction_data = get_list_from_file(self.pframe_data_dir + "pframe_" + str(x) + ".txt")
 
             # Create the output files..
             debug_output_file = self.debug_dir + "debug" + str(x + 1) + self.extension_type

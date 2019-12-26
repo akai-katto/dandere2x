@@ -30,16 +30,19 @@ def get_operating_system():
 # returns a list given a text file (representing a string)
 
 
-def get_list_from_file(text_file: str):
+def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
-    while not exists:
+    while not exists and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(text_file + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
+
+    if cancel.is_cancelled:
+        return
 
     file = None
     try:
@@ -256,7 +259,7 @@ def verify_user_settings(context):
 
 
 def main():
-    text = get_list_from_file("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
+    text = get_list_from_file_wait("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
 
 
 if __name__ == "__main__":
