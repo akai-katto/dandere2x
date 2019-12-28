@@ -13,6 +13,8 @@ import shutil
 import time
 from sys import platform
 
+from dandere2xlib.utils.thread_utils import CancellationToken
+
 
 def get_operating_system():
     if platform == "linux" or platform == "linux2":
@@ -29,16 +31,19 @@ def get_operating_system():
 # returns a list given a text file (representing a string)
 
 
-def get_list_from_file(text_file: str):
+def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
-    while not exists:
+    while not exists and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(text_file + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
+
+    if cancel.is_cancelled:
+        return
 
     file = None
     try:
@@ -63,11 +68,11 @@ def get_list_from_file(text_file: str):
 
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
-def wait_on_file(file_string: str):
+def wait_on_file(file_string: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
-    while not exists:
+    while not exists and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
@@ -76,12 +81,12 @@ def wait_on_file(file_string: str):
 
 
 # for renaming function, break when either file exists
-def wait_on_either_file(file_1: str, file_2: str):
+def wait_on_either_file(file_1: str, file_2: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)
     count = 0
-    while not (exists_1 or exists_2):
+    while not (exists_1 or exists_2) and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(file_1 + " does not exist, waiting")
         exists_1 = os.path.isfile(file_1)
@@ -93,11 +98,11 @@ def wait_on_either_file(file_1: str, file_2: str):
 
 # Sometimes dandere2x is offsync with window's handlers, and a directory might be deleted after
 # the call was made, so in some cases make sure it's completely deleted before moving on during runtime
-def wait_on_delete_dir(dir: str):
+def wait_on_delete_dir(dir: str, cancel_token=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists = dir_exists(dir)
     count = 0
-    while exists:
+    while exists and not cancel_token.is_cancelled:
         if count / 500 == 0:
             logger.info(dir + " does not exist, waiting")
         exists = os.path.isfile(dir)
@@ -255,7 +260,7 @@ def verify_user_settings(context):
 
 
 def main():
-    text = get_list_from_file("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
+    text = get_list_from_file_wait("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
 
 
 if __name__ == "__main__":
