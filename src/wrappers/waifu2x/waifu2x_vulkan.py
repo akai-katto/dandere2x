@@ -30,7 +30,7 @@ class Waifu2xVulkan(threading.Thread):
         self.context = context
         self.signal_upscale = True
         self.active_waifu2x_subprocess = None
-        self._is_stopped = False
+        self.start_frame = 1
 
         self.waifu2x_vulkan_upscale_frame = [self.waifu2x_ncnn_vulkan_file_path,
                                              "-i", "[input_file]",
@@ -64,6 +64,9 @@ class Waifu2xVulkan(threading.Thread):
                 d2xcpp_psutil.kill()
         except psutil.NoSuchProcess:
             pass
+
+    def set_start_frame(self, start_frame):
+        self.start_frame = start_frame
 
     def join(self, timeout=None):
         threading.Thread.join(self, timeout)
@@ -162,7 +165,7 @@ class Waifu2xVulkan(threading.Thread):
 
         # make a list of names that will eventually (past or future) be upscaled
         list_of_names = []
-        for x in range(1, self.frame_count):
+        for x in range(self.start_frame, self.frame_count):
             list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
 
         for x in range(len(list_of_names)):
@@ -199,7 +202,7 @@ class Waifu2xVulkan(threading.Thread):
         """
 
         file_names = []
-        for x in range(1, self.frame_count):
+        for x in range(self.start_frame, self.frame_count):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:

@@ -27,6 +27,16 @@ class Dandere2xCppWrapper(threading.Thread):
         self.log_dir = context.console_output_dir
         self.dandere2x_cpp_subprocess = None
 
+        self.exec_command = [self.dandere2x_cpp_dir,
+                self.workspace,
+                str(self.frame_count),
+                str(self.block_size),
+                str(self.step_size),
+                "n",
+                str(1),
+                self.extension_type]
+
+
         # Threading Specific
 
         self.alive = True
@@ -46,29 +56,30 @@ class Dandere2xCppWrapper(threading.Thread):
         d2xcpp_psutil = psutil.Process(self.dandere2x_cpp_subprocess.pid)
         d2xcpp_psutil.kill()
 
-    def run(self):
-        logger = logging.getLogger(__name__)
-
-        exec = [self.dandere2x_cpp_dir,
+    def set_start_frame(self, start_frame):
+        self.exec_command = [self.dandere2x_cpp_dir,
                 self.workspace,
                 str(self.frame_count),
                 str(self.block_size),
                 str(self.step_size),
-                "n",
-                str(1),
+                "r",
+                str(start_frame),
                 self.extension_type]
 
-        logger.info(exec)
+    def run(self):
+        logger = logging.getLogger(__name__)
+
+        logger.info(self.exec_command)
 
         # On linux, we can't use subprocess.create_new_console, so we just write
         # The dandere2x_cpp output to a text file.
         if get_operating_system() == 'win32':
-            self.dandere2x_cpp_subprocess = subprocess.Popen(exec, creationflags=subprocess.CREATE_NEW_CONSOLE)
+            self.dandere2x_cpp_subprocess = subprocess.Popen(self.exec_command, creationflags=subprocess.CREATE_NEW_CONSOLE)
 
         elif get_operating_system() == 'linux':
             console_output = open(self.log_dir + "dandere2x_cpp.txt", "w")
-            console_output.write(str(exec))
-            self.dandere2x_cpp_subprocess = subprocess.Popen(exec, shell=False, stderr=console_output, stdout=console_output)
+            console_output.write(str(self.exec_command))
+            self.dandere2x_cpp_subprocess = subprocess.Popen(self.exec_command, shell=False, stderr=console_output, stdout=console_output)
 
         if self.dandere2x_cpp_subprocess.returncode == 0:
             logger.info("d2xcpp finished correctly")

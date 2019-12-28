@@ -55,7 +55,7 @@ class Dandere2x(threading.Thread):
     class that is called when Dandere2x ultimately needs to start.
     """
 
-    def __init__(self, context):
+    def __init__(self, context, first_frame=1):
         self.context = context
         self.jobs = {}
         self.min_disk_demon = None
@@ -66,6 +66,12 @@ class Dandere2x(threading.Thread):
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
         self.status_thread = Status(context)
 
+        # session specific
+        self.first_frame = first_frame
+        self.resume_session = False
+
+        if self.first_frame != 1:
+            self.resume_session = True
 
         # Threading Specific
 
@@ -77,6 +83,9 @@ class Dandere2x(threading.Thread):
     def __extract_frames(self):
 
         if self.context.use_min_disk:
+            if self.resume_session:
+                self.min_disk_demon.progressive_frame_extractor.extract_frames_to(self.first_frame)
+
             self.min_disk_demon.extract_initial_frames()
         elif not self.context.use_min_disk:
             extract_frames(self.context, self.context.input_file)
@@ -96,13 +105,14 @@ class Dandere2x(threading.Thread):
             self.min_disk_demon = MinDiskUsage(self.context)
             self.jobs['min_disk_thread'] = self.min_disk_demon
 
+
     def __upscale_first_frame(self):
 
         one_frame_time = time.time()
-        self.waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame1" + self.context.extension_type,
-                                  output_file=self.context.merged_dir + "merged_1" + self.context.extension_type)
+        self.waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame" + str(self.first_frame) + self.context.extension_type,
+                                  output_file=self.context.merged_dir + "merged_" + str(self.first_frame) + self.context.extension_type)
 
-        if not file_exists(self.context.merged_dir + "merged_1" + self.context.extension_type):
+        if not file_exists(self.context.merged_dir + "merged_" + str(self.first_frame) + self.context.extension_type):
             """ 
             Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't.
             """
@@ -156,7 +166,15 @@ class Dandere2x(threading.Thread):
         self.dandere2x_cpp_thread.kill()
         self.status_thread.kill()
 
+    def __set_first_frame(self):
 
+        self.compress_frames_thread.set_start_frame(self.first_frame)
+        self.dandere2x_cpp_thread.set_start_frame(self.first_frame)
+        self.merge_thread.set_start_frame(self.first_frame)
+        self.residual_thread.set_start_frame(self.first_frame)
+        self.waifu2x.set_start_frame(self.first_frame)
+        self.status_thread.set_start_frame(self.first_frame)
+        self.min_disk_demon.set_start_frame(self.first_frame)
 
     def run(self):
         """
@@ -177,17 +195,15 @@ class Dandere2x(threading.Thread):
         # create the list of threads to use for dandere2x
         self.__setup_jobs()
 
+        if self.resume_session:
+            self.__set_first_frame()
+
+        self.min_disk_demon.progressive_frame_extractor.extract_frames_to(150)
         # extract the initial frames needed for execution depending on type (min_disk_usage / non min_disk_usage )
         self.__extract_frames()
 
         # first frame needs to be upscaled manually before dandere2x process starts.
         self.__upscale_first_frame()
-
-        # run and wait for all the dandere2x threads.
-        # for job in self.jobs:
-        #     self.jobs[job].start()
-        #     logging.info("Starting new %s process" % job)
-
 
         self.compress_frames_thread.start()
         self.dandere2x_cpp_thread.start()

@@ -64,6 +64,20 @@ class ProgressiveFramesExtractorFFMPEG:
     def kill_task(self):
         self.pause_resume.kill()
 
+    def extract_frames_to(self, stop_frame: int):
+
+        self.count = stop_frame
+
+        # Resume the thread in order to produce a new frame.
+        self.pause_resume.resume()
+        # Although the file may exist, there are niche conditions in which the file on disk is
+        # not processable. Make sure the image is proccessible before killing the signal.
+        while not file_exists(self.input_frames_dir + "frame" + str(self.count) + self.extension_type):
+            time.sleep(.00001)
+
+        while file_is_empty(self.input_frames_dir + "frame" + str(self.count) + self.extension_type):
+            time.sleep(.00001)
+
     def next_frame(self):
         """
         Call and save the next frame.

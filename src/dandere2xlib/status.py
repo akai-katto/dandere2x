@@ -20,6 +20,7 @@ class Status(threading.Thread):
         self.frame_count = context.frame_count
         self.is_alive = True
         self._is_stopped = False
+        self.start_frame = 1
 
         # Threading Specific
 
@@ -27,7 +28,6 @@ class Status(threading.Thread):
         self.cancel_token = CancellationToken()
         self._stopevent = threading.Event()
         threading.Thread.__init__(self, name="StatusTHread")
-
 
     def join(self, timeout=None):
         threading.Thread.join(self, timeout)
@@ -37,11 +37,14 @@ class Status(threading.Thread):
         self.cancel_token.cancel()
         self._stopevent.set()
 
+    def set_start_frame(self, start_frame: int):
+        self.start_frame = start_frame
+
     def run(self):
 
         last_10 = [0]
 
-        for x in range(1, self.frame_count - 1):
+        for x in range(self.start_frame, self.frame_count - 1):
 
             if not self.is_alive:
                 break

@@ -26,6 +26,7 @@ class MinDiskUsage(threading.Thread):
         self.max_frames_ahead = self.context.max_frames_ahead
         self.frame_count = context.frame_count
         self.progressive_frame_extractor = ProgressiveFramesExtractorFFMPEG(self.context, self.context.input_file)
+        self.start_frame = 1
 
         self.progressive_frame_extractor.start_task()
         # Threading Specific
@@ -44,6 +45,9 @@ class MinDiskUsage(threading.Thread):
         self.cancel_token.cancel()
         self._stopevent.set()
 
+    def set_start_frame(self, start_frame):
+        self.start_frame = start_frame
+
     """
     todo:
     - Rather than extracting frame by frame, look into the applications of extracting every N frames rather than every
@@ -57,7 +61,7 @@ class MinDiskUsage(threading.Thread):
         When it does, delete the used files and extract the needed frame.
         """
         logger = logging.getLogger(__name__)
-        for x in range(1, self.frame_count - self.context.max_frames_ahead + 1):
+        for x in range(self.start_frame, self.frame_count - self.context.max_frames_ahead + 1):
             logger.info("on frame x: " + str(x))
             # wait for signal to get ahead of MinDiskUsage
             while x >= self.context.signal_merged_count and self.alive:

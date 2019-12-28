@@ -20,6 +20,7 @@ class CompressFrames(threading.Thread):
         self.compressed_moving_dir = context.compressed_moving_dir
         self.quality_minimum = context.quality_minimum
         self.extension_type = context.extension_type
+        self.start_frame = 1
 
         # threading member variables
         self.cancel_token = CancellationToken()
@@ -35,9 +36,12 @@ class CompressFrames(threading.Thread):
         self.alive = False
         self._stopevent.set()
 
+    def set_start_frame(self, start_frame: int):
+        self.start_frame = start_frame
+
     def run(self):
         # start from 1 because ffmpeg's extracted frames starts from 1
-        for x in range(1, self.frame_count + 1):
+        for x in range(self.start_frame, self.frame_count + 1):
 
             # loading files area
             frame = Frame()

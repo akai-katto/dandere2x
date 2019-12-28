@@ -42,11 +42,11 @@ class Dandere2x_Gui_Wrapper:
 
         # starting shit
         print("Starting Dandere2x")
-        d = Dandere2x(self.context)
+        d = Dandere2x(self.context, 100)
         d.run()
 
-        time.sleep(15)
-        d.kill()
+        #time.sleep(15)
+        #d.kill()
         d.join()
 
         if d.context.config_yaml['dandere2x']['developer_settings']['gui_delete_workspace_after']:

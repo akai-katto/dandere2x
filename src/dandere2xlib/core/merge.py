@@ -39,6 +39,7 @@ class Merge(threading.Thread):
         self.nosound_file = context.nosound_file
         self.preserve_frames = context.preserve_frames
         self.logger = logging.getLogger(__name__)
+        self.start_frame = 1
 
         # setup the pipe for merging
 
@@ -59,6 +60,9 @@ class Merge(threading.Thread):
         self.pipe.kill_thread()
         self.cancel_token.cancel()
         self._stopevent.set()
+
+    def set_start_frame(self, start_frame):
+        self.start_frame = start_frame
 
     @staticmethod
     def make_merge_image(context: Context, frame_residual: Frame, frame_previous: Frame,
@@ -112,17 +116,17 @@ class Merge(threading.Thread):
         self.pipe.start_pipe_thread()
         # Load the genesis image + the first upscaled image.
         frame_previous = Frame()
-        frame_previous.load_from_string_wait(self.merged_dir + "merged_" + str(1) + self.extension_type,
+        frame_previous.load_from_string_wait(self.merged_dir + "merged_" + str(self.start_frame) + self.extension_type,
                                              self.cancel_token)
 
         self.pipe.save(frame_previous)
 
         f1 = Frame()
-        f1.load_from_string_wait(self.upscaled_dir + "output_" + get_lexicon_value(6, 1) + ".png",
+        f1.load_from_string_wait(self.upscaled_dir + "output_" + get_lexicon_value(6, self.start_frame) + ".png",
                                  self.cancel_token)
 
         last_frame = False
-        for x in range(1, self.frame_count):
+        for x in range(self.start_frame, self.frame_count):
 
             if not self.alive:
                 break
