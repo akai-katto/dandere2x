@@ -55,10 +55,6 @@ class Residual(threading.Thread):
         for x in range(self.start_frame, self.frame_count):
 
             # loading files area
-            # stop if thread is killed
-            if not self.alive:
-                return
-
             f1 = Frame()
             f1.load_from_string_wait(self.input_frames_dir + "frame" + str(x + 1) + self.extension_type,
                                      self.cancel_token)
@@ -69,7 +65,7 @@ class Residual(threading.Thread):
             prediction_data = get_list_from_file_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
                                                       self.cancel_token)
 
-            # stop if thread is killed
+            # kill this thread if, after we attempted to load the files, the thread was killed.
             if not self.alive:
                 return
 
