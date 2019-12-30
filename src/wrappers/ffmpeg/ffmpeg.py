@@ -173,6 +173,38 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
 
 
+def concat_two_videos(context: Context, video_1: str, video_2: str, output_video: str):
+    # load context
+
+    workspace = context.workspace
+
+    temp_concat_file = workspace + "concat_list.txt"
+
+    file = open(temp_concat_file, "a")
+
+    file.write("file " + "'" + video_1 + "'" + "\n")
+    file.write("file " + "'" + video_2 + "'" + "\n")
+    file.close()
+
+    concat_command = [context.ffmpeg_dir,
+                      "-f",
+                      "concat",
+                      "-safe",
+                      "0",
+                      "-i",
+                      temp_concat_file,
+                      "-c",
+                      "copy",
+                      output_video]
+
+    console_output = open(context.console_output_dir + "concat_video_from_text_file.txt", "w")
+    console_output.write(str(concat_command))
+    subprocess.call(concat_command, shell=False, stderr=console_output, stdout=console_output)
+
+    import os
+    os.remove(temp_concat_file)
+
+
 def create_video_from_specific_frames(context: Context, file_prefix, output_file, start_number, frames_per_video):
     """
     Create a video using the 'start_number' ffmpeg flag and the 'vframes' input flag to create a video

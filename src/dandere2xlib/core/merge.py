@@ -53,6 +53,7 @@ class Merge(threading.Thread):
         threading.Thread.__init__(self, name="MergeThread")
 
     def join(self, timeout=None):
+        self.pipe.join_ffmpeg_subprocess()
         threading.Thread.join(self, timeout)
 
     def kill(self):

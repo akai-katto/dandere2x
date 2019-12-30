@@ -148,9 +148,29 @@ class Dandere2x(threading.Thread):
         print("threading at end of join")
         print(threading.enumerate())
 
-        file1 = open(self.context.workspace + "death_folder.txt", "a")
-        file1.write(str(self.context.signal_merged_count))
-        file1.close()
+        # if this became a suspended dandere2x session, kill it.
+        if not self.alive:
+            self.__suspend_exit_conditions()
+
+
+    def __suspend_exit_conditions(self):
+
+        suspended_file = self.context.workspace + str(self.context.signal_merged_count) + ".mp4"
+        os.rename(self.context.nosound_file, suspended_file)
+        self.context.nosound_file = suspended_file
+        self.__leave_killed_message()
+
+    def __leave_killed_message(self):
+        import yaml
+        file = open(self.context.workspace + "death_folder.txt", "a")
+
+        dict_outout = {}
+        dict_outout['signal_merged_count'] = self.context.signal_merged_count
+        dict_outout['nosound_file'] = self.context.nosound_file
+
+        documents = yaml.dump(dict_outout, file)
+
+
 
 
     def kill(self):
@@ -198,7 +218,6 @@ class Dandere2x(threading.Thread):
         if self.resume_session:
             self.__set_first_frame()
 
-        self.min_disk_demon.progressive_frame_extractor.extract_frames_to(150)
         # extract the initial frames needed for execution depending on type (min_disk_usage / non min_disk_usage )
         self.__extract_frames()
 

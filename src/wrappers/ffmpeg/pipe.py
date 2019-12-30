@@ -58,6 +58,11 @@ class Pipe():
 
         self.thread_alive = True
 
+    def join_ffmpeg_subprocess(self):
+        print("waiting for pipe join")
+        self.ffmpeg_pipe_subprocess.wait()
+        print("pipe join done")
+
     def kill_thread(self):
         self.thread_alive = False
 

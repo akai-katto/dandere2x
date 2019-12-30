@@ -135,6 +135,18 @@ def rename_file(file1, file2):
         os.remove(file2)
         os.rename(file1, file2)
 
+def rename_file_wait(file1, file2):
+
+    renamed = False
+
+    while not renamed:
+        try:
+            os.rename(file1, file2)
+            renamed = True
+        except PermissionError:
+            print("permission error thrown")
+            pass
+
 
 # Both waifu2x-Caffe and waifu2x-conv read images in lexiconic order, so in order
 # to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.

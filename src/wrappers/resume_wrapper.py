@@ -3,21 +3,27 @@
 import os
 import shutil
 import time
+import copy
 
 from context import Context
 from dandere2x import Dandere2x
-from dandere2xlib.utils.dandere2x_utils import dir_exists, wait_on_delete_dir
+from dandere2xlib.utils.dandere2x_utils import dir_exists, wait_on_delete_dir, rename_file_wait
+from wrappers.ffmpeg.ffmpeg import concat_two_videos
 
-
-class Dandere2x_Gui_Wrapper:
+class Dandere2x_Gui_Wrapper_Resume:
     """
     A wrapper to call dandere2x.py from the GUI. The extra-added faetures are clearing the workspace ahead of time
     and deleting the files after run-time, if gui_delete_workspace_after json is set to true.
     """
 
-    def __init__(self, config_yaml):
-        self.config_json = config_yaml
+    def __init__(self, config_yaml, resume_yaml: dict):
+
+        self.resume_yaml = resume_yaml
+        self.start_frame = self.resume_yaml['signal_merged_count']
+        config_yaml['dandere2x']['developer_settings']['workspace'] =\
+            config_yaml['dandere2x']['developer_settings']['workspace'] + str(self.start_frame) + os.path.sep
         self.context = Context(config_yaml)
+
 
     def start(self):
         print(self.context.workspace)
@@ -42,15 +48,23 @@ class Dandere2x_Gui_Wrapper:
 
         # starting shit
         print("Starting Dandere2x")
-        d = Dandere2x(self.context)
+        d = Dandere2x(self.context, self.start_frame)
         d.run()
 
         time.sleep(15)
         d.kill()
         d.join()
 
-        if d.context.config_yaml['dandere2x']['developer_settings']['gui_delete_workspace_after']:
-            d.delete_workspace_files()
+        file_to_be_concat = self.context.workspace + "file_to_be_concat.mp4"
+
+        # need to migrate concat 
+        rename_file_wait(self.context.nosound_file, file_to_be_concat)
+
+        print("dandere2x is concating two videos")
+        concat_two_videos(self.context, self.resume_yaml['nosound_file'], file_to_be_concat,self.context.nosound_file)
+
+        # if d.context.config_yaml['dandere2x']['developer_settings']['gui_delete_workspace_after']:
+        #     d.delete_workspace_files()
 
         print("Dandere2x GUI Run Finished Successfully")
 
