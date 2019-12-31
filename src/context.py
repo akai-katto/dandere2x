@@ -4,9 +4,11 @@ import os
 import pathlib
 import sys
 import tempfile
+import yaml
 
 from dandere2xlib.utils.yaml_utils import absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
+
 
 
 class Context:
@@ -17,7 +19,7 @@ class Context:
     D2x's development - keep this file clean and nice, as it'll be used more than anything else!
     """
 
-    def __init__(self, config_file_unparsed: json):
+    def __init__(self, config_file_unparsed: yaml):
         """
         Create all the needed values that will be used in various parts of dandere2x. A lot of these values
         are derived from external files, such as the json, ffmpeg and ffprobe, or are joined from directories.
@@ -34,6 +36,7 @@ class Context:
             self.this_folder = os.path.dirname(__file__)
 
         self.this_folder = pathlib.Path(self.this_folder)
+        self.config_file_unparsed = config_file_unparsed
 
         # Parse the unparsed config into a parsed (../externals -> C:/this_folder/externals)
         self.config_yaml = absolutify_yaml(config_file_unparsed, str(self.this_folder.absolute()), absolutify_key="..")

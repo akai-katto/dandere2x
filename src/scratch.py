@@ -1,28 +1,24 @@
-import time
-
 import yaml
+from collections import OrderedDict
 
-from context import Context
-from dandere2x import Dandere2x
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
-from wrappers.ffmpeg.ffmpeg import concat_two_videos
+def represent_dictionary_order(self, dict_data):
+    return self.represent_mapping('tag:yaml.org,2002:map', dict_data.items())
 
-start = time.time()
+def setup_yaml():
+    yaml.add_representer(OrderedDict, represent_dictionary_order)
 
-# get config based on OS
-configfile = "dandere2x_%s.yaml" % get_operating_system()
+setup_yaml()
+
+configfile = "dandere2x_win32.yaml"
 
 # load yaml
 
 with open(configfile, "r") as read_file:
     config = yaml.safe_load(read_file)
 
-# load the context with yaml stuff
-context = Context(config)
+od = OrderedDict(config)
 
-video_1 = "C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\default\\nosound.mp4"
-video_2 = "C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\default\\32\\nosound.mp4"
-output = "C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\default\\32\\python_test.mp4"
+output_file = "C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\output_test.yaml"
 
-concat_two_videos(context, video_1, video_2, output)
-
+with open(output_file, "w") as write_file:
+    yaml.dump(od,write_file, sort_keys=False)

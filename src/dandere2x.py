@@ -36,11 +36,11 @@ from dandere2xlib.core.residual import Residual
 from dandere2xlib.frame_compressor import CompressFrames
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
-from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories
+from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories, rename_file
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, file_exists
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import extract_frames, append_video_resize_filter
+from wrappers.ffmpeg.ffmpeg import extract_frames, append_video_resize_filter, concat_two_videos, migrate_tracks
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
@@ -55,7 +55,7 @@ class Dandere2x(threading.Thread):
     class that is called when Dandere2x ultimately needs to start.
     """
 
-    def __init__(self, context, first_frame=1):
+    def __init__(self, context, first_frame=1, resume_dict = None):
         self.context = context
         self.jobs = {}
         self.min_disk_demon = None
@@ -69,6 +69,7 @@ class Dandere2x(threading.Thread):
         # session specific
         self.first_frame = first_frame
         self.resume_session = False
+        self.resume_dict = resume_dict
 
         if self.first_frame != 1:
             self.resume_session = True
@@ -148,9 +149,26 @@ class Dandere2x(threading.Thread):
         print("threading at end of join")
         print(threading.enumerate())
 
+        if self.resume_session:
+            file_to_be_concat = self.context.workspace + "file_to_be_concat.mp4"
+
+            # need to migrate concat
+            rename_file(self.context.nosound_file, file_to_be_concat)
+
+            print("dandere2x is concating two videos")
+            concat_two_videos(self.context, self.resume_dict['nosound_file'], file_to_be_concat,
+                              self.context.nosound_file)
+
+
         # if this became a suspended dandere2x session, kill it.
         if not self.alive:
             self.__suspend_exit_conditions()
+
+        elif self.alive:
+            print("is an alive session")
+            migrate_tracks(self.context, self.context.nosound_file,
+                           self.context.sound_file, self.context.output_file)
+
 
 
     def __suspend_exit_conditions(self):
@@ -162,13 +180,14 @@ class Dandere2x(threading.Thread):
 
     def __leave_killed_message(self):
         import yaml
-        file = open(self.context.workspace + "death_folder.txt", "a")
+        file = open(self.context.workspace + "suspended_session_data.yaml", "a")
 
-        dict_outout = {}
-        dict_outout['signal_merged_count'] = self.context.signal_merged_count
-        dict_outout['nosound_file'] = self.context.nosound_file
+        config_file_unparsed = self.context.config_file_unparsed
 
-        documents = yaml.dump(dict_outout, file)
+        config_file_unparsed['signal_merged_count'] = self.context.signal_merged_count
+        config_file_unparsed['nosound_file'] = self.context.nosound_file
+
+        yaml.dump(config_file_unparsed, file, sort_keys = False)
 
 
 
