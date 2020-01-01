@@ -63,9 +63,11 @@ dandere2x:
     quality_moving_ratio: 0.55
     step_size: 8
 
-
+# don't touch these unless you know what you're doing!
 resume_settings:
-
+  resume_session: false
+  signal_merged_count: 0
+  nosound_file: null
 
 waifu2x_caffe:
 

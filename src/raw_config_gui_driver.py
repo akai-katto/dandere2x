@@ -18,8 +18,8 @@ def main():
     start = time.time()
 
     # get config based on OS
-    configfile = "dandere2x_%s.yaml" % get_operating_system()
-
+    #configfile = "dandere2x_%s.yaml" % get_operating_system()
+    configfile = "C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\default\\34\\suspended_session_data.yaml"
     # load yaml
 
     with open(configfile, "r") as read_file:
@@ -28,7 +28,7 @@ def main():
     # continue d2x
     d2x = Dandere2x_Gui_Wrapper(config)
     d2x.start()
-    d2x.join()
+    #d2x.join()
 
 
 if __name__ == "__main__":

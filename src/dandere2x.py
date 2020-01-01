@@ -55,26 +55,28 @@ class Dandere2x(threading.Thread):
     class that is called when Dandere2x ultimately needs to start.
     """
 
-    def __init__(self, context, first_frame=1, resume_dict = None):
+    def __init__(self, context):
         self.context = context
         self.jobs = {}
         self.min_disk_demon = None
-        print("init1")
         self.merge_thread = Merge(self.context)
         self.residual_thread = Residual(self.context)
         self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
         self.compress_frames_thread = CompressFrames(self.context)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
         self.status_thread = Status(context)
-        print("init2")
+
 
         # session specific
-        self.first_frame = first_frame
         self.resume_session = False
-        self.resume_dict = resume_dict
+        self.first_frame = 1
 
-        if self.first_frame != 1:
+        if self.context.config_yaml['resume_settings']['resume_session']:
+            print("is resume session")
             self.resume_session = True
+            self.first_frame = int(self.context.config_yaml['resume_settings']['signal_merged_count'])
+        else:
+            print("is not resume session")
 
         # Threading Specific
 
@@ -87,7 +89,7 @@ class Dandere2x(threading.Thread):
 
         if self.context.use_min_disk:
             if self.resume_session:
-                self.min_disk_demon.progressive_frame_extractor.extract_frames_to(self.first_frame)
+                self.min_disk_demon.progressive_frame_extractor.extract_frames_to(int(self.context.config_yaml['resume_settings']['signal_merged_count']))
 
             self.min_disk_demon.extract_initial_frames()
         elif not self.context.use_min_disk:
@@ -159,7 +161,7 @@ class Dandere2x(threading.Thread):
             rename_file(self.context.nosound_file, file_to_be_concat)
 
             print("dandere2x is concating two videos")
-            concat_two_videos(self.context, self.resume_dict['nosound_file'], file_to_be_concat,
+            concat_two_videos(self.context, self.context.config_yaml['resume_settings']['nosound_file'], file_to_be_concat,
                               self.context.nosound_file)
 
 
@@ -182,17 +184,24 @@ class Dandere2x(threading.Thread):
         self.__leave_killed_message()
 
     def __leave_killed_message(self):
+        """
+        write the yaml file for the next resume session. The next dandere2x will resume in the same folder
+        where the previous one left off, but at at \last_upscaled_frame\ (\30\).
+        :return:
+        """
         import yaml
         file = open(self.context.workspace + "suspended_session_data.yaml", "a")
 
         config_file_unparsed = self.context.config_file_unparsed
+        config_file_unparsed['resume_settings']['signal_merged_count'] = self.context.signal_merged_count
+        config_file_unparsed['resume_settings']['nosound_file'] = self.context.nosound_file
+        config_file_unparsed['resume_settings']['resume_session'] = True
 
-        config_file_unparsed['signal_merged_count'] = self.context.signal_merged_count
-        config_file_unparsed['nosound_file'] = self.context.nosound_file
+        config_file_unparsed['dandere2x']['developer_settings']['workspace'] = \
+            config_file_unparsed['dandere2x']['developer_settings']['workspace'] + \
+            str(self.context.signal_merged_count) + os.path.sep
 
         yaml.dump(config_file_unparsed, file, sort_keys = False)
-
-
 
 
     def kill(self):
