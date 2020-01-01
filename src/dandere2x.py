@@ -59,12 +59,14 @@ class Dandere2x(threading.Thread):
         self.context = context
         self.jobs = {}
         self.min_disk_demon = None
+        print("init1")
         self.merge_thread = Merge(self.context)
         self.residual_thread = Residual(self.context)
         self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
         self.compress_frames_thread = CompressFrames(self.context)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
         self.status_thread = Status(context)
+        print("init2")
 
         # session specific
         self.first_frame = first_frame
@@ -127,6 +129,7 @@ class Dandere2x(threading.Thread):
 
 
     def join(self, timeout=None):
+
         print("joining min disk demon")
         self.min_disk_demon.join()
         print("joining residual")

@@ -10,8 +10,7 @@ import time
 
 import yaml
 
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
-from wrappers.resume_wrapper import Dandere2x_Gui_Wrapper_Resume
+from wrappers.dandere2x_wrappers.resume_wrapper import Dandere2x_Gui_Wrapper_Resume
 
 
 def main():

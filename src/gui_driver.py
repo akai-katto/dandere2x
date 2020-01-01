@@ -2,12 +2,13 @@ import os
 import sys
 
 import yaml
+
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
-
+from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_operating_system
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
-from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
+from dandere2x import Dandere2x
 
 
 class QtDandere2xThread(QtCore.QThread):
@@ -15,19 +16,25 @@ class QtDandere2xThread(QtCore.QThread):
 
     def __init__(self, parent, config_yaml):
         super(QtDandere2xThread, self).__init__(parent)
-        self.config_yaml = config_yaml
+
+        context = Context(config_yaml)
+        self.dandere2x = Dandere2x(context)
+
 
     def run(self):
-        d = Dandere2x_Gui_Wrapper(self.config_yaml)
 
         try:
-            d.start()
+            self.dandere2x.start()
 
         except:
             print("dandere2x could not start.. trying again. If it fails, try running as admin..")
-            d.start()
+            self.dandere2x.start()
 
         self.finished.emit()
+
+    def kill(self):
+        self.dandere2x.kill()
+        self.dandere2x.join()
 
 
 class AppWindow(QMainWindow):
@@ -76,12 +83,17 @@ class AppWindow(QMainWindow):
         self.refresh_scale_factor()
         self.show()
 
+    def press_suspend_button(self):
+        print("suspend button pressed")
+        self.thread.kill()
+
     # Setup connections for each button
     def config_buttons(self):
         self.ui.select_video_button.clicked.connect(self.press_select_video_button)
         self.ui.select_output_button.clicked.connect(self.press_select_output_button)
         self.ui.upscale_button.clicked.connect(self.press_upscale_button)
         self.ui.waifu2x_type_combo_box.currentIndexChanged.connect(self.refresh_scale_factor)
+        self.ui.suspend_button.clicked.connect(self.press_suspend_button)
 
         # The following connects are to re-adjust the file name
 

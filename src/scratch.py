@@ -1,24 +1,24 @@
+
+import time
+
 import yaml
-from collections import OrderedDict
 
-def represent_dictionary_order(self, dict_data):
-    return self.represent_mapping('tag:yaml.org,2002:map', dict_data.items())
+from context import Context
+from dandere2x import Dandere2x
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
+from dandere2x import Dandere2x
 
-def setup_yaml():
-    yaml.add_representer(OrderedDict, represent_dictionary_order)
-
-setup_yaml()
-
-configfile = "dandere2x_win32.yaml"
+configfile = "dandere2x_%s.yaml" % get_operating_system()
 
 # load yaml
 
 with open(configfile, "r") as read_file:
     config = yaml.safe_load(read_file)
 
-od = OrderedDict(config)
 
-output_file = "C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\output_test.yaml"
+context = Context(config)
 
-with open(output_file, "w") as write_file:
-    yaml.dump(od,write_file, sort_keys=False)
+
+dandere2x = Dandere2x(context)
+
+dandere2x.start()
