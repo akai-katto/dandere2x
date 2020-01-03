@@ -143,7 +143,8 @@ class Merge(threading.Thread):
             # Pre-load the next iteration of the loop image ahead of time, if we're not on the last frame.
             if not last_frame:
                 background_frame_load = AsyncFrameRead(
-                    self.upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
+                    self.upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
+                    self.cancel_token)
                 background_frame_load.start()
 
             #######################
@@ -153,10 +154,17 @@ class Merge(threading.Thread):
             self.logger.info("Upscaling frame " + str(x))
 
             # Load the needed vectors to create the merged image.
-            prediction_data_list = get_list_from_file_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt")
-            residual_data_list = get_list_from_file_wait(self.residual_data_dir + "residual_" + str(x) + ".txt")
-            correction_data_list = get_list_from_file_wait(self.correction_data_dir + "correction_" + str(x) + ".txt")
-            fade_data_list = get_list_from_file_wait(self.fade_data_dir + "fade_" + str(x) + ".txt")
+            prediction_data_list = get_list_from_file_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
+                                                           self.cancel_token)
+            residual_data_list = get_list_from_file_wait(self.residual_data_dir + "residual_" + str(x) + ".txt",
+                                                         self.cancel_token)
+            correction_data_list = get_list_from_file_wait(self.correction_data_dir + "correction_" + str(x) + ".txt",
+                                                           self.cancel_token)
+            fade_data_list = get_list_from_file_wait(self.fade_data_dir + "fade_" + str(x) + ".txt",
+                                                     self.cancel_token)
+
+            if not self.alive:
+                return
 
             # Create the actual image itself.
             frame_next = self.make_merge_image(self.context, f1, frame_previous,

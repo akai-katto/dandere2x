@@ -1,6 +1,6 @@
 import os
 import sys
-
+import threading
 import yaml
 
 from PyQt5 import QtCore, QtGui
@@ -27,14 +27,22 @@ class QtDandere2xThread(QtCore.QThread):
             self.dandere2x.start()
 
         except:
-            print("dandere2x could not start.. trying again. If it fails, try running as admin..")
-            self.dandere2x.start()
+            print("dandere2x failed to work correctly")
+            exit(1)
 
+        self.join()
+
+
+    def join(self):
+        from dandere2xlib.utils.dandere2x_utils import wait_on_file
+
+        wait_on_file(self.dandere2x.context.nosound_file)
+        self.dandere2x.join()
         self.finished.emit()
 
     def kill(self):
         self.dandere2x.kill()
-        self.dandere2x.join()
+        # self.dandere2x.join()
 
 
 class AppWindow(QMainWindow):
@@ -154,6 +162,14 @@ class AppWindow(QMainWindow):
             self.ui.scale_4_radio_button.setEnabled(True)
             self.ui.scale_1_radio_button.setEnabled(True)
 
+
+    def is_suspend_file(self, file):
+        path, name = os.path.split(file)
+
+        if name == "suspended_session_data.yaml":
+            return True
+        return False
+
     def press_upscale_button(self):
 
         self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
@@ -172,18 +188,27 @@ class AppWindow(QMainWindow):
             with open(os.path.join(self.this_folder, "dandere2x_linux.yaml"), "r") as read_file:
                 config_yaml = yaml.safe_load(read_file)
 
-        config_yaml['dandere2x']['usersettings']['output_file'] = self.output_file
-        config_yaml['dandere2x']['usersettings']['input_file'] = self.input_file
-        config_yaml['dandere2x']['usersettings']['block_size'] = self.block_size
-        config_yaml['dandere2x']['usersettings']['quality_minimum'] = self.image_quality
-        config_yaml['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
-        config_yaml['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
+        if self.is_suspend_file(self.input_file):
+            print("is suspend file")
+            print("input file: " + str(self.input_file))
+            with open(self.input_file, "r") as read_file:
+                config_yaml = yaml.safe_load(read_file)
+        else:
+            print("is not suspend file")
+            # if user selected video file
+            config_yaml['dandere2x']['usersettings']['output_file'] = self.output_file
+            config_yaml['dandere2x']['usersettings']['input_file'] = self.input_file
+            config_yaml['dandere2x']['usersettings']['block_size'] = self.block_size
+            config_yaml['dandere2x']['usersettings']['quality_minimum'] = self.image_quality
+            config_yaml['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
+            config_yaml['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
 
-        print("output_file = " + self.output_file)
-        print("input_file = " + self.input_file)
-        print("block_size = " + str(self.block_size))
-        print("image_quality = " + str(self.image_quality))
-        print("waifu2x_type = " + self.waifu2x_type)
+        print("output_file = " + config_yaml['dandere2x']['usersettings']['output_file'])
+        print("input_file = " + config_yaml['dandere2x']['usersettings']['input_file'])
+        print("block_size = " + str(config_yaml['dandere2x']['usersettings']['block_size']))
+        print("image_quality = " + str(config_yaml['dandere2x']['usersettings']['quality_minimum']))
+        print("waifu2x_type = " + config_yaml['dandere2x']['usersettings']['waifu2x_type'])
+        print("workspace = " + config_yaml['dandere2x']['developer_settings']['workspace'])
 
         self.thread = QtDandere2xThread(self, config_yaml)
         self.thread.finished.connect(self.update)
@@ -196,6 +221,7 @@ class AppWindow(QMainWindow):
             print("Oops!", sys.exc_info()[0], "occured.")
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Upscale Failed. See log")
+
 
     def disable_buttons(self):
         self.ui.upscale_button.setEnabled(False)

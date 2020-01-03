@@ -18,8 +18,8 @@ def main():
     start = time.time()
 
     # get config based on OS
-    #configfile = "dandere2x_%s.yaml" % get_operating_system()
-    configfile = "C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\default\\34\\suspended_session_data.yaml"
+    configfile = "dandere2x_%s.yaml" % get_operating_system()
+    #configfile = "C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\default\\34\\suspended_session_data.yaml"
     # load yaml
 
     with open(configfile, "r") as read_file:
