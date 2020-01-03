@@ -1,14 +1,14 @@
 import os
 import sys
-import threading
-import yaml
 
+import yaml
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
+
 from context import Context
+from dandere2x import Dandere2x
 from dandere2xlib.utils.dandere2x_utils import get_operating_system
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
-from dandere2x import Dandere2x
 
 
 class QtDandere2xThread(QtCore.QThread):
@@ -20,7 +20,6 @@ class QtDandere2xThread(QtCore.QThread):
         context = Context(config_yaml)
         self.dandere2x = Dandere2x(context)
 
-
     def run(self):
 
         try:
@@ -31,7 +30,6 @@ class QtDandere2xThread(QtCore.QThread):
             exit(1)
 
         self.join()
-
 
     def join(self):
         from dandere2xlib.utils.dandere2x_utils import wait_on_file
@@ -162,7 +160,6 @@ class AppWindow(QMainWindow):
             self.ui.scale_4_radio_button.setEnabled(True)
             self.ui.scale_1_radio_button.setEnabled(True)
 
-
     def is_suspend_file(self, file):
         path, name = os.path.split(file)
 
@@ -221,7 +218,6 @@ class AppWindow(QMainWindow):
             print("Oops!", sys.exc_info()[0], "occured.")
             self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
             self.ui.upscale_status_label.setText("Upscale Failed. See log")
-
 
     def disable_buttons(self):
         self.ui.upscale_button.setEnabled(False)

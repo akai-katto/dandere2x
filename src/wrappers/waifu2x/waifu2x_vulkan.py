@@ -3,14 +3,15 @@ import logging
 import os
 import subprocess
 import threading
-import time
+
 import psutil
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import file_exists, get_lexicon_value, rename_file, wait_on_either_file
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from dandere2xlib.utils.thread_utils import CancellationToken
 from dandere2xlib.utils.dandere2x_utils import wait_on_file
+from dandere2xlib.utils.thread_utils import CancellationToken
+from dandere2xlib.utils.yaml_utils import get_options_from_section
+
 
 class Waifu2xVulkan(threading.Thread):
     """
@@ -121,7 +122,8 @@ class Waifu2xVulkan(threading.Thread):
         fix_names_forever_thread = threading.Thread(target=self.__fix_names_all, name="fixnamesforrever")
         fix_names_forever_thread.start()
 
-        remove_when_upscaled_thread = threading.Thread(target=self.__remove_once_upscaled_then_stop, name="removeoneupscaled")
+        remove_when_upscaled_thread = threading.Thread(target=self.__remove_once_upscaled_then_stop,
+                                                       name="removeoneupscaled")
         remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
@@ -153,7 +155,8 @@ class Waifu2xVulkan(threading.Thread):
 
         console_output = open(self.context.console_output_dir + "vulkan_upscale_frame.txt", "w")
         console_output.write(str(exec_command))
-        self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output, stdout=console_output)
+        self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
+                                                          stdout=console_output)
         self.active_waifu2x_subprocess.wait()
         console_output.close()
 

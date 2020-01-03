@@ -5,9 +5,9 @@ import time
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from dandere2xlib.utils.thread_utils import CancellationToken
 # from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
 from wrappers.ffmpeg.progressive_frame_extractor_ffmpeg import ProgressiveFramesExtractorFFMPEG
-from dandere2xlib.utils.thread_utils import CancellationToken
 
 
 class MinDiskUsage(threading.Thread):

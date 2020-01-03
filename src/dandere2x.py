@@ -47,7 +47,6 @@ from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
 from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
 
 
-
 class Dandere2x(threading.Thread):
     """
     The main driver that can be called in a various level of circumstances - for example, dandere2x can be started
@@ -66,7 +65,6 @@ class Dandere2x(threading.Thread):
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
         self.status_thread = Status(context)
         self.thread_started = False
-
 
         # session specific
         self.resume_session = False
@@ -90,7 +88,8 @@ class Dandere2x(threading.Thread):
 
         if self.context.use_min_disk:
             if self.resume_session:
-                self.min_disk_demon.progressive_frame_extractor.extract_frames_to(int(self.context.config_yaml['resume_settings']['signal_merged_count']))
+                self.min_disk_demon.progressive_frame_extractor.extract_frames_to(
+                    int(self.context.config_yaml['resume_settings']['signal_merged_count']))
 
             self.min_disk_demon.extract_initial_frames()
         elif not self.context.use_min_disk:
@@ -111,12 +110,12 @@ class Dandere2x(threading.Thread):
             self.min_disk_demon = MinDiskUsage(self.context)
             self.jobs['min_disk_thread'] = self.min_disk_demon
 
-
     def __upscale_first_frame(self):
 
         one_frame_time = time.time()
-        self.waifu2x.upscale_file(input_file=self.context.input_frames_dir + "frame" + str(self.first_frame) + self.context.extension_type,
-                                  output_file=self.context.merged_dir + "merged_" + str(self.first_frame) + self.context.extension_type)
+        self.waifu2x.upscale_file(
+            input_file=self.context.input_frames_dir + "frame" + str(self.first_frame) + self.context.extension_type,
+            output_file=self.context.merged_dir + "merged_" + str(self.first_frame) + self.context.extension_type)
 
         if not file_exists(self.context.merged_dir + "merged_" + str(self.first_frame) + self.context.extension_type):
             """ 
@@ -129,7 +128,6 @@ class Dandere2x(threading.Thread):
             sys.exit(1)
 
         print("\n Time to upscale an uncompressed frame: " + str(round(time.time() - one_frame_time, 2)))
-
 
     def join(self, timeout=None):
 
@@ -150,7 +148,6 @@ class Dandere2x(threading.Thread):
         print("joining compress")
         self.compress_frames_thread.join()
 
-
         self.context.logger.info("All threaded processes have finished")
         print("everything finished")
 
@@ -164,9 +161,9 @@ class Dandere2x(threading.Thread):
             rename_file(self.context.nosound_file, file_to_be_concat)
 
             print("dandere2x is concating two videos")
-            concat_two_videos(self.context, self.context.config_yaml['resume_settings']['nosound_file'], file_to_be_concat,
+            concat_two_videos(self.context, self.context.config_yaml['resume_settings']['nosound_file'],
+                              file_to_be_concat,
                               self.context.nosound_file)
-
 
         # if this became a suspended dandere2x session, kill it.
         if not self.alive:
@@ -176,7 +173,6 @@ class Dandere2x(threading.Thread):
             print("is an alive session")
             migrate_tracks(self.context, self.context.nosound_file,
                            self.context.sound_file, self.context.output_file)
-
 
     def __suspend_exit_conditions(self):
 
@@ -203,8 +199,7 @@ class Dandere2x(threading.Thread):
             config_file_unparsed['dandere2x']['developer_settings']['workspace'] + \
             str(self.context.signal_merged_count + 1) + os.path.sep
 
-        yaml.dump(config_file_unparsed, file, sort_keys = False)
-
+        yaml.dump(config_file_unparsed, file, sort_keys=False)
 
     def kill(self):
         self.alive = False
@@ -212,25 +207,25 @@ class Dandere2x(threading.Thread):
         self._stopevent.set()
 
         self.merge_thread.kill()
-        #self.merge_thread.join()
+        # self.merge_thread.join()
 
         self.waifu2x.kill()
-        #self.waifu2x.join()
+        # self.waifu2x.join()
 
         self.residual_thread.kill()
-        #self.residual_thread.join()
+        # self.residual_thread.join()
 
         self.compress_frames_thread.kill()
-        #self.compress_frames_thread.join()
+        # self.compress_frames_thread.join()
 
         self.min_disk_demon.kill()
-        #self.min_disk_demon.join()
+        # self.min_disk_demon.join()
 
         self.dandere2x_cpp_thread.kill()
-        #self.dandere2x_cpp_thread.join()
+        # self.dandere2x_cpp_thread.join()
 
         self.status_thread.kill()
-        #self.status_thread.join()
+        # self.status_thread.join()
 
     def __set_first_frame(self):
 
@@ -279,10 +274,6 @@ class Dandere2x(threading.Thread):
         self.min_disk_demon.start()
 
         self.thread_started = True
-
-
-
-
 
     def _get_waifu2x_class(self, name: str):
 

@@ -12,6 +12,7 @@ import os
 import shutil
 import time
 from sys import platform
+
 from dandere2xlib.utils.thread_utils import CancellationToken
 
 
@@ -135,8 +136,8 @@ def rename_file(file1, file2):
         os.remove(file2)
         os.rename(file1, file2)
 
-def rename_file_wait(file1, file2):
 
+def rename_file_wait(file1, file2):
     renamed = False
 
     while not renamed:

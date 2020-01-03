@@ -1,14 +1,13 @@
-import json
 import logging
 import os
 import pathlib
 import sys
 import tempfile
+
 import yaml
 
 from dandere2xlib.utils.yaml_utils import absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
-
 
 
 class Context:
@@ -188,7 +187,7 @@ class Context:
         import time
 
         log_name = "dandere2x" + str(time.time()) + ".log"  # create logs using epoch time to denote them
-        log_file =os.path.join(self.log_folder_dir, log_name)
+        log_file = os.path.join(self.log_folder_dir, log_name)
 
         print("log file is: " + str(log_file))
         logging.basicConfig(filename=log_file, level=logging.INFO)

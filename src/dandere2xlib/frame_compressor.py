@@ -1,11 +1,9 @@
 import os
-import time
+import threading
 
 from context import Context
-from wrappers.frame.frame import Frame
-import threading
-from dandere2xlib.utils.dandere2x_utils import file_exists
 from dandere2xlib.utils.thread_utils import CancellationToken
+from wrappers.frame.frame import Frame
 
 
 class CompressFrames(threading.Thread):

@@ -63,7 +63,6 @@ class Residual(threading.Thread):
             f1.load_from_string_wait(self.input_frames_dir + "frame" + str(x + 1) + self.extension_type,
                                      self.cancel_token)
 
-
             # Load the neccecary lists to compute this iteration of residual making
             residual_data = get_list_from_file_wait(self.residual_data_dir + "residual_" + str(x) + ".txt",
                                                     self.cancel_token)

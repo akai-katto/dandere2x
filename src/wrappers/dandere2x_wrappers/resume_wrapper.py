@@ -3,12 +3,11 @@
 import os
 import shutil
 import time
-import copy
 
 from context import Context
 from dandere2x import Dandere2x
-from dandere2xlib.utils.dandere2x_utils import dir_exists, wait_on_delete_dir, rename_file_wait
-from wrappers.ffmpeg.ffmpeg import concat_two_videos
+from dandere2xlib.utils.dandere2x_utils import dir_exists, wait_on_delete_dir
+
 
 class Dandere2x_Gui_Wrapper_Resume:
     """
@@ -21,11 +20,10 @@ class Dandere2x_Gui_Wrapper_Resume:
         self.resume_yaml = resume_yaml
         self.start_frame = self.resume_yaml['signal_merged_count']
 
-        config_yaml['dandere2x']['developer_settings']['workspace'] =\
+        config_yaml['dandere2x']['developer_settings']['workspace'] = \
             config_yaml['dandere2x']['developer_settings']['workspace'] + str(self.start_frame) + os.path.sep
 
         self.context = Context(config_yaml)
-
 
     def start(self):
         print(self.context.workspace)
@@ -53,11 +51,9 @@ class Dandere2x_Gui_Wrapper_Resume:
         d = Dandere2x(self.context, self.start_frame, self.resume_yaml)
         d.run()
 
-        #time.sleep(7)
-        #d.kill()
+        # time.sleep(7)
+        # d.kill()
         d.join()
-
-
 
         # if d.context.config_yaml['dandere2x']['developer_settings']['gui_delete_workspace_after']:
         #     d.delete_workspace_files()

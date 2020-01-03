@@ -1,6 +1,6 @@
 import sys
-import time
 import threading
+import time
 
 from context import Context
 from dandere2xlib.utils.thread_utils import CancellationToken
@@ -67,4 +67,3 @@ class Status(threading.Thread):
 
             while x >= self.context.signal_merged_count and self.alive:
                 time.sleep(.00001)
-
