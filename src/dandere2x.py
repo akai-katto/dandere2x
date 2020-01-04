@@ -56,7 +56,6 @@ class Dandere2x(threading.Thread):
 
     def __init__(self, context):
         self.context = context
-        self.jobs = {}
         self.min_disk_demon = None
         self.merge_thread = Merge(self.context)
         self.residual_thread = Residual(self.context)
@@ -64,7 +63,6 @@ class Dandere2x(threading.Thread):
         self.compress_frames_thread = CompressFrames(self.context)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
         self.status_thread = Status(context)
-        self.thread_started = False
 
         # session specific
         self.resume_session = False
@@ -82,9 +80,10 @@ class Dandere2x(threading.Thread):
         self.alive = True
         self.cancel_token = CancellationToken()
         self._stopevent = threading.Event()
-        threading.Thread.__init__(self, name="ResidualThread")
+        threading.Thread.__init__(self, name="dandere2x_thread")
 
     def __extract_frames(self):
+        """Extract the initial frames needed for a dandere2x to run depending on session type."""
 
         if self.context.use_min_disk:
             if self.resume_session:
@@ -96,22 +95,15 @@ class Dandere2x(threading.Thread):
             extract_frames(self.context, self.context.input_file)
 
     def __setup_jobs(self):
-
-        # need to not rely on threading.thread here, need to make them classes
-        self.jobs['compress_frames_thread'] = self.compress_frames_thread
-        self.jobs['dandere2xcpp_thread'] = self.dandere2x_cpp_thread
-        self.jobs['merge_thread'] = self.merge_thread
-        self.jobs['residual_thread'] = self.residual_thread
-
-        self.jobs['waifu2x_thread'] = self.waifu2x
-        self.jobs['status_thread'] = self.status_thread
-
+        """This method is somewhat deprecated, will be moved somewhere else in the future."""
         if self.context.use_min_disk:
             self.min_disk_demon = MinDiskUsage(self.context)
-            self.jobs['min_disk_thread'] = self.min_disk_demon
 
     def __upscale_first_frame(self):
+        """The first frame of any dandere2x session needs to be upscaled fully, and this is done as it's own
+        process. Ensuring the first frame can get upscaled also provides a source of error checking for the user."""
 
+        # measure the time to upscale a single frame for printing purposes
         one_frame_time = time.time()
         self.waifu2x.upscale_file(
             input_file=self.context.input_frames_dir + "frame" + str(self.first_frame) + self.context.extension_type,
@@ -131,50 +123,49 @@ class Dandere2x(threading.Thread):
 
     def join(self, timeout=None):
 
-        print("dandere2x joined called")
+        logging.info("dandere2x joined called")
 
-        print("joining residual")
+        logging.info("joining residual")
         self.residual_thread.join()
-        print("joining min disk demon")
+        logging.info("joining min disk demon")
         self.min_disk_demon.join()
-        print("joining merge")
+        logging.info("joining merge")
         self.merge_thread.join()
-        print("joining waifu2x")
+        logging.info("joining waifu2x")
         self.waifu2x.join()
-        print("joining dandere2x")
+        logging.info("joining dandere2x")
         self.dandere2x_cpp_thread.join()
-        print("joining status")
+        logging.info("joining status")
         self.status_thread.join()
-        print("joining compress")
+        logging.info("joining compress")
         self.compress_frames_thread.join()
 
         self.context.logger.info("All threaded processes have finished")
-        print("everything finished")
-
-        print("threading at end of join")
-        print(threading.enumerate())
+        print("All threaded processes have been finished")
 
         if self.resume_session:
+            print("Session is a resume session, concatenating two videos")
+            logging.info("Session is a resume session, concatenating two videos")
             file_to_be_concat = self.context.workspace + "file_to_be_concat.mp4"
 
-            # need to migrate concat
             rename_file(self.context.nosound_file, file_to_be_concat)
-
-            print("dandere2x is concating two videos")
             concat_two_videos(self.context, self.context.config_yaml['resume_settings']['nosound_file'],
                               file_to_be_concat,
                               self.context.nosound_file)
 
         # if this became a suspended dandere2x session, kill it.
         if not self.alive:
+            logging.info("Invoking suspend exit conditions")
             self.__suspend_exit_conditions()
 
         elif self.alive:
-            print("is an alive session")
+            logging.info("Migrating tracks")
             migrate_tracks(self.context, self.context.nosound_file,
                            self.context.sound_file, self.context.output_file)
 
     def __suspend_exit_conditions(self):
+        """This is called when dandere2x session is suspended midway through completition, need to save
+        meta data and needed files to be resumable."""
 
         suspended_file = self.context.workspace + str(self.context.signal_merged_count + 1) + ".mp4"
         os.rename(self.context.nosound_file, suspended_file)
@@ -207,28 +198,17 @@ class Dandere2x(threading.Thread):
         self._stopevent.set()
 
         self.merge_thread.kill()
-        # self.merge_thread.join()
-
         self.waifu2x.kill()
-        # self.waifu2x.join()
-
         self.residual_thread.kill()
-        # self.residual_thread.join()
-
         self.compress_frames_thread.kill()
-        # self.compress_frames_thread.join()
-
         self.min_disk_demon.kill()
-        # self.min_disk_demon.join()
-
         self.dandere2x_cpp_thread.kill()
-        # self.dandere2x_cpp_thread.join()
-
         self.status_thread.kill()
-        # self.status_thread.join()
 
     def __set_first_frame(self):
-
+        """
+        Set the first frame for the relevent dandere2x threads when doing a resume session
+        """
         self.compress_frames_thread.set_start_frame(self.first_frame)
         self.dandere2x_cpp_thread.set_start_frame(self.first_frame)
         self.merge_thread.set_start_frame(self.first_frame)
@@ -273,9 +253,10 @@ class Dandere2x(threading.Thread):
         self.status_thread.start()
         self.min_disk_demon.start()
 
-        self.thread_started = True
-
     def _get_waifu2x_class(self, name: str):
+        """
+        Returns a waifu2x object depending on what the user selected
+        """
 
         if name == "caffe":
             return Waifu2xCaffe(self.context)

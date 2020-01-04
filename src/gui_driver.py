@@ -90,7 +90,6 @@ class AppWindow(QMainWindow):
         self.show()
 
     def press_suspend_button(self):
-        print("suspend button pressed")
         self.thread.kill()
 
     # Setup connections for each button
