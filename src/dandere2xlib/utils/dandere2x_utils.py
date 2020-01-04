@@ -182,10 +182,16 @@ def valid_input_resolution(width: int, height: int, block_size: int):
     return width % block_size == 0 and height % block_size == 0
 
 
-def create_directories(directories_list: list):
+def create_directories(workspace: str, directories_list: list):
     """
     In dandere2x's context file, there's a list of directories"""
 
+    # need to create workspace first or else subdirectories wont get made correctly
+    try:
+        os.mkdir(workspace)
+    except:
+
+        print("creating of %s failed" % workspace)
     # create each directory
     for subdirectory in directories_list:
         try:
