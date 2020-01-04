@@ -129,9 +129,6 @@ class Merge(threading.Thread):
         last_frame = False
         for x in range(self.start_frame, self.frame_count):
 
-            if not self.alive:
-                break
-
             ###################################
             # Loop-iteration pre-requirements #
             ###################################
@@ -151,8 +148,6 @@ class Merge(threading.Thread):
             # Loop-iteration Core #
             #######################
 
-            self.logger.info("Upscaling frame " + str(x))
-
             # Load the needed vectors to create the merged image.
             prediction_data_list = get_list_from_file_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
                                                            self.cancel_token)
@@ -164,8 +159,10 @@ class Merge(threading.Thread):
                                                      self.cancel_token)
 
             if not self.alive:
+                self.logger.info("Merge.py killed at frame " + str(x))
                 return
 
+            self.logger.info("Upscaling frame " + str(x))
             # Create the actual image itself.
             frame_next = self.make_merge_image(self.context, f1, frame_previous,
                                                prediction_data_list, residual_data_list,

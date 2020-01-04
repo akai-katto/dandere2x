@@ -80,7 +80,7 @@ waifu2x_caffe:
     -model_dir: null
     -output_depth: null
     -output_quality: null
-    -process: gpu
+    -process: cudnn
     -tta: null
 
 

@@ -129,7 +129,9 @@ class Waifu2xVulkan(threading.Thread):
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
         while self.signal_upscale and self.alive:
             console_output.write(str(exec_command))
-            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
+            self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
+                                                              stdout=console_output)
+            self.active_waifu2x_subprocess.wait()
 
         console_output.close()
 
