@@ -9,8 +9,9 @@ Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes li
 - Interpolated video compression
 - Minimum Quality Loss (MQL) dictated by DCT quantization
 - Weighted blocks (Fade to Black, Fade to White) 
-- Real-time video encoding for ffmpeg video filters
 - Interactive GUI
+- Suspend / Resume Session Capabilities
+- Reduced Disk Usage Mode (reduces the amount of files saved to the disk at a given time)
 
 
 ## How does Dandere2x work?
