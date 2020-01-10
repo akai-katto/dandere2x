@@ -96,7 +96,6 @@ def create_video_from_extract_frames(context: Context, output_file: str):
     subprocess.call(command, shell=False, stderr=console_output, stdout=console_output)
 
 
-@staticmethod
 def append_video_resize_filter(context: Context):
     """
     For ffmpeg, there's a video filter to resize a video to a given resolution.
