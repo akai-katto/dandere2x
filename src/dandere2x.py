@@ -127,8 +127,11 @@ class Dandere2x(threading.Thread):
 
         logging.info("joining residual")
         self.residual_thread.join()
-        logging.info("joining min disk demon")
-        self.min_disk_demon.join()
+
+        if self.context.use_min_disk:
+            logging.info("joining min disk demon")
+            self.min_disk_demon.join()
+
         logging.info("joining merge")
         self.merge_thread.join()
         logging.info("joining waifu2x")
@@ -201,7 +204,9 @@ class Dandere2x(threading.Thread):
         self.waifu2x.kill()
         self.residual_thread.kill()
         self.compress_frames_thread.kill()
-        self.min_disk_demon.kill()
+
+        if self.context.use_min_disk:
+            self.min_disk_demon.kill()
         self.dandere2x_cpp_thread.kill()
         self.status_thread.kill()
 
@@ -215,7 +220,9 @@ class Dandere2x(threading.Thread):
         self.residual_thread.set_start_frame(self.first_frame)
         self.waifu2x.set_start_frame(self.first_frame)
         self.status_thread.set_start_frame(self.first_frame)
-        self.min_disk_demon.set_start_frame(self.first_frame)
+
+        if self.context.use_min_disk:
+            self.min_disk_demon.set_start_frame(self.first_frame)
 
     def run(self):
         """
@@ -251,7 +258,9 @@ class Dandere2x(threading.Thread):
         self.residual_thread.start()
         self.waifu2x.start()
         self.status_thread.start()
-        self.min_disk_demon.start()
+
+        if self.context.use_min_disk:
+            self.min_disk_demon.start()
 
     def _get_waifu2x_class(self, name: str):
         """

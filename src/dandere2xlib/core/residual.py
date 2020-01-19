@@ -166,6 +166,7 @@ class Residual(threading.Thread):
 
         return residual_image
 
+    @staticmethod
     def debug_image(block_size, frame_base, list_predictive, list_differences, output_location):
         """
         Note:

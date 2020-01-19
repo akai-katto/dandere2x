@@ -198,9 +198,12 @@ class AppWindow(QMainWindow):
             config_yaml['dandere2x']['usersettings']['quality_minimum'] = self.image_quality
             config_yaml['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
             config_yaml['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
+            config_yaml['dandere2x']['usersettings']['denoise_level'] = self.noise_level
+
 
         print("output_file = " + config_yaml['dandere2x']['usersettings']['output_file'])
         print("input_file = " + config_yaml['dandere2x']['usersettings']['input_file'])
+        print("block_size = " + str(config_yaml['dandere2x']['usersettings']['block_size']))
         print("block_size = " + str(config_yaml['dandere2x']['usersettings']['block_size']))
         print("image_quality = " + str(config_yaml['dandere2x']['usersettings']['quality_minimum']))
         print("waifu2x_type = " + config_yaml['dandere2x']['usersettings']['waifu2x_type'])
