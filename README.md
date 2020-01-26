@@ -7,9 +7,7 @@ Telegram Server: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
 # Quick Overview
 
-This following section is a brief, white-paper styled explanation of Dandere2x. For a more in-depth explanation, check out this link: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works
-
-
+This following section is a brief, white-paper styled explanation of Dandere2x. For a more in-depth explanation, check out this link: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works. I've simplified this landing page greatly to make the program more approachable for new users. 
 
 
 ## Abstract (Introduction)
@@ -25,7 +23,7 @@ Waifu2x is a powerful tool for upscaling anime-styled images to a higher resolut
 *Image: An image of lower resolution ( left ) being brought to a higher resolution using waifu2x (right). Source: Wikipedia*
 
 
-While waifu2x may take 2-4 seconds on a modern graphics card to produce a higher resolution image, this becomes problematic when upscaling frames in a video, as one second can take multiple minutes to process. Considering the number of visual redundancies found in anime, having an algorithm to identify these redundancies and recycling them would prove to be an effective time-reducing step to help upscale videos to higher resolutions. Dandere2x does this by applying I-frame and p-frame compression to anime-styled videos.
+While waifu2x may take 2-4 seconds on a modern graphics card to produce a higher resolution image, this becomes problematic when upscaling frames in a video, as one second can take multiple minutes to process. Considering the number of visual redundancies found in anime, having an algorithm to identify these redundancies and recycling them would prove to be an effective time-reducing step to help upscale videos to higher resolutions. Dandere2x does this by applying I-frame and p-frame compression to anime-styled videos to reduce the work needed by the GPU.
 
 
 ![Image of I-Frame Compression](https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/I_P_and_B_frames.svg/1920px-I_P_and_B_frames.svg.png)
@@ -33,7 +31,7 @@ While waifu2x may take 2-4 seconds on a modern graphics card to produce a higher
 
 ## Methods
 
-Dandere2x is a novel method and algorithm for anime-specific and upscaling-specific compression targeted at reducing the GPU time needed to upscale a video. Without going in-depth into the tools used, the following image summarizes the dandere2x process, and how it uses previous frames to create future frames.
+Dandere2x is an upscaling-specific compression algorithm targeted at reducing the GPU time needed to upscale a video. Without going in-depth into the tools used, the following image summarizes the dandere2x process, and how it uses previous frames to create future frames.
 
 ![Image of Dandere2x](https://i.imgur.com/7cqZz4I.png)
 
@@ -65,14 +63,15 @@ Dandere2x as a program is still being improved and maintained. My current goal i
 
 ## Current Features
 
+![Image of the GUI](https://i.imgur.com/PWe7NzV.png)
+*Image: A picture of the dandere2x GUI (old)*
+
 #### Quality Customizable
 
 The quality of a dandere2x video is currently customizable. For more in-depth reading, refer to this link: https://github.com/aka-katto/dandere2x/wiki/Settings-and-Their-Meanings
 
 
 #### Interactive GUI
-
-![Image of the GUI](https://i.imgur.com/PWe7NzV.png)
 
 While still in the works, Dandere2x currently has a GUI which allows for a user-friendly experience. 
 
