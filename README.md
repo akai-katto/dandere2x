@@ -1,46 +1,91 @@
 # Dandere2x - Fast Waifu2x Video Upscaling
 
-## What is Dandere2x?
+# Quick Overview
+
+This following section is a brief, white-paper styled explanation of Dandere2x. For a more in-depth explanation, check out this link: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works
+
+
+
+
+## Abstract (Introduction)
 
 Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes live-action) videos by applying compression techniques. Just as Netflix uses compression to quickly stream videos to your home, Dandere2x uses compression to expedite the waifu2x upscaling process.
 
+## Motivation 
+
+Waifu2x is a powerful tool for upscaling anime-styled images to a higher resolution. However, for most users, the task is very slow, with each frame taking around 1-2 seconds in a 1080p video to be scaled to 3840p. Considering the number of visual redundancies found in anime, having an algorithm to identify these redundancies. A technique to reduce the time needed to upscale an anime-styled video to higher resolutions is by applying I-frame and p-frame compression.
+
+
+![Image of I-Frame Compression](https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/I_P_and_B_frames.svg/1920px-I_P_and_B_frames.svg.png)
+*Image: Different compression types being visualized with PacMan. Source: Wikipedia*
+
+## Methods
+
+Dandere2x is a novel method and algorithm for anime-specific and upscaling-specific compression targeted at reducing the GPU time needed to upscale a video. Without going in-depth into the tools used, the following image summarizes the dandere2x process, and how it uses previous frames to create future frames.
+
+![Image of Dandere2x](https://i.imgur.com/7cqZz4I.png)
+
+By only upscaling the content that can't be produced from a previous frame, Dandere2x can dramatically speed up the upscaling process by only upscaling essential information.
+
+## Results
+
+Here is are some user-created videos that were produced using older versions of Dandere2x.
+
+https://www.youtube.com/watch?v=sfD_D9KVfzE
+
+https://www.youtube.com/watch?v=VhqRVW_fU5s
+
+https://www.youtube.com/watch?v=w3QBHD47Yr0
+
+# Dandere2x as a Program
+
+Dandere2x as a program is still being improved and maintained. My current goal is to provide a more user-friendly and stable experience for the program.
+
+
+
 ## Current Features
 
-- Interpolated video compression
-- Minimum Quality Loss (MQL) dictated by DCT quantization
-- Weighted blocks (Fade to Black, Fade to White) 
-- Interactive GUI
-- Suspend / Resume Session Capabilities
-- Reduced Disk Usage Mode (reduces the amount of files saved to the disk at a given time)
+#### Quality Customizable
+
+The quality of a dandere2x video is currently customizable. For more in-depth reading, refer to this link: https://github.com/aka-katto/dandere2x/wiki/Settings-and-Their-Meanings
 
 
-## How does Dandere2x work?
-
-Dandere2x is a compression algorithm specifically designed to help compress anime so Waifu2x can work faster. In short, Dandere2x looks for redundancies in anime to reduce the time needed to upscale a video. A longer, more in-depth post can be found here. 
-
-https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works
-
-## GUI Preview
+#### Interactive GUI
 
 ![Image of the GUI](https://i.imgur.com/PWe7NzV.png)
 
-## Development Status
+While still in the works, Dandere2x currently has a GUI which allows for a user-friendly experience. 
 
-Dandere2x has entered it's beta phase, meaning that although development is still happening, the program itself is now stable and usable to others as a beta-release.
+#### Suspend / Resume Session Capabilities
 
-If you wish to actively follow my thoughts and developments, I highly encourage you to check out the subreddit at
+Dandere2x can be started, suspended, then resumed in a later session. This feature is still being tested by users, but for the developer, it seems stable.
+
+
+#### Reduced Disk Usage
+
+Dandere2x has a novel method of minimizing the hard-drive complexity by only referring to files on-disk when needed, and will delete files in real-time to prevent the workspace from being too large. It is possible to allow Dandere2x to upscale a video while keeping the used space under 200mb. 
+
+# Development Status
+
+I consider 1.3.1 the most stable build, with any release after that a testing version. You can test these later versions yourself and report bugs as they come up to help bring another stable release out.
+
+As for me, I'm a college student and I put time into Dandere2x when it's appropriate. I prioritize school + life, but Dandere2x is worked on when I can. If you wish to actively follow my thoughts and developments, I highly encourage you to check out the subreddit at
 
 www.reddit.com/r/dandere2x
+
+## Downloads
+
 
 For those looking to use Dandere2x, I highly encourage using the latest stable release at 
 
 https://github.com/aka-katto/dandere2x/releases
 
+
 ## Can I help with Dandere2x?
 
 Dandere2x has been very reliant on the community for its development. Testing nightly releases and reporting bugs and crashes has allowed Dandere2x to become usable over many months. 
 
-Feel free to comment your ideas on what can or should be improved on. I'm more than happy to explain some code to you over telegram if you wish to contribute to the project.
+Feel free to comment on your ideas on what can or should be improved on. I'm more than happy to explain some code to you over telegram if you wish to contribute to the project.
 
 ## FAQ
 
