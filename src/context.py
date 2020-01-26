@@ -1,9 +1,10 @@
-import json
 import logging
 import os
 import pathlib
 import sys
 import tempfile
+
+import yaml
 
 from dandere2xlib.utils.yaml_utils import absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
@@ -17,7 +18,7 @@ class Context:
     D2x's development - keep this file clean and nice, as it'll be used more than anything else!
     """
 
-    def __init__(self, config_file_unparsed: json):
+    def __init__(self, config_file_unparsed: yaml):
         """
         Create all the needed values that will be used in various parts of dandere2x. A lot of these values
         are derived from external files, such as the json, ffmpeg and ffprobe, or are joined from directories.
@@ -34,6 +35,7 @@ class Context:
             self.this_folder = os.path.dirname(__file__)
 
         self.this_folder = pathlib.Path(self.this_folder)
+        self.config_file_unparsed = config_file_unparsed
 
         # Parse the unparsed config into a parsed (../externals -> C:/this_folder/externals)
         self.config_yaml = absolutify_yaml(config_file_unparsed, str(self.this_folder.absolute()), absolutify_key="..")
@@ -94,8 +96,7 @@ class Context:
         self.temp_image_folder = self.workspace + "temp_image_folder" + os.path.sep
 
         # put all the directories that need to be created into a list for creation / deleting.
-        self.directories = {self.workspace,
-                            self.input_frames_dir,
+        self.directories = {self.input_frames_dir,
                             self.correction_data_dir,
                             self.residual_images_dir,
                             self.residual_upscaled_dir,
@@ -185,7 +186,7 @@ class Context:
         import time
 
         log_name = "dandere2x" + str(time.time()) + ".log"  # create logs using epoch time to denote them
-        log_file =os.path.join(self.log_folder_dir, log_name)
+        log_file = os.path.join(self.log_folder_dir, log_name)
 
         print("log file is: " + str(log_file))
         logging.basicConfig(filename=log_file, level=logging.INFO)

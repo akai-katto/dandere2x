@@ -4,10 +4,12 @@ import os
 import subprocess
 import threading
 import time
+import psutil
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, file_exists
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, file_exists, wait_on_file
 from dandere2xlib.utils.yaml_utils import get_options_from_section
+from dandere2xlib.utils.thread_utils import CancellationToken
 
 
 class Waifu2xCaffe(threading.Thread):
@@ -27,6 +29,8 @@ class Waifu2xCaffe(threading.Thread):
         self.workspace = context.workspace
         self.context = context
         self.signal_upscale = True
+        self.active_waifu2x_subprocess = None
+        self.start_frame = 1
 
         # Create Caffe Command
         self.waifu2x_caffe_upscale_frame = [self.waifu2x_caffe_cui_dir,
@@ -41,8 +45,32 @@ class Waifu2xCaffe(threading.Thread):
 
         self.waifu2x_caffe_upscale_frame.extend(["-o", "[output_file]"])
 
-        threading.Thread.__init__(self)
+        # Threading Specific
+
+        self.alive = True
+        self.cancel_token = CancellationToken()
+        self._stopevent = threading.Event()
+        threading.Thread.__init__(self, name="Waifu2xCaffeThread")
+
         logging.basicConfig(filename=self.workspace + 'waifu2x.log', level=logging.INFO)
+
+    def kill(self):
+        self.alive = False
+        self.cancel_token.cancel()
+        self._stopevent.set()
+
+        try:
+            d2xcpp_psutil = psutil.Process(self.active_waifu2x_subprocess.pid)
+            if psutil.pid_exists(d2xcpp_psutil.pid):
+                d2xcpp_psutil.kill()
+        except psutil.NoSuchProcess:
+            pass
+
+    def set_start_frame(self, start_frame):
+        self.start_frame = start_frame
+
+    def join(self, timeout=None):
+        threading.Thread.join(self, timeout)
 
     # The current Dandere2x implementation requires files to be removed from the folder
     # During runtime. As files produced by Dandere2x don't all exist during the initial
@@ -73,9 +101,11 @@ class Waifu2xCaffe(threading.Thread):
         remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
-        while self.signal_upscale:
+        while self.signal_upscale and self.alive:
             console_output.write(str(exec_command))
-            subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
+            self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
+                                                              stdout=console_output)
+            self.active_waifu2x_subprocess.wait()
 
     def upscale_file(self, input_file: str, output_file: str):
 
@@ -93,7 +123,10 @@ class Waifu2xCaffe(threading.Thread):
 
         console_output = open(self.context.console_output_dir + "waifu2x_caffe_upscale_frame_single.txt", "w")
         console_output.write(str(exec_command))
-        subprocess.call(exec_command, shell=False, stderr=console_output, stdout=console_output)
+
+        self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
+                                                          stdout=console_output)
+        self.active_waifu2x_subprocess.wait()
 
     def __remove_once_upscaled_then_stop(self):
         self.__remove_once_upscaled()
@@ -103,7 +136,7 @@ class Waifu2xCaffe(threading.Thread):
 
         # make a list of names that will eventually (past or future) be upscaled
         list_of_names = []
-        for x in range(1, self.frame_count):
+        for x in range(self.start_frame, self.frame_count):
             list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
 
         for x in range(len(list_of_names)):
@@ -113,8 +146,10 @@ class Waifu2xCaffe(threading.Thread):
             residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
             residual_upscaled_file = self.residual_upscaled_dir + name
 
-            while not file_exists(residual_upscaled_file):
-                time.sleep(.00001)
+            wait_on_file(residual_upscaled_file, self.cancel_token)
+
+            if not self.alive:
+                return
 
             if os.path.exists(residual_file):
                 os.remove(residual_file)
