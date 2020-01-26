@@ -18,7 +18,14 @@ Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes li
 
 ## Motivation 
 
-Waifu2x is a powerful tool for upscaling anime-styled images to a higher resolution. However, for most users, the task is very slow, with each frame taking around 1-2 seconds in a 1080p video to be scaled to 3840p. Considering the number of visual redundancies found in anime, having an algorithm to identify these redundancies and recycling them would prove to be an effective time-reducing step to help upscale images to higher resolutions. Dandere2x does this by applying I-frame and p-frame compression to anime-styled videos.
+Waifu2x is a powerful tool for upscaling anime-styled images to a higher resolution. It does this using a convolutional neural network, which can bring greater visual fidelity to images by removing the noise produced from resolution upscaling or compression.
+
+![Image of a Waifu2x Upscale](https://i.imgur.com/irRaQ07.png)
+
+*Image: An image of lower resolution ( left ) being brought to a higher resolution using waifu2x (right). Source: Wikipedia*
+
+
+While waifu2x may take 1-2 seconds on a modern graphics card to produce a higher resolution image, the time it takes to upscale a frame in an anime-styled video is very slow, sometimes taking weeks for a 1080p video. Considering the number of visual redundancies found in anime, having an algorithm to identify these redundancies and recycling them would prove to be an effective time-reducing step to help upscale images to higher resolutions. Dandere2x does this by applying I-frame and p-frame compression to anime-styled videos.
 
 
 ![Image of I-Frame Compression](https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/I_P_and_B_frames.svg/1920px-I_P_and_B_frames.svg.png)
@@ -33,6 +40,14 @@ Dandere2x is a novel method and algorithm for anime-specific and upscaling-speci
 By only upscaling the content that can't be produced from a previous frame, Dandere2x can dramatically speed up the upscaling process by only upscaling essential information.
 
 ## Results
+
+The time-reduction dandere2x produces varies based on the user input, as well as the settings used. However, in a benchmark video is shown here, Dandere2x provided a dramatic improvement in time over Video2x (a lossless waifu2x-video upscaler): https://www.youtube.com/watch?v=d1Y4pmQb44k.
+
+| Upscaler  | Time  |
+|-----------|-------|
+| Dandere2x | 03:37 |
+| Video2x   | 18:34 |
+
 
 Here is are some user-created videos that were produced using older versions of Dandere2x.
 
