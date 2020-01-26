@@ -64,23 +64,24 @@ Dandere2x as a program is still being improved and maintained. My current goal i
 ## Current Features
 
 ![Image of the GUI](https://i.imgur.com/PWe7NzV.png)
+
 *Image: A picture of the dandere2x GUI (old)*
 
-#### Quality Customizable
+#### 1) Quality Customizable
 
 The quality of a dandere2x video is currently customizable. For more in-depth reading, refer to this link: https://github.com/aka-katto/dandere2x/wiki/Settings-and-Their-Meanings
 
 
-#### Interactive GUI
+#### 2) Interactive GUI
 
 While still in the works, Dandere2x currently has a GUI which allows for a user-friendly experience. 
 
-#### Suspend / Resume Session Capabilities
+#### 3) Suspend / Resume Session Capabilities
 
 Dandere2x can be started, suspended, then resumed in a later session. This feature is still being tested by users, but for the developer, it seems stable.
 
 
-#### Reduced Disk Usage
+#### 4) Reduced Disk Usage
 
 Dandere2x has a novel method of minimizing the hard-drive complexity by only referring to files on-disk when needed, and will delete files in real-time to prevent the workspace from being too large. It is possible to allow Dandere2x to upscale a video while keeping the used space under 200mb. 
 
