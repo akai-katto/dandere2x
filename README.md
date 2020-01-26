@@ -1,5 +1,10 @@
 # Dandere2x - Fast Waifu2x Video Upscaling
 
+Subreddit (Preferred Contact): https://www.reddit.com/r/Dandere2x/
+
+Telegram Server: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
+
+
 # Quick Overview
 
 This following section is a brief, white-paper styled explanation of Dandere2x. For a more in-depth explanation, check out this link: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works
