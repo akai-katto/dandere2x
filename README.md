@@ -18,7 +18,7 @@ Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes li
 
 ## Motivation 
 
-Waifu2x is a powerful tool for upscaling anime-styled images to a higher resolution. However, for most users, the task is very slow, with each frame taking around 1-2 seconds in a 1080p video to be scaled to 3840p. Considering the number of visual redundancies found in anime, having an algorithm to identify these redundancies. A technique to reduce the time needed to upscale an anime-styled video to higher resolutions is by applying I-frame and p-frame compression.
+Waifu2x is a powerful tool for upscaling anime-styled images to a higher resolution. However, for most users, the task is very slow, with each frame taking around 1-2 seconds in a 1080p video to be scaled to 3840p. Considering the number of visual redundancies found in anime, having an algorithm to identify these redundancies and recycling them would prove to be an effective time-reducing step to help upscale images to higher resolutions. Dandere2x does this by applying I-frame and p-frame compression to anime-styled videos.
 
 
 ![Image of I-Frame Compression](https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/I_P_and_B_frames.svg/1920px-I_P_and_B_frames.svg.png)
