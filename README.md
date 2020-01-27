@@ -16,7 +16,7 @@ Dandere2x reduces the time needed for Waifu2x to upscale animation (sometimes li
 
 ## Motivation 
 
-Waifu2x is a powerful tool for upscaling anime-styled images to a higher resolution. It does this using a convolutional neural network, which can bring greater visual fidelity to images by removing the noise produced from resolution upscaling or compression.
+Waifu2x (https://github.com/nagadomi/waifu2x) is a powerful tool for upscaling anime-styled images to a higher resolution. It does this using a convolutional neural network, which can bring greater visual fidelity to images by removing the noise produced from resolution upscaling or compression.
 
 ![Image of a Waifu2x Upscale](https://i.imgur.com/irRaQ07.png)
 
