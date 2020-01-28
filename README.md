@@ -6,7 +6,7 @@ Telegram Server: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
 # Tech Overview
 
-This following section is a brief, white-paper styled explanation of Dandere2x. For a more in-depth explanation, check out this link: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works. I've simplified this landing page greatly to make the program more approachable for new users. 
+This following section is a brief, white-paper styled explanation of Dandere2x. For a more in-depth explanation, check out this link: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works. I've simplified this landing page greatly to make the program more understandable for new users. 
 
 
 ## Abstract (Introduction)
