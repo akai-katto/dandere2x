@@ -5,17 +5,21 @@ Subreddit (Preferred Contact): https://www.reddit.com/r/Dandere2x/
 Telegram Server: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
 
-# Downloads
+## Downloads
 
-## Stable Build:
+### Stable Build:
 
 I consider 1.3.1 the most stable build, although a bit older, has the most hours used and encounters the least amount of errors. If you're looking for a more modern dandere2x, consider trying a nightly build-out. 
 
 https://github.com/aka-katto/dandere2x/releases/tag/1.3.1
 
-## Other Builds:
+### Other Builds:
 
 Anything beyond 1.3.1 I don't consider stable, although users are still finding bugs in my latest additions. Reporting bugs will help bring a future build to become more stable. 
+
+The most recent and stable-ish build is 1.7.1
+
+https://github.com/aka-katto/dandere2x/releases/tag/v1.7.1
 
 
 # Tech Overview
@@ -103,12 +107,12 @@ While I consider dandere2x more as a compression algorithm, it stands on its own
 
 ### 1) Quality Customizable
 
-The quality of a dandere2x video is currently customizable. For more in-depth reading, refer to this link: https://github.com/aka-katto/dandere2x/wiki/Settings-and-Their-Meanings
+The quality of a dandere2x video is currently customizable, meaning users can trade speed for overall visual fidelity of an upscale. For more in-depth reading, refer to this link: https://github.com/aka-katto/dandere2x/wiki/Settings-and-Their-Meanings
 
 
 ### 2) Interactive GUI
 
-While still in the works, Dandere2x currently has a GUI which allows for a user-friendly experience. 
+While still in the works, Dandere2x currently has a GUI which allows for a user-friendly experience. I plan on re-making this whenever. 
 
 ### 3) Suspend / Resume Session Capabilities
 
@@ -119,8 +123,8 @@ Dandere2x can be started, suspended, then resumed in a later session. This featu
 
 Dandere2x has a novel method of minimizing the hard-drive complexity by only referring to files on-disk when needed, and will delete files in real-time to prevent the workspace from being too large. It is possible to allow Dandere2x to upscale a video while keeping the used space under 200mb. 
 
-# Development Status
 
+# Development Status
 
 As for me, I'm a college student and I put time into Dandere2x when it's appropriate. I prioritize school + life, but Dandere2x is worked on when I can. If you wish to actively follow my thoughts and developments, I highly encourage you to check out the subreddit at
 
