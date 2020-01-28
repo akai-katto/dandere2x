@@ -5,7 +5,20 @@ Subreddit (Preferred Contact): https://www.reddit.com/r/Dandere2x/
 Telegram Server: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
 
-# Quick Overview
+# Downloads
+
+## Stable Build:
+
+I consider 1.3.1 the most stable build, although a bit older, has the most hours used and encounters the least amount of errors. If you're looking for a more modern dandere2x, consider trying a nightly build-out. 
+
+https://github.com/aka-katto/dandere2x/releases/tag/1.3.1
+
+## Other Builds:
+
+Anything beyond 1.3.1 I don't consider stable, although users are still finding bugs in my latest additions. Reporting bugs will help bring a future build to become more stable. 
+
+
+# Tech Overview
 
 This following section is a brief, white-paper styled explanation of Dandere2x. For a more in-depth explanation, check out this link: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works. I've simplified this landing page greatly to make the program more approachable for new users. 
 
@@ -39,6 +52,10 @@ By only upscaling the content that can't be produced from a previous frame, Dand
 
 ## Results
 
+
+
+### Preformance Differences
+
 The time-reduction dandere2x produces varies based on the user input, as well as the settings used. However, in a benchmark video is shown here, Dandere2x provided a dramatic improvement in time over Video2x (a lossless waifu2x-video upscaler): https://www.youtube.com/watch?v=d1Y4pmQb44k.
 
 | Upscaler  | Time  |
@@ -55,7 +72,22 @@ https://www.youtube.com/watch?v=VhqRVW_fU5s
 
 https://www.youtube.com/watch?v=w3QBHD47Yr0
 
-# Dandere2x as a Program
+### Compression Noise
+
+Being a loss-driven compression algorithm, Dandere2x produced noticeable noise on its own (which can be fixed with filters, which will be discussed later). Likewise, as a result of how convolutional pooling works, compressed blocks have a noticeable discoloration at the edges.
+
+![A picture of Dandere2x Noise](https://i.imgur.com/uF2xk83.png)
+
+*Image: A picture of noise produced by raw Dandere2x. Notice the obvious placement of the blocks in the color gradients.*
+
+However, Reddit user /u/Naizuri77 found that various compression filters can reduce the noticeability of these visual blemishes.
+
+![A picture of Dandere2x reduced using filters](https://i.imgur.com/rVMgy5U.png)
+
+*Image: The same image above, but with a compression-filter applied to reduce the dandere2x compression noise.*
+
+
+# Program Overview
 
 Dandere2x as a program is still being improved and maintained. My current goal is to provide a more user-friendly and stable experience for the program.
 
@@ -63,42 +95,36 @@ Dandere2x as a program is still being improved and maintained. My current goal i
 
 ## Current Features
 
+While I consider dandere2x more as a compression algorithm, it stands on its own as a program, with several quality-of-life features. 
+
 ![Image of the GUI](https://i.imgur.com/PWe7NzV.png)
 
 *Image: A picture of the dandere2x GUI (old)*
 
-#### 1) Quality Customizable
+### 1) Quality Customizable
 
 The quality of a dandere2x video is currently customizable. For more in-depth reading, refer to this link: https://github.com/aka-katto/dandere2x/wiki/Settings-and-Their-Meanings
 
 
-#### 2) Interactive GUI
+### 2) Interactive GUI
 
 While still in the works, Dandere2x currently has a GUI which allows for a user-friendly experience. 
 
-#### 3) Suspend / Resume Session Capabilities
+### 3) Suspend / Resume Session Capabilities
 
 Dandere2x can be started, suspended, then resumed in a later session. This feature is still being tested by users, but for the developer, it seems stable.
 
 
-#### 4) Reduced Disk Usage
+### 4) Reduced Disk Usage
 
 Dandere2x has a novel method of minimizing the hard-drive complexity by only referring to files on-disk when needed, and will delete files in real-time to prevent the workspace from being too large. It is possible to allow Dandere2x to upscale a video while keeping the used space under 200mb. 
 
 # Development Status
 
-I consider 1.3.1 the most stable build, with any release after that a testing version. You can test these later versions yourself and report bugs as they come up to help bring another stable release out.
 
 As for me, I'm a college student and I put time into Dandere2x when it's appropriate. I prioritize school + life, but Dandere2x is worked on when I can. If you wish to actively follow my thoughts and developments, I highly encourage you to check out the subreddit at
 
 www.reddit.com/r/dandere2x
-
-## Downloads
-
-
-For those looking to use Dandere2x, I highly encourage using the latest stable release at 
-
-https://github.com/aka-katto/dandere2x/releases
 
 
 ## Can I help with Dandere2x?
