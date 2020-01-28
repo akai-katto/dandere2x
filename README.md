@@ -4,16 +4,13 @@ Subreddit (Preferred Contact): https://www.reddit.com/r/Dandere2x/
 
 Telegram Server: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
-
-## Downloads
-
-### Stable Build:
+### Stable Download:
 
 I consider 1.3.1 the most stable build, although a bit older, has the most hours used and encounters the least amount of errors. If you're looking for a more modern dandere2x, consider trying a nightly build-out. 
 
 https://github.com/aka-katto/dandere2x/releases/tag/1.3.1
 
-### Other Builds:
+### Nightly Download:
 
 Anything beyond 1.3.1 I don't consider stable, although users are still finding bugs in my latest additions. Reporting bugs will help bring a future build to become more stable. 
 
