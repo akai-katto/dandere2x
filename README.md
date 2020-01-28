@@ -4,21 +4,6 @@ Subreddit (Preferred Contact): https://www.reddit.com/r/Dandere2x/
 
 Telegram Server: https://t.me/joinchat/KTRznBIPPNCbHkUqnwT8pA
 
-### Stable Download:
-
-I consider 1.3.1 the most stable build, although a bit older, has the most hours used and encounters the least amount of errors. If you're looking for a more modern dandere2x, consider trying a nightly build-out. 
-
-https://github.com/aka-katto/dandere2x/releases/tag/1.3.1
-
-### Nightly Download:
-
-Anything beyond 1.3.1 I don't consider stable, although users are still finding bugs in my latest additions. Reporting bugs will help bring a future build to become more stable. 
-
-The most recent and stable-ish build is 1.7.1
-
-https://github.com/aka-katto/dandere2x/releases/tag/v1.7.1
-
-
 # Tech Overview
 
 This following section is a brief, white-paper styled explanation of Dandere2x. For a more in-depth explanation, check out this link: https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works. I've simplified this landing page greatly to make the program more approachable for new users. 
@@ -120,6 +105,21 @@ Dandere2x can be started, suspended, then resumed in a later session. This featu
 
 Dandere2x has a novel method of minimizing the hard-drive complexity by only referring to files on-disk when needed, and will delete files in real-time to prevent the workspace from being too large. It is possible to allow Dandere2x to upscale a video while keeping the used space under 200mb. 
 
+# Downloads
+
+### Stable Download:
+
+I consider 1.3.1 the most stable build, although a bit older, has the most hours used and encounters the least amount of errors. If you're looking for a more modern dandere2x, consider trying a nightly build-out. 
+
+https://github.com/aka-katto/dandere2x/releases/tag/1.3.1
+
+### Nightly Download:
+
+Anything beyond 1.3.1 I don't consider stable, although users are still finding bugs in my latest additions. Reporting bugs will help bring a future build to become more stable. 
+
+The most recent and stable-ish build is 1.7.1
+
+https://github.com/aka-katto/dandere2x/releases/tag/v1.7.1
 
 # Development Status
 
