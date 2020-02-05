@@ -3,7 +3,7 @@ import glob
 import os
 
 from context import Context
-from wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
+from wrappers.dandere2x_wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
 
 
 class Dandere2xUpscaleFolder:

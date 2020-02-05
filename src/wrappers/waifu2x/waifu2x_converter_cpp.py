@@ -122,8 +122,9 @@ class Waifu2xConverterCpp(threading.Thread):
         for name in list_of_names:
             if '[NS-L3][x' + str(self.scale_factor) + '.000000]' in name:
                 rename_file(self.residual_upscaled_dir + name,
-                            self.residual_upscaled_dir + name.replace('_[NS-L3][x' + str(self.scale_factor) + '.000000]',
-                                                                      ''))
+                            self.residual_upscaled_dir + name.replace(
+                                '_[NS-L3][x' + str(self.scale_factor) + '.000000]',
+                                ''))
 
     def __remove_once_upscaled_then_stop(self):
         self.__remove_once_upscaled()

@@ -5,11 +5,12 @@ import time
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
+from dandere2xlib.utils.thread_utils import CancellationToken
 # from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
 from wrappers.ffmpeg.progressive_frame_extractor_ffmpeg import ProgressiveFramesExtractorFFMPEG
 
 
-class MinDiskUsage:
+class MinDiskUsage(threading.Thread):
     """
     A class to facilitate the actions needed to operate min_disk_usage.
 
@@ -25,6 +26,27 @@ class MinDiskUsage:
         self.max_frames_ahead = self.context.max_frames_ahead
         self.frame_count = context.frame_count
         self.progressive_frame_extractor = ProgressiveFramesExtractorFFMPEG(self.context, self.context.input_file)
+        self.start_frame = 1
+
+        self.progressive_frame_extractor.start_task()
+        # Threading Specific
+
+        self.alive = True
+        self.cancel_token = CancellationToken()
+        self._stopevent = threading.Event()
+        threading.Thread.__init__(self, name="ResidualThread")
+
+    def join(self, timeout=None):
+        threading.Thread.join(self, timeout)
+
+    def kill(self):
+        self.alive = False
+        self.progressive_frame_extractor.kill_task()
+        self.cancel_token.cancel()
+        self._stopevent.set()
+
+    def set_start_frame(self, start_frame):
+        self.start_frame = start_frame
 
     """
     todo:
@@ -39,11 +61,14 @@ class MinDiskUsage:
         When it does, delete the used files and extract the needed frame.
         """
         logger = logging.getLogger(__name__)
-        for x in range(1, self.frame_count - self.context.max_frames_ahead + 1):
+        for x in range(self.start_frame, self.frame_count - self.context.max_frames_ahead + 1):
             logger.info("on frame x: " + str(x))
             # wait for signal to get ahead of MinDiskUsage
-            while x >= self.context.signal_merged_count:
+            while x >= self.context.signal_merged_count and self.alive:
                 time.sleep(.00001)
+
+            if not self.alive:
+                return
 
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
@@ -101,10 +126,9 @@ class MinDiskUsage:
         remove.append(upscaled_file_r)
 
         # remove
-        threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True).start()
+        threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True, name="mindiskusage").start()
 
-    @staticmethod
-    def __delete_files_from_list(files):
+    def __delete_files_from_list(self, files):
         """
         Delete all the files in a given list.
 
@@ -112,7 +136,7 @@ class MinDiskUsage:
         """
         for item in files:
             c = 0
-            while True:
+            while True and self.alive:
                 if os.path.isfile(item):
                     try:
                         os.remove(item)

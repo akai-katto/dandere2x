@@ -25,8 +25,8 @@ dandere2x:
     #                        caffe: [1, 2, 3, 4]
     #                        converter_cpp: [1,2,3,4]
 
-    input_file: ..\workspace\yn_moving.mkv
-    output_file: ..\workspace\1second_output.mp4
+    input_file: ..\workspace\odd_res.mkv
+    output_file: ..\workspace\odd_res_output.mp4
     input_folder: ..\workspace\multiple_videos\
     output_folder: ..\workspace\multiple_videos_output\
 
@@ -63,8 +63,11 @@ dandere2x:
     quality_moving_ratio: 0.55
     step_size: 8
 
-
-
+# don't touch these unless you know what you're doing!
+resume_settings:
+  resume_session: false
+  signal_merged_count: 0
+  nosound_file: null
 
 waifu2x_caffe:
 
@@ -77,7 +80,7 @@ waifu2x_caffe:
     -model_dir: null
     -output_depth: null
     -output_quality: null
-    -process: gpu
+    -process: cudnn
     -tta: null
 
 

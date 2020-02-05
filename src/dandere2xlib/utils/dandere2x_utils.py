@@ -13,6 +13,8 @@ import shutil
 import time
 from sys import platform
 
+from dandere2xlib.utils.thread_utils import CancellationToken
+
 
 def get_operating_system():
     if platform == "linux" or platform == "linux2":
@@ -29,16 +31,19 @@ def get_operating_system():
 # returns a list given a text file (representing a string)
 
 
-def get_list_from_file(text_file: str):
+def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
-    while not exists:
+    while not exists and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(text_file + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
+
+    if cancel.is_cancelled:
+        return
 
     file = None
     try:
@@ -63,11 +68,11 @@ def get_list_from_file(text_file: str):
 
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
-def wait_on_file(file_string: str):
+def wait_on_file(file_string: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
-    while not exists:
+    while not exists and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
@@ -76,12 +81,12 @@ def wait_on_file(file_string: str):
 
 
 # for renaming function, break when either file exists
-def wait_on_either_file(file_1: str, file_2: str):
+def wait_on_either_file(file_1: str, file_2: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)
     count = 0
-    while not (exists_1 or exists_2):
+    while not (exists_1 or exists_2) and not cancel.is_cancelled:
         if count / 500 == 0:
             logger.info(file_1 + " does not exist, waiting")
         exists_1 = os.path.isfile(file_1)
@@ -132,6 +137,18 @@ def rename_file(file1, file2):
         os.rename(file1, file2)
 
 
+def rename_file_wait(file1, file2):
+    renamed = False
+
+    while not renamed:
+        try:
+            os.rename(file1, file2)
+            renamed = True
+        except PermissionError:
+            print("permission error thrown")
+            pass
+
+
 # Both waifu2x-Caffe and waifu2x-conv read images in lexiconic order, so in order
 # to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.
 def get_lexicon_value(digits: int, val: int):
@@ -165,10 +182,16 @@ def valid_input_resolution(width: int, height: int, block_size: int):
     return width % block_size == 0 and height % block_size == 0
 
 
-def create_directories(directories_list: list):
+def create_directories(workspace: str, directories_list: list):
     """
     In dandere2x's context file, there's a list of directories"""
 
+    # need to create workspace first or else subdirectories wont get made correctly
+    try:
+        os.mkdir(workspace)
+    except:
+
+        print("creating of %s failed" % workspace)
     # create each directory
     for subdirectory in directories_list:
         try:
@@ -255,7 +278,7 @@ def verify_user_settings(context):
 
 
 def main():
-    text = get_list_from_file("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
+    text = get_list_from_file_wait("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
 
 
 if __name__ == "__main__":
