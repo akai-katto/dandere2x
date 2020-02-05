@@ -335,8 +335,12 @@ class AppWindow(QMainWindow):
         filename = QFileDialog.getOpenFileName(w, 'Open File', self.this_folder)
         return filename
 
-
 app = QApplication(sys.argv)
 w = AppWindow()
-w.show()
-sys.exit(app.exec_())
+
+def gui_start():
+    w.show()
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    gui_start()
