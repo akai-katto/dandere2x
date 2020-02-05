@@ -11,7 +11,7 @@ import time
 import yaml
 
 from dandere2xlib.utils.dandere2x_utils import get_operating_system
-from wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
+from wrappers.dandere2x_wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
 
 
 def main():

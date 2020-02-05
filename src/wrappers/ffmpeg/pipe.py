@@ -54,10 +54,23 @@ class Pipe():
 
         self.ffmpeg_pipe_subprocess = None
 
+        # thread variables
+
+        self.thread_alive = True
+
+    def join_ffmpeg_subprocess(self):
+        print("waiting for pipe join")
+        self.ffmpeg_pipe_subprocess.wait()
+        print("pipe join done")
+
+    def kill_thread(self):
+        self.thread_alive = False
+
     def start_pipe_thread(self):
         console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
-        self.ffmpeg_pipe_subprocess = subprocess.Popen(self.ffmpeg_pipe_command, stdin=subprocess.PIPE, stdout=console_output)
-        threading.Thread(target=self.__write_to_pipe).start()
+        self.ffmpeg_pipe_subprocess = subprocess.Popen(self.ffmpeg_pipe_command, stdin=subprocess.PIPE,
+                                                       stdout=console_output)
+        threading.Thread(target=self.__write_to_pipe, name="pipehtread").start()
 
     # todo: Implement this without a 'while true'
     def save(self, frame):
@@ -78,7 +91,7 @@ class Pipe():
 
         print("\n    Waiting for the ffmpeg-pipe-encode buffer list to end....")
 
-        while len(self.images_to_pipe) > 0:
+        while len(self.images_to_pipe) > 0 and self.thread_alive:
             time.sleep(0.05)
 
         self.pipe_running = False
@@ -92,7 +105,7 @@ class Pipe():
         Continually pop images from the buffer into the piped video while there are still images to be piped.
         """
 
-        while self.pipe_running:
+        while self.pipe_running and self.thread_alive:
             if len(self.images_to_pipe) > 0:
                 img = self.images_to_pipe.pop(0).get_pil_image()  # get the first image and remove it from list
                 img.save(self.ffmpeg_pipe_subprocess.stdin, format="jpeg", quality=100)

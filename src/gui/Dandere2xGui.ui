@@ -2786,6 +2786,62 @@
                     <set>Qt::AlignCenter</set>
                 </property>
             </widget>
+            <widget class="QPushButton" name="suspend_button">
+                <property name="geometry">
+                    <rect>
+                        <x>260</x>
+                        <y>30</y>
+                        <width>171</width>
+                        <height>41</height>
+                    </rect>
+                </property>
+                <property name="palette">
+                    <palette>
+                        <active>
+                            <colorrole role="Mid">
+                                <brush brushstyle="SolidPattern">
+                                    <color alpha="255">
+                                        <red>4</red>
+                                        <green>79</green>
+                                        <blue>160</blue>
+                                    </color>
+                                </brush>
+                            </colorrole>
+                        </active>
+                        <inactive>
+                            <colorrole role="Mid">
+                                <brush brushstyle="SolidPattern">
+                                    <color alpha="255">
+                                        <red>4</red>
+                                        <green>79</green>
+                                        <blue>160</blue>
+                                    </color>
+                                </brush>
+                            </colorrole>
+                        </inactive>
+                        <disabled>
+                            <colorrole role="Mid">
+                                <brush brushstyle="SolidPattern">
+                                    <color alpha="255">
+                                        <red>4</red>
+                                        <green>79</green>
+                                        <blue>160</blue>
+                                    </color>
+                                </brush>
+                            </colorrole>
+                        </disabled>
+                    </palette>
+                </property>
+                <property name="font">
+                    <font>
+                        <family>Microsoft YaHei Light</family>
+                        <pointsize>14</pointsize>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>Suspend Session</string>
+                </property>
+            </widget>
         </widget>
         <widget class="QMenuBar" name="menubar">
             <property name="geometry">
