@@ -12,43 +12,43 @@ from dandere2xlib.utils.dandere2x_utils import get_operating_system, wait_on_fil
 from wrappers.dandere2x_wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
 
 
-def printLogs():
-    print("logs!")
+def load_parser():
+    """
+    Create a parser for dandere2x for the needed arguments
+    :return:
+    """
 
+    parser = argparse.ArgumentParser()
 
-parser = argparse.ArgumentParser()
+    parser.add_argument('-b', '--block_size', action="store", dest="block_size", type=int, default=30,
+                        help='Block Size (Default 30)')
 
-parser.add_argument('-b', '--block_size', action="store", dest="block_size", type=int, default=30,
-                    help='Block Size (Default 30)')
+    parser.add_argument('-i', '--input', action="store", dest="input_file", help='Input Video (no default)')
 
+    parser.add_argument('-o', '--output', action="store", dest="output_file", help='Output Video (no default)')
 
-parser.add_argument('-i', '--input', action="store", dest="input_file", help='Input Video (no default)')
-parser.add_argument('-o', '--output', action="store", dest="output_file", help='Output Video (no default)')
+    parser.add_argument('-q', '--quality', action="store", dest="image_quality", type=int, default=85,
+                        help='Image Quality (Default 85)')
 
-parser.add_argument('-q', '--quality', action="store", dest="image_quality", type=int, default=85,
-                    help='Image Quality (Default 85)')
+    parser.add_argument('-w', '--waifu2x_type', action="store", dest="waifu2x_type", type=str, default="vulkan",
+                        help='Waifu2x Type. Options: "vulkan" "converter-cpp" "caffe". Default: "vulkan"')
 
-parser.add_argument('-w', '--waifu2x_type', action="store", dest="waifu2x_type", type=str, default="vulkan",
-                    help='Waifu2x Type. Options: "vulkan" "converter-cpp" "caffe". Default: "vulkan"')
+    parser.add_argument('-s', '--scale_factor', action="store", dest="scale_factor", type=int, default=2,
+                        help='Scale Factor (Default 2)')
 
-parser.add_argument('-s', '--scale_factor', action="store", dest="scale_factor", type=int, default=2,
-                    help='Scale Factor (Default 2)')
+    parser.add_argument('-n', '--noise_level', action="store", dest="noise_level", type=int, default=3,
+                        help='Denoise Noise Level (Default 3)')
 
-parser.add_argument('-n', '--noise_level', action="store", dest="noise_level", type=int, default=3,
-                    help='Denoise Noise Level (Default 3)')
+    args = parser.parse_args()
+    return args
 
-args = parser.parse_args()
+def cli_start(args):
+    """
+    Start Dandere2x using command line
 
-if len(sys.argv) == 1:
-    # load in code to prevent any code from gui_driver from even being loaded, or else it loads the
-    # gui driver itself
-
-    from gui_driver import gui_start
-    print("gui start called")
-    gui_start()
-
-else:
-    start = time.time()
+    :param args: args loaded from load_parser()
+    :return: none
+    """
 
     # get config based on OS
     configfile = "dandere2x_%s.yaml" % get_operating_system()
@@ -102,4 +102,29 @@ else:
         d2x.join()
 
 
-    print("\n Total runtime duration:", time.time() - start)
+def start_gui():
+    # load in code to prevent any code from gui_driver from even being loaded, or else it loads the
+    # gui driver itself
+
+    from gui_driver import gui_start
+    print("gui start called")
+    gui_start()
+
+def main():
+    """
+    Start a Dandere2x session either through CLI or GUI. Times the session used in either case.
+
+    :return:
+    """
+    args = load_parser()
+    start = time.time()
+
+    if len(sys.argv) == 1:
+        start_gui()
+    else:
+        cli_start(args)
+
+    print("Total runtime duration:", time.time() - start)
+
+
+main()
