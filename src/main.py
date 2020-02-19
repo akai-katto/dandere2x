@@ -98,8 +98,6 @@ def cli_start(args):
 
         d2x = Dandere2x(context)
         d2x.start()
-
-        wait_on_file(d2x.context.nosound_file)
         d2x.join()
 
 

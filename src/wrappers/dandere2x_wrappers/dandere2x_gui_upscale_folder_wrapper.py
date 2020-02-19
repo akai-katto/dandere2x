@@ -6,7 +6,6 @@ import time
 
 from dandere2x import Dandere2x
 from context import Context
-from wrappers.dandere2x_wrappers.dandere2x_gui_wrapper import Dandere2x_Gui_Wrapper
 from dandere2xlib.utils.dandere2x_utils import wait_on_file, dir_exists, file_exists
 
 class Dandere2xUpscaleFolder:

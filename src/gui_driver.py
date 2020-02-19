@@ -47,9 +47,6 @@ class QtDandere2xThread(QtCore.QThread):
         self.join()
 
     def join(self):
-        from dandere2xlib.utils.dandere2x_utils import wait_on_file
-
-        wait_on_file(self.dandere2x.context.nosound_file)
         self.dandere2x.join()
         self.finished.emit()
 
