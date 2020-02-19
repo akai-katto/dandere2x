@@ -37,7 +37,7 @@ from dandere2xlib.frame_compressor import CompressFrames
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories, rename_file
-from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, file_exists
+from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, file_exists, wait_on_file
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import extract_frames, append_video_resize_filter, concat_two_videos, migrate_tracks
@@ -124,6 +124,9 @@ class Dandere2x(threading.Thread):
     def join(self, timeout=None):
 
         logging.info("dandere2x joined called")
+
+        # due to a weird quirk, prevent dandere2x from being joined until nosound.mkv exists (at least).
+        wait_on_file(self.context.nosound_file)
 
         logging.info("joining residual")
         self.residual_thread.join()

@@ -1,13 +1,15 @@
 import os
 import sys
-
+import shutil
 import yaml
+import time
+
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from context import Context
 from dandere2x import Dandere2x
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
+from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 
 
@@ -22,6 +24,19 @@ class QtDandere2xThread(QtCore.QThread):
 
     def run(self):
 
+        if dir_exists(self.dandere2x.context.workspace):
+            print("Deleted Folder")
+
+            # This is a recurring bug that seems to be popping up on other people's operating systems.
+            # I'm unsure if this will fix it, but it could provide a solution for people who can't even get d2x to work.
+            try:
+                shutil.rmtree(self.dandere2x.context.workspace)
+            except PermissionError:
+                print("Trying to delete workspace via RM tree threw PermissionError - Dandere2x may not work.")
+
+            while(file_exists(self.dandere2x.context.workspace)):
+                time.sleep(1)
+
         try:
             self.dandere2x.start()
 
@@ -32,9 +47,6 @@ class QtDandere2xThread(QtCore.QThread):
         self.join()
 
     def join(self):
-        from dandere2xlib.utils.dandere2x_utils import wait_on_file
-
-        wait_on_file(self.dandere2x.context.nosound_file)
         self.dandere2x.join()
         self.finished.emit()
 
@@ -371,8 +383,12 @@ class AppWindow(QMainWindow):
         filename = QFileDialog.getOpenFileName(w, 'Open File', self.this_folder)
         return filename
 
-
 app = QApplication(sys.argv)
 w = AppWindow()
-w.show()
-sys.exit(app.exec_())
+
+def gui_start():
+    w.show()
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    gui_start()

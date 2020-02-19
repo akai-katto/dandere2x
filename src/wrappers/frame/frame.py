@@ -198,7 +198,7 @@ class Frame:
             raise ValueError('invalid copy image')
 
         copy_from(frame_other.frame, self.frame, (0, 0), (0, 0),
-                  (frame_other.frame.shape[1], frame_other.frame[1].shape[0]))
+                  (frame_other.frame.shape[0], frame_other.frame.shape[1]))
 
     def copy_block(self, frame_other, block_size, other_x, other_y, this_x, this_y):
         """
