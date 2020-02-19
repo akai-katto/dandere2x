@@ -11,7 +11,8 @@ from dandere2xlib.utils.dandere2x_utils import wait_on_file, dir_exists, file_ex
 
 class Dandere2xUpscaleFolder:
     """
-    A wrapper that wraps around dandere2_gui_wrapper that upscales an entire folder.
+    A wrapper that wraps around dandere2x that upscales an entire folder. It does this by creating
+    a new 'yaml' config for each video file in the folder.
     """
 
     def __init__(self, config_yaml):
@@ -28,6 +29,8 @@ class Dandere2xUpscaleFolder:
             files_in_folder.append(os.path.basename(file))
 
         for x in range(len(files_in_folder)):
+            # Cycle through each file
+
             iteration_yaml = copy.copy(self.config_yaml)
 
             file_name = os.path.join(self.input_folder, files_in_folder[x])
@@ -35,6 +38,7 @@ class Dandere2xUpscaleFolder:
             path, name = os.path.split(files_in_folder[x])
             name_only = name.split(".")[0]
 
+            # Set the output name to be 'upscaled + original name'
             output_name = os.path.join(self.output_folder, "upscaled_" + name_only + ".mp4")
 
             # change the yaml to contain the data for this iteration of dandere2x
@@ -44,6 +48,7 @@ class Dandere2xUpscaleFolder:
 
             context = Context(iteration_yaml)
 
+            # Delete the workspace if it already exists to prevent bugs
             if dir_exists(context.workspace):
                 print("Deleted Folder")
 
