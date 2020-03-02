@@ -100,8 +100,8 @@ public:
         double var_b = variance_block(image_B, variable_x, variable_y, block_size, color);
         double covar_ab = covariance(image_A, image_B, initial_x, initial_y, variable_x, variable_y, block_size, color);
 
-        double c1 = (0.01 * 255);
-        double c2 = (0.03 * 255);
+        double c1 = (0.01 * 255)*(0.01 * 255);
+        double c2 = (0.03 * 255)*(0.03 * 255);
 
 
         ssim = ((2 * mean_a * mean_b + c1) * (2 * covar_ab + c2))

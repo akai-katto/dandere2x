@@ -50,7 +50,7 @@ void driver_difference(string workspace, int resume_count, int frame_count,
     string correction_prefix = workspace + separator() + "correction_data" + separator() + "correction_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
     string compressed_static_prefix = workspace + separator() + "compressed_static" + separator() + "compressed_";
-    string compressed_moving_prefix = workspace + separator() + "compressed_moving" + separator() + "compressed_";
+    string compressed_moving_prefix = workspace + separator() + "compressed_static" + separator() + "compressed_";
    // DANDERE2x_CPP DRIVER STARTS HERE //
 
    // Before we start anything, we need to load the gensises image, image_1. This is because the first

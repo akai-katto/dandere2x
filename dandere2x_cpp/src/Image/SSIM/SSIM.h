@@ -1,38 +1,70 @@
 //
-// Created by https://github.com/CardinalPanda
+// Created by owo on 3/1/20.
 //
-//Licensed under the GNU General Public License Version 3 (GNU GPL v3),
-//    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
 #ifndef DANDERE2X_CPP_SSIM_H
 #define DANDERE2X_CPP_SSIM_H
 
 #include "../Image/Image.h"
-#include "SsimStatsFunctions.h"
-
 
 class SSIM {
+
 public:
-
-
-    inline static double ssim(Image &image_A, Image &image_B,
-                              int initial_x, int initial_y,
-                              int variable_x, int variable_y,
-                              int block_size) {
-
-        //compute the SSIM for all rgb elements
-        double ssim_r = StatFunctions::ssim(image_A, image_B, initial_x, initial_y, variable_x, variable_y, block_size,
-                                            'r');
-        double ssim_g = StatFunctions::ssim(image_A, image_B, initial_x, initial_y, variable_x, variable_y, block_size,
-                                            'g');
-        double ssim_b = StatFunctions::ssim(image_A, image_B, initial_x, initial_y, variable_x, variable_y, block_size,
-                                            'b');
-
-        //return the average of all 3 individually
-        return (ssim_r + ssim_g + ssim_b) / 3;
+    static double getLumaColor(Image::Color &col) {
+        return col.r * (double) 0.212655 + col.g * (double) 0.715158 + (double) 0.072187 * col.b;
     }
 
+    static double averageLuma(Image &image, int initial_x, int initial_y, int block_size) {
 
+        double sum = 0;
+
+        for (int x = 0; x < block_size; x++) {
+            for (int y = 0; y < block_size; y++) {
+                sum += getLumaColor(image.get_color(initial_x + x, initial_y + y));
+            }
+        }
+
+        sum /= block_size * block_size;
+        return sum;
+    }
+
+    static double ssim(Image &image_A, Image &image_B,
+                             int initial_x, int initial_y,
+                             int variable_x, int variable_y,
+                             int block_size) {
+
+        double mx = averageLuma(image_A, initial_x, initial_y, block_size);
+        double my = averageLuma(image_B, variable_x, variable_y, block_size);
+
+        double sigxy = 0;
+        double sigsqx = 0;
+        double sigsqy = 0;
+
+        for (int x = 0; x < block_size; x++) {
+            for (int y = 0; y < block_size; y++) {
+                sigsqx += pow((getLumaColor(image_A.get_color(initial_x + x, initial_y + y)) - mx), 2);
+                sigsqy += pow((getLumaColor(image_B.get_color(variable_x + x, variable_y + y)) - my), 2);
+
+                sigxy += (getLumaColor(image_A.get_color(initial_x + x, initial_y + y)) - mx) * (getLumaColor(image_B.get_color(variable_x + x, variable_y + y)) - my);
+            }
+        }
+
+        double numPixelsInWin = block_size * block_size;
+
+        sigsqx /= numPixelsInWin;
+        sigsqy /= numPixelsInWin;
+        sigxy /= numPixelsInWin;
+
+        double c1 = pow((0.01 * 255), 2);
+        double c2 = pow((0.03 * 255), 2);
+
+        double numerator = (2 * mx * my + c1) * (2 * sigxy + c2);
+        double denominator = (pow(mx, 2) + pow(my, 2) + c1) * (sigsqx + sigsqy + c2);
+
+        double ssim = numerator / denominator;
+        return ssim;
+    }
 };
+
 
 #endif //DANDERE2X_CPP_SSIM_H
