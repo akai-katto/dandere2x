@@ -117,9 +117,9 @@ https://github.com/aka-katto/dandere2x/releases/tag/1.3.1
 
 Anything beyond 1.3.1 I don't consider stable, although users are still finding bugs in my latest additions. Reporting bugs will help bring a future build to become more stable. 
 
-The most recent and stable-ish build is 1.7.1
+The most recent and stable-ish build is 1.8
 
-https://github.com/aka-katto/dandere2x/releases/tag/v1.7.1
+https://github.com/aka-katto/dandere2x/releases/tag/v1.8
 
 # Development Status
 
