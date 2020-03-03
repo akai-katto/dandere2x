@@ -119,7 +119,7 @@ Anything beyond 1.3.1 I don't consider stable, although users are still finding 
 
 The most recent and stable-ish build is 1.8
 
-https://github.com/aka-katto/dandere2x/releases/tag/v1.8
+https://github.com/aka-katto/dandere2x/releases/tag/1.8
 
 # Development Status
 
