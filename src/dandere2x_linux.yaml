@@ -18,8 +18,6 @@ dandere2x:
     use_min_disk: True
     max_frames_ahead: 20
 
-
-
   developer_settings:
 
     debug: false # if d2x will write debug frames into workspace/debug, really fun to watch
@@ -67,7 +65,11 @@ dandere2x:
   # in the config below like so: the path is the root dir, in this case, /usr/bin/ note the last slash is required
   # and the file name is the name of the binary in this case waifu2x-converter-cpp
 
-
+  # don't touch me 
+resume_settings:
+  resume_session: false
+  signal_merged_count: 0
+  nosound_file: null
 
 waifu2x_converter:
 
