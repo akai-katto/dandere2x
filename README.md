@@ -1,7 +1,3 @@
-# Edit:
-
-Development status is postponed at the moment due to corona. The latest releases seem to be stable, but still please report bugs for when I return to development. 
-
 # Dandere2x - Fast Waifu2x Video Upscaling
 
 Subreddit (Preferred Contact): https://www.reddit.com/r/Dandere2x/
