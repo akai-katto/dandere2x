@@ -134,7 +134,7 @@ GUI way
 
 Inside the ``dandere2x/src`` directory, run
 
-    ``python driver_gui.py``
+    ``python gui_driver.py``
 
 We recommend you use the **Vulkan** client of Waifu2x when using Dandere2x.
 
