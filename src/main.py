@@ -73,7 +73,7 @@ def cli_start(args):
         print("is not dir")
         if not os.path.isdir(args.output_file):
             print("input is type 'directory' but output is not type 'directory'. Dandere2x exiting")
-            exit(1)
+            sys.exit(1)
         config['dandere2x']['usersettings']['input_folder'] = args.input_file
         config['dandere2x']['usersettings']['output_folder'] = args.output_file
 
