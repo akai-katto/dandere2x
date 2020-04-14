@@ -188,14 +188,14 @@ def create_directories(workspace: str, directories_list: list):
 
     # need to create workspace first or else subdirectories wont get made correctly
     try:
-        os.mkdir(workspace)
+        os.makedirs(workspace)
     except:
 
         print("creating of %s failed" % workspace)
     # create each directory
     for subdirectory in directories_list:
         try:
-            os.mkdir(subdirectory)
+            os.makekdirs(subdirectory)
         except OSError:
             print("Creation of the directory %s failed" % subdirectory)
         else:
