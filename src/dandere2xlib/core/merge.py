@@ -90,9 +90,9 @@ class Merge(threading.Thread):
         out_image = Frame()
         out_image.create_new(frame_previous.width, frame_previous.height)
 
-        # If list_predictive and list_predictive are both empty, then the residual frame is simply the newly
+        # If list_predictive is empty, then the residual frame is simply the newly
         # produced image.
-        if not list_predictive and not list_predictive:
+        if not list_predictive:
             out_image.copy_image(frame_residual)
             return out_image
 
