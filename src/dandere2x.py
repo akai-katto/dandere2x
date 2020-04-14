@@ -285,7 +285,7 @@ class Dandere2x(threading.Thread):
         else:
             logging.info("no valid waifu2x selected")
             print("no valid waifu2x selected")
-            exit(1)
+            sys.exit(1)
 
     def delete_workspace_files(self):
         """
