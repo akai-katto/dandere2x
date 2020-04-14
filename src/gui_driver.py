@@ -42,7 +42,7 @@ class QtDandere2xThread(QtCore.QThread):
 
         except:
             print("dandere2x failed to work correctly")
-            exit(1)
+            sys.exit(1)
 
         self.join()
 
