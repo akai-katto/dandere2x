@@ -195,7 +195,7 @@ def create_directories(workspace: str, directories_list: list):
     # create each directory
     for subdirectory in directories_list:
         try:
-            os.makekdirs(subdirectory)
+            os.makedirs(subdirectory)
         except OSError:
             print("Creation of the directory %s failed" % subdirectory)
         else:
