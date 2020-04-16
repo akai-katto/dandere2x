@@ -20,24 +20,35 @@
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
 Date: 4/11/20 
-Purpose: A set of functions to perform Mean Squared Error (MSE)
-         computations.
+Purpose: Provide a memoization function / table for various block
+         matching algorithms to use.
 ===================================================================== */
 
 
-#ifndef CPP_REWORK_MSE_FUNCTIONS_H
-#define CPP_REWORK_MSE_FUNCTIONS_H
+#ifndef CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H
+#define CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H
 
-#include "../frame/Frame.h"
+#import "../../frame/Frame.h"
+#import "Block.h"
 
-class MSE_FUNCTIONS{
+#import <memory>
+
+using namespace std;
+
+class BlockMatchingMemoization {
 
 public:
-    static inline int square(const Frame::Color& color_a, const Frame::Color& color_b);
-    static double compute_mse(const Frame& image_a, const Frame& image_b,
-                                     const int initial_x, const int initial_y,
-                                     const int variable_x, const int variable_y, const int block_size);
+    BlockMatchingMemoization(shared_ptr<Frame> frame1, shared_ptr<Frame> frame2);
 
+    bool isMemoized(const Block& block) const;
+    bool addToMemoize(const Block block);
+
+private:
+
+    unsigned long hashBlock(const Block& block) const{
+        return hash<string>{}(block.get_coordinate_string());
+    }
 };
 
-#endif //CPP_REWORK_MSE_FUNCTIONS_H
+
+#endif //CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H

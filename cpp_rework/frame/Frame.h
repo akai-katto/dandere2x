@@ -54,24 +54,42 @@ public:
     };
 
     // Constructors //
+
     Frame(const string file_name);
+
+    Frame(const Frame& other);
 
     Frame(const int height, const int width);
 
-    // Getters //
-    int getWidth() const;
-
-    int getHeight() const;
-
-    Frame::Color &get_color(const int x, const int y) const;
-
-    // Setters //
-    void set_color(const int x, const int y, const Frame::Color &color);
+    Frame();
 
     // External Bounds Checking //
     bool block_within_bounds(const int x, const int y, const int block_size) const;
 
     bool is_out_of_bounds(const int x, const int y) const;
+
+    // Trivial Getters //
+    int get_width() const {
+        return this->width;
+    }
+
+    int get_height() const {
+        return this->height;
+    }
+
+    string get_file_name() const {
+        return this->file_name;
+    }
+
+    Frame::Color &get_color(const int x, const int y) const {
+        sanity_check("Frame::Color &Frame::get_color", x, y);
+        return const_cast<Frame::Color &>(image_colors[x][y]);
+    }
+
+    void set_color(const int x, const int y, const Frame::Color &color) {
+        sanity_check("void Frame::set_color", x, y);
+        image_colors[x][y] = color;
+    }
 
 private:
 

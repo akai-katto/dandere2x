@@ -20,24 +20,36 @@
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
 Date: 4/11/20 
-Purpose: A set of functions to perform Mean Squared Error (MSE)
-         computations.
+Purpose: An abstract class describing inherited d2x_cpp classes.
+ 
 ===================================================================== */
 
 
-#ifndef CPP_REWORK_MSE_FUNCTIONS_H
-#define CPP_REWORK_MSE_FUNCTIONS_H
+#ifndef CPP_REWORK_ABSTRACTPLUGIN_H
+#define CPP_REWORK_ABSTRACTPLUGIN_H
 
+#include <string>
 #include "../frame/Frame.h"
 
-class MSE_FUNCTIONS{
+using namespace std;
 
+class AbstractPlugin {
 public:
-    static inline int square(const Frame::Color& color_a, const Frame::Color& color_b);
-    static double compute_mse(const Frame& image_a, const Frame& image_b,
-                                     const int initial_x, const int initial_y,
-                                     const int variable_x, const int variable_y, const int block_size);
+
+    // Every plugin needs to be 'ran' to some extent.
+    virtual void run() = 0;
+
+    // Write the contents of the plugin somewhere.
+    virtual void write(const string &output_file) = 0;
+
+private:
+
+    // Every plugin needs to affect the frame somehow after it's done it's processing on it.
+    virtual void update_frame() = 0;
+
+    // Every plugin *should* utilize some sort of parallel optimization, although it doesn't need t.
+    virtual void parallel_function_call(int x, int y) = 0;
 
 };
 
-#endif //CPP_REWORK_MSE_FUNCTIONS_H
+#endif //CPP_REWORK_ABSTRACTPLUGIN_H

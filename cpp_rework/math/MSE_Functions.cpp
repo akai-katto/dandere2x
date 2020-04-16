@@ -30,7 +30,7 @@ Purpose:
 // Purpose: A simple square function which calculuates the "distance" or loss
 //          between two colors.
 //-----------------------------------------------------------------------------
-int MSE_FUNCTIONS::square(const Frame::Color& color_a, const Frame::Color& color_b) {
+int MSE_FUNCTIONS::square(const Frame::Color &color_a, const Frame::Color &color_b) {
 
     int r1 = (int) color_a.r;
     int r2 = (int) color_a.r;
@@ -49,10 +49,9 @@ int MSE_FUNCTIONS::square(const Frame::Color& color_a, const Frame::Color& color
 //          blocks in their respective images. If the block is out of bounds,
 //          returns INT_MAX (i.e, is the worst MSE possible)
 //-----------------------------------------------------------------------------
-double MSE_FUNCTIONS::compute_mse(const Frame &image_a, const Frame &image_b,
+double MSE_FUNCTIONS::compute_mse(const Frame& image_a, const Frame& image_b,
                                   const int image_a_x_start, const int image_a_y_start,
-                                  const int image_b_x_start, const int image_b_y_start,
-                                  const int block_size) {
+                                  const int image_b_x_start, const int image_b_y_start, const int block_size) {
 
     // Return a really large MSE if the two images are out of bounds (this is also to avoid causing 'sanity check'
     // within Frame from exiting the program).

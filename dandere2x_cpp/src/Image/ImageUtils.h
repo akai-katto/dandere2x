@@ -67,8 +67,6 @@ public:
         return (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
     }
 
-
-
     // Calculuates mean squared error of an entire image
     static double mse_image(Image &image_A,
                             Image &image_B) {
@@ -81,7 +79,6 @@ public:
         sum /= (image_A.height * image_A.width);
         return sum;
     }
-
 
     // todo, is this PSNR function written correctly?
     static double psnr(Image &imageA,
@@ -122,8 +119,6 @@ public:
         sum /= block_size * block_size;
         return sum;
     }
-
-
 };
 
 #endif //DANDERE2X_IMAGEUTILS_H

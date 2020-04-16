@@ -1,8 +1,8 @@
 
 /*
-    This file is part of the Dandere2x project.
+This file is part of the Dandere2x project.
 
-    Dandere2x is free software: you can redistribute it and/or modify
+Dandere2x is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -18,7 +18,7 @@
 
 /* 
 ========= Copyright aka_katto 2018, All rights reserved. ============
-Original Author: aka_katto 
+Original Author: aka_katto
 Date: 4/11/20 
 Purpose: 
  
@@ -83,7 +83,8 @@ double SSIM_Function::compute_ssim_color(const Frame& image_a, const Frame& imag
 //-----------------------------------------------------------------------------
 // Purpose: Compute the average color (aka luma) of a block.
 //-----------------------------------------------------------------------------
-double SSIM_Function::compute_average_color(const Frame& image, const int start_x, const int start_y, const int block_size,
+double SSIM_Function::compute_average_color(const Frame& image, const int start_x,
+											const int start_y, const int block_size,
                                             SSIM_Function::RGB rgb_component) {
 
     double sum = 0;

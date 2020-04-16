@@ -24,8 +24,6 @@ public:
         int y;
     };
 
-
-
     int x_start;
     int y_start;
     int x_end;
@@ -63,7 +61,6 @@ public:
     bool operator<(const Block &other) {
         return this->sum < other.sum;
     }
-
 
     //for creating displacement vector files
     friend std::ostream &operator<<(std::ostream &os, Block &block) {

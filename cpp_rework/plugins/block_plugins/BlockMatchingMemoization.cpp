@@ -20,24 +20,9 @@
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
 Date: 4/11/20 
-Purpose: A set of functions to perform Mean Squared Error (MSE)
-         computations.
+Purpose: 
+ 
 ===================================================================== */
 
 
-#ifndef CPP_REWORK_MSE_FUNCTIONS_H
-#define CPP_REWORK_MSE_FUNCTIONS_H
-
-#include "../frame/Frame.h"
-
-class MSE_FUNCTIONS{
-
-public:
-    static inline int square(const Frame::Color& color_a, const Frame::Color& color_b);
-    static double compute_mse(const Frame& image_a, const Frame& image_b,
-                                     const int initial_x, const int initial_y,
-                                     const int variable_x, const int variable_y, const int block_size);
-
-};
-
-#endif //CPP_REWORK_MSE_FUNCTIONS_H
+#include "BlockMatchingMemoization.h"
