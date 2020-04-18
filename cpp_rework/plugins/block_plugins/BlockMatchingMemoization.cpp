@@ -25,4 +25,43 @@ Purpose:
 ===================================================================== */
 
 
+#include <assert.h>
 #include "BlockMatchingMemoization.h"
+
+//-----------------------------------------------------------------------------
+// Purpose: See if a block is memoized in either directions, since blocks
+//          are single directional vectors.
+//-----------------------------------------------------------------------------
+bool BlockMatchingMemoization::is_memoized(const Block &block) const {
+
+    bool is_memoized = false;
+
+    if (this->memoize_table.count(block.left_to_right_hash) > 0 || this->memoize_table.count(block.right_to_left_hash) > 0)
+        is_memoized = true;
+
+    return is_memoized;
+}
+
+//------------------------------------------------
+// Purpose: Return the reference if a cached block
+//------------------------------------------------
+Block &BlockMatchingMemoization::get_memoized_block(const Block &block) const{
+    assert(is_memoized(block)); // sanity check
+
+    return const_cast<Block &>(this->memoize_table.at(block.left_to_right_hash));
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Add a block to the memoization cache. Adds for both directions
+//          in order to account for blocks being single-directional vectors.
+//-----------------------------------------------------------------------------
+bool BlockMatchingMemoization::add_to_memoized(const Block &block) {
+    assert(!is_memoized(block)); // sanity check
+
+    memoize_table[block.left_to_right_hash] = block;
+    memoize_table[block.right_to_left_hash] = block;
+
+    return false;
+}
+

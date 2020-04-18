@@ -31,14 +31,14 @@ Purpose: A data structure representing the movement of a square grid
 
 #include <iostream>
 #include <limits>
+#include <string>
+
+using namespace std;
 
 class Block {
-public:
+    friend class BlockMatchingMemoization;
 
-    struct Point {
-        int x;
-        int y;
-    };
+public:
 
     int x_start;
     int y_start;
@@ -53,12 +53,9 @@ public:
 
     Block(const Block &other);
 
-    void flip_direction();
+    void flip_direction(); // used in optimization techniques (memoization)
 
-    string get_coordinate_string() const {
-        return to_string(x_start) + " " + to_string(y_start) + " " +
-               to_string(x_end) + " " + to_string(y_end);
-    };
+    [[nodiscard]] bool is_equivalent(const Block &other) const;
 
     // Overrides//
 
@@ -72,46 +69,13 @@ public:
     }
 
 
+// Ignore these sections unless you're working with memoization
+protected:
+    unsigned long left_to_right_hash;
+    unsigned long right_to_left_hash;
+
+
 };
 
-//---------------------------------------------------------------
-// Purpose: Flip the direction a block goes (used in memoization)
-//---------------------------------------------------------------
-void Block::flip_direction() {
-    int temp_x_start = x_start;
-    int temp_y_start = y_start;
-
-    x_start = x_end;
-    y_start = y_end;
-    x_end = temp_x_start;
-    y_end = temp_y_start;
-}
-
-Block::Block(const Block &other) {
-    this->x_start = other.x_start;
-    this->y_start = other.y_start;
-    this->x_end = other.x_end;
-    this->y_end = other.y_end;
-    this->sum = other.sum;
-    this->valid = other.valid;
-}
-
-Block::Block() {
-    this->x_start = -1;
-    this->y_start = -1;
-    this->x_end = -1;
-    this->y_end = -1;
-    this->sum = INT32_MAX;
-    this->valid = false;
-}
-
-Block::Block(int x_start, int y_start, int x_end, int y_end, double sum) {
-    this->x_start = x_start;
-    this->y_start = y_start;
-    this->x_end = x_end;
-    this->y_end = y_end;
-    this->sum = sum;
-    this->valid = true;
-}
 
 #endif //CPP_REWORK_BLOCK_H

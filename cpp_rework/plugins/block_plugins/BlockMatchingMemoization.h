@@ -28,27 +28,32 @@ Purpose: Provide a memoization function / table for various block
 #ifndef CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H
 #define CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H
 
-#import "../../frame/Frame.h"
-#import "Block.h"
+#include "../../frame/Frame.h"
+#include "Block.h"
 
-#import <memory>
+#include <memory>
+#include <map>
 
 using namespace std;
 
 class BlockMatchingMemoization {
 
 public:
-    BlockMatchingMemoization(shared_ptr<Frame> frame1, shared_ptr<Frame> frame2);
 
-    bool isMemoized(const Block& block) const;
-    bool addToMemoize(const Block block);
+    BlockMatchingMemoization(){}
+
+    [[nodiscard]] Block &get_memoized_block(const Block &block) const;
+
+    [[nodiscard]] bool is_memoized(const Block &block) const;
+
+    bool add_to_memoized(const Block &block);
 
 private:
 
-    unsigned long hashBlock(const Block& block) const{
-        return hash<string>{}(block.get_coordinate_string());
-    }
+    map<unsigned long, Block> memoize_table;
+
 };
+
 
 
 #endif //CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H
