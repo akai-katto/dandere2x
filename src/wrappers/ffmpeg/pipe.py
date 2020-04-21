@@ -35,6 +35,7 @@ class Pipe():
 
         self.nosound_file = output_no_sound
         self.frame_rate = str(self.context.frame_rate)
+        self.dar = self.context.dar
         self.input_file = self.context.input_file
         self.output_file = self.context.output_file
         self.ffmpeg_dir = self.context.ffmpeg_dir
@@ -50,6 +51,11 @@ class Pipe():
 
         self.ffmpeg_pipe_command.append("-r")
         self.ffmpeg_pipe_command.append(self.frame_rate)
+
+        if self.dar:
+            self.ffmpeg_pipe_command.append("-vf")
+            self.ffmpeg_pipe_command.append("setdar=" + self.dar.replace(":", "/"))
+
         self.ffmpeg_pipe_command.append(self.nosound_file)
 
         self.ffmpeg_pipe_subprocess = None
