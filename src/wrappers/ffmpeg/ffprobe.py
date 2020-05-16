@@ -34,6 +34,36 @@ def get_video_info(ffprobe_dir, input_video):
     return json.loads(json_str.decode('utf-8'))
 
 
+def get_aspect_ratio(ffprobe_dir, input_video):
+    """ Gets input video information
+    This method reads input video information
+    using ffprobe in dictionary.
+    Arguments:
+        input_video {string} -- input video file path
+    Returns:
+        dictionary -- JSON text of input video information
+    """
+
+    # this execution command needs to be hard-coded
+    # since video2x only strictly recignizes this one format
+    execute = [
+        ffprobe_dir,
+        '-v',
+        'error',
+        '-select_streams',
+        'v:0',
+        '-show_entries',
+        'stream=display_aspect_ratio',
+        '-of',
+        'csv=p=0',
+        input_video
+    ]
+
+    return_bytes = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
+    return_string = return_bytes.decode("utf-8")
+
+    return return_string
+
 def get_width_height(ffprobe_dir, input_video):
     """ Gets input video information
     This method reads input video information

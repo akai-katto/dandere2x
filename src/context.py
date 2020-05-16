@@ -170,6 +170,7 @@ class Context:
 
         self.frame_rate = self.video_settings.frame_rate
         self.width, self.height = self.video_settings.width, self.video_settings.height
+        self.dar = self.video_settings.dar
 
         # self.frame_count = ffmpeg.count(frames)
         self.frame_count = self.video_settings.frame_count
