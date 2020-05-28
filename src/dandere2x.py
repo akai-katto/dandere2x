@@ -123,6 +123,8 @@ class Dandere2x(threading.Thread):
 
     def join(self, timeout=None):
 
+        start = time.time() # for printing out total runtime
+
         logging.info("dandere2x joined called")
 
         # due to a weird quirk, prevent dandere2x from being joined until nosound.mkv exists (at least).
@@ -168,6 +170,8 @@ class Dandere2x(threading.Thread):
             logging.info("Migrating tracks")
             migrate_tracks(self.context, self.context.nosound_file,
                            self.context.sound_file, self.context.output_file)
+
+        print("Total runtime : ", time.time() - start)
 
     def __suspend_exit_conditions(self):
         """This is called when dandere2x session is suspended midway through completition, need to save
