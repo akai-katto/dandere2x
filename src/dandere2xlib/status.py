@@ -67,3 +67,8 @@ class Status(threading.Thread):
 
             while x >= self.context.signal_merged_count and self.alive:
                 time.sleep(.00001)
+
+            later = time.time()
+            difference = float(later - now)
+            last_10.append(difference)
+
