@@ -140,7 +140,7 @@ ffmpeg:
       -pix_fmt: null
       -vcodec: libx264
       -vf:
-        - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+        - ' deband=range=8:blur=false, pp7=qp=2:mode=medium'
   pipe_video:
     -y: true
     output_options:
@@ -153,7 +153,7 @@ ffmpeg:
       -qscale: 5
       -crf: 17
       -vf:
-        - ' pp=hb/vb/dr/fq|32, deband=range=22:blur=false'
+        - ' deband=range=8:blur=false, pp7=qp=2:mode=medium'
   migrating_tracks:
     output_options:
       -pix_fmt: null
