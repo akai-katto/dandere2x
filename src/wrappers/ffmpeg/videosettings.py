@@ -26,6 +26,6 @@ class VideoSettings:
             self.dar = self.settings_json['streams'][0]['display_aspect_ratio']
 
         except KeyError:
-            self.height, self.width = get_width_height(self.ffprobe_dir, video_file)
+            self.width, self.height = get_width_height(self.ffprobe_dir, video_file)
             self.frame_rate = float(Fraction(get_frame_rate(self.ffprobe_dir, video_file)))
             self.dar = get_aspect_ratio(self.ffprobe_dir, video_file)
