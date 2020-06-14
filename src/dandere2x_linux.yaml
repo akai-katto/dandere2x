@@ -99,7 +99,7 @@ waifu2x_ncnn_vulkan:
   output_options:
     -gpu: null
     -load-proc-save_threads: null
-    -model-path: null
+    -m: null
     -t: 256 # note: if you get black images try lowering this tile argument to some lower value.
     -verbose: null
 

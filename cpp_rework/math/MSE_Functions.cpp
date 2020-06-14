@@ -33,10 +33,10 @@ Purpose:
 int MSE_FUNCTIONS::square(const Frame::Color &color_a, const Frame::Color &color_b) {
 
     int r1 = (int) color_a.r;
-    int r2 = (int) color_a.r;
+    int r2 = (int) color_b.r;
     int g1 = (int) color_a.g;
-    int g2 = (int) color_a.g;
-    int b1 = (int) color_b.b;
+    int g2 = (int) color_b.g;
+    int b1 = (int) color_a.b;
     int b2 = (int) color_b.b;
 
     // Developer Note: We're using multiplication here and addition rather than POW
@@ -62,10 +62,10 @@ double MSE_FUNCTIONS::compute_mse(const Frame& image_a, const Frame& image_b,
     // Compute the mse
     double sum = 0;
     for (int x = 0; x < block_size; x++)
-        for (int y = 0; y < block_size; y++)
+        for (int y = 0; y < block_size; y++) {
             sum += square(image_a.get_color(image_a_x_start + x, image_a_y_start + y),
-                          image_a.get_color(image_b_x_start + x, image_b_y_start + y));
-
+                          image_b.get_color(image_b_x_start + x, image_b_y_start + y));
+        }
     sum /= block_size * block_size;
 
     return sum;

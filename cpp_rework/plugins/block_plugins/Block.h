@@ -40,6 +40,12 @@ class Block {
 
 public:
 
+    // A nifty struct to have when block matching.
+    struct Point {
+        int x;
+        int y;
+    };
+
     int x_start;
     int y_start;
     int x_end;
@@ -57,15 +63,13 @@ public:
 
     [[nodiscard]] bool is_equivalent(const Block &other) const;
 
-    // Overrides//
-
     // Compare a blocks mean squared error with relation to another block.
     bool operator<(const Block &other) {
         return this->sum < other.sum;
     }
 
     friend std::ostream &operator<<(std::ostream &os, Block &block) {
-        return os << block.x_start << block.y_start << block.x_end << block.y_end << "\n";
+        return os << block.x_start <<" " <<  block.y_start << " " << block.x_end << " " << block.y_end << "\n";
     }
 
 
@@ -73,9 +77,8 @@ public:
 protected:
     unsigned long left_to_right_hash;
     unsigned long right_to_left_hash;
-
-
 };
+
 
 
 #endif //CPP_REWORK_BLOCK_H

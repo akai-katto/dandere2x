@@ -20,35 +20,33 @@
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
 Date: 4/11/20 
-Purpose: Given two frames, try to find as many matching blocks between
-         them, either by using stationary block matching techniques,
-         or by using motion-prediction block matching algorithm.
+Purpose: 
+ 
 ===================================================================== */
 
 
-#ifndef CPP_REWORK_PREDICTIVEFRAME_H
-#define CPP_REWORK_PREDICTIVEFRAME_H
+#ifndef CPP_REWORK_EXHAUSTIVESEARCH_H
+#define CPP_REWORK_EXHAUSTIVESEARCH_H
 
-#include <memory>
-#import "AbstractPlugin.h"
-#import "../frame/Frame.h"
 
-using namespace std;
-class PredictiveFrame : AbstractPlugin {
+#include "AbstractBlockMatch.h"
+
+class ExhaustiveSearch : public AbstractBlockMatch{
 public:
-    PredictiveFrame(shared_ptr<Frame> frame1, shared_ptr<Frame> frame2, shared_ptr<Frame> frame_compressed,
-                    int block_size, string predictive_frame_file_output, string residual_file_output, int step_size = 4);
+    ExhaustiveSearch(Frame &desired_image, Frame &input_image, int block_size) : AbstractBlockMatch(desired_image, input_image, block_size){
+
+    }
+    // Implementation of match_block
+    Block match_block(int x, int y);
+
+    void set_max_box(int max_box){this->max_box = max_box;}
 
 private:
+    std::vector<Block::Point> createSearchVector(int centx, int centy);
 
-    shared_ptr<Frame> frame1;
-    shared_ptr<Frame> frame2;
-    shared_ptr<Frame> frame2_compressed;
-    string predictive_frame_file_output;
-    string residual_file_output;
-    int step_size = 4;
+    int max_box = 10;
 
 };
 
 
-#endif //CPP_REWORK_PREDICTIVEFRAME_H
+#endif //CPP_REWORK_EXHAUSTIVESEARCH_H
