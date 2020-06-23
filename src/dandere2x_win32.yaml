@@ -25,7 +25,7 @@ dandere2x:
     #                        caffe: [1, 2, 3, 4]
     #                        converter_cpp: [1,2,3,4]
 
-    input_file: ..\workspace\odd_res.mkv
+    input_file: C:\Users\windwoz\Documents\GitHub\dandere2x\src\workspace\sideways_vid\d2x_input_video.mkv
     output_file: ..\workspace\odd_res_output.mp4
     input_folder: ..\workspace\multiple_videos\
     output_folder: ..\workspace\multiple_videos_output\
@@ -157,6 +157,7 @@ ffmpeg:
   video_to_frames:
     output_options:
       -pix_fmt: null
-      -qscale:v: 2
+      -qscale:v: 0
+      -vsync: "cfr"
       -vf:
         - noise=c1s=8:c0f=u

@@ -1,3 +1,4 @@
+cv2
 numpy==1.16.2
 imageio==2.5.0
 Pillow==6.2.0

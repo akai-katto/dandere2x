@@ -38,6 +38,34 @@ def trim_video(context: Context, output_file: str):
     subprocess.call(trim_video_command, shell=False, stderr=console_output, stdout=console_output)
 
 
+def convert_video(context: Context, input_file: str, output_file: str):
+    """
+    Converts a video from input to input with filters needed for d2x to work.
+    """
+    logger = logging.getLogger(__name__)
+    frame_rate = context.frame_rate
+
+    extract_frames_command = [context.ffmpeg_dir,
+                              "-hwaccel", context.hwaccel,
+                              "-i", input_file]
+
+    extract_frames_options = \
+        get_options_from_section(context.config_yaml["ffmpeg"]["video_to_frames"]['output_options'],
+                                 ffmpeg_command=True)
+
+    for element in extract_frames_options:
+        extract_frames_command.append(element)
+
+    extract_frames_command.append("-r")
+    extract_frames_command.append(str(frame_rate))
+
+    extract_frames_command.extend([output_file])
+
+    console_output = open(context.console_output_dir + "ffmpeg_convert_video.txt", "w")
+    console_output.write(str(extract_frames_command))
+    subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
+
+
 def extract_frames(context: Context, input_file: str):
     """
     Extract frames from a video using ffmpeg.
@@ -150,13 +178,16 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
     """
     Add the audio tracks from the original video to the output video.
     """
+
     migrate_tracks_command = [context.ffmpeg_dir,
                               "-i", no_audio,
                               "-i", file_dir,
-                              "-map", "0:v:0?",
-                              "-map", "1?",
-                              "-c", "copy",
-                              "-map", "-1:v?"]
+                              "-map", "0:v?",
+                              "-map", "1:a?",
+                              "-map", "1:s?",
+                              "-map", "1:d?",
+                              "-map", "1:t?"
+                              ]
 
     migrate_tracks_options = \
         get_options_from_section(context.config_yaml["ffmpeg"]["migrating_tracks"]['output_options'],
@@ -171,6 +202,14 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
     console_output.write(str(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
 
+    with open(context.console_output_dir + "migrate_tracks_command.txt") as f:
+        if 'Conversion failed!' in f.read():
+            import os
+            import shutil
+
+            print("conversion failed in migration for some reason, letting this exist as technical debt for now. ")
+            os.remove(output_file)
+            shutil.copy(no_audio, output_file)
 
 def concat_two_videos(context: Context, video_1: str, video_2: str, output_video: str):
     # load context

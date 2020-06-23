@@ -33,18 +33,19 @@ import time
 
 from dandere2xlib.core.merge import Merge
 from dandere2xlib.core.residual import Residual
-from dandere2xlib.frame_compressor import CompressFrames
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
 from dandere2xlib.utils.dandere2x_utils import delete_directories, create_directories, rename_file
 from dandere2xlib.utils.dandere2x_utils import valid_input_resolution, file_exists, wait_on_file
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import extract_frames, append_video_resize_filter, concat_two_videos, migrate_tracks
+from wrappers.ffmpeg.ffmpeg import extract_frames, append_video_resize_filter, concat_two_videos, migrate_tracks, convert_video
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
 from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
+
+from context import Context
 
 
 class Dandere2x(threading.Thread):
@@ -60,7 +61,6 @@ class Dandere2x(threading.Thread):
         self.merge_thread = Merge(self.context)
         self.residual_thread = Residual(self.context)
         self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
-        self.compress_frames_thread = CompressFrames(self.context)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
         self.status_thread = Status(context)
 
@@ -145,8 +145,6 @@ class Dandere2x(threading.Thread):
         self.dandere2x_cpp_thread.join()
         logging.info("joining status")
         self.status_thread.join()
-        logging.info("joining compress")
-        self.compress_frames_thread.join()
 
         self.context.logger.info("All threaded processes have finished")
         print("All threaded processes have been finished")
@@ -210,7 +208,6 @@ class Dandere2x(threading.Thread):
         self.merge_thread.kill()
         self.waifu2x.kill()
         self.residual_thread.kill()
-        self.compress_frames_thread.kill()
 
         if self.context.use_min_disk:
             self.min_disk_demon.kill()
@@ -221,7 +218,6 @@ class Dandere2x(threading.Thread):
         """
         Set the first frame for the relevent dandere2x threads when doing a resume session
         """
-        self.compress_frames_thread.set_start_frame(self.first_frame)
         self.dandere2x_cpp_thread.set_start_frame(self.first_frame)
         self.merge_thread.set_start_frame(self.first_frame)
         self.residual_thread.set_start_frame(self.first_frame)
@@ -247,6 +243,9 @@ class Dandere2x(threading.Thread):
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
             append_video_resize_filter(self.context)
 
+        if not self.resume_session:
+            self._replace_input_file_with_dandere2x_friendly_video()
+
         # create the list of threads to use for dandere2x
         self.__setup_jobs()
 
@@ -259,7 +258,6 @@ class Dandere2x(threading.Thread):
         # first frame needs to be upscaled manually before dandere2x process starts.
         self.__upscale_first_frame()
 
-        self.compress_frames_thread.start()
         self.dandere2x_cpp_thread.start()
         self.merge_thread.start()
         self.residual_thread.start()
@@ -268,6 +266,30 @@ class Dandere2x(threading.Thread):
 
         if self.context.use_min_disk:
             self.min_disk_demon.start()
+
+    def _replace_input_file_with_dandere2x_friendly_video(self):
+        workspace = self.context.workspace
+        input_file = self.context.input_file
+        output_no_sound = workspace + "d2x_input_video_nonmigrated.mkv"
+        output_sound = workspace + "d2x_input_video.mkv"
+
+        convert_video(self.context, input_file, output_no_sound)
+        migrate_tracks(self.context, output_no_sound, input_file, output_sound)
+        os.remove(output_no_sound)
+
+        self.context.config_file_unparsed['dandere2x']['usersettings']['input_file'] = output_sound
+        self.context = Context(self.context.config_file_unparsed)
+
+        self.merge_thread = Merge(self.context)
+        self.residual_thread = Residual(self.context)
+        self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
+        self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
+        self.status_thread = Status(self.context)
+
+
+
+
+
 
     def _get_waifu2x_class(self, name: str):
         """
