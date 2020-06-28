@@ -62,11 +62,14 @@ public:
         double sigxy = 0;
         double sigsqx = 0;
         double sigsqy = 0;
+        double mse = 0;
 
         for (int x = 0; x < block_size; x++) {
             for (int y = 0; y < block_size; y++) {
                 sigsqx += pow((getLumaColor(image_A.get_color(initial_x + x, initial_y + y), color) - mx), 2);
                 sigsqy += pow((getLumaColor(image_B.get_color(variable_x + x, variable_y + y), color) - my), 2);
+                mse += pow((getLumaColor(image_A.get_color(initial_x + x, initial_y + y), color))
+                           - (getLumaColor(image_B.get_color(initial_x + x, initial_y + y), color)), 2);
 
                 sigxy += (getLumaColor(image_A.get_color(initial_x + x, initial_y + y), color) - mx) * (getLumaColor(image_B.get_color(variable_x + x, variable_y + y), color) - my);
             }
@@ -85,7 +88,14 @@ public:
         double denominator = (pow(mx, 2) + pow(my, 2) + c1) * (sigsqx + sigsqy + c2);
 
         double ssim = numerator / denominator;
-        return ssim;
+
+        // Variables used to stabalize a weak (or zero) denominator (similar to c1 c2 in SSIM)
+        double d1 = pow(0.01 * (255*255), 2);
+        double d2 = pow(0.03 * (255*255), 2);
+
+        double inverse_mse = (1 + d1) / (mse + d2);
+
+        return ssim * inverse_mse;
     }
 };
 
