@@ -51,4 +51,8 @@ add_executable(dandere2x_cpp
         src/Plugins/PFrame/PFrame.h
         src/Driver.h
         src/main.cpp
+<<<<<<< Updated upstream
         CMakeLists.txt src/Plugins/Fade/Fade.h src/Plugins/Fade/Fade.cpp src/BlockMatch/ExhaustiveSearch.h)
+=======
+        CMakeLists.txt src/Plugins/Fade/Fade.h src/Plugins/Fade/Fade.cpp src/BlockMatch/ExhaustiveSearch.h src/Image/SSIM/SSIM-MSE.h src/Image/SSIM/SsimStatsFunctions.h)
+>>>>>>> Stashed changes

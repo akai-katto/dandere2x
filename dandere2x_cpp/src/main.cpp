@@ -16,6 +16,11 @@ void benchmark(){
 #include "Plugins/PFrame/PFrame.h"
 
 #include "BlockMatch/ExhaustiveSearch.h"
+<<<<<<< Updated upstream
+=======
+#include "Image/SSIM/SSIM-MSE.h"
+#include "Image/SSIM/SsimStatsFunctions.h"
+>>>>>>> Stashed changes
 
     Image im1 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame120.jpg");
     Image im2 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame121.jpg");
