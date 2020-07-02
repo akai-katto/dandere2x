@@ -25,7 +25,7 @@ dandere2x:
     #                        caffe: [1, 2, 3, 4]
     #                        converter_cpp: [1,2,3,4]
 
-    input_file: C:\Users\windwoz\Documents\GitHub\dandere2x\src\workspace\sideways_vid\d2x_input_video.mkv
+    input_file: C:\Users\windwoz\Documents\GitHub\dandere2x\src\workspace\yn_moving.mkv
     output_file: ..\workspace\odd_res_output.mp4
     input_folder: ..\workspace\multiple_videos\
     output_folder: ..\workspace\multiple_videos_output\
@@ -53,6 +53,8 @@ dandere2x:
 
   developer_settings:
 
+    pre_process: True
+    processed_video: None
     debug: false
     workspace: ..\workspace\sideways_vid\ # path to the workspace folder (lots of files will be written here)
     dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
@@ -154,6 +156,15 @@ ffmpeg:
     output_options:
       -pix_fmt: null
       -y: true
+      -c: copy
+
+  re_encode_video:
+    output_options:
+      -pix_fmt: null
+      -vsync: "cfr"
+      -vf:
+        - noise=c1s=8:c0f=u
+
   video_to_frames:
     output_options:
       -pix_fmt: null

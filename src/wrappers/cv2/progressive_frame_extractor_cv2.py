@@ -10,7 +10,7 @@ class ProgressiveFramesExtractorCV2:
     """
 
     def __init__(self, context):
-        self.input_file = context.input_file
+        self.pre_processed_video = context.pre_processed_video
         self.input_frames_dir = context.input_frames_dir
         self.compressed_moving_dir = context.compressed_moving_dir
         self.compressed_static_dir = context.compressed_static_dir
@@ -18,7 +18,7 @@ class ProgressiveFramesExtractorCV2:
         self.quality_minimum = context.quality_minimum
         self.quality_moving_ratio = context.quality_moving_ratio
 
-        self.cap = cv2.VideoCapture(self.input_file)
+        self.cap = cv2.VideoCapture(self.pre_processed_video)
 
         self.count = 1
 

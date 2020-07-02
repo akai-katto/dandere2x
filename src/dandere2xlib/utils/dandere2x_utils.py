@@ -10,8 +10,11 @@ Last Modified: April 2, 2019
 import logging
 import os
 import shutil
+import sys
 import time
 from sys import platform
+
+from pip._vendor.distlib.compat import raw_input
 
 from dandere2xlib.utils.thread_utils import CancellationToken
 
@@ -21,6 +24,19 @@ def get_operating_system():
         return 'linux'
     elif platform == "win32":
         return 'win32'
+
+def show_exception_and_exit(exc_type, exc_value, tb):
+    """
+    To keep Dandere2x window open on death.
+    """
+    import traceback
+    traceback.print_exception(exc_type, exc_value, tb)
+    raw_input("Press key to exit.")
+    sys.exit(-1)
+
+
+
+
 
 
 # if the value in the key value pair exists, add it.

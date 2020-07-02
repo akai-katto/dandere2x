@@ -133,6 +133,7 @@ class Context:
         self.output_extension = os.path.splitext(self.output_file)[1]
 
         # Developer Settings
+        self.pre_process = self.config_yaml['dandere2x']['developer_settings']['pre_process']
         self.quality_moving_ratio = self.config_yaml['dandere2x']['developer_settings']['quality_moving_ratio']
         self.step_size = self.config_yaml['dandere2x']['developer_settings']['step_size']
         self.bleed = self.config_yaml['dandere2x']['developer_settings']['bleed']
@@ -141,6 +142,7 @@ class Context:
         self.dandere2x_cpp_dir = self.config_yaml['dandere2x']['developer_settings']['dandere2x_cpp_dir']
         self.correction_block_size = 2
         self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
+        self.pre_processed_video = self.workspace + "pre_processed" + self.output_extension
 
         #####################
         # MIN DISK SETTINGS #
@@ -166,14 +168,11 @@ class Context:
         ##################
 
         # load the needed video settings
-        self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
-
-        self.frame_rate = self.video_settings.frame_rate
-        self.width, self.height = self.video_settings.width, self.video_settings.height
-        self.dar = self.video_settings.dar
-
-        # self.frame_count = ffmpeg.count(frames)
-        self.frame_count = self.video_settings.frame_count
+        self.video_settings = None
+        self.frame_rate = None
+        self.width, self.height = None, None
+        self.dar = None
+        self.frame_count = None
 
         #########
         # Other #
@@ -181,6 +180,17 @@ class Context:
 
         # create and set the log file
         self.set_logger()
+
+
+    def load_video_settings(self):
+        self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
+        self.frame_rate = self.video_settings.frame_rate
+        self.width, self.height = self.video_settings.width, self.video_settings.height
+        self.dar = self.video_settings.dar
+
+        # self.frame_count = ffmpeg.count(frames)
+        self.frame_count = self.video_settings.frame_count
+
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
