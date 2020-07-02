@@ -17,6 +17,7 @@ context = Context(config)
 
 d2x = Dandere2x(context)
 d2x.start()
+d2x.join()
 
 
 #

@@ -166,7 +166,7 @@ def append_video_resize_filter(context: Context):
     context.width = width
     context.height = height
 
-    context.config_yaml['ffmpeg']['video_to_frames']['output_options']['-vf'] \
+    context.config_yaml['ffmpeg']['re_encode_video']['output_options']['-vf'] \
         .append("scale=" + str(context.width) + ":" + str(context.height))
 
 

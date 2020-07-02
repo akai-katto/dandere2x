@@ -4,7 +4,7 @@ import os
 import shutil
 import time
 
-from dandere2x_old import Dandere2x
+from dandere2x import Dandere2x
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import wait_on_file, dir_exists, file_exists
 
@@ -59,7 +59,7 @@ class Dandere2xUpscaleFolder:
                 while (file_exists(context.workspace)):
                     time.sleep(1)
 
-            d2x = Dandere2x(context)
+            d2x = Dandere2xOld(context)
             d2x.start()
 
             wait_on_file(d2x.context.nosound_file)

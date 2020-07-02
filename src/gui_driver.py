@@ -8,7 +8,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from context import Context
-from dandere2x_old import Dandere2x
+from dandere2x import Dandere2x
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 
@@ -158,7 +158,7 @@ class AppWindow(QMainWindow):
                                                + "[s" + str(self.scale_factor) + "]"
                                                + "[n" + str(self.noise_level) + "]"
                                                + "[b" + str(self.block_size) + "]"
-                                               + "[q" + str(self.image_quality) + "]" + ".mp4"))
+                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
 
         self.set_output_file_name()
 

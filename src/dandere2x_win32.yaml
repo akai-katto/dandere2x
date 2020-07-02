@@ -25,7 +25,7 @@ dandere2x:
     #                        caffe: [1, 2, 3, 4]
     #                        converter_cpp: [1,2,3,4]
 
-    input_file: C:\Users\windwoz\Documents\GitHub\dandere2x\src\workspace\yn_moving.mkv
+    input_file: C:\Users\windwoz\Documents\GitHub\dandere2x\src\workspace\yn_moving_480.mkv
     output_file: ..\workspace\odd_res_output.mp4
     input_folder: ..\workspace\multiple_videos\
     output_folder: ..\workspace\multiple_videos_output\

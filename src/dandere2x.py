@@ -25,8 +25,9 @@ from dandere2xlib.core.residual import Residual
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks
-from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, wait_on_file, create_directories
+from wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks, append_video_resize_filter
+from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, wait_on_file, create_directories, \
+    valid_input_resolution
 
 import threading
 import time
@@ -51,6 +52,12 @@ class Dandere2x(threading.Thread):
         self.first_frame = 1
         self._force_delete_workspace()
         self.context.load_video_settings()
+
+        # dandere2x needs the width and height to be a share a common factor with the block size,
+        # so append a video filter if needed to make the size conform
+        if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
+            append_video_resize_filter(self.context)
+
         create_directories(self.context.workspace, self.context.directories)
         self._video_pre_processing()
 
@@ -68,7 +75,6 @@ class Dandere2x(threading.Thread):
     def start(self):
 
         self.pre_processing()
-
         self.min_disk_demon.start()
         self.dandere2x_cpp_thread.start()
         self.merge_thread.start()
@@ -76,6 +82,7 @@ class Dandere2x(threading.Thread):
         self.waifu2x.start()
         self.status_thread.start()
 
+    def join(self, timeout=None):
         wait_on_file(self.context.nosound_file)
         self.residual_thread.join()
 
@@ -86,7 +93,8 @@ class Dandere2x(threading.Thread):
         self.waifu2x.join()
         self.dandere2x_cpp_thread.join()
         self.status_thread.join()
-
+        migrate_tracks(self.context, self.context.nosound_file,
+                       self.context.sound_file, self.context.output_file)
 
     def rmtree_custom(self, top):
         import os
