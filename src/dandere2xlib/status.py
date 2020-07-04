@@ -65,7 +65,7 @@ class Status(threading.Thread):
 
             now = time.time()
 
-            while x >= self.context.signal_merged_count and self.alive:
+            while x >= self.context.controller.get_current_frame() and self.alive:
                 time.sleep(.00001)
 
             later = time.time()

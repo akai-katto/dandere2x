@@ -93,7 +93,7 @@ class AppWindow(QMainWindow):
 
         # theres a bug with qt designer and '80' for default quality needs to be set elsewhere
         _translate = QtCore.QCoreApplication.translate
-        self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "85"))
+        self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "95"))
         self.ui.block_size_combo_box.setCurrentText(_translate("Dandere2xGUI", "20"))
         self.ui.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Vulkan"))
         # self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\aka.png"))

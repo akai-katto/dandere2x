@@ -8,6 +8,7 @@ import yaml
 
 from dandere2xlib.utils.yaml_utils import absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
+from controller import Controller
 
 
 class Context:
@@ -158,10 +159,7 @@ class Context:
         ####################
         # Signal Variables #
         ####################
-        """
-        These variables are used in between threads to communicate with one another.
-        """
-        self.signal_merged_count = 0
+        self.controller = Controller()
 
         ##################
         # Video Settings #

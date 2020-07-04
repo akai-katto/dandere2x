@@ -113,7 +113,6 @@ class Dandere2x(threading.Thread):
         if os.path.isdir(self.context.workspace):
             try:
                 os.system('rmdir /S /Q "{}"'.format(self.context.workspace))
-                #self.rmtree_custom(self.context.workspace)
             except PermissionError:
                 print("Trying to delete workspace with rmtree threw PermissionError - Dandere2x may not work.")
                 print("Continuing along...")
