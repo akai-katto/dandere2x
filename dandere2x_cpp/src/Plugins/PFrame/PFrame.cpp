@@ -7,13 +7,15 @@
 #include "Plugins/PFrame/PFrame.h"
 #include "BlockMatch/ExhaustiveSearch.h"
 #include <omp.h>
+#include "Image/SSIM/SSIM.h"
 
 
 // Note to self, what happens if pframes declares too many unmatched blocks, but fade made
 // predictions? This is a really niche scenario - I wouldn't imagine it to ever happen.
 
 
-PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2, std::shared_ptr<Image> image2_compressed_static,
+PFrame::PFrame(std::shared_ptr<Image> image1, std::shared_ptr<Image> image2,
+               std::shared_ptr<Image> image2_compressed_static,
                std::shared_ptr<Image> image2_compressed_moving,
                unsigned int block_size, std::string p_frame_file, std::string residual_file,
                int step_size) {
@@ -60,7 +62,8 @@ void PFrame::run() {
         //At a certain point it's just easier / faster to redraw a scene rather than trying to piece it back together.
         int max_blocks_possible = (this->height * this->width) / (this->block_size * this->block_size);
 
-        if (max_blocks_possible <= ((block_size*block_size)*matched_blocks_count) / ((block_size+bleed)*(block_size+bleed))) {
+        if (max_blocks_possible <=
+            ((block_size * block_size) * matched_blocks_count) / ((block_size + bleed) * (block_size + bleed))) {
             // We decided not to keep any of the blocks.. abandon all the progress we did in this function
 
             std::cout << "Too many missing blocks - conducting redraw" << std::endl;
@@ -89,8 +92,7 @@ void PFrame::save() {
         create_residual();
         this->res->write(residual_file);
         this->write(p_frame_file);
-    }
-    else { //if parts of frame2 cannot be made from frame1, just copy frame2.
+    } else { //if parts of frame2 cannot be made from frame1, just copy frame2.
         dandere2x::write_empty(residual_file);
         dandere2x::write_empty(p_frame_file);
     }
@@ -134,8 +136,8 @@ void PFrame::match_all_blocks() {
     int x = 0;
     int y = 0;
     int numthreads = 8;
-    
-#pragma omp parallel for shared(image1, image2, image2_compressed_static,image2_compressed_moving, matched_blocks) private(x, y)
+
+#pragma omp parallel for shared(image1, image2, image2_compressed_static, image2_compressed_moving, matched_blocks) private(x, y)
 
     for (x = 0; x < width / block_size; x++) {
         for (y = 0; y < height / block_size; y++) {
@@ -157,10 +159,15 @@ void PFrame::match_all_blocks() {
 void PFrame::match_block(int x, int y) {
 
     // Using the compressed image, determine a good measure of the minimum MSE required for the matched to have.
-    double min_mse_static = ImageUtils::mse(*image2, *image2_compressed_static,
-                                     x * block_size, y * block_size,
-                                     x * block_size, y * block_size,
-                                     block_size);
+    double min_ssim_static = SSIM::ssim(*image2, *image2_compressed_static,
+                                        x * block_size, y * block_size,
+                                        x * block_size, y * block_size,
+                                        block_size);
+
+    double min_ssim_moving = SSIM::ssim(*image2, *image2_compressed_moving,
+                                        x * block_size, y * block_size,
+                                        x * block_size, y * block_size,
+                                        block_size);
 
     double min_mse_moving = ImageUtils::mse(*image2, *image2_compressed_moving,
                                             x * block_size, y * block_size,
@@ -168,14 +175,14 @@ void PFrame::match_block(int x, int y) {
                                             block_size);
 
     // Compute the MSE of the block at the same (x,y) location.
-    double stationary_mse = ImageUtils::mse(*image1, *image2,
-                                            x * block_size, y * block_size,
-                                            x * block_size, y * block_size,
-                                            block_size);
+    double stationary_ssim = SSIM::ssim(*image1, *image2,
+                                        x * block_size, y * block_size,
+                                        x * block_size, y * block_size,
+                                        block_size);
 
     // If the MSE found at the stationary location is good enough, add it to the list of matched blocks.
-    if (stationary_mse <= min_mse_static) {
-        matched_blocks[x][y] = Block(x * block_size, y * block_size, x * block_size, y * block_size, stationary_mse);
+    if (stationary_ssim >= min_ssim_static) {
+        matched_blocks[x][y] = Block(x * block_size, y * block_size, x * block_size, y * block_size, stationary_ssim);
         this->matched_blocks_count++;
     } else {
         // If the MSE found at the stationary location isn't good enough, conduct a diamond search looking
@@ -183,12 +190,16 @@ void PFrame::match_block(int x, int y) {
         Block result = DiamondSearch::diamond_search_iterative_super(*image2, *image1,
                                                                      x * block_size, y * block_size,
                                                                      x * block_size, y * block_size,
-                                                                     min_mse_moving, block_size, step_size, max_checks);
+                                                                     1000, block_size, step_size, max_checks);
 
 //        Block result = ExhaustiveSearch::exhaustive_search(*image2, *image1, x * block_size, y * block_size, block_size);
 
-        //If the Diamond Searched block is a good enough match, add it to the list of matched blocks.
-        if (result.sum <= min_mse_moving && result.x_end != result.x_start && result.y_end != result.y_start) {
+        double block_ssim = SSIM::ssim(*image1, *image2,
+                                       result.x_start, result.y_start,
+                                       result.x_end, result.y_end,
+                                       block_size);
+
+        if (block_ssim >= min_ssim_moving && result.x_end != result.x_start && result.y_end != result.y_start) {
 //            std::cout << " x:  " <<  result.x_start << " -> " <<  result.x_end << " y: " <<  result.y_start << " -> " <<  result.y_end << std::endl;
             matched_blocks[x][y] = result;
             this->matched_blocks_count++;
@@ -211,7 +222,7 @@ void PFrame::write(std::string output_file) {
 
     for (int x = 0; x < width / block_size; x++) {
         for (int y = 0; y < height / block_size; y++) {
-            if (matched_blocks[x][y].valid){ // &&
+            if (matched_blocks[x][y].valid) { // &&
                 //matched_blocks[x][y].x_start != matched_blocks[x][y].x_end &&
                 //matched_blocks[x][y].y_start != matched_blocks[x][y].y_end ) {
 

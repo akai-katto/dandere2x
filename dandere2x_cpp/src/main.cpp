@@ -16,32 +16,42 @@ void benchmark(){
 #include "Plugins/PFrame/PFrame.h"
 
 #include "BlockMatch/ExhaustiveSearch.h"
+#include "Image/SSIM/SSIM.h"
+#include "Image/SSIM/SsimStatsFunctions.h"
 
-    Image im1 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame120.jpg");
-    Image im2 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame121.jpg");
+    Image im1 = Image("C:\\Users\\windwoz\\Desktop\\release\\workspace\\neg_test\\frame202.png");
+    Image im2 = Image("C:\\Users\\windwoz\\Desktop\\release\\workspace\\neg_test\\frame203.png");
 
-    Block b = ExhaustiveSearch::exhaustive_search(im1, im2, 500, 500, 20);
+    double covariance = StatFunctions::covariance(im1, im2, 0, 0, 0,0, 60, 'g');
+    double var = StatFunctions::variance_block(im1,  0, 0,  60, 'g');
+    double mean = StatFunctions::mean_block(im1,  0, 0,  60, 'g');
 
-    std::cout << b.x_start << " -> " << b.x_end << b.y_start << " -> " << b.y_end << std::endl;
+    std::cout << "variance: " << var << std::endl;
+    std::cout << "covariance: " << covariance << std::endl;
+    std::cout << "mean: " << mean << std::endl;
+
+    double ssim_r = SSIM::ssim(im1, im2, 0, 0, 0, 0, 60);
+    std::cout << "ssim_r: " << ssim_r << std::endl;
 }
 
 int main(int argc, char **argv) {
 
+//    cout << "hi" << endl;
 //    benchmark();
-
+////
     bool debug = false; //debug flag
 
     //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
-    string workspace = "/home/linux/Documents/github_projects/dandere2x/src/workspace/7secondstwig_folder/";
-    int frame_count = 43;
-    int block_size = 20;
+    string workspace = "C:\\Users\\windwoz\\Desktop\\release\\workspace\\default\\";
+    int frame_count = 205;
+    int block_size = 30;
     int step_size = 8;
-    string run_type = "n";// 'n' or 'r'
-    int resume_frame = 55;
+    string run_type = "r";// 'n' or 'r'
+    int resume_frame = 200;
     string extension_type = ".jpg";
 
-    cout << "Hello Dandere!!" << endl;
+    cout << "Dandere2x MSE-SSIM v1.0" << endl;
 
     //load arguments
     if (!debug) {

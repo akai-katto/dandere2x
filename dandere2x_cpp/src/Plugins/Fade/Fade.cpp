@@ -40,17 +40,19 @@ void Fade::run() {
             // get a scalar value transforming a block at (x,y) f_1 to best match the block in f_2
             int scalar = get_scalar_for_block(x * block_size, y * block_size);
 
+            this->add_scalar_to_copy(x * block_size, y * block_size, scalar);
+
             // find the MSE loss using this weak scalar prediction
-            double fade_mse = mse_fade(*image1, *image2, x * block_size, y * block_size,
-                                       x * block_size, y * block_size, block_size, scalar);
+            double fade_ssim = SSIM::ssim(*image1_copy, *image2, x * block_size, y * block_size,
+                                       x * block_size, y * block_size, block_size);
 
             // find the max MSE loss from the compressed image
-            double compressed_mse = ImageUtils::mse(*image2, *image2_compressed, x * block_size, y * block_size,
+            double compressed_ssim = SSIM::ssim(*image2, *image2_compressed, x * block_size, y * block_size,
                                                     x * block_size, y * block_size, block_size);
 
             // only add it to the list of accepted fades if it matches the MSE requirement.
             // If the scalar is zero, don't include (since there won't be any affect)
-            if (fade_mse < compressed_mse && scalar !=0 ) {
+            if (fade_ssim >= compressed_ssim && scalar !=0 ) {
                 FadeBlock current_fade;
 
                 current_fade.scalar = scalar;
@@ -121,6 +123,17 @@ void Fade::draw_over(int x_start, int y_start, int scalar) {
         for (int y = y_start; y < y_start + block_size; y++) {
             Image::Color col = add_scalar_to_color(image1->get_color(x, y), scalar);
             image1->set_color(x, y, col);
+        }
+    }
+}
+
+// Over-write every pixel in the block with the scalar.
+void Fade::add_scalar_to_copy(int x_start, int y_start, int scalar) {
+
+    for (int x = x_start; x < x_start + block_size; x++) {
+        for (int y = y_start; y < y_start + block_size; y++) {
+            Image::Color col = add_scalar_to_color(image1->get_color(x, y), scalar);
+            image1_copy->set_color(x, y, col);
         }
     }
 
