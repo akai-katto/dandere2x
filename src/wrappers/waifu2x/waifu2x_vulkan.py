@@ -14,9 +14,7 @@ from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
 class Waifu2xVulkan(threading.Thread):
-    """
-    The waifu2x-vulkan wrapper, with custom functions written that are specific for dandere2x to work.
-    """
+    """ The waifu2x-vulkan wrapper, with custom functions written that are specific for dandere2x to work. """
 
     def __init__(self, context: Context):
         # load context
@@ -29,7 +27,6 @@ class Waifu2xVulkan(threading.Thread):
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.context = context
-        self.signal_upscale = True
         self.active_waifu2x_subprocess = None
         self.start_frame = 1
 
@@ -70,6 +67,11 @@ class Waifu2xVulkan(threading.Thread):
         self.start_frame = start_frame
 
     def join(self, timeout=None):
+
+        while self.alive:
+            import time
+            time.sleep(1)
+
         threading.Thread.join(self, timeout)
 
     def run(self):
@@ -98,11 +100,9 @@ class Waifu2xVulkan(threading.Thread):
         """
 
         logger = logging.getLogger(__name__)
-
         residual_images_dir = self.context.residual_images_dir
         residual_upscaled_dir = self.context.residual_upscaled_dir
         exec_command = copy.copy(self.waifu2x_vulkan_upscale_frame)
-
         console_output = open(self.context.console_output_dir + "vulkan_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
@@ -127,7 +127,7 @@ class Waifu2xVulkan(threading.Thread):
         remove_when_upscaled_thread.start()
 
         # while there are pictures that have yet to be upscaled, keep calling the upscale command
-        while self.signal_upscale and self.alive:
+        while self.alive:
             console_output.write(str(exec_command))
             self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
                                                               stdout=console_output)
@@ -136,9 +136,7 @@ class Waifu2xVulkan(threading.Thread):
         console_output.close()
 
     def upscale_file(self, input_file: str, output_file: str):
-        """
-        Manually upscale a file using the wrapper.
-        """
+        """ Manually upscale a file using the wrapper. """
 
         # load context
         waifu2x_ncnn_vulkan_path = self.context.waifu2x_ncnn_vulkan_path
@@ -164,7 +162,7 @@ class Waifu2xVulkan(threading.Thread):
 
     def __remove_once_upscaled_then_stop(self):
         self.__remove_once_upscaled()
-        self.signal_upscale = False
+        self.alive = False
 
     def __remove_once_upscaled(self):
 

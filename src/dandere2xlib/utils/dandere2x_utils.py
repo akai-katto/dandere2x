@@ -16,6 +16,7 @@ from sys import platform
 
 from pip._vendor.distlib.compat import raw_input
 
+from controller import Controller
 from dandere2xlib.utils.thread_utils import CancellationToken
 
 
@@ -45,7 +46,6 @@ def show_exception_and_exit(exc_type, exc_value, tb):
 # THis doesnt work with multiple keys and import warnings
 
 # returns a list given a text file (representing a string)
-
 
 def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
@@ -82,6 +82,43 @@ def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
     return text_list
 
 
+
+from controller import Controller
+def get_list_from_file_wait_controller(text_file: str, controller=Controller()):
+    logger = logging.getLogger(__name__)
+    exists = exists = os.path.isfile(text_file)
+    count = 0
+    while not exists and controller.is_alive():
+        if count / 500 == 0:
+            logger.info(text_file + " does not exist, waiting")
+        exists = os.path.isfile(text_file)
+        count += 1
+        time.sleep(.01)
+
+    if not controller.is_alive():
+        return
+
+    file = None
+    try:
+        file = open(text_file, "r")
+    except PermissionError:
+        logging.info("permission error on file" + text_file)
+
+    while not file:
+        try:
+            file = open(text_file, "r")
+        except PermissionError:
+            logging.info("permission error on file" + text_file)
+
+    text_list = file.read().split('\n')
+    file.close()
+
+    if len(text_list) == 1:
+        return []
+
+    return text_list
+
+
 # many times a file may not exist yet, so just have this function
 # wait if it does not.
 def wait_on_file(file_string: str, cancel=CancellationToken()):
@@ -89,6 +126,18 @@ def wait_on_file(file_string: str, cancel=CancellationToken()):
     exists = os.path.isfile(file_string)
     count = 0
     while not exists and not cancel.is_cancelled:
+        if count / 500 == 0:
+            logger.info(file_string + " does not exist, waiting")
+        exists = os.path.isfile(file_string)
+        count += 1
+        time.sleep(.001)
+
+
+def wait_on_file_controller(file_string: str, controller: Controller):
+    logger = logging.getLogger(__name__)
+    exists = os.path.isfile(file_string)
+    count = 0
+    while not exists and not controller.is_alive():
         if count / 500 == 0:
             logger.info(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)

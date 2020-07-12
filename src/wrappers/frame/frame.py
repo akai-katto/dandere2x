@@ -127,6 +127,31 @@ class Frame:
                 logger.info("Value Error")
                 loaded = False
 
+    from controller import Controller
+    def load_from_string_controller(self, input_string, controller=Controller()):
+
+        logger = logging.getLogger(__name__)
+        exists = exists = os.path.isfile(input_string)
+        count = 0
+        while not exists and controller.is_alive():
+            if count % 10000 == 0:
+                logger.info(input_string + " dne")
+            exists = os.path.isfile(input_string)
+            count += 1
+            time.sleep(.2)
+
+        loaded = False
+        while not loaded and controller.is_alive():
+            try:
+                self.load_from_string(input_string)
+                loaded = True
+            except PermissionError:
+                logger.info("Permission Error")
+                loaded = False
+            except ValueError:
+                logger.info("Value Error")
+                loaded = False
+
     def save_image(self, out_location):
         """
         Save an image with specific instructions depending on it's extension type.

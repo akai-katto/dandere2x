@@ -35,7 +35,7 @@ import sys
 
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
-from wrappers.waifu2x.waifu2x_vulkan import Waifu2xVulkan
+from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
 
 
@@ -84,13 +84,17 @@ class Dandere2x(threading.Thread):
 
     def join(self, timeout=None):
         wait_on_file(self.context.nosound_file)
+
+        print("merge joined started")
+        self.merge_thread.join()
+        print("merged joined end")
+
         self.residual_thread.join()
+        self.waifu2x.join()
 
         if self.context.use_min_disk:
             self.min_disk_demon.join()
 
-        self.merge_thread.join()
-        self.waifu2x.join()
         self.dandere2x_cpp_thread.join()
         self.status_thread.join()
         migrate_tracks(self.context, self.context.nosound_file,
@@ -121,9 +125,7 @@ class Dandere2x(threading.Thread):
                 time.sleep(1)
 
     def _get_waifu2x_class(self, name: str):
-        """
-        Returns a waifu2x object depending on what the user selected
-        """
+        """ Returns a waifu2x object depending on what the user selected. """
 
         if name == "caffe":
             return Waifu2xCaffe(self.context)
@@ -132,7 +134,10 @@ class Dandere2x(threading.Thread):
             return Waifu2xConverterCpp(self.context)
 
         elif name == "vulkan":
-            return Waifu2xVulkan(self.context)
+            return Waifu2xNCNNVulkan(self.context)
+
+        # elif name == "vulkan":
+        #     return Waifu2xVulkan(self.context)
 
         elif name == "vulkan_legacy":
             return Waifu2xVulkanLegacy(self.context)
@@ -148,10 +153,7 @@ class Dandere2x(threading.Thread):
             self.min_disk_demon.extract_initial_frames()
 
     def _video_pre_processing(self):
-        """
-        Re-encode the user input video (if applicable).
-        :return:
-        """
+        """ Re-encode the user input video (if applicable). """
         workspace = self.context.workspace
         input_file = self.context.input_file
         unmigrated = workspace + "d2x_input_video_nonmigrated.mkv"
@@ -168,8 +170,8 @@ class Dandere2x(threading.Thread):
         # measure the time to upscale a single frame for printing purposes
         one_frame_time = time.time()
         self.waifu2x.upscale_file(
-            input_file=self.context.input_frames_dir + "frame" + str(self.first_frame) + self.context.extension_type,
-            output_file=self.context.merged_dir + "merged_" + str(self.first_frame) + self.context.extension_type)
+            input_image=self.context.input_frames_dir + "frame" + str(self.first_frame) + self.context.extension_type,
+            output_image=self.context.merged_dir + "merged_" + str(self.first_frame) + self.context.extension_type)
 
         if not file_exists(self.context.merged_dir + "merged_" + str(self.first_frame) + self.context.extension_type):
             """ 

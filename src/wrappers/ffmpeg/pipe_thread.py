@@ -5,7 +5,7 @@ import time
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
-class Pipe():
+class Pipe(threading.Thread):
     """
     The pipe class allows images (Frame.py) to be processed into a video directly. It does this by "piping"
     images to ffmpeg, thus removing the need for storing the processed images onto the disk.
@@ -64,6 +64,12 @@ class Pipe():
 
         self.thread_alive = True
 
+    def run(self) -> None:
+        console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
+        self.ffmpeg_pipe_subprocess = subprocess.Popen(self.ffmpeg_pipe_command, stdin=subprocess.PIPE,
+                                                       stdout=console_output)
+        threading.Thread(target=self.__write_to_pipe, name="pipehtread").start()
+
     def join_ffmpeg_subprocess(self):
         print("waiting for pipe join")
         self.ffmpeg_pipe_subprocess.wait()
@@ -71,13 +77,6 @@ class Pipe():
 
     def kill_thread(self):
         self.thread_alive = False
-        self.wait_finish_stop_pipe()
-
-    def start_pipe_thread(self):
-        console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
-        self.ffmpeg_pipe_subprocess = subprocess.Popen(self.ffmpeg_pipe_command, stdin=subprocess.PIPE,
-                                                       stdout=console_output)
-        threading.Thread(target=self.__write_to_pipe, name="pipehtread").start()
 
     # todo: Implement this without a 'while true'
     def save(self, frame):

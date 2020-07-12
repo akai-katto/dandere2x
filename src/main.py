@@ -8,7 +8,7 @@ import yaml
 
 from context import Context
 from dandere2x import Dandere2x
-from dandere2xlib.utils.dandere2x_utils import get_operating_system, wait_on_file, dir_exists, file_exists
+from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 from wrappers.dandere2x_wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
 
 

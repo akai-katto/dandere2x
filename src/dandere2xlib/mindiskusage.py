@@ -63,10 +63,10 @@ class MinDiskUsage(threading.Thread):
             logger.info("on frame x: " + str(x))
 
             # wait for signal to get ahead of MinDiskUsage
-            while x >= self.context.signal_merged_count and self.alive:
+            while x >= self.context.controller.get_current_frame() and self.context.controller.is_alive():
                 time.sleep(.00001)
 
-            if not self.alive:
+            if not self.context.controller.is_alive():
                 return
 
             # when it does get ahead, extract the next frame

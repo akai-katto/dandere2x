@@ -159,6 +159,10 @@ class Context:
         ####################
         # Signal Variables #
         ####################
+        self.signal_merged_count = 0
+
+        # massive to do, fix this / implement this everywhere
+        self.start_frame = 1
         self.controller = Controller()
 
         ##################
@@ -193,13 +197,9 @@ class Context:
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
         import time
+        from dandere2xlib.utils.console_log import ConsoleLogger
 
-        log_name = "dandere2x" + str(time.time()) + ".log"  # create logs using epoch time to denote them
-        log_file = os.path.join(self.log_folder_dir, log_name)
-
-        print("log file is: " + str(log_file))
-        logging.basicConfig(filename=log_file, level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
+        self.logger = ConsoleLogger(10)
 
     def close_logger(self):
         logging.shutdown()
