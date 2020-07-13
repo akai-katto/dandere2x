@@ -10,7 +10,7 @@ from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait, wait_on_file, \
     get_list_from_file_wait_controller, wait_on_file_controller
 from dandere2xlib.utils.thread_utils import CancellationToken
-from wrappers.ffmpeg.pipe import Pipe
+from wrappers.ffmpeg.pipe_thread import Pipe
 from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 from wrappers.frame.frame import Frame
 
@@ -54,12 +54,12 @@ class Merge(threading.Thread):
         threading.Thread.__init__(self, name="MergeThread")
 
     def join(self, timeout=None):
-        self.pipe.join_ffmpeg_subprocess()
+        self.pipe.join()
         threading.Thread.join(self, timeout)
 
     def kill(self):
         self.alive = False
-        self.pipe.kill_thread()
+        self.pipe.kill()
         self.cancel_token.cancel()
         self._stopevent.set()
 
@@ -115,7 +115,7 @@ class Merge(threading.Thread):
 
     def run(self):
 
-        self.pipe.start_pipe_thread()
+        self.pipe.start()
         # Load the genesis image + the first upscaled image.
         frame_previous = Frame()
         frame_previous.load_from_string_controller(self.merged_dir + "merged_" + str(self.start_frame) + self.extension_type,
@@ -132,7 +132,6 @@ class Merge(threading.Thread):
             ###################################
             # Loop-iteration pre-requirements #
             ###################################
-            print("1")
             # Check if we're at the last image, which affects the behaviour of the loop.
             if x == self.frame_count - 1:
                 last_frame = True
@@ -145,7 +144,6 @@ class Merge(threading.Thread):
 
                 background_frame_load.start()
 
-            print("2")
             #######################
             # Loop-iteration Core #
             #######################
@@ -160,13 +158,10 @@ class Merge(threading.Thread):
             fade_data_list = get_list_from_file_wait_controller(self.fade_data_dir + "fade_" + str(x) + ".txt",
                                                                 self.context.controller)
 
-            print("3")
             if not self.context.controller.is_alive():
                 self.logger.info("Merge.py killed at frame " + str(x))
-                self.pipe.kill_thread()
                 return
 
-            print("4")
             self.logger.info("Upscaling frame " + str(x))
             # Create the actual image itself.
             frame_next = self.make_merge_image(self.context, f1, frame_previous,
@@ -176,7 +171,6 @@ class Merge(threading.Thread):
             ###############
             # Saving Area #
             ###############
-            print("5")
             # Directly write the image to the ffmpeg pipe line.
             self.pipe.save(frame_next)
 
@@ -190,7 +184,6 @@ class Merge(threading.Thread):
             # Assign variables for next iteration #
             #######################################
 
-            print("6")
             # last_frame + 1 does not exist, so don't load.
             if not last_frame:
                 # We need to wait until the next upscaled image exists before we move on.
@@ -205,8 +198,7 @@ class Merge(threading.Thread):
             # Signal to the rest of the dandere2x process we've finished upscaling frame 'x'.
             self.context.controller.update_frame_count(x)
 
-        self.pipe.wait_finish_stop_pipe()
-
+        self.pipe.kill()
         # need to migrate tracks, but not in merge.
 
 

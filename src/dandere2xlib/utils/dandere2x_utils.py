@@ -137,7 +137,7 @@ def wait_on_file_controller(file_string: str, controller: Controller):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
-    while not exists and not controller.is_alive():
+    while not exists and controller.is_alive():
         if count / 500 == 0:
             logger.info(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)

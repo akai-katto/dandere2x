@@ -56,7 +56,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
     def join(self, timeout=None) -> None:
 
         while self.controller.is_alive() and not self.check_if_done():
-            time.sleep(1)
+            time.sleep(0.05)
 
     def repeated_call(self) -> None:
         """ Call the "upscale folder" command. """

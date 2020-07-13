@@ -53,7 +53,7 @@ class AbstractUpscaler(Thread, ABC):
         """
 
         remove_thread = RemoveUpscaledFiles(context=self.context)
-        remove_thread.run()
+        remove_thread.start()
 
         while not self.check_if_done() or not self.controller.is_alive():
             self.repeated_call()
@@ -103,11 +103,12 @@ class RemoveUpscaledFiles(Thread):
         for x in range(self.start_frame, self.frame_count):
             self.list_of_names.append("output_" + get_lexicon_value(6, x) + ".jpg")
 
+    # todo, fix this a bit. This isn't scalable / maintainable
     def run(self) -> None:
         for x in range(len(self.list_of_names)):
             name = self.list_of_names[x]
-            residual_file = self.residual_images_dir + name
-            residual_upscaled_file = self.residual_upscaled_dir + name
+            residual_file = self.residual_images_dir + name.replace(".png", ".jpg")
+            residual_upscaled_file = self.residual_upscaled_dir + name.replace(".jpg", ".png")
 
             wait_on_file_controller(residual_upscaled_file, self.controller)
             if not self.controller.is_alive():

@@ -12,71 +12,47 @@ class Pipe(threading.Thread):
     """
 
     def __init__(self, context, output_no_sound: str):
+        threading.Thread.__init__(self, name="Pipe Thread")
+
+        # load context
         self.context = context
+        self.output_no_sound = output_no_sound
 
-        # load variables from context
-        self.workspace = self.context.workspace
-        self.upscaled_dir = self.context.residual_upscaled_dir
-        self.compressed_static_dir = self.context.compressed_static_dir
-        self.compressed_moving_dir = self.context.compressed_moving_dir
-        self.input_frames_dir = self.context.input_frames_dir
-        self.merged_dir = self.context.merged_dir
-        self.residual_data_dir = self.context.residual_data_dir
-        self.pframe_data_dir = self.context.pframe_data_dir
-        self.correction_data_dir = self.context.correction_data_dir
-        self.fade_data_dir = self.context.fade_data_dir
-        self.frame_count = self.context.frame_count
-        self.waifu2x_type = self.context.waifu2x_type
-
-        # How many images to have maximum in a buffer at a given time.
-        self.buffer_limit = 20
-        self.pipe_running = True
-        self.images_to_pipe = []
-
-        self.nosound_file = output_no_sound
-        self.frame_rate = str(self.context.frame_rate)
-        self.dar = self.context.dar
-        self.input_file = self.context.input_file
-        self.output_file = self.context.output_file
-        self.ffmpeg_dir = self.context.ffmpeg_dir
-
-        # Create the piping command
-        self.ffmpeg_pipe_command = [self.ffmpeg_dir, "-r", self.frame_rate]
-
-        options = get_options_from_section(context.config_yaml["ffmpeg"]["pipe_video"]['output_options'],
-                                           ffmpeg_command=True)
-
-        for item in options:
-            self.ffmpeg_pipe_command.append(item)
-
-        self.ffmpeg_pipe_command.append("-r")
-        self.ffmpeg_pipe_command.append(self.frame_rate)
-
-        if self.dar:
-            self.ffmpeg_pipe_command.append("-vf")
-            self.ffmpeg_pipe_command.append("setdar=" + self.dar.replace(":", "/"))
-
-        self.ffmpeg_pipe_command.append(self.nosound_file)
-
+        # class specific
         self.ffmpeg_pipe_subprocess = None
+        self.alive = False
+        self.images_to_pipe = []
+        self.buffer_limit = 20
+        self.lock_buffer = False
 
-        # thread variables
+    def kill(self) -> None:
+        self.alive = False
 
-        self.thread_alive = True
+    def join(self, timeout=None) -> None:
+        threading.Thread.join(self)
 
     def run(self) -> None:
-        console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
-        self.ffmpeg_pipe_subprocess = subprocess.Popen(self.ffmpeg_pipe_command, stdin=subprocess.PIPE,
-                                                       stdout=console_output)
-        threading.Thread(target=self.__write_to_pipe, name="pipehtread").start()
+        self.alive = True
+        self._setup_pipe()
 
-    def join_ffmpeg_subprocess(self):
-        print("waiting for pipe join")
+        # keep piping images to ffmpeg while this thread is supposed to be kept alive.
+        while self.alive and self.context.controller.is_alive():
+            if len(self.images_to_pipe) > 0:
+                img = self.images_to_pipe.pop(0).get_pil_image()  # get the first image and remove it from list
+                img.save(self.ffmpeg_pipe_subprocess.stdin, format="jpeg", quality=100)
+            else:
+                time.sleep(0.1)
+
+        # if the thread is killed for whatever reason, finish writing the remainder of the images to the video file.
+        while self.images_to_pipe:
+            pil_image = self.images_to_pipe.pop(0).get_pil_image()
+            pil_image.save(self.ffmpeg_pipe_subprocess.stdin, format="jpeg", quality=100)
+
+        self.ffmpeg_pipe_subprocess.stdin.close()
         self.ffmpeg_pipe_subprocess.wait()
-        print("pipe join done")
 
-    def kill_thread(self):
-        self.thread_alive = False
+        # ensure thread is dead (can be killed with controller.kill() )
+        self.alive = False
 
     # todo: Implement this without a 'while true'
     def save(self, frame):
@@ -90,33 +66,34 @@ class Pipe(threading.Thread):
                 break
             time.sleep(0.05)
 
-    def wait_finish_stop_pipe(self):
-        """
-        Prevent another program from continuing until all the images have been written to the pipe.
-        """
+    def _setup_pipe(self) -> None:
 
-        print("\n    Waiting for the ffmpeg-pipe-encode buffer list to end....")
+        # load variables..
+        output_no_sound = self.output_no_sound
+        frame_rate = str(self.context.frame_rate)
+        output_no_sound = output_no_sound
+        ffmpeg_dir = self.context.ffmpeg_dir
+        dar = self.context.dar
 
-        while len(self.images_to_pipe) > 0 and self.thread_alive:
-            time.sleep(0.05)
+        # constructing the pipe command...
+        ffmpeg_pipe_command = [ffmpeg_dir, "-r", frame_rate]
 
-        self.pipe_running = False
+        options = get_options_from_section(self.context.config_yaml["ffmpeg"]["pipe_video"]['output_options'],
+                                           ffmpeg_command=True)
+        for item in options:
+            ffmpeg_pipe_command.append(item)
 
-    def __close(self):
-        self.ffmpeg_pipe_subprocess.stdin.close()
-        self.ffmpeg_pipe_subprocess.wait()
+        ffmpeg_pipe_command.append("-r")
+        ffmpeg_pipe_command.append(frame_rate)
 
-    def __write_to_pipe(self):
-        """
-        Continually pop images from the buffer into the piped video while there are still images to be piped.
-        """
+        if dar:
+            ffmpeg_pipe_command.append("-vf")
+            ffmpeg_pipe_command.append("setdar=" + dar.replace(":", "/"))
 
-        while self.pipe_running and self.thread_alive:
-            if len(self.images_to_pipe) > 0:
-                img = self.images_to_pipe.pop(0).get_pil_image()  # get the first image and remove it from list
-                img.save(self.ffmpeg_pipe_subprocess.stdin, format="jpeg", quality=100)
-            time.sleep(0.05)
+        ffmpeg_pipe_command.append(output_no_sound)
 
-        print("\n  Closing FFMPEG as encode finished...")
-
-        self.__close()
+        # Starting the Pipe Command
+        console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
+        print(ffmpeg_pipe_command)
+        self.ffmpeg_pipe_subprocess = subprocess.Popen(ffmpeg_pipe_command, stdin=subprocess.PIPE,
+                                                       stdout=console_output)
