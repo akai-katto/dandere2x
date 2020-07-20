@@ -17,22 +17,19 @@ Purpose:
  
 ====================================================================="""
 import os
-import shutil
+import sys
+import threading
+import time
 
 from context import Context
 from dandere2xlib.core.merge import Merge
 from dandere2xlib.core.residual import Residual
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
-from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks, append_video_resize_filter
 from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, wait_on_file, create_directories, \
-    valid_input_resolution
-
-import threading
-import time
-import sys
-
+    valid_input_resolution, rename_file
+from wrappers.dandere2x_cpp import Dandere2xCppWrapper
+from wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks, append_video_resize_filter, concat_two_videos
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
@@ -42,14 +39,16 @@ from wrappers.waifu2x.waifu2x_vulkan_legacy import Waifu2xVulkanLegacy
 class Dandere2x(threading.Thread):
 
     def __init__(self, context: Context):
-        self.context = context
-
         import sys
         sys.excepthook = show_exception_and_exit  # set a custom except hook to prevent window from closing.
+        self.context = context
+
+        threading.Thread.__init__(self, name="Dandere2x Thread")
 
     def pre_processing(self):
+        """ This MUST be the first thing `run` calls, or else dandere2x.py will not work! """
 
-        self.first_frame = 1
+        self.first_frame = self.context.start_frame
         self._force_delete_workspace()
         self.context.load_video_settings()
 
@@ -61,6 +60,14 @@ class Dandere2x(threading.Thread):
         create_directories(self.context.workspace, self.context.directories)
         self._video_pre_processing()
 
+    def kill(self):
+        print("kill invoked")
+        self.context.controller.kill()
+
+    def run(self):
+        self.pre_processing()
+
+        # Creation
         self.min_disk_demon = MinDiskUsage(self.context)
         self.status_thread = Status(self.context)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
@@ -71,10 +78,6 @@ class Dandere2x(threading.Thread):
         self.__extract_frames()
         self.__upscale_first_frame()
 
-
-    def start(self):
-
-        self.pre_processing()
         self.min_disk_demon.start()
         self.dandere2x_cpp_thread.start()
         self.merge_thread.start()
@@ -82,25 +85,39 @@ class Dandere2x(threading.Thread):
         self.waifu2x.start()
         self.status_thread.start()
 
+
+
     def join(self, timeout=None):
         wait_on_file(self.context.nosound_file)
 
-        print("merge joined started")
+        self.min_disk_demon.join()
+        self.dandere2x_cpp_thread.join()
         self.merge_thread.join()
-        print("merged joined end")
-
         self.residual_thread.join()
         self.waifu2x.join()
-
-        if self.context.use_min_disk:
-            self.min_disk_demon.join()
-
-        self.dandere2x_cpp_thread.join()
         self.status_thread.join()
-        migrate_tracks(self.context, self.context.nosound_file,
-                       self.context.sound_file, self.context.output_file)
 
-    def rmtree_custom(self, top):
+        if not self.context.controller.is_alive():
+            self._kill_conditions()
+
+        if self.context.resume_session:
+            print("Session is a resume session, concatenating two videos")
+            file_to_be_concat = self.context.workspace + "file_to_be_concat.mp4"
+
+            rename_file(self.context.nosound_file, file_to_be_concat)
+            concat_two_videos(self.context, self.context.incomplete_video,
+                              file_to_be_concat,
+                              self.context.nosound_file)
+
+    def setup_resume_session(self):
+
+        self.dandere2x_cpp_thread.set_start_frame(self.context.last_saved_frame)
+        self.merge_thread.set_start_frame(self.context.last_saved_frame)
+        self.residual_thread.set_start_frame(self.context.last_saved_frame)
+        self.waifu2x.set_start_frame(self.context.last_saved_frame)
+        self.status_thread.set_start_frame(self.context.last_saved_frame)
+
+    def _rmtree_custom(self, top):
         import os
         import stat
         for root, dirs, files in os.walk(top, topdown=False):
@@ -149,6 +166,9 @@ class Dandere2x(threading.Thread):
     def __extract_frames(self):
         """Extract the initial frames needed for a dandere2x to run depending on session type."""
 
+        if self.context.start_frame != 1:
+            self.min_disk_demon.progressive_frame_extractor.extract_frames_to(self.context.start_frame)
+
         if self.context.use_min_disk:
             self.min_disk_demon.extract_initial_frames()
 
@@ -161,7 +181,28 @@ class Dandere2x(threading.Thread):
 
         re_encode_video(self.context, input_file, unmigrated, throw_exception=True)
         migrate_tracks(self.context, unmigrated, input_file, pre_processed_video, copy_if_failed=True)
-        os.remove(unmigrated)
+        #os.remove(unmigrated)
+
+    def _kill_conditions(self):
+        import yaml
+
+        print("starting kill conditions")
+        suspended_file = self.context.workspace + str(self.context.controller.get_current_frame() + 1) + ".mp4"
+        os.rename(self.context.nosound_file, suspended_file)
+        self.context.nosound_file = suspended_file
+
+        file = open(self.context.workspace + "suspended_session_data.yaml", "a")
+
+        config_file_unparsed = self.context.config_file_unparsed
+        config_file_unparsed['resume_settings']['last_saved_frame'] = self.context.controller.get_current_frame() + 1
+        config_file_unparsed['resume_settings']['incomplete_video'] = self.context.nosound_file
+        config_file_unparsed['resume_settings']['resume_session'] = True
+
+        config_file_unparsed['dandere2x']['developer_settings']['workspace'] = \
+            config_file_unparsed['dandere2x']['developer_settings']['workspace'] + \
+            str(self.context.controller.get_current_frame() + 1) + os.path.sep
+
+        yaml.dump(config_file_unparsed, file, sort_keys=False)
 
     def __upscale_first_frame(self):
         """The first frame of any dandere2x session needs to be upscaled fully, and this is done as it's own

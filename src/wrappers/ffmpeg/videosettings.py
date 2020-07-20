@@ -16,6 +16,8 @@ class VideoSettings:
         self.settings_json = get_video_info(self.ffprobe_dir, video_file)
         self.frame_count = int(get_frame_count(self.ffprobe_dir, video_file))
 
+        print(self.settings_json)
+
         # todo: This entire class can be removed and simplified into the 'except' clause,
         # but having this try / except provides me a sense of security. Some file containers
         # Won't work for the first try, and some won't work for the except, so there's double security here?
@@ -26,6 +28,7 @@ class VideoSettings:
             self.dar = self.settings_json['streams'][0]['display_aspect_ratio']
 
         except KeyError:
+            print("key error")
             self.width, self.height = get_width_height(self.ffprobe_dir, video_file)
             self.frame_rate = float(Fraction(get_frame_rate(self.ffprobe_dir, video_file)))
             self.dar = get_aspect_ratio(self.ffprobe_dir, video_file)

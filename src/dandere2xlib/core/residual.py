@@ -30,7 +30,7 @@ class Residual(threading.Thread):
         self.debug = context.debug
         self.temp_image = context.temp_image_folder + "tempimage.jpg"
         self.logger = logging.getLogger(__name__)
-        self.start_frame = 1
+        self.start_frame = self.context.start_frame
 
         # Threading Specific
 
@@ -57,7 +57,7 @@ class Residual(threading.Thread):
 
             # stop if thread is killed
             if not self.context.controller.is_alive():
-                return
+                break
 
             # loading files area
             f1 = Frame()
@@ -73,7 +73,7 @@ class Residual(threading.Thread):
 
             # stop if thread is killed
             if not self.context.controller.is_alive():
-                return
+                break
 
             # Create the output files..
             debug_output_file = self.debug_dir + "debug" + str(x + 1) + self.extension_type
@@ -107,6 +107,8 @@ class Residual(threading.Thread):
 
             if self.context.debug == 1:
                 self.debug_image(self.block_size, f1, prediction_data, residual_data, debug_output_file)
+
+        print("it is broken")
 
     @staticmethod
     def make_residual_image(context: Context, raw_frame: Frame, list_residual: list, list_predictive: list):

@@ -26,14 +26,14 @@ class MinDiskUsage(threading.Thread):
         self.max_frames_ahead = self.context.max_frames_ahead
         self.frame_count = context.frame_count
         self.progressive_frame_extractor = ProgressiveFramesExtractorCV2(self.context)
-        self.start_frame = 1
+        self.start_frame = self.context.start_frame
 
         # Threading Specific
 
         self.alive = True
         self.cancel_token = CancellationToken()
         self._stopevent = threading.Event()
-        threading.Thread.__init__(self, name="ResidualThread")
+        threading.Thread.__init__(self, name="Min Disk Thread")
 
     def join(self, timeout=None):
         threading.Thread.join(self, timeout)
@@ -135,7 +135,7 @@ class MinDiskUsage(threading.Thread):
         """
         for item in files:
             c = 0
-            while True and self.alive:
+            while True and self.context.controller.is_alive():
                 if os.path.isfile(item):
                     try:
                         os.remove(item)

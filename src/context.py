@@ -156,13 +156,7 @@ class Context:
         self.max_frames_ahead = self.config_yaml['dandere2x']['min_disk_settings']['max_frames_ahead']
         self.sound_file = self.config_yaml['dandere2x']['usersettings']['input_file']
 
-        ####################
-        # Signal Variables #
-        ####################
-        self.signal_merged_count = 0
-
-        # massive to do, fix this / implement this everywhere
-        self.start_frame = 1
+        self.start_frame = self.config_yaml['resume_settings']['last_saved_frame']
         self.controller = Controller()
 
         ##################
@@ -175,6 +169,13 @@ class Context:
         self.width, self.height = None, None
         self.dar = None
         self.frame_count = None
+
+        ###################
+        # Resume Settings #
+        ###################
+        self.resume_session = self.config_yaml['resume_settings']['resume_session']
+        self.last_saved_frame = self.config_yaml['resume_settings']['last_saved_frame']
+        self.incomplete_video = self.config_yaml['resume_settings']['incomplete_video']
 
         #########
         # Other #

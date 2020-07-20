@@ -26,13 +26,10 @@ class ProgressiveFramesExtractorCV2:
 
         for x in range(0, stop_frame):
             self.next_frame()
-            self.count += 1
 
     # TODO: need to apply core d2x filters # FIXED: FFMPEG WORKAROUND
     def next_frame(self):
-        """
-        Call and save the next frame.
-        """
+        """ Call and save the next frame. """
 
         success = False
 

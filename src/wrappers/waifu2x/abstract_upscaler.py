@@ -55,7 +55,7 @@ class AbstractUpscaler(Thread, ABC):
         remove_thread = RemoveUpscaledFiles(context=self.context)
         remove_thread.start()
 
-        while not self.check_if_done() or not self.controller.is_alive():
+        while not self.check_if_done() and self.controller.is_alive():
             self.repeated_call()
 
     def check_if_done(self) -> bool:

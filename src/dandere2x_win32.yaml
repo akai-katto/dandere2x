@@ -68,8 +68,8 @@ dandere2x:
 # don't touch these unless you know what you're doing!
 resume_settings:
   resume_session: false
-  signal_merged_count: 0
-  nosound_file: null
+  last_saved_frame: 1
+  incomplete_video: "none"
 
 waifu2x_caffe:
 

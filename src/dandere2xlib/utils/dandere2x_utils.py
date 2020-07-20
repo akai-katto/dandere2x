@@ -160,6 +160,20 @@ def wait_on_either_file(file_1: str, file_2: str, cancel=CancellationToken()):
         count += 1
         time.sleep(.001)
 
+# for renaming function, break when either file exists
+def wait_on_either_file_controller(file_1: str, file_2: str, controller: Controller):
+    logger = logging.getLogger(__name__)
+    exists_1 = os.path.isfile(file_1)
+    exists_2 = os.path.isfile(file_2)
+    count = 0
+    while not (exists_1 or exists_2) and controller.is_alive():
+        if count / 500 == 0:
+            logger.info(file_1 + " does not exist, waiting")
+        exists_1 = os.path.isfile(file_1)
+        exists_2 = os.path.isfile(file_2)
+
+        count += 1
+        time.sleep(.001)
 
 # Sometimes dandere2x is offsync with window's handlers, and a directory might be deleted after
 # the call was made, so in some cases make sure it's completely deleted before moving on during runtime

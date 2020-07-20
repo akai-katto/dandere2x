@@ -40,7 +40,7 @@ class Merge(threading.Thread):
         self.nosound_file = context.nosound_file
         self.preserve_frames = context.preserve_frames
         self.logger = logging.getLogger(__name__)
-        self.start_frame = 1
+        self.start_frame = self.context.start_frame
 
         # setup the pipe for merging
 
@@ -159,8 +159,9 @@ class Merge(threading.Thread):
                                                                 self.context.controller)
 
             if not self.context.controller.is_alive():
+                print("merge thread broken")
                 self.logger.info("Merge.py killed at frame " + str(x))
-                return
+                break
 
             self.logger.info("Upscaling frame " + str(x))
             # Create the actual image itself.
@@ -198,6 +199,7 @@ class Merge(threading.Thread):
             # Signal to the rest of the dandere2x process we've finished upscaling frame 'x'.
             self.context.controller.update_frame_count(x)
 
+        print("merge thread seems done")
         self.pipe.kill()
         # need to migrate tracks, but not in merge.
 

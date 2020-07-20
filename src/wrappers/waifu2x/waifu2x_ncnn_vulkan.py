@@ -23,7 +23,7 @@ from threading import Thread
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, wait_on_either_file, file_exists, \
-    rename_file
+    rename_file, wait_on_either_file_controller
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
 
@@ -32,6 +32,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
 
     def __init__(self, context: Context):
         super().__init__(context)
+        Thread.__init__(self, name="Waifu2x Thread")
 
         # load context specific to implementation
         self.frame_count = context.frame_count
@@ -145,7 +146,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             clean_name = self.residual_upscaled_dir + file + ".png"
 
             # TODO - IMPLEMENT WITH CONTROLLER
-            wait_on_either_file(clean_name, dirty_name)
+            wait_on_either_file_controller(clean_name, dirty_name, self.controller)
 
             if not self.controller.is_alive():
                 return

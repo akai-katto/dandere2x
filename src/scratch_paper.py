@@ -1,31 +1,41 @@
 from context import Context
 from dandere2x import Dandere2x
-from wrappers.ffmpeg.pipe_thread import Pipe
-from wrappers.frame.frame import Frame
+
+import threading
 
 import yaml
 
-with open("dandere2x_win32.yaml", "r") as read_file:
+def thread_test(dandere2x: Dandere2x):
+    import time
+    time.sleep(5)
+    dandere2x.kill()
+
+with open("C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\sideways_vid\\54\\suspended_session_data.yaml", "r") as read_file:
     config = yaml.safe_load(read_file)
+
+# with open("dandere2x_win32.yaml", "r") as read_file:
+#     config = yaml.safe_load(read_file)
 
 context = Context(config)
 context.load_video_settings()
 
-
-# pipe = Pipe(context, "output.mkv")
-# test = Frame()
-# test.create_new(1920,1080)
-# pipe.start()
-# print('rawr')
-# pipe.save(test)
-# pipe.join()
-
-#
 dandere2x = Dandere2x(context)
 dandere2x.start()
+
+# class sleeper(threading.Thread):
+#     def __init__(self, d2x):
 #
-# # import time
-# # time.sleep(5)
-# # dandere2x.context.controller.kill()
+#         super().__init__()
+#         self.d2x = d2x
 #
+#     def run(self) -> None:
+#         import time
+#         time.sleep(15)
+#         self.d2x.kill()
+#
+#
+# sleeper_obj = sleeper(dandere2x)
+# sleeper_obj.start()
+
 dandere2x.join()
+# sleeper_obj.join()

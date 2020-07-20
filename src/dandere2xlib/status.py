@@ -20,7 +20,7 @@ class Status(threading.Thread):
         self.frame_count = context.frame_count
         self.is_alive = True
         self._is_stopped = False
-        self.start_frame = 1
+        self.start_frame = self.context.start_frame
 
         # Threading Specific
 
@@ -46,7 +46,7 @@ class Status(threading.Thread):
 
         for x in range(self.start_frame, self.frame_count - 1):
 
-            if not self.is_alive:
+            if not self.context.controller.is_alive():
                 break
 
             percent = int((x / self.frame_count) * 100)
@@ -65,7 +65,7 @@ class Status(threading.Thread):
 
             now = time.time()
 
-            while x >= self.context.controller.get_current_frame() and self.alive:
+            while x >= self.context.controller.get_current_frame() and self.context.controller.is_alive():
                 time.sleep(.00001)
 
             later = time.time()
