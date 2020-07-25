@@ -67,7 +67,7 @@ class AppWindow(QMainWindow):
 
         # load 'this folder' in a pyinstaller friendly way
         self.this_folder = os.getcwd()
-        self.ui.suspend_button.setEnabled(False)
+        self.ui.suspend_button.setEnabled(True)
 
         # Note: At the moment running d2x from venv on windows 10 is having issues with this
         # segment of code. I've left it commented for the time being since I'm unsure if pyinstaller

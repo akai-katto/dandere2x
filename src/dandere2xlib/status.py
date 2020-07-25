@@ -58,7 +58,7 @@ class Status(threading.Thread):
             average = round(average / len(last_10), 2)
 
             sys.stdout.write('\r')
-            sys.stdout.write("Frame: [%s] %i%%    Average of Last 10 Frames: %s sec / frame" % (x, percent, average))
+            sys.stdout.write("Frame: [%s] %i%%    Average of Last 10 Frames: %s sec / frame   pipe.piped_frames %s " % (x, percent, average, self.context.controller.get_current_frame()))
 
             if len(last_10) == 10:
                 last_10.pop(0)

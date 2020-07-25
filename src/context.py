@@ -69,6 +69,14 @@ class Context:
             self.waifu2x_ncnn_vulkan_legacy_file_path = os.path.join(self.waifu2x_ncnn_vulkan_legacy_path,
                                                                      self.waifu2x_ncnn_vulkan_legacy_file_name)
 
+        if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "realsr_ncnn_vulkan":
+            self.realsr_ncnn_vulkan_path = self.config_yaml['realsr_ncnn_vulkan'][
+                'realsr_ncnn_vulkan_path']
+            self.realsr_ncnn_vulkan_file_name = self.config_yaml['realsr_ncnn_vulkan'][
+                'realsr_ncnn_vulkan_file_name']
+            self.realsr_ncnn_vulkan_file_path = os.path.join(self.realsr_ncnn_vulkan_path,
+                                                                     self.realsr_ncnn_vulkan_file_name)
+
         if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "caffe":
             self.waifu2x_caffe_cui_dir = self.config_yaml['waifu2x_caffe']['waifu2x_caffe_path']
 
@@ -185,8 +193,8 @@ class Context:
         self.set_logger()
 
 
-    def load_video_settings(self):
-        self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
+    def load_video_settings(self, file: str):
+        self.video_settings = VideoSettings(self.ffprobe_dir, file)
         self.frame_rate = self.video_settings.frame_rate
         self.width, self.height = self.video_settings.width, self.video_settings.height
         self.dar = self.video_settings.dar

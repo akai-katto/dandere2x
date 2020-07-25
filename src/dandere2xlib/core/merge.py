@@ -147,7 +147,6 @@ class Merge(threading.Thread):
             #######################
             # Loop-iteration Core #
             #######################
-
             # Load the needed vectors to create the merged image.
             prediction_data_list = get_list_from_file_wait_controller(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
                                                                       self.context.controller)
@@ -172,6 +171,7 @@ class Merge(threading.Thread):
             ###############
             # Saving Area #
             ###############
+
             # Directly write the image to the ffmpeg pipe line.
             self.pipe.save(frame_next)
 
@@ -184,7 +184,6 @@ class Merge(threading.Thread):
             #######################################
             # Assign variables for next iteration #
             #######################################
-
             # last_frame + 1 does not exist, so don't load.
             if not last_frame:
                 # We need to wait until the next upscaled image exists before we move on.

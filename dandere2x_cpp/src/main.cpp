@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     int resume_frame = 55;
     string extension_type = ".jpg";
 
-    cout << "Hello Dandere!!" << endl;
+    cout << "Dandere2x CPP vDSSIM 1.0" << endl;
 
     //load arguments
     if (!debug) {

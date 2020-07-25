@@ -31,12 +31,12 @@ dandere2x:
     output_folder: ..\workspace\multiple_videos_output\
 
     log_folder: ..\workspace\log_folder\
-    waifu2x_type: caffe
+    waifu2x_type: realsr_ncnn_vulkan
     preserve_frames: true
     block_size: 20
     denoise_level: 3
     quality_minimum: 95
-    scale_factor: 2
+    scale_factor: 4
 
   min_disk_settings:
     #        use_min_disk: Use min_disk or not.

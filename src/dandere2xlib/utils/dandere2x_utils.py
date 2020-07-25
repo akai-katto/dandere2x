@@ -16,7 +16,6 @@ from sys import platform
 
 from pip._vendor.distlib.compat import raw_input
 
-from controller import Controller
 from dandere2xlib.utils.thread_utils import CancellationToken
 
 
@@ -81,6 +80,18 @@ def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
 
     return text_list
 
+
+def force_delete_directory(directory):
+    """ Deletes a workspace with really aggressive functions calls. shutil.rm had too many issues. """
+    if os.path.isdir(directory):
+        try:
+            os.system('rmdir /S /Q "{}"'.format(directory))
+        except PermissionError:
+            print("Trying to delete workspace with rmtree threw PermissionError - Dandere2x may not work.")
+            print("Continuing along...")
+
+        while file_exists(directory):
+            time.sleep(1)
 
 
 from controller import Controller
@@ -355,6 +366,19 @@ def verify_user_settings(context):
 
         context.block_size = new_block_size
 
+def download_and_extract_externals(dandere2x_dir: str):
+    import wget
+    import zipfile
+    import os
+
+    download_file = dandere2x_dir + "download.zip"
+    wget.download('https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.0.1/externals.zip',
+                  out=download_file)
+
+    with zipfile.ZipFile(download_file, 'r') as zip_ref:
+        zip_ref.extractall(dandere2x_dir)
+
+    os.remove(download_file)
 
 def main():
     text = get_list_from_file_wait("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")

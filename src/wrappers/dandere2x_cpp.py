@@ -75,7 +75,7 @@ class Dandere2xCppWrapper(threading.Thread):
         # The dandere2x_cpp output to a text file.
         if get_operating_system() == 'win32':
             self.dandere2x_cpp_subprocess = subprocess.Popen(self.exec_command,
-                                                             creationflags=subprocess.CREATE_NEW_CONSOLE)
+                                                              creationflags=subprocess.CREATE_NEW_CONSOLE)
 
         elif get_operating_system() == 'linux':
             console_output = open(self.log_dir + "dandere2x_cpp.txt", "w")

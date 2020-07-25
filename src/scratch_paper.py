@@ -10,14 +10,13 @@ def thread_test(dandere2x: Dandere2x):
     time.sleep(5)
     dandere2x.kill()
 
-with open("C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\sideways_vid\\54\\suspended_session_data.yaml", "r") as read_file:
-    config = yaml.safe_load(read_file)
-
-# with open("dandere2x_win32.yaml", "r") as read_file:
+# with open("C:\\Users\\windwoz\\Documents\\GitHub\\dandere2x\\src\\workspace\\sideways_vid\\54\\suspended_session_data.yaml", "r") as read_file:
 #     config = yaml.safe_load(read_file)
 
+with open("dandere2x_win32.yaml", "r") as read_file:
+    config = yaml.safe_load(read_file)
+
 context = Context(config)
-context.load_video_settings()
 
 dandere2x = Dandere2x(context)
 dandere2x.start()
