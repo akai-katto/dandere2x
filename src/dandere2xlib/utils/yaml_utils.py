@@ -51,6 +51,7 @@ def absolutify_yaml(unparsed_yaml: yaml, current_folder: str, absolutify_key="..
     values back to their yaml equivalent.
     """
 
+    print(unparsed_yaml)
     current_folder_yaml = current_folder.replace("\\", "\\\\")
     parsed_yaml_str = str(unparsed_yaml)
 
@@ -61,5 +62,22 @@ def absolutify_yaml(unparsed_yaml: yaml, current_folder: str, absolutify_key="..
     parsed_yaml_str = parsed_yaml_str.replace("None", "null")
     parsed_yaml_str = parsed_yaml_str.replace(absolutify_key, current_folder_yaml)
 
-    # load the json back into the config
+    returned_yaml = None
+
+    try:
+        returned_yaml = yaml.safe_load(parsed_yaml_str)
+    except:
+        import os
+        import re
+        regex = re.compile('[^a-zA-Z.]')
+        invalid_file_dir = unparsed_yaml['dandere2x']['usersettings']['input_file']
+        path, name = os.path.split(invalid_file_dir)
+
+        fixed_name = regex.sub('', name)
+
+        print("You've encountered a known dandere2x bug I am currently fixing!")
+        print("Try renaming youre input file from %s to %s" % (name,fixed_name))
+        raise Exception("Try renaming youre input file from %s to %s" % (name,fixed_name))
+
+    # load the yaml back into the config
     return yaml.safe_load(parsed_yaml_str)

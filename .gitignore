@@ -46,6 +46,7 @@ workspace/
 *.egg-info/
 .installed.cfg
 *.egg
+scratch_paper.py
 MANIFEST
 
 # PyInstaller

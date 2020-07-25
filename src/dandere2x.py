@@ -26,16 +26,15 @@ from dandere2xlib.core.merge import Merge
 from dandere2xlib.core.residual import Residual
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
-from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, wait_on_file, create_directories, \
+from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, create_directories, \
     valid_input_resolution, rename_file, force_delete_directory
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks, append_video_resize_filter, concat_two_videos
-from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
-from wrappers.waifu2x.waifu2x_caffe_new import Waifu2xCaffeNew
-from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
-from wrappers.waifu2x.waifu2x_converter_cpp_new import Waifu2xConverterCppNew
-from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 from wrappers.waifu2x.realsr_ncnn_vulkan import RealSRNCNNVulkan
+from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
+from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
+from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
+
 
 class Dandere2x(threading.Thread):
 
@@ -51,7 +50,7 @@ class Dandere2x(threading.Thread):
 
         # Declarations
         """ 
-        These are set later, but due to lack of python member-variable declarations, they're initially set here so the IDE can 
+        These are re-set later, but due to lack of python member-variable declarations, they're initially set here so the IDE can 
         do autocomplete corrections / predictions. It's important they're correctly assigned when self.run() is called. 
         """
         self.min_disk_demon = MinDiskUsage(self.context)
@@ -157,19 +156,13 @@ class Dandere2x(threading.Thread):
         """ Returns a waifu2x object depending on what the user selected. """
 
         if name == "caffe":
-            return Waifu2xCaffeNew(self.context)
+            return Waifu2xCaffe(self.context)
 
         elif name == "converter_cpp":
-            return Waifu2xConverterCppNew(self.context)
+            return Waifu2xConverterCpp(self.context)
 
         elif name == "vulkan":
             return Waifu2xNCNNVulkan(self.context)
-
-        # elif name == "vulkan":
-        #     return Waifu2xVulkan(self.context)
-
-        elif name == "vulkan_legacy":
-            return Waifu2xVulkanLegacy(self.context)
 
         elif name == "realsr_ncnn_vulkan":
             return RealSRNCNNVulkan(self.context)
@@ -218,10 +211,13 @@ class Dandere2x(threading.Thread):
         # measure the time to upscale a single frame for printing purposes
         one_frame_time = time.time()
         self.waifu2x.upscale_file(
-            input_image=self.context.input_frames_dir + "frame" + str(self.context.start_frame) + self.context.extension_type,
-            output_image=self.context.merged_dir + "merged_" + str(self.context.start_frame) + self.context.extension_type)
+            input_image=self.context.input_frames_dir + "frame" + str(
+                self.context.start_frame) + self.context.extension_type,
+            output_image=self.context.merged_dir + "merged_" + str(
+                self.context.start_frame) + self.context.extension_type)
 
-        if not file_exists(self.context.merged_dir + "merged_" + str(self.context.start_frame) + self.context.extension_type):
+        if not file_exists(
+                self.context.merged_dir + "merged_" + str(self.context.start_frame) + self.context.extension_type):
             """ Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't. """
 
             print("Could not upscale first file.. check logs file to see what's wrong")
