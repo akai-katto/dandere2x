@@ -62,11 +62,14 @@ def absolutify_yaml(unparsed_yaml: yaml, current_folder: str, absolutify_key="..
     parsed_yaml_str = parsed_yaml_str.replace("None", "null")
     parsed_yaml_str = parsed_yaml_str.replace(absolutify_key, current_folder_yaml)
 
-    returned_yaml = None
-
     try:
-        returned_yaml = yaml.safe_load(parsed_yaml_str)
+        yaml.safe_load(parsed_yaml_str)
     except:
+        # todo, remove absolutify_yaml due to its buggy nature.
+        """
+        This bug occurs when trying to use my "absolutify_yaml" script to fix the users input, which, unfortunately,
+        breaks if a non valid working directory / file is selected. This will be fixed in the near future.
+        """
         import os
         import re
         regex = re.compile('[^a-zA-Z.]')

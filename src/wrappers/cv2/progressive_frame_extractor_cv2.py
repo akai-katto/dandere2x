@@ -27,7 +27,12 @@ class ProgressiveFramesExtractorCV2:
         for x in range(0, stop_frame):
             self.next_frame()
 
-    # TODO: need to apply core d2x filters # FIXED: FFMPEG WORKAROUND
+    def release_capture(self):
+        self.cap.release()
+        # Closes all the frames
+        cv2.destroyAllWindows()
+
+        # TODO: need to apply core d2x filters # FIXED: FFMPEG WORKAROUND
     def next_frame(self):
         """ Call and save the next frame. """
 

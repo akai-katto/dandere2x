@@ -152,7 +152,7 @@ class Context:
         self.correction_block_size = 2
         self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
         self.pre_processed_video = self.workspace + "pre_processed" + self.output_extension
-
+        self.delete_workspace_after = self.config_yaml['dandere2x']['developer_settings']['delete_workspace_after']
         #####################
         # MIN DISK SETTINGS #
         #####################

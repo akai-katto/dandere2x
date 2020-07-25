@@ -67,11 +67,14 @@ class MinDiskUsage(threading.Thread):
                 time.sleep(.00001)
 
             if not self.context.controller.is_alive():
+                self.progressive_frame_extractor.release_capture()
                 return
 
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
             self.__delete_used_files(x)
+
+        self.progressive_frame_extractor.release_capture()
 
     def extract_initial_frames(self):
         """

@@ -25,17 +25,17 @@ dandere2x:
     #                        caffe: [1, 2, 3, 4]
     #                        converter_cpp: [1,2,3,4]
 
-    input_file: C:\Users\windwoz\Documents\GitHub\dandere2x\src\workspace\invalid'name.mkv
+    input_file: C:\Users\windwoz\Documents\GitHub\dandere2x\src\workspace\yn_moving_480.mkv
     output_file: ..\workspace\odd_res_output.mp4
     input_folder: ..\workspace\multiple_videos\
     output_folder: ..\workspace\multiple_videos_output\
 
     log_folder: ..\workspace\log_folder\
-    waifu2x_type: caffe
+    waifu2x_type: vulkan
     preserve_frames: true
     block_size: 20
     denoise_level: 3
-    quality_minimum: 95
+    quality_minimum: 5
     scale_factor: 2
 
   min_disk_settings:
@@ -59,7 +59,7 @@ dandere2x:
     workspace: ..\workspace\sideways_vid\ # path to the workspace folder (lots of files will be written here)
     dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
     workspace_use_temp: false
-    gui_delete_workspace_after: false
+    delete_workspace_after: true
     extension_type: .jpg
     bleed: 3
     quality_moving_ratio: 0.55

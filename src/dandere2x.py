@@ -136,9 +136,12 @@ class Dandere2x(threading.Thread):
         self.waifu2x.join()
         self.status_thread.join()
 
-        if not self.context.controller.is_alive():
+        if self.context.controller.is_alive():
+            self._successful_completion()
+        else:
             self._kill_conditions()
 
+    def _successful_completion(self):
         if self.context.resume_session:
             print("Session is a resume session, concatenating two videos")
             file_to_be_concat = self.context.workspace + "file_to_be_concat.mp4"
@@ -148,9 +151,35 @@ class Dandere2x(threading.Thread):
                               file_to_be_concat,
                               self.context.nosound_file)
 
-        if self.context.controller.is_alive():
-            migrate_tracks(self.context, self.context.nosound_file,
-                           self.context.sound_file, self.context.output_file)
+        migrate_tracks(self.context, self.context.nosound_file,
+                       self.context.sound_file, self.context.output_file)
+
+        if self.context.delete_workspace_after:
+            force_delete_directory(self.context.workspace)
+
+    def _kill_conditions(self):
+        """ Begin a series of kill conditions that will prepare dandere2x to resume the session once suspended.
+        For the most part, this involves documenting all the variables needed for dandere2x to know where the last
+        session left off at. """
+        import yaml
+
+        print("starting kill conditions")
+        suspended_file = self.context.workspace + str(self.context.controller.get_current_frame() + 1) + ".mp4"
+        os.rename(self.context.nosound_file, suspended_file)
+        self.context.nosound_file = suspended_file
+
+        file = open(self.context.workspace + "suspended_session_data.yaml", "a")
+
+        config_file_unparsed = self.context.config_file_unparsed
+        config_file_unparsed['resume_settings']['last_saved_frame'] = self.context.controller.get_current_frame() + 1
+        config_file_unparsed['resume_settings']['incomplete_video'] = self.context.nosound_file
+        config_file_unparsed['resume_settings']['resume_session'] = True
+
+        config_file_unparsed['dandere2x']['developer_settings']['workspace'] = \
+            config_file_unparsed['dandere2x']['developer_settings']['workspace'] + \
+            str(self.context.controller.get_current_frame() + 1) + os.path.sep
+
+        yaml.dump(config_file_unparsed, file, sort_keys=False)
 
     def _get_waifu2x_class(self, name: str):
         """ Returns a waifu2x object depending on what the user selected. """
@@ -179,30 +208,6 @@ class Dandere2x(threading.Thread):
 
         if self.context.use_min_disk:
             self.min_disk_demon.extract_initial_frames()
-
-    def _kill_conditions(self):
-        """ Begin a series of kill conditions that will prepare dandere2x to resume the session once suspended.
-        For the most part, this involves documenting all the variables needed for dandere2x to know where the last
-        session left off at. """
-        import yaml
-
-        print("starting kill conditions")
-        suspended_file = self.context.workspace + str(self.context.controller.get_current_frame() + 1) + ".mp4"
-        os.rename(self.context.nosound_file, suspended_file)
-        self.context.nosound_file = suspended_file
-
-        file = open(self.context.workspace + "suspended_session_data.yaml", "a")
-
-        config_file_unparsed = self.context.config_file_unparsed
-        config_file_unparsed['resume_settings']['last_saved_frame'] = self.context.controller.get_current_frame() + 1
-        config_file_unparsed['resume_settings']['incomplete_video'] = self.context.nosound_file
-        config_file_unparsed['resume_settings']['resume_session'] = True
-
-        config_file_unparsed['dandere2x']['developer_settings']['workspace'] = \
-            config_file_unparsed['dandere2x']['developer_settings']['workspace'] + \
-            str(self.context.controller.get_current_frame() + 1) + os.path.sep
-
-        yaml.dump(config_file_unparsed, file, sort_keys=False)
 
     def __upscale_first_frame(self):
         """ The first frame of any dandere2x session needs to be upscaled fully, and this is done as it's own
