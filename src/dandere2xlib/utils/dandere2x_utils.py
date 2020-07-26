@@ -10,8 +10,12 @@ Last Modified: April 2, 2019
 import logging
 import os
 import shutil
+import sys
 import time
 from sys import platform
+
+from pip._vendor.distlib.compat import raw_input
+from wget import bar_thermometer, bar_adaptive
 
 from dandere2xlib.utils.thread_utils import CancellationToken
 
@@ -22,6 +26,19 @@ def get_operating_system():
     elif platform == "win32":
         return 'win32'
 
+def show_exception_and_exit(exc_type, exc_value, tb):
+    """
+    To keep Dandere2x window open on death.
+    """
+    import traceback
+    traceback.print_exception(exc_type, exc_value, tb)
+    raw_input("Press key to exit.")
+    sys.exit(-1)
+
+
+
+
+
 
 # if the value in the key value pair exists, add it.
 # if the key is just 'true', only add the key
@@ -29,7 +46,6 @@ def get_operating_system():
 # THis doesnt work with multiple keys and import warnings
 
 # returns a list given a text file (representing a string)
-
 
 def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
@@ -43,6 +59,55 @@ def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
         time.sleep(.01)
 
     if cancel.is_cancelled:
+        return
+
+    file = None
+    try:
+        file = open(text_file, "r")
+    except PermissionError:
+        logging.info("permission error on file" + text_file)
+
+    while not file:
+        try:
+            file = open(text_file, "r")
+        except PermissionError:
+            logging.info("permission error on file" + text_file)
+
+    text_list = file.read().split('\n')
+    file.close()
+
+    if len(text_list) == 1:
+        return []
+
+    return text_list
+
+
+def force_delete_directory(directory):
+    """ Deletes a workspace with really aggressive functions calls. shutil.rm had too many issues. """
+    if os.path.isdir(directory):
+        try:
+            os.system('rmdir /S /Q "{}"'.format(directory))
+        except PermissionError:
+            print("Trying to delete workspace with rmtree threw PermissionError - Dandere2x may not work.")
+            print("Continuing along...")
+
+        while file_exists(directory):
+            time.sleep(1)
+
+
+from controller import Controller
+def get_list_from_file_wait_controller(text_file: str, controller=Controller()):
+    logger = logging.getLogger(__name__)
+    exists = exists = os.path.isfile(text_file)
+    count = 0
+    while not exists and controller.is_alive():
+        if count / 500 == 0:
+            logger.info(text_file + " does not exist, waiting")
+        exists = os.path.isfile(text_file)
+        count += 1
+        time.sleep(.01)
+
+    if not controller.is_alive():
         return
 
     file = None
@@ -80,6 +145,18 @@ def wait_on_file(file_string: str, cancel=CancellationToken()):
         time.sleep(.001)
 
 
+def wait_on_file_controller(file_string: str, controller: Controller):
+    logger = logging.getLogger(__name__)
+    exists = os.path.isfile(file_string)
+    count = 0
+    while not exists and controller.is_alive():
+        if count / 500 == 0:
+            logger.info(file_string + " does not exist, waiting")
+        exists = os.path.isfile(file_string)
+        count += 1
+        time.sleep(.001)
+
+
 # for renaming function, break when either file exists
 def wait_on_either_file(file_1: str, file_2: str, cancel=CancellationToken()):
     logger = logging.getLogger(__name__)
@@ -95,6 +172,20 @@ def wait_on_either_file(file_1: str, file_2: str, cancel=CancellationToken()):
         count += 1
         time.sleep(.001)
 
+# for renaming function, break when either file exists
+def wait_on_either_file_controller(file_1: str, file_2: str, controller: Controller):
+    logger = logging.getLogger(__name__)
+    exists_1 = os.path.isfile(file_1)
+    exists_2 = os.path.isfile(file_2)
+    count = 0
+    while not (exists_1 or exists_2) and controller.is_alive():
+        if count / 500 == 0:
+            logger.info(file_1 + " does not exist, waiting")
+        exists_1 = os.path.isfile(file_1)
+        exists_2 = os.path.isfile(file_2)
+
+        count += 1
+        time.sleep(.001)
 
 # Sometimes dandere2x is offsync with window's handlers, and a directory might be deleted after
 # the call was made, so in some cases make sure it's completely deleted before moving on during runtime
@@ -276,6 +367,44 @@ def verify_user_settings(context):
 
         context.block_size = new_block_size
 
+
+def bar_custom(current, total, width=80):
+    global currentrelease, startdownload
+
+    # current       -     time.time() - startdownload
+    # total-current -     eta
+
+    # eta ==   (total-current)*(time.time()-startdownload)) / current
+
+    try:  # div by zero
+        eta = int(((time.time() - startdownload) * (total - current)) / current)
+    except Exception:
+        eta = 0
+
+    avgdown = (current / (time.time() - startdownload)) / 1024
+
+    currentpercentage = int(current / total * 100)
+
+    print("\r Downloading release [{}]: [{}%] [{:.2f} MB / {:.2f} MB] ETA: [{} sec] AVG: [{:.2f} kB/s]".format(
+        currentrelease, currentpercentage, current / 1024 / 1024, total / 1024 / 1024, eta, avgdown), end='',
+        flush=True)
+
+
+def download_and_extract_externals(dandere2x_dir: str):
+    import wget
+    import zipfile
+    import os
+
+    print("Downloading: " + "https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip")
+    download_file = dandere2x_dir + "download.zip"
+    wget.download('https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip',
+                  out=download_file, bar=bar_adaptive)
+
+    with zipfile.ZipFile(download_file, 'r') as zip_ref:
+        zip_ref.extractall(dandere2x_dir)
+
+    print("finished downloading")
+    os.remove(download_file)
 
 def main():
     text = get_list_from_file_wait("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")

@@ -51,4 +51,4 @@ add_executable(dandere2x_cpp
         src/Plugins/PFrame/PFrame.h
         src/Driver.h
         src/main.cpp
-        CMakeLists.txt src/Plugins/Fade/Fade.h src/Plugins/Fade/Fade.cpp src/BlockMatch/ExhaustiveSearch.h src/Image/SSIM/SSIM.h src/Image/SSIM/SsimStatsFunctions.h)
+        CMakeLists.txt src/Plugins/Fade/Fade.h src/Plugins/Fade/Fade.cpp src/BlockMatch/ExhaustiveSearch.h src/Image/SSIM/SSIM-MSE.h)

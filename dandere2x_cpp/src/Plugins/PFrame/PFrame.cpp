@@ -7,7 +7,7 @@
 #include "Plugins/PFrame/PFrame.h"
 #include "BlockMatch/ExhaustiveSearch.h"
 #include <omp.h>
-#include "Image/SSIM/SSIM.h"
+#include "Image/SSIM/SSIM-MSE.h"
 
 
 // Note to self, what happens if pframes declares too many unmatched blocks, but fade made

@@ -38,7 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include <Image/ImageUtils.h>
-#include "Image/SSIM/SSIM.h"
+#include "Image/SSIM/SSIM-MSE.h"
 
 using namespace std;
 

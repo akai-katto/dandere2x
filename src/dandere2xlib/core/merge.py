@@ -7,9 +7,10 @@ from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait, wait_on_file
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait, wait_on_file, \
+    get_list_from_file_wait_controller, wait_on_file_controller
 from dandere2xlib.utils.thread_utils import CancellationToken
-from wrappers.ffmpeg.pipe import Pipe
+from wrappers.ffmpeg.pipe_thread import Pipe
 from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
 from wrappers.frame.frame import Frame
 
@@ -39,7 +40,7 @@ class Merge(threading.Thread):
         self.nosound_file = context.nosound_file
         self.preserve_frames = context.preserve_frames
         self.logger = logging.getLogger(__name__)
-        self.start_frame = 1
+        self.start_frame = self.context.start_frame
 
         # setup the pipe for merging
 
@@ -53,12 +54,12 @@ class Merge(threading.Thread):
         threading.Thread.__init__(self, name="MergeThread")
 
     def join(self, timeout=None):
-        self.pipe.join_ffmpeg_subprocess()
+        self.pipe.join()
         threading.Thread.join(self, timeout)
 
     def kill(self):
         self.alive = False
-        self.pipe.kill_thread()
+        self.pipe.kill()
         self.cancel_token.cancel()
         self._stopevent.set()
 
@@ -114,53 +115,51 @@ class Merge(threading.Thread):
 
     def run(self):
 
-        self.pipe.start_pipe_thread()
+        self.pipe.start()
         # Load the genesis image + the first upscaled image.
         frame_previous = Frame()
-        frame_previous.load_from_string_wait(self.merged_dir + "merged_" + str(self.start_frame) + self.extension_type,
-                                             self.cancel_token)
+        frame_previous.load_from_string_controller(self.merged_dir + "merged_" + str(self.start_frame) + self.extension_type,
+                                                   self.context.controller)
 
         self.pipe.save(frame_previous)
 
         f1 = Frame()
-        f1.load_from_string_wait(self.upscaled_dir + "output_" + get_lexicon_value(6, self.start_frame) + ".png",
-                                 self.cancel_token)
+        f1.load_from_string_controller(self.upscaled_dir + "output_" + get_lexicon_value(6, self.start_frame) + ".png",
+                                       self.context.controller)
 
         last_frame = False
         for x in range(self.start_frame, self.frame_count):
-
             ###################################
             # Loop-iteration pre-requirements #
             ###################################
-
             # Check if we're at the last image, which affects the behaviour of the loop.
             if x == self.frame_count - 1:
                 last_frame = True
 
             # Pre-load the next iteration of the loop image ahead of time, if we're not on the last frame.
             if not last_frame:
-                background_frame_load = AsyncFrameRead(
-                    self.upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
-                    self.cancel_token)
+                background_frame_load = \
+                    AsyncFrameRead(
+                        self.upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png", self.context.controller)
+
                 background_frame_load.start()
 
             #######################
             # Loop-iteration Core #
             #######################
-
             # Load the needed vectors to create the merged image.
-            prediction_data_list = get_list_from_file_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                                                           self.cancel_token)
-            residual_data_list = get_list_from_file_wait(self.residual_data_dir + "residual_" + str(x) + ".txt",
-                                                         self.cancel_token)
-            correction_data_list = get_list_from_file_wait(self.correction_data_dir + "correction_" + str(x) + ".txt",
-                                                           self.cancel_token)
-            fade_data_list = get_list_from_file_wait(self.fade_data_dir + "fade_" + str(x) + ".txt",
-                                                     self.cancel_token)
+            prediction_data_list = get_list_from_file_wait_controller(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
+                                                                      self.context.controller)
+            residual_data_list = get_list_from_file_wait_controller(self.residual_data_dir + "residual_" + str(x) + ".txt",
+                                                                    self.context.controller)
+            correction_data_list = get_list_from_file_wait_controller(self.correction_data_dir + "correction_" + str(x) + ".txt",
+                                                                      self.context.controller)
+            fade_data_list = get_list_from_file_wait_controller(self.fade_data_dir + "fade_" + str(x) + ".txt",
+                                                                self.context.controller)
 
-            if not self.alive:
+            if not self.context.controller.is_alive():
                 self.logger.info("Merge.py killed at frame " + str(x))
-                return
+                break
 
             self.logger.info("Upscaling frame " + str(x))
             # Create the actual image itself.
@@ -184,23 +183,21 @@ class Merge(threading.Thread):
             #######################################
             # Assign variables for next iteration #
             #######################################
-
             # last_frame + 1 does not exist, so don't load.
             if not last_frame:
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
-                    wait_on_file(self.upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
-                                 self.cancel_token)
+                    wait_on_file_controller(self.upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
+                                            self.context.controller)
 
                 f1 = background_frame_load.loaded_image
 
             frame_previous = frame_next
 
             # Signal to the rest of the dandere2x process we've finished upscaling frame 'x'.
-            self.context.signal_merged_count = x
+            self.context.controller.update_frame_count(x)
 
-        self.pipe.wait_finish_stop_pipe()
-
+        self.pipe.kill()
         # need to migrate tracks, but not in merge.
 
 

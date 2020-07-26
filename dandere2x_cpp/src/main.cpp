@@ -11,28 +11,7 @@
  */
 
 
-void benchmark(){
-#include "Image/Image.h"
-#include "Plugins/PFrame/PFrame.h"
 
-#include "BlockMatch/ExhaustiveSearch.h"
-#include "Image/SSIM/SSIM.h"
-#include "Image/SSIM/SsimStatsFunctions.h"
-
-    Image im1 = Image("C:\\Users\\windwoz\\Desktop\\release\\workspace\\neg_test\\frame202.png");
-    Image im2 = Image("C:\\Users\\windwoz\\Desktop\\release\\workspace\\neg_test\\frame203.png");
-
-    double covariance = StatFunctions::covariance(im1, im2, 0, 0, 0,0, 60, 'g');
-    double var = StatFunctions::variance_block(im1,  0, 0,  60, 'g');
-    double mean = StatFunctions::mean_block(im1,  0, 0,  60, 'g');
-
-    std::cout << "variance: " << var << std::endl;
-    std::cout << "covariance: " << covariance << std::endl;
-    std::cout << "mean: " << mean << std::endl;
-
-    double ssim_r = SSIM::ssim(im1, im2, 0, 0, 0, 0, 60);
-    std::cout << "ssim_r: " << ssim_r << std::endl;
-}
 
 int main(int argc, char **argv) {
 
@@ -51,7 +30,7 @@ int main(int argc, char **argv) {
     int resume_frame = 200;
     string extension_type = ".jpg";
 
-    cout << "Dandere2x MSE-SSIM v1.0" << endl;
+    cout << "Dandere2x CPP vDSSIM 1.0" << endl;
 
     //load arguments
     if (!debug) {

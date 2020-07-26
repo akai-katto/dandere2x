@@ -1,3 +1,4 @@
+import glob
 import os
 import sys
 import shutil
@@ -62,11 +63,22 @@ class AppWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+
+        config_names = []
+        os.chdir(os.getcwd())
+        for file in glob.glob("*.yaml"):
+            config_names.append(file)
+
         self.ui = Ui_Dandere2xGUI()
-        self.ui.setupUi(self)
+        self.ui.setupUi(self, config_names)
+
+        _translate = QtCore.QCoreApplication.translate
+        self.ui.config_select_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Caffe"))
 
         # load 'this folder' in a pyinstaller friendly way
         self.this_folder = os.getcwd()
+        self.ui.suspend_button.setEnabled(True)
+
 
         # Note: At the moment running d2x from venv on windows 10 is having issues with this
         # segment of code. I've left it commented for the time being since I'm unsure if pyinstaller
@@ -83,6 +95,7 @@ class AppWindow(QMainWindow):
 
         self.input_file = ''
         self.output_file = ''
+        self.config_file = ''
         self.scale_factor = None
         self.noise_level = None
         self.image_quality = None
@@ -92,7 +105,7 @@ class AppWindow(QMainWindow):
 
         # theres a bug with qt designer and '80' for default quality needs to be set elsewhere
         _translate = QtCore.QCoreApplication.translate
-        self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "85"))
+        self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "95"))
         self.ui.block_size_combo_box.setCurrentText(_translate("Dandere2xGUI", "20"))
         self.ui.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Vulkan"))
         # self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\aka.png"))
@@ -104,6 +117,10 @@ class AppWindow(QMainWindow):
     def press_suspend_button(self):
         self.thread.kill()
 
+    def press_download_externals_button(self):
+        from dandere2xlib.utils.dandere2x_utils import download_and_extract_externals
+        download_and_extract_externals(os.getcwd())
+
     # Setup connections for each button
     def config_buttons(self):
         self.ui.select_video_button.clicked.connect(self.press_select_video_button)
@@ -111,6 +128,7 @@ class AppWindow(QMainWindow):
         self.ui.upscale_button.clicked.connect(self.press_upscale_button)
         self.ui.waifu2x_type_combo_box.currentIndexChanged.connect(self.refresh_scale_factor)
         self.ui.suspend_button.clicked.connect(self.press_suspend_button)
+        self.ui.download_externals_button.clicked.connect(self.press_download_externals_button)
 
         # The following connects are to re-adjust the file name
 
@@ -157,7 +175,7 @@ class AppWindow(QMainWindow):
                                                + "[s" + str(self.scale_factor) + "]"
                                                + "[n" + str(self.noise_level) + "]"
                                                + "[b" + str(self.block_size) + "]"
-                                               + "[q" + str(self.image_quality) + "]" + ".mp4"))
+                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
 
         self.set_output_file_name()
 
@@ -165,6 +183,11 @@ class AppWindow(QMainWindow):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
             self.ui.scale_3_radio_button.setEnabled(False)
             self.ui.scale_4_radio_button.setEnabled(False)
+            self.ui.scale_1_radio_button.setEnabled(False)
+        elif self.ui.waifu2x_type_combo_box.currentText() == 'RealSR':
+            self.ui.scale_3_radio_button.setEnabled(False)
+            self.ui.scale_4_radio_button.setEnabled(True)
+            self.ui.scale_2_radio_button.setEnabled(False)
             self.ui.scale_1_radio_button.setEnabled(False)
         else:
             self.ui.scale_3_radio_button.setEnabled(True)
@@ -189,11 +212,7 @@ class AppWindow(QMainWindow):
         print(os.getcwd())
 
         if get_operating_system() == 'win32':
-            with open(os.path.join(self.this_folder, "dandere2x_win32.yaml"), "r") as read_file:
-                config_yaml = yaml.safe_load(read_file)
-
-        elif get_operating_system() == 'linux':
-            with open(os.path.join(self.this_folder, "dandere2x_linux.yaml"), "r") as read_file:
+            with open(os.path.join(self.this_folder, self.config_file), "r") as read_file:
                 config_yaml = yaml.safe_load(read_file)
 
         if self.is_suspend_file(self.input_file):
@@ -291,6 +310,9 @@ class AppWindow(QMainWindow):
 
         self.image_quality = int(self.ui.image_quality_box.currentText())
         self.block_size = int(self.ui.block_size_combo_box.currentText())
+        self.config_file = self.ui.config_select_box.currentText()
+
+        print("config file: " + self.config_file)
 
         # Waifu2x Type
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Caffe':
@@ -299,8 +321,8 @@ class AppWindow(QMainWindow):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
             self.waifu2x_type = 'vulkan'
 
-        if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan-Legacy':
-            self.waifu2x_type = 'vulkan_legacy'
+        if self.ui.waifu2x_type_combo_box.currentText() == 'RealSR':
+            self.waifu2x_type = 'realsr_ncnn_vulkan'
 
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Converter-Cpp':
             self.waifu2x_type = "converter_cpp"

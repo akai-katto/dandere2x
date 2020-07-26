@@ -5,7 +5,8 @@ import math
 import threading
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait, \
+    get_list_from_file_wait_controller
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.frame.frame import DisplacementVector, Frame
 
@@ -29,7 +30,7 @@ class Residual(threading.Thread):
         self.debug = context.debug
         self.temp_image = context.temp_image_folder + "tempimage.jpg"
         self.logger = logging.getLogger(__name__)
-        self.start_frame = 1
+        self.start_frame = self.context.start_frame
 
         # Threading Specific
 
@@ -54,24 +55,25 @@ class Residual(threading.Thread):
         # for every frame in the video, create a residual_frame given the text files.
         for x in range(self.start_frame, self.frame_count):
 
-            # loading files area
             # stop if thread is killed
-            if not self.alive:
-                return
+            if not self.context.controller.is_alive():
+                break
 
+            # loading files area
             f1 = Frame()
-            f1.load_from_string_wait(self.input_frames_dir + "frame" + str(x + 1) + self.extension_type,
-                                     self.cancel_token)
+            f1.load_from_string_controller(self.input_frames_dir + "frame" + str(x + 1) + self.extension_type,
+                                           self.context.controller)
 
             # Load the neccecary lists to compute this iteration of residual making
-            residual_data = get_list_from_file_wait(self.residual_data_dir + "residual_" + str(x) + ".txt",
-                                                    self.cancel_token)
-            prediction_data = get_list_from_file_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                                                      self.cancel_token)
+            residual_data = get_list_from_file_wait_controller(self.residual_data_dir + "residual_" + str(x) + ".txt",
+                                                               self.context.controller)
+
+            prediction_data = get_list_from_file_wait_controller(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
+                                                                 self.context.controller)
 
             # stop if thread is killed
-            if not self.alive:
-                return
+            if not self.context.controller.is_alive():
+                break
 
             # Create the output files..
             debug_output_file = self.debug_dir + "debug" + str(x + 1) + self.extension_type

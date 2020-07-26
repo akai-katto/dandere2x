@@ -7,7 +7,7 @@ from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 from dandere2xlib.utils.thread_utils import CancellationToken
 # from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
-from wrappers.ffmpeg.progressive_frame_extractor_ffmpeg import ProgressiveFramesExtractorFFMPEG
+from wrappers.cv2.progressive_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
 
 
 class MinDiskUsage(threading.Thread):
@@ -25,23 +25,21 @@ class MinDiskUsage(threading.Thread):
         self.context = context
         self.max_frames_ahead = self.context.max_frames_ahead
         self.frame_count = context.frame_count
-        self.progressive_frame_extractor = ProgressiveFramesExtractorFFMPEG(self.context, self.context.input_file)
-        self.start_frame = 1
+        self.progressive_frame_extractor = ProgressiveFramesExtractorCV2(self.context)
+        self.start_frame = self.context.start_frame
 
-        self.progressive_frame_extractor.start_task()
         # Threading Specific
 
         self.alive = True
         self.cancel_token = CancellationToken()
         self._stopevent = threading.Event()
-        threading.Thread.__init__(self, name="ResidualThread")
+        threading.Thread.__init__(self, name="Min Disk Thread")
 
     def join(self, timeout=None):
         threading.Thread.join(self, timeout)
 
     def kill(self):
         self.alive = False
-        self.progressive_frame_extractor.kill_task()
         self.cancel_token.cancel()
         self._stopevent.set()
 
@@ -63,16 +61,20 @@ class MinDiskUsage(threading.Thread):
         logger = logging.getLogger(__name__)
         for x in range(self.start_frame, self.frame_count - self.context.max_frames_ahead + 1):
             logger.info("on frame x: " + str(x))
+
             # wait for signal to get ahead of MinDiskUsage
-            while x >= self.context.signal_merged_count and self.alive:
+            while x >= self.context.controller.get_current_frame() and self.context.controller.is_alive():
                 time.sleep(.00001)
 
-            if not self.alive:
+            if not self.context.controller.is_alive():
+                self.progressive_frame_extractor.release_capture()
                 return
 
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
             self.__delete_used_files(x)
+
+        self.progressive_frame_extractor.release_capture()
 
     def extract_initial_frames(self):
         """
@@ -136,7 +138,7 @@ class MinDiskUsage(threading.Thread):
         """
         for item in files:
             c = 0
-            while True and self.alive:
+            while True and self.context.controller.is_alive():
                 if os.path.isfile(item):
                     try:
                         os.remove(item)

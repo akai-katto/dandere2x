@@ -2,23 +2,23 @@ import threading
 
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.frame.frame import Frame
-
+from controller import Controller
 
 class AsyncFrameRead(threading.Thread):
     """
     Read an image asynchronously
     """
 
-    def __init__(self, input_image: str, cancel_token=CancellationToken()):
+    def __init__(self, input_image: str, controller=Controller()):
         # calling superclass init
         threading.Thread.__init__(self, name="asyncframeread")
         self.input_image = input_image
         self.loaded_image = Frame()
         self.load_complete = False
-        self.cancel_token = cancel_token
+        self.controller = controller
 
     def run(self):
-        self.loaded_image.load_from_string_wait(self.input_image, self.cancel_token)
+        self.loaded_image.load_from_string_controller(self.input_image, self.controller)
         self.load_complete = True
 
 

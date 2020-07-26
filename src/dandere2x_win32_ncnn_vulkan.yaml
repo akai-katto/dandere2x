@@ -60,7 +60,7 @@ dandere2x:
     workspace_use_temp: false
     delete_workspace_after: true
     extension_type: .jpg
-    bleed: 1
+    bleed: 3
     quality_moving_ratio: 0.55
     step_size: 8
 

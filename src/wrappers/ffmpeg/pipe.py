@@ -80,6 +80,7 @@ class Pipe():
 
     def kill_thread(self):
         self.thread_alive = False
+        self.wait_finish_stop_pipe()
 
     def start_pipe_thread(self):
         console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")

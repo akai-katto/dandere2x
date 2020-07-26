@@ -61,5 +61,25 @@ def absolutify_yaml(unparsed_yaml: yaml, current_folder: str, absolutify_key="..
     parsed_yaml_str = parsed_yaml_str.replace("None", "null")
     parsed_yaml_str = parsed_yaml_str.replace(absolutify_key, current_folder_yaml)
 
-    # load the json back into the config
+    try:
+        yaml.safe_load(parsed_yaml_str)
+    except:
+        # todo, remove absolutify_yaml due to its buggy nature.
+        """
+        This bug occurs when trying to use my "absolutify_yaml" script to fix the users input, which, unfortunately,
+        breaks if a non valid working directory / file is selected. This will be fixed in the near future.
+        """
+        import os
+        import re
+        regex = re.compile('[^a-zA-Z.]')
+        invalid_file_dir = unparsed_yaml['dandere2x']['usersettings']['input_file']
+        path, name = os.path.split(invalid_file_dir)
+
+        fixed_name = regex.sub('', name)
+
+        print("You've encountered a known dandere2x bug I am currently fixing!")
+        print("Try renaming youre input file from %s to %s" % (name,fixed_name))
+        raise Exception("Try renaming youre input file from %s to %s" % (name,fixed_name))
+
+    # load the yaml back into the config
     return yaml.safe_load(parsed_yaml_str)

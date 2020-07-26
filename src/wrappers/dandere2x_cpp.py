@@ -16,6 +16,7 @@ class Dandere2xCppWrapper(threading.Thread):
 
     def __init__(self, context: Context):
         # load stuff from context
+        self.context = context
         self.workspace = context.workspace
         self.dandere2x_cpp_dir = context.dandere2x_cpp_dir
         self.frame_count = context.frame_count
@@ -25,14 +26,15 @@ class Dandere2xCppWrapper(threading.Thread):
         self.residual_images_dir = context.residual_images_dir
         self.log_dir = context.console_output_dir
         self.dandere2x_cpp_subprocess = None
+        self.start_frame = self.context.start_frame
 
         self.exec_command = [self.dandere2x_cpp_dir,
                              self.workspace,
                              str(self.frame_count),
                              str(self.block_size),
                              str(self.step_size),
-                             "n",
-                             str(1),
+                             "r",
+                             str(self.start_frame),
                              self.extension_type]
 
         # Threading Specific
@@ -73,7 +75,7 @@ class Dandere2xCppWrapper(threading.Thread):
         # The dandere2x_cpp output to a text file.
         if get_operating_system() == 'win32':
             self.dandere2x_cpp_subprocess = subprocess.Popen(self.exec_command,
-                                                             creationflags=subprocess.CREATE_NEW_CONSOLE)
+                                                              creationflags=subprocess.CREATE_NEW_CONSOLE)
 
         elif get_operating_system() == 'linux':
             console_output = open(self.log_dir + "dandere2x_cpp.txt", "w")

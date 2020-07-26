@@ -8,6 +8,7 @@ import yaml
 
 from dandere2xlib.utils.yaml_utils import absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
+from controller import Controller
 
 
 class Context:
@@ -67,6 +68,14 @@ class Context:
                 'waifu2x_ncnn_vulkan_legacy_file_name']
             self.waifu2x_ncnn_vulkan_legacy_file_path = os.path.join(self.waifu2x_ncnn_vulkan_legacy_path,
                                                                      self.waifu2x_ncnn_vulkan_legacy_file_name)
+
+        if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "realsr_ncnn_vulkan":
+            self.realsr_ncnn_vulkan_path = self.config_yaml['realsr_ncnn_vulkan'][
+                'realsr_ncnn_vulkan_path']
+            self.realsr_ncnn_vulkan_file_name = self.config_yaml['realsr_ncnn_vulkan'][
+                'realsr_ncnn_vulkan_file_name']
+            self.realsr_ncnn_vulkan_file_path = os.path.join(self.realsr_ncnn_vulkan_path,
+                                                                     self.realsr_ncnn_vulkan_file_name)
 
         if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "caffe":
             self.waifu2x_caffe_cui_dir = self.config_yaml['waifu2x_caffe']['waifu2x_caffe_path']
@@ -133,6 +142,7 @@ class Context:
         self.output_extension = os.path.splitext(self.output_file)[1]
 
         # Developer Settings
+        self.pre_process = self.config_yaml['dandere2x']['developer_settings']['pre_process']
         self.quality_moving_ratio = self.config_yaml['dandere2x']['developer_settings']['quality_moving_ratio']
         self.step_size = self.config_yaml['dandere2x']['developer_settings']['step_size']
         self.bleed = self.config_yaml['dandere2x']['developer_settings']['bleed']
@@ -141,7 +151,8 @@ class Context:
         self.dandere2x_cpp_dir = self.config_yaml['dandere2x']['developer_settings']['dandere2x_cpp_dir']
         self.correction_block_size = 2
         self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
-
+        self.pre_processed_video = self.workspace + "pre_processed" + self.output_extension
+        self.delete_workspace_after = self.config_yaml['dandere2x']['developer_settings']['delete_workspace_after']
         #####################
         # MIN DISK SETTINGS #
         #####################
@@ -149,32 +160,29 @@ class Context:
         #   noisey.mkv and have that be the primarly used video we need to refer back to the original
         #   video file in order for audio track migrations to work properly.
 
-        self.use_min_disk = self.config_yaml['dandere2x']['min_disk_settings']['use_min_disk']
         self.max_frames_ahead = self.config_yaml['dandere2x']['min_disk_settings']['max_frames_ahead']
         self.sound_file = self.config_yaml['dandere2x']['usersettings']['input_file']
 
-        ####################
-        # Signal Variables #
-        ####################
-        """
-        These variables are used in between threads to communicate with one another.
-        """
-        self.signal_merged_count = 0
+        self.start_frame = self.config_yaml['resume_settings']['last_saved_frame']
+        self.controller = Controller()
 
         ##################
         # Video Settings #
         ##################
 
         # load the needed video settings
-        self.video_settings = VideoSettings(self.ffprobe_dir, self.input_file)
+        self.video_settings = None
+        self.frame_rate = None
+        self.width, self.height = None, None
+        self.dar = None
+        self.frame_count = None
 
-        self.frame_rate = self.video_settings.frame_rate
-        self.width, self.height = self.video_settings.width, self.video_settings.height
-        self.dar = self.video_settings.dar
-        self.rotate = self.video_settings.rotate
-
-        # self.frame_count = ffmpeg.count(frames)
-        self.frame_count = self.video_settings.frame_count
+        ###################
+        # Resume Settings #
+        ###################
+        self.resume_session = self.config_yaml['resume_settings']['resume_session']
+        self.last_saved_frame = self.config_yaml['resume_settings']['last_saved_frame']
+        self.incomplete_video = self.config_yaml['resume_settings']['incomplete_video']
 
         #########
         # Other #
@@ -183,21 +191,25 @@ class Context:
         # create and set the log file
         self.set_logger()
 
+
+    def load_video_settings(self, file: str):
+        self.video_settings = VideoSettings(self.ffprobe_dir, file)
+        self.frame_rate = self.video_settings.frame_rate
+        self.width, self.height = self.video_settings.width, self.video_settings.height
+        self.dar = self.video_settings.dar
+        self.rotate = self.video_settings.rotate
+
+        # self.frame_count = ffmpeg.count(frames)
+        self.frame_count = self.video_settings.frame_count
+
+
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
-        import time
-
-        log_name = "dandere2x" + str(time.time()) + ".log"  # create logs using epoch time to denote them
-
-        # create the log output folder if it doesn't exist
-        if not os.path.exists(self.log_folder_dir):
-            os.makedirs(self.log_folder_dir)
-
-        log_file = os.path.join(self.log_folder_dir, log_name)
-
-        print("log file is: " + str(log_file))
-        logging.basicConfig(filename=log_file, level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
+        pass
+        # import time
+        # from dandere2xlib.utils.console_log import ConsoleLogger
+        #
+        # self.logger = ConsoleLogger(10)
 
     def close_logger(self):
         logging.shutdown()
