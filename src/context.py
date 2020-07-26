@@ -171,6 +171,7 @@ class Context:
         self.frame_rate = self.video_settings.frame_rate
         self.width, self.height = self.video_settings.width, self.video_settings.height
         self.dar = self.video_settings.dar
+        self.rotate = self.video_settings.rotate
 
         # self.frame_count = ffmpeg.count(frames)
         self.frame_count = self.video_settings.frame_count
@@ -187,6 +188,11 @@ class Context:
         import time
 
         log_name = "dandere2x" + str(time.time()) + ".log"  # create logs using epoch time to denote them
+
+        # create the log output folder if it doesn't exist
+        if not os.path.exists(self.log_folder_dir):
+            os.makedirs(self.log_folder_dir)
+
         log_file = os.path.join(self.log_folder_dir, log_name)
 
         print("log file is: " + str(log_file))

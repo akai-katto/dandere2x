@@ -3,6 +3,7 @@ import threading
 import time
 
 from dandere2xlib.utils.yaml_utils import get_options_from_section
+from re import split
 
 
 class Pipe():
@@ -36,6 +37,7 @@ class Pipe():
         self.nosound_file = output_no_sound
         self.frame_rate = str(self.context.frame_rate)
         self.dar = self.context.dar
+        self.rotate = self.context.rotate
         self.input_file = self.context.input_file
         self.output_file = self.context.output_file
         self.ffmpeg_dir = self.context.ffmpeg_dir
@@ -54,7 +56,14 @@ class Pipe():
 
         if self.dar:
             self.ffmpeg_pipe_command.append("-vf")
-            self.ffmpeg_pipe_command.append("setdar=" + self.dar.replace(":", "/"))
+            dar = self.dar.replace(":", "/")
+
+            # adjust the aspect ratio for vertical videos with rotate tag
+            if self.rotate == 90 or self.rotate == 270:
+                aspectRatio = split("/", dar)
+                dar = aspectRatio[1] + "/" + aspectRatio[0];
+
+            self.ffmpeg_pipe_command.append("setdar=" + dar)
 
         self.ffmpeg_pipe_command.append(self.nosound_file)
 
