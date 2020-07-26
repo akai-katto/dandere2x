@@ -160,7 +160,6 @@ class Context:
         #   noisey.mkv and have that be the primarly used video we need to refer back to the original
         #   video file in order for audio track migrations to work properly.
 
-        self.use_min_disk = self.config_yaml['dandere2x']['min_disk_settings']['use_min_disk']
         self.max_frames_ahead = self.config_yaml['dandere2x']['min_disk_settings']['max_frames_ahead']
         self.sound_file = self.config_yaml['dandere2x']['usersettings']['input_file']
 
@@ -205,10 +204,11 @@ class Context:
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
-        import time
-        from dandere2xlib.utils.console_log import ConsoleLogger
-
-        self.logger = ConsoleLogger(10)
+        pass
+        # import time
+        # from dandere2xlib.utils.console_log import ConsoleLogger
+        #
+        # self.logger = ConsoleLogger(10)
 
     def close_logger(self):
         logging.shutdown()

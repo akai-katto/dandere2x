@@ -108,8 +108,6 @@ class Residual(threading.Thread):
             if self.context.debug == 1:
                 self.debug_image(self.block_size, f1, prediction_data, residual_data, debug_output_file)
 
-        print("it is broken")
-
     @staticmethod
     def make_residual_image(context: Context, raw_frame: Frame, list_residual: list, list_predictive: list):
         """

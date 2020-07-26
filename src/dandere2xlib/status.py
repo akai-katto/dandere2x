@@ -1,3 +1,4 @@
+import os
 import sys
 import threading
 import time
@@ -44,12 +45,14 @@ class Status(threading.Thread):
 
         last_10 = [0]
 
+        path, name = os.path.split(self.context.input_file) # get file name only
+
         for x in range(self.start_frame, self.frame_count - 1):
 
             if not self.context.controller.is_alive():
                 break
 
-            percent = int((x / self.frame_count) * 100)
+            percent = int(((x+1) / self.frame_count) * 100)
 
             average = 0
             for time_count in last_10:
@@ -58,7 +61,7 @@ class Status(threading.Thread):
             average = round(average / len(last_10), 2)
 
             sys.stdout.write('\r')
-            sys.stdout.write("Frame: [%s] %i%%    Average of Last 10 Frames: %s sec / frame   pipe.piped_frames %s " % (x, percent, average, self.context.controller.get_current_frame()))
+            sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
 
             if len(last_10) == 10:
                 last_10.pop(0)

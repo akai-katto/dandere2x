@@ -24,7 +24,7 @@ class ProgressiveFramesExtractorCV2:
 
     def extract_frames_to(self, stop_frame: int):
 
-        for x in range(0, stop_frame):
+        for x in range(1, stop_frame):
             self.next_frame()
 
     def release_capture(self):

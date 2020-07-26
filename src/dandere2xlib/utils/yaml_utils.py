@@ -51,7 +51,6 @@ def absolutify_yaml(unparsed_yaml: yaml, current_folder: str, absolutify_key="..
     values back to their yaml equivalent.
     """
 
-    print(unparsed_yaml)
     current_folder_yaml = current_folder.replace("\\", "\\\\")
     parsed_yaml_str = str(unparsed_yaml)
 

@@ -59,8 +59,6 @@ class Dandere2xUpscaleFolder:
                 while (file_exists(context.workspace)):
                     time.sleep(1)
 
-            d2x = Dandere2xOld(context)
+            d2x = Dandere2x(context)
             d2x.start()
-
-            wait_on_file(d2x.context.nosound_file)
             d2x.join()

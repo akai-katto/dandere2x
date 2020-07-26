@@ -94,6 +94,5 @@ class Pipe(threading.Thread):
 
         # Starting the Pipe Command
         console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
-        print(ffmpeg_pipe_command)
         self.ffmpeg_pipe_subprocess = subprocess.Popen(ffmpeg_pipe_command, stdin=subprocess.PIPE,
                                                        stdout=console_output)

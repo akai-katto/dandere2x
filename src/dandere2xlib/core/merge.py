@@ -158,7 +158,6 @@ class Merge(threading.Thread):
                                                                 self.context.controller)
 
             if not self.context.controller.is_alive():
-                print("merge thread broken")
                 self.logger.info("Merge.py killed at frame " + str(x))
                 break
 
@@ -198,7 +197,6 @@ class Merge(threading.Thread):
             # Signal to the rest of the dandere2x process we've finished upscaling frame 'x'.
             self.context.controller.update_frame_count(x)
 
-        print("merge thread seems done")
         self.pipe.kill()
         # need to migrate tracks, but not in merge.
 

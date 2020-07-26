@@ -27,7 +27,7 @@ from dandere2xlib.core.residual import Residual
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
 from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, create_directories, \
-    valid_input_resolution, rename_file, force_delete_directory
+    valid_input_resolution, rename_file, force_delete_directory, wait_on_file_controller
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks, append_video_resize_filter, concat_two_videos
 from wrappers.waifu2x.realsr_ncnn_vulkan import RealSRNCNNVulkan
@@ -89,7 +89,7 @@ class Dandere2x(threading.Thread):
         re_encode_video(self.context, input_file, unmigrated, throw_exception=True)
         migrate_tracks(self.context, unmigrated, input_file, pre_processed_video, copy_if_failed=True)
         os.remove(unmigrated)
-
+        wait_on_file_controller(pre_processed_video, controller=self.context.controller)
         self.context.load_video_settings(file=pre_processed_video)
 
     def run(self):
@@ -206,8 +206,7 @@ class Dandere2x(threading.Thread):
         if self.context.start_frame != 1:
             self.min_disk_demon.progressive_frame_extractor.extract_frames_to(self.context.start_frame)
 
-        if self.context.use_min_disk:
-            self.min_disk_demon.extract_initial_frames()
+        self.min_disk_demon.extract_initial_frames()
 
     def __upscale_first_frame(self):
         """ The first frame of any dandere2x session needs to be upscaled fully, and this is done as it's own

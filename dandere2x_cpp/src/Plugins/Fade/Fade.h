@@ -38,10 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include <Image/ImageUtils.h>
-<<<<<<< Updated upstream
-=======
 #include "Image/SSIM/SSIM-MSE.h"
->>>>>>> Stashed changes
 
 using namespace std;
 

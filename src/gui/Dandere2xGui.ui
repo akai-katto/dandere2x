@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>707</width>
-    <height>336</height>
+    <width>688</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="palette">
@@ -142,7 +142,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>210</y>
+      <y>220</y>
       <width>171</width>
       <height>41</height>
      </rect>
@@ -203,7 +203,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>210</y>
+      <y>220</y>
       <width>171</width>
       <height>41</height>
      </rect>
@@ -262,7 +262,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>210</y>
+      <y>220</y>
       <width>171</width>
       <height>41</height>
      </rect>
@@ -318,7 +318,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>260</y>
+      <y>270</y>
       <width>171</width>
       <height>21</height>
      </rect>
@@ -433,7 +433,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>260</y>
+      <y>270</y>
       <width>171</width>
       <height>21</height>
      </rect>
@@ -548,7 +548,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>120</y>
+      <y>130</y>
       <width>161</width>
       <height>71</height>
      </rect>
@@ -933,7 +933,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>90</y>
+      <y>100</y>
       <width>141</width>
       <height>21</height>
      </rect>
@@ -1045,7 +1045,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>50</y>
+      <y>60</y>
       <width>141</width>
       <height>21</height>
      </rect>
@@ -1177,7 +1177,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>20</y>
+      <y>30</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -1289,7 +1289,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>90</y>
+      <y>100</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -1401,7 +1401,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>120</y>
+      <y>130</y>
       <width>161</width>
       <height>71</height>
      </rect>
@@ -1789,7 +1789,7 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>130</y>
+      <y>140</y>
       <width>51</width>
       <height>21</height>
      </rect>
@@ -1951,7 +1951,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>130</y>
+      <y>140</y>
       <width>131</width>
       <height>21</height>
      </rect>
@@ -2063,7 +2063,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>160</y>
+      <y>170</y>
       <width>131</width>
       <height>21</height>
      </rect>
@@ -2183,7 +2183,7 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>160</y>
+      <y>170</y>
       <width>51</width>
       <height>21</height>
      </rect>
@@ -2325,7 +2325,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>90</y>
+      <y>100</y>
       <width>141</width>
       <height>21</height>
      </rect>
@@ -2437,7 +2437,7 @@
     <property name="geometry">
      <rect>
       <x>670</x>
-      <y>160</y>
+      <y>170</y>
       <width>40</width>
       <height>20</height>
      </rect>
@@ -2555,7 +2555,7 @@
     <property name="geometry">
      <rect>
       <x>669</x>
-      <y>130</y>
+      <y>140</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -2672,7 +2672,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>250</y>
+      <y>260</y>
       <width>171</width>
       <height>41</height>
      </rect>
@@ -2790,9 +2790,9 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>30</y>
+      <y>50</y>
       <width>171</width>
-      <height>41</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="palette">
@@ -2846,7 +2846,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>20</y>
+      <y>30</y>
       <width>141</width>
       <height>21</height>
      </rect>
@@ -2954,13 +2954,181 @@
      <string>Dandere2x Config</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="download_externals_button">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>10</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="Mid">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>4</red>
+          <green>79</green>
+          <blue>160</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="Mid">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>4</red>
+          <green>79</green>
+          <blue>160</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="Mid">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>4</red>
+          <green>79</green>
+          <blue>160</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="font">
+     <font>
+      <family>Microsoft YaHei Light</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Download Externals</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="config_select_box">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>60</y>
+      <width>171</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="BrightText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>225</red>
+          <green>225</green>
+          <blue>225</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="BrightText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>225</red>
+          <green>225</green>
+          <blue>225</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>120</red>
+          <green>120</green>
+          <blue>120</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="BrightText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>83</red>
+          <green>87</green>
+          <blue>96</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="font">
+     <font>
+      <family>Yu Gothic</family>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="currentText">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>707</width>
+     <width>688</width>
      <height>21</height>
     </rect>
    </property>

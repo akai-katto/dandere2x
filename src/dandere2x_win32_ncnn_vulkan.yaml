@@ -31,12 +31,12 @@ dandere2x:
     output_folder: ..\workspace\multiple_videos_output\
 
     log_folder: ..\workspace\log_folder\
-    waifu2x_type: realsr_ncnn_vulkan
-    preserve_frames: true
+    waifu2x_type: vulkan
+    preserve_frames: false
     block_size: 20
     denoise_level: 3
-    quality_minimum: 95
-    scale_factor: 4
+    quality_minimum: 5
+    scale_factor: 2
 
   min_disk_settings:
     #        use_min_disk: Use min_disk or not.
@@ -47,7 +47,6 @@ dandere2x:
     #                          Options: [20,1000]
 
 
-    use_min_disk: True
     max_frames_ahead: 20
 
 
@@ -59,7 +58,7 @@ dandere2x:
     workspace: ..\workspace\sideways_vid\ # path to the workspace folder (lots of files will be written here)
     dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
     workspace_use_temp: false
-    gui_delete_workspace_after: false
+    delete_workspace_after: true
     extension_type: .jpg
     bleed: 3
     quality_moving_ratio: 0.55

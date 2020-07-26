@@ -15,6 +15,7 @@ import time
 from sys import platform
 
 from pip._vendor.distlib.compat import raw_input
+from wget import bar_thermometer, bar_adaptive
 
 from dandere2xlib.utils.thread_utils import CancellationToken
 
@@ -366,18 +367,43 @@ def verify_user_settings(context):
 
         context.block_size = new_block_size
 
+
+def bar_custom(current, total, width=80):
+    global currentrelease, startdownload
+
+    # current       -     time.time() - startdownload
+    # total-current -     eta
+
+    # eta ==   (total-current)*(time.time()-startdownload)) / current
+
+    try:  # div by zero
+        eta = int(((time.time() - startdownload) * (total - current)) / current)
+    except Exception:
+        eta = 0
+
+    avgdown = (current / (time.time() - startdownload)) / 1024
+
+    currentpercentage = int(current / total * 100)
+
+    print("\r Downloading release [{}]: [{}%] [{:.2f} MB / {:.2f} MB] ETA: [{} sec] AVG: [{:.2f} kB/s]".format(
+        currentrelease, currentpercentage, current / 1024 / 1024, total / 1024 / 1024, eta, avgdown), end='',
+        flush=True)
+
+
 def download_and_extract_externals(dandere2x_dir: str):
     import wget
     import zipfile
     import os
 
+    print("Downloading: " + "https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip")
     download_file = dandere2x_dir + "download.zip"
-    wget.download('https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.0.1/externals.zip',
-                  out=download_file)
+    wget.download('https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip',
+                  out=download_file, bar=bar_adaptive)
 
     with zipfile.ZipFile(download_file, 'r') as zip_ref:
         zip_ref.extractall(dandere2x_dir)
 
+    print("finished downloading")
     os.remove(download_file)
 
 def main():

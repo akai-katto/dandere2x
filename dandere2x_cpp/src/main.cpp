@@ -11,24 +11,7 @@
  */
 
 
-void benchmark(){
-#include "Image/Image.h"
-#include "Plugins/PFrame/PFrame.h"
 
-#include "BlockMatch/ExhaustiveSearch.h"
-<<<<<<< Updated upstream
-=======
-#include "Image/SSIM/SSIM-MSE.h"
-#include "Image/SSIM/SsimStatsFunctions.h"
->>>>>>> Stashed changes
-
-    Image im1 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame120.jpg");
-    Image im2 = Image("C:\\Users\\windwoz\\Documents\\github_projects\\src\\workspace\\violet_movement_workspace_2\\inputs\\frame121.jpg");
-
-    Block b = ExhaustiveSearch::exhaustive_search(im1, im2, 500, 500, 20);
-
-    std::cout << b.x_start << " -> " << b.x_end << b.y_start << " -> " << b.y_end << std::endl;
-}
 
 int main(int argc, char **argv) {
 
