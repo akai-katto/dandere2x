@@ -2,9 +2,11 @@ import os
 import sys
 import threading
 import time
+import logging
 
 from context import Context
 from dandere2xlib.utils.thread_utils import CancellationToken
+import ctypes
 
 
 # todo
@@ -22,6 +24,7 @@ class Status(threading.Thread):
         self.is_alive = True
         self._is_stopped = False
         self.start_frame = self.context.start_frame
+        self.log = logging.getLogger()
 
         # Threading Specific
 
@@ -31,9 +34,12 @@ class Status(threading.Thread):
         threading.Thread.__init__(self, name="StatusTHread")
 
     def join(self, timeout=None):
+        self.log.info("Join called.")
         threading.Thread.join(self, timeout)
+        self.log.info("Join finished.")
 
     def kill(self):
+        self.log.info("Kill called.")
         self.alive = False
         self.cancel_token.cancel()
         self._stopevent.set()
@@ -42,7 +48,7 @@ class Status(threading.Thread):
         self.start_frame = start_frame
 
     def run(self):
-
+        self.log.info("Run called.")
         last_10 = [0]
 
         path, name = os.path.split(self.context.input_file) # get file name only
@@ -60,8 +66,9 @@ class Status(threading.Thread):
 
             average = round(average / len(last_10), 2)
 
-            sys.stdout.write('\r')
-            sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
+            # sys.stdout.write('\r')
+            # sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
+            ctypes.windll.kernel32.SetConsoleTitleW("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
 
             if len(last_10) == 10:
                 last_10.pop(0)

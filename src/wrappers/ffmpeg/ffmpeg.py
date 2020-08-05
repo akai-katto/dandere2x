@@ -156,12 +156,12 @@ def append_video_resize_filter(context: Context):
     For dandere2x, we need a very specific set of video resolutions to work with.  This method applies that filter
     to the video in order for it to work correctly.
     """
-
-    print("Forcing Resizing to match blocksize..")
+    log = logging.getLogger()
     width, height = get_a_valid_input_resolution(context.width, context.height, context.block_size)
 
-    print("New width -> " + str(width))
-    print("New height -> " + str(height))
+    log.info("Dandere2x is resizing the video in order to make the resolution compatible with your settings... ")
+    log.info("New width -> %s " % str(width))
+    log.info("New height -> %s " % str(height))
 
     context.width = width
     context.height = height

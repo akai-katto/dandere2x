@@ -135,7 +135,7 @@ class Frame:
         count = 0
         while not exists and controller.is_alive():
             if count % 10000 == 0:
-                logger.info(input_string + " dne")
+                logger.debug(input_string + " dne")
             exists = os.path.isfile(input_string)
             count += 1
             time.sleep(.2)
@@ -146,10 +146,10 @@ class Frame:
                 self.load_from_string(input_string)
                 loaded = True
             except PermissionError:
-                logger.info("Permission Error")
+                logger.debug("Permission Error")
                 loaded = False
             except ValueError:
-                logger.info("Value Error")
+                logger.debug("Value Error")
                 loaded = False
 
     def save_image(self, out_location):

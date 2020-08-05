@@ -1,6 +1,7 @@
 import subprocess
 import threading
 import time
+import logging
 
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 
@@ -17,6 +18,7 @@ class Pipe(threading.Thread):
         # load context
         self.context = context
         self.output_no_sound = output_no_sound
+        self.log = logging.getLogger()
 
         # class specific
         self.ffmpeg_pipe_subprocess = None
@@ -26,12 +28,17 @@ class Pipe(threading.Thread):
         self.lock_buffer = False
 
     def kill(self) -> None:
+        self.log.info("Kill called.")
         self.alive = False
 
     def join(self, timeout=None) -> None:
+        self.log.info("Join called.")
         threading.Thread.join(self)
+        self.log.info("Join finished.")
 
     def run(self) -> None:
+        self.log.info("Run Called")
+
         self.alive = True
         self._setup_pipe()
 

@@ -29,7 +29,7 @@ class Residual(threading.Thread):
         self.debug_dir = context.debug_dir
         self.debug = context.debug
         self.temp_image = context.temp_image_folder + "tempimage.jpg"
-        self.logger = logging.getLogger(__name__)
+        self.log = logging.getLogger()
         self.start_frame = self.context.start_frame
 
         # Threading Specific
@@ -40,9 +40,12 @@ class Residual(threading.Thread):
         threading.Thread.__init__(self, name="ResidualThread")
 
     def join(self, timeout=None):
+        self.log.info("Join called.")
         threading.Thread.join(self, timeout)
+        self.log.info("Join finished.")
 
     def kill(self):
+        self.log.info("Kill called.")
         self.alive = False
         self.cancel_token.cancel()
         self._stopevent.set()
@@ -51,7 +54,7 @@ class Residual(threading.Thread):
         self.start_frame = start_frame
 
     def run(self):
-
+        self.log.info("Run called.")
         # for every frame in the video, create a residual_frame given the text files.
         for x in range(self.start_frame, self.frame_count):
 

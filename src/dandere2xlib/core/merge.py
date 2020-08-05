@@ -39,7 +39,7 @@ class Merge(threading.Thread):
         self.extension_type = context.extension_type
         self.nosound_file = context.nosound_file
         self.preserve_frames = context.preserve_frames
-        self.logger = logging.getLogger(__name__)
+        self.log = logging.getLogger()
         self.start_frame = self.context.start_frame
 
         # setup the pipe for merging
@@ -54,10 +54,13 @@ class Merge(threading.Thread):
         threading.Thread.__init__(self, name="MergeThread")
 
     def join(self, timeout=None):
+        self.log.info("Join called.")
         self.pipe.join()
         threading.Thread.join(self, timeout)
+        self.log.info("Join finished.")
 
     def kill(self):
+        self.log.info("Kill called.")
         self.alive = False
         self.pipe.kill()
         self.cancel_token.cancel()
@@ -114,7 +117,7 @@ class Merge(threading.Thread):
         return out_image
 
     def run(self):
-
+        self.log.info("Started")
         self.pipe.start()
         # Load the genesis image + the first upscaled image.
         frame_previous = Frame()
@@ -158,10 +161,9 @@ class Merge(threading.Thread):
                                                                 self.context.controller)
 
             if not self.context.controller.is_alive():
-                self.logger.info("Merge.py killed at frame " + str(x))
+                self.log.info(" Merge thread killed at frame %s " % str(x))
                 break
 
-            self.logger.info("Upscaling frame " + str(x))
             # Create the actual image itself.
             frame_next = self.make_merge_image(self.context, f1, frame_previous,
                                                prediction_data_list, residual_data_list,

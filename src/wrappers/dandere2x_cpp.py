@@ -1,7 +1,6 @@
 import logging
 import subprocess
 import threading
-
 import psutil
 
 from context import Context
@@ -27,6 +26,7 @@ class Dandere2xCppWrapper(threading.Thread):
         self.log_dir = context.console_output_dir
         self.dandere2x_cpp_subprocess = None
         self.start_frame = self.context.start_frame
+        self.log = logging.getLogger()
 
         self.exec_command = [self.dandere2x_cpp_dir,
                              self.workspace,
@@ -45,16 +45,12 @@ class Dandere2xCppWrapper(threading.Thread):
         threading.Thread.__init__(self, name="Dandere2xCpp")
 
     def join(self, timeout=None):
-        print("dandere2xcpp killed")
+        self.log.info("Thread joined")
         threading.Thread.join(self, timeout)
 
     def kill(self):
-        self.alive = False
-        self.cancel_token.cancel()
-        self._stopevent.set()
-
-        d2xcpp_psutil = psutil.Process(self.dandere2x_cpp_subprocess.pid)
-        d2xcpp_psutil.kill()
+        self.log.info("Killing thread")
+        self.dandere2x_cpp_subprocess.kill()
 
     def set_start_frame(self, start_frame):
         self.exec_command = [self.dandere2x_cpp_dir,
@@ -82,6 +78,8 @@ class Dandere2xCppWrapper(threading.Thread):
             console_output.write(str(self.exec_command))
             self.dandere2x_cpp_subprocess = subprocess.Popen(self.exec_command, shell=False, stderr=console_output,
                                                              stdout=console_output)
+
+        self.dandere2x_cpp_subprocess.wait()
 
         if self.dandere2x_cpp_subprocess.returncode == 0:
             logger.info("d2xcpp finished correctly")

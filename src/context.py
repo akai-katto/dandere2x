@@ -3,7 +3,6 @@ import os
 import pathlib
 import sys
 import tempfile
-
 import yaml
 
 from dandere2xlib.utils.yaml_utils import absolutify_yaml
@@ -202,6 +201,12 @@ class Context:
         # self.frame_count = ffmpeg.count(frames)
         self.frame_count = self.video_settings.frame_count
 
+    def log_all_variables(self):
+        log = logging.getLogger()
+
+        log.info("Context Settings:")
+        for item in self.__dict__:
+            log.info("%s : %s" % (item, self.__dict__[item]))
 
     # the workspace folder needs to exist before creating the log file, hence the method
     def set_logger(self):
@@ -210,9 +215,6 @@ class Context:
         # from dandere2xlib.utils.console_log import ConsoleLogger
         #
         # self.logger = ConsoleLogger(10)
-
-    def close_logger(self):
-        logging.shutdown()
 
     def update_frame_count(self):
         """

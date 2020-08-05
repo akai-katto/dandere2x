@@ -53,7 +53,7 @@ def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
     count = 0
     while not exists and not cancel.is_cancelled:
         if count / 500 == 0:
-            logger.info(text_file + " does not exist, waiting")
+            logger.debug(text_file + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
@@ -84,14 +84,21 @@ def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
 
 def force_delete_directory(directory):
     """ Deletes a workspace with really aggressive functions calls. shutil.rm had too many issues. """
+
+    log = logging.getLogger()
+
     if os.path.isdir(directory):
+        log.info("%s exists, attempting to delete the workspace folder." % directory)
         try:
             os.system('rmdir /S /Q "{}"'.format(directory))
         except PermissionError:
-            print("Trying to delete workspace with rmtree threw PermissionError - Dandere2x may not work.")
-            print("Continuing along...")
+            log.warning("Trying to delete workspace with rmtree threw PermissionError - Dandere2x may not work.")
+            log.warning("Dandere2x will continue regardless of this. ")
 
+        # Even though os.system rm was called, it's possible for windows to lag behind, so make sure the folder actually
+        # was deleted before continuing.
         while file_exists(directory):
+            log.warning("%s still exists, waiting..." % directory)
             time.sleep(1)
 
 
@@ -102,7 +109,7 @@ def get_list_from_file_wait_controller(text_file: str, controller=Controller()):
     count = 0
     while not exists and controller.is_alive():
         if count / 500 == 0:
-            logger.info(text_file + " does not exist, waiting")
+            logger.debug(text_file + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
@@ -139,7 +146,7 @@ def wait_on_file(file_string: str, cancel=CancellationToken()):
     count = 0
     while not exists and not cancel.is_cancelled:
         if count / 500 == 0:
-            logger.info(file_string + " does not exist, waiting")
+            logger.debug(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
         count += 1
         time.sleep(.001)
@@ -151,7 +158,7 @@ def wait_on_file_controller(file_string: str, controller: Controller):
     count = 0
     while not exists and controller.is_alive():
         if count / 500 == 0:
-            logger.info(file_string + " does not exist, waiting")
+            logger.debug(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
         count += 1
         time.sleep(.001)
@@ -165,7 +172,7 @@ def wait_on_either_file(file_1: str, file_2: str, cancel=CancellationToken()):
     count = 0
     while not (exists_1 or exists_2) and not cancel.is_cancelled:
         if count / 500 == 0:
-            logger.info(file_1 + " does not exist, waiting")
+            logger.debug(file_1 + " does not exist, waiting")
         exists_1 = os.path.isfile(file_1)
         exists_2 = os.path.isfile(file_2)
 
@@ -180,7 +187,7 @@ def wait_on_either_file_controller(file_1: str, file_2: str, controller: Control
     count = 0
     while not (exists_1 or exists_2) and controller.is_alive():
         if count / 500 == 0:
-            logger.info(file_1 + " does not exist, waiting")
+            logger.debug(file_1 + " does not exist, waiting")
         exists_1 = os.path.isfile(file_1)
         exists_2 = os.path.isfile(file_2)
 
@@ -195,7 +202,7 @@ def wait_on_delete_dir(dir: str):
     count = 0
     while exists:
         if count / 500 == 0:
-            logger.info(dir + " does not exist, waiting")
+            logger.debug(dir + " does not exist, waiting")
         exists = os.path.isfile(dir)
         count += 1
         time.sleep(.001)
@@ -276,21 +283,22 @@ def valid_input_resolution(width: int, height: int, block_size: int):
 def create_directories(workspace: str, directories_list: list):
     """
     In dandere2x's context file, there's a list of directories"""
+    log = logging.getLogger()
+    log.info("Creating directories. Starting with %s first" % workspace)
 
     # need to create workspace first or else subdirectories wont get made correctly
     try:
         os.makedirs(workspace)
     except:
-
-        print("creating of %s failed" % workspace)
+        log.warning("Creation of directory %s failed.. dandere2x may still work but be advised. " % workspace)
     # create each directory
     for subdirectory in directories_list:
         try:
             os.makedirs(subdirectory)
         except OSError:
-            print("Creation of the directory %s failed" % subdirectory)
+            log.warning("Creation of the directory %s failed.. dandere2x may still work but be advised. " % workspace)
         else:
-            print("Successfully created the directory %s " % subdirectory)
+            log.info("Successfully created the directory %s " % subdirectory)
 
 
 def delete_directories(directories_list: list):

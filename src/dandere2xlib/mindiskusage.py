@@ -60,7 +60,7 @@ class MinDiskUsage(threading.Thread):
         """
         logger = logging.getLogger(__name__)
         for x in range(self.start_frame, self.frame_count - self.context.max_frames_ahead + 1):
-            logger.info("on frame x: " + str(x))
+            logger.debug("on frame x: " + str(x))
 
             # wait for signal to get ahead of MinDiskUsage
             while x >= self.context.controller.get_current_frame() and self.context.controller.is_alive():
