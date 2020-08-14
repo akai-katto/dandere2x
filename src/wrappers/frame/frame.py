@@ -9,7 +9,6 @@ import imageio
 import numpy
 import numpy as np
 from PIL import Image
-from scipy import misc  # pip install Pillow
 
 from dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file
 
@@ -202,9 +201,10 @@ class Frame:
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
         else:
-            misc.imsave(out_location + "temp" + extension, self.frame)
-            wait_on_file(out_location + "temp" + extension)
-            rename_file(out_location + "temp" + extension, out_location)
+            #todo, fix this
+            self.logger.error("Aka-katto has removed this customization you added - he's going to re-add it later.")
+            self.logger.error('Sorry about that : \\')
+            raise ValueError('See Console')
 
     def copy_image(self, frame_other):
         """

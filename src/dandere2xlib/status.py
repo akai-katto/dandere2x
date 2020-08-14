@@ -12,6 +12,7 @@ import ctypes
 # todo
 # This could probably be improved visually for the user.. it's not the most pleasing to look at
 # Also, in a very niche case the GUI didn't catch up with the deletion of files, so it ceased updating
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
 
 
 class Status(threading.Thread):
@@ -68,7 +69,13 @@ class Status(threading.Thread):
 
             # sys.stdout.write('\r')
             # sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
-            ctypes.windll.kernel32.SetConsoleTitleW("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
+
+            if get_operating_system() == 'win32':
+                ctypes.windll.kernel32.SetConsoleTitleW("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
+            else:
+                sys.stdout.write('\r')
+                sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (
+                name, x, percent, average))
 
             if len(last_10) == 10:
                 last_10.pop(0)

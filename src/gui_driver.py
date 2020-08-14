@@ -211,9 +211,8 @@ class AppWindow(QMainWindow):
 
         print(os.getcwd())
 
-        if get_operating_system() == 'win32':
-            with open(os.path.join(self.this_folder, self.config_file), "r") as read_file:
-                config_yaml = yaml.safe_load(read_file)
+        with open(os.path.join(self.this_folder, self.config_file), "r") as read_file:
+            config_yaml = yaml.safe_load(read_file)
 
         if self.is_suspend_file(self.input_file):
             print("is suspend file")

@@ -49,9 +49,6 @@ class Dandere2x(threading.Thread):
         threading.Thread.__init__(self, name="Dandere2x Thread")
         self.set_logging()
 
-        import ctypes
-        ctypes.windll.kernel32.SetConsoleTitleA("My New Title")
-
         # Class Specific
         self.context = context
         self.alive = False
