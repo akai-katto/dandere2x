@@ -42,3 +42,5 @@ cd ..
 
 # create workspace folder (this needs to exist I think?)
 mkdir -p workspace
+
+echo success, be sure to install requirements and you should be good to go with "python3 main.py" now. 
