@@ -1,11 +1,9 @@
-import io
 import json
 import subprocess
 
 
 # Credit: https://github.com/k4yt3x/video2x
 # Changes: Not much, just got it to work with d2x.
-from io import StringIO
 
 
 def get_video_info(ffprobe_dir, input_video):
@@ -67,6 +65,7 @@ def get_aspect_ratio(ffprobe_dir, input_video):
 
     return return_string
 
+
 def get_width_height(ffprobe_dir, input_video):
     """ Gets input video information
     This method reads input video information
@@ -96,6 +95,7 @@ def get_width_height(ffprobe_dir, input_video):
     return_string = return_bytes.decode("utf-8").split(",")
 
     return int(return_string[0]), int(return_string[1])
+
 
 def get_frame_rate(ffprobe_dir, input_video):
     """ Gets input video information

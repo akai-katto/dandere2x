@@ -13,7 +13,10 @@
 """"""
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
-Purpose: 
+Purpose: This is the ultimate driver class that facilitates all the 
+         major operations for Dandere2x to work. If you're looking
+         to understand how Dandere2x works, this is the best starting
+         point. 
  
 ====================================================================="""
 import logging
@@ -57,7 +60,7 @@ class Dandere2x(threading.Thread):
         # Class Specific Declarations
         """ 
         These are re-set later, but due to lack of python member-variable declarations, they're initially set here so the IDE can 
-        do autocomplete corrections / predictions. It's important they're correctly assigned when self.run() is called. 
+        do autocomplete corrections / predictions. It's important they're correctly re-assigned when self.run() is called. 
         """
         self.min_disk_demon = MinDiskUsage(self.context)
         self.status_thread = Status(self.context)
@@ -93,6 +96,7 @@ class Dandere2x(threading.Thread):
 
         self.alive = True
 
+    # todo, need to implement DAR fix bug.
     def _pre_processing(self):
         """
         This MUST be the first thing `run` calls, or else dandere2x.py will not work!
@@ -116,7 +120,8 @@ class Dandere2x(threading.Thread):
             need to resize the video in that scenario.
             """
 
-            self.log.warning("Input video needs to be resized to be compatible with block-size - this is expected behaviour.")
+            self.log.warning(
+                "Input video needs to be resized to be compatible with block-size - this is expected behaviour.")
             append_video_resize_filter(self.context)
 
         create_directories(self.context.workspace, self.context.directories)
@@ -168,17 +173,23 @@ class Dandere2x(threading.Thread):
         self.log.info("Join finished.")
 
     def _successful_completion(self):
-
+        """
+        This is called when Dandere2x 'finishes' successfully, and the finishing conditions (such as making sure
+        subtitles get migrated, merging videos (if necessary), and deleting the workspace.
+        """
         self.log.info("It seems Dandere2x has finished successfully. Starting the final steps to complete your video.")
 
         if self.context.resume_session:
+            """
+            In the event if Dandere2x is resuming a session, it'll need to merge `incomplete_video` (see yaml) with
+            the current session's video, in order to make a complete video. 
+            """
+
             self.log.info("This session is a resume session. Dandere2x will need to merge the two videos. ")
             file_to_be_concat = self.context.workspace + "file_to_be_concat.mp4"
 
             rename_file(self.context.nosound_file, file_to_be_concat)
-            concat_two_videos(self.context, self.context.incomplete_video,
-                              file_to_be_concat,
-                              self.context.nosound_file)
+            concat_two_videos(self.context, self.context.incomplete_video, file_to_be_concat, self.context.nosound_file)
             self.log.info("Merging the two videos is done. ")
 
         migrate_tracks(self.context, self.context.nosound_file,
@@ -196,7 +207,7 @@ class Dandere2x(threading.Thread):
 
         self.log.warning("Starting Kill Conditions...")
         self.log.warning("Dandere2x is saving the meta-data needed to resume this session later.")
-        
+
         suspended_file = self.context.workspace + str(self.context.controller.get_current_frame() + 1) + ".mp4"
         os.rename(self.context.nosound_file, suspended_file)
         self.context.nosound_file = suspended_file

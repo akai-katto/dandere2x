@@ -7,8 +7,8 @@ from context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait, wait_on_file, \
-    get_list_from_file_wait_controller, wait_on_file_controller
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, \
+    wait_on_file_controller
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.ffmpeg.pipe_thread import Pipe
 from wrappers.frame.asyncframe import AsyncFrameWrite, AsyncFrameRead
@@ -121,8 +121,9 @@ class Merge(threading.Thread):
         self.pipe.start()
         # Load the genesis image + the first upscaled image.
         frame_previous = Frame()
-        frame_previous.load_from_string_controller(self.merged_dir + "merged_" + str(self.start_frame) + self.extension_type,
-                                                   self.context.controller)
+        frame_previous.load_from_string_controller(
+            self.merged_dir + "merged_" + str(self.start_frame) + self.extension_type,
+            self.context.controller)
 
         self.pipe.save(frame_previous)
 
@@ -151,14 +152,17 @@ class Merge(threading.Thread):
             # Loop-iteration Core #
             #######################
             # Load the needed vectors to create the merged image.
-            prediction_data_list = get_list_from_file_wait_controller(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                                                                      self.context.controller)
-            residual_data_list = get_list_from_file_wait_controller(self.residual_data_dir + "residual_" + str(x) + ".txt",
-                                                                    self.context.controller)
-            correction_data_list = get_list_from_file_wait_controller(self.correction_data_dir + "correction_" + str(x) + ".txt",
-                                                                      self.context.controller)
-            fade_data_list = get_list_from_file_wait_controller(self.fade_data_dir + "fade_" + str(x) + ".txt",
-                                                                self.context.controller)
+            prediction_data_list = get_list_from_file_and_wait(
+                self.pframe_data_dir + "pframe_" + str(x) + ".txt",
+                self.context.controller)
+            residual_data_list = get_list_from_file_and_wait(
+                self.residual_data_dir + "residual_" + str(x) + ".txt",
+                self.context.controller)
+            correction_data_list = get_list_from_file_and_wait(
+                self.correction_data_dir + "correction_" + str(x) + ".txt",
+                self.context.controller)
+            fade_data_list = get_list_from_file_and_wait(self.fade_data_dir + "fade_" + str(x) + ".txt",
+                                                         self.context.controller)
 
             if not self.context.controller.is_alive():
                 self.log.info(" Merge thread killed at frame %s " % str(x))

@@ -15,9 +15,7 @@ import time
 from sys import platform
 
 from pip._vendor.distlib.compat import raw_input
-from wget import bar_thermometer, bar_adaptive
-
-from dandere2xlib.utils.thread_utils import CancellationToken
+from wget import bar_adaptive
 
 
 def get_operating_system():
@@ -25,6 +23,7 @@ def get_operating_system():
         return 'linux'
     elif platform == "win32":
         return 'win32'
+
 
 def show_exception_and_exit(exc_type, exc_value, tb):
     """
@@ -36,55 +35,8 @@ def show_exception_and_exit(exc_type, exc_value, tb):
     sys.exit(-1)
 
 
-
-
-
-
-# if the value in the key value pair exists, add it.
-# if the key is just 'true', only add the key
-
-# THis doesnt work with multiple keys and import warnings
-
-# returns a list given a text file (representing a string)
-
-def get_list_from_file_wait(text_file: str, cancel=CancellationToken()):
-    logger = logging.getLogger(__name__)
-    exists = exists = os.path.isfile(text_file)
-    count = 0
-    while not exists and not cancel.is_cancelled:
-        if count / 500 == 0:
-            logger.debug(text_file + " does not exist, waiting")
-        exists = os.path.isfile(text_file)
-        count += 1
-        time.sleep(.01)
-
-    if cancel.is_cancelled:
-        return
-
-    file = None
-    try:
-        file = open(text_file, "r")
-    except PermissionError:
-        logging.info("permission error on file" + text_file)
-
-    while not file:
-        try:
-            file = open(text_file, "r")
-        except PermissionError:
-            logging.info("permission error on file" + text_file)
-
-    text_list = file.read().split('\n')
-    file.close()
-
-    if len(text_list) == 1:
-        return []
-
-    return text_list
-
-
 def force_delete_directory(directory):
     """ Deletes a workspace with really aggressive functions calls. shutil.rm had too many issues. """
-
     log = logging.getLogger()
 
     if os.path.isdir(directory):
@@ -103,7 +55,9 @@ def force_delete_directory(directory):
 
 
 from controller import Controller
-def get_list_from_file_wait_controller(text_file: str, controller=Controller()):
+
+
+def get_list_from_file_and_wait(text_file: str, controller=Controller()):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
@@ -138,21 +92,7 @@ def get_list_from_file_wait_controller(text_file: str, controller=Controller()):
     return text_list
 
 
-# many times a file may not exist yet, so just have this function
-# wait if it does not.
-def wait_on_file(file_string: str, cancel=CancellationToken()):
-    logger = logging.getLogger(__name__)
-    exists = os.path.isfile(file_string)
-    count = 0
-    while not exists and not cancel.is_cancelled:
-        if count / 500 == 0:
-            logger.debug(file_string + " does not exist, waiting")
-        exists = os.path.isfile(file_string)
-        count += 1
-        time.sleep(.001)
-
-
-def wait_on_file_controller(file_string: str, controller: Controller):
+def wait_on_file_controller(file_string: str, controller = Controller()):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
@@ -165,22 +105,7 @@ def wait_on_file_controller(file_string: str, controller: Controller):
 
 
 # for renaming function, break when either file exists
-def wait_on_either_file(file_1: str, file_2: str, cancel=CancellationToken()):
-    logger = logging.getLogger(__name__)
-    exists_1 = os.path.isfile(file_1)
-    exists_2 = os.path.isfile(file_2)
-    count = 0
-    while not (exists_1 or exists_2) and not cancel.is_cancelled:
-        if count / 500 == 0:
-            logger.debug(file_1 + " does not exist, waiting")
-        exists_1 = os.path.isfile(file_1)
-        exists_2 = os.path.isfile(file_2)
-
-        count += 1
-        time.sleep(.001)
-
-# for renaming function, break when either file exists
-def wait_on_either_file_controller(file_1: str, file_2: str, controller: Controller):
+def wait_on_either_file_controller(file_1: str, file_2: str, controller = Controller()):
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)
@@ -194,29 +119,13 @@ def wait_on_either_file_controller(file_1: str, file_2: str, controller: Control
         count += 1
         time.sleep(.001)
 
-# Sometimes dandere2x is offsync with window's handlers, and a directory might be deleted after
-# the call was made, so in some cases make sure it's completely deleted before moving on during runtime
-def wait_on_delete_dir(dir: str):
-    logger = logging.getLogger(__name__)
-    exists = dir_exists(dir)
-    count = 0
-    while exists:
-        if count / 500 == 0:
-            logger.debug(dir + " does not exist, waiting")
-        exists = os.path.isfile(dir)
-        count += 1
-        time.sleep(.001)
 
-
-# many times a file may not exist yet, so just have this function
-# wait if it does not.
+# many times a file may not exist yet, so just have this function wait if it does not.
 def file_exists(file_string: str):
-    logger = logging.getLogger(__name__)
     return os.path.isfile(file_string)
 
 
-# many times a file may not exist yet, so just have this function
-# wait if it does not.
+# many times a file may not exist yet, so just have this function wait if it does not.
 def file_is_empty(file_string: str):
     return os.path.getsize(file_string) == 0
 
@@ -226,8 +135,8 @@ def dir_exists(file_string: str):
     return os.path.isdir(file_string)
 
 
-# custom function to rename file if it already exists
 def rename_file(file1, file2):
+    """Custom rename file method, catches error and overwrites file2 if output file exists already."""
     try:
         os.rename(file1, file2)
     except FileExistsError:
@@ -236,6 +145,7 @@ def rename_file(file1, file2):
 
 
 def rename_file_wait(file1, file2):
+    log = logging.getLogger()
     renamed = False
 
     while not renamed:
@@ -243,7 +153,7 @@ def rename_file_wait(file1, file2):
             os.rename(file1, file2)
             renamed = True
         except PermissionError:
-            print("permission error thrown")
+            log.warning("Permission error thrown, attempting again.")
             pass
 
 
@@ -251,17 +161,6 @@ def rename_file_wait(file1, file2):
 # to maximize efficiency, save the images that will be upscaled by waifu2x in lexiconic ordering.
 def get_lexicon_value(digits: int, val: int):
     return str(val).zfill(digits)
-
-
-# get frame count from a string input
-def get_seconds_from_time(time_frame: int):
-    splitted = time_frame.split(":")
-    print(splitted)
-    hours_seconds = int(splitted[0]) * 3600
-    minutes_seconds = int(splitted[1]) * 60
-    seconds = int(splitted[2])
-
-    return hours_seconds + minutes_seconds + seconds
 
 
 def get_valid_block_sizes(width: int, height: int, minimum=1):
@@ -340,7 +239,6 @@ def get_a_valid_input_resolution(width: int, height: int, block_size: int):
 
 # TODO bring this to ffprobe's modern settings
 # TODO Very outdated!
-# load the first frame, check if the block size is compatible with the resolution
 def verify_user_settings(context):
     from wrappers.frame.frame import Frame
 
@@ -376,34 +274,13 @@ def verify_user_settings(context):
         context.block_size = new_block_size
 
 
-def bar_custom(current, total, width=80):
-    global currentrelease, startdownload
-
-    # current       -     time.time() - startdownload
-    # total-current -     eta
-
-    # eta ==   (total-current)*(time.time()-startdownload)) / current
-
-    try:  # div by zero
-        eta = int(((time.time() - startdownload) * (total - current)) / current)
-    except Exception:
-        eta = 0
-
-    avgdown = (current / (time.time() - startdownload)) / 1024
-
-    currentpercentage = int(current / total * 100)
-
-    print("\r Downloading release [{}]: [{}%] [{:.2f} MB / {:.2f} MB] ETA: [{} sec] AVG: [{:.2f} kB/s]".format(
-        currentrelease, currentpercentage, current / 1024 / 1024, total / 1024 / 1024, eta, avgdown), end='',
-        flush=True)
-
-
 def download_and_extract_externals(dandere2x_dir: str):
     import wget
     import zipfile
     import os
 
-    print("Downloading: " + "https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip")
+    print(
+        "Downloading: " + "https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip")
     download_file = dandere2x_dir + "download.zip"
     wget.download('https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip',
                   out=download_file, bar=bar_adaptive)
@@ -413,10 +290,3 @@ def download_and_extract_externals(dandere2x_dir: str):
 
     print("finished downloading")
     os.remove(download_file)
-
-def main():
-    text = get_list_from_file_wait("/home/linux/Videos/newdebug/yn2/pframe_data/pframe_1.txt")
-
-
-if __name__ == "__main__":
-    main()

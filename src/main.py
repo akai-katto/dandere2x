@@ -12,10 +12,10 @@ from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists,
 from wrappers.dandere2x_wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
 
 
-def load_parser():
+def create_parser():
     """
-    Create a parser for dandere2x for the needed arguments
-    :return:
+    Create a parser for dandere2x for the needed arguments.
+    :return: ArgsParse for dandere2x.
     """
 
     parser = argparse.ArgumentParser()
@@ -43,11 +43,10 @@ def load_parser():
     return args
 
 
-def cli_start(args):
+def cli_start():
     """
-    Start Dandere2x using command line
+    Start Dandere2x using command line. Parse the user arguments and run dandere2x in
 
-    :param args: args loaded from load_parser()
     :return: none
     """
 
@@ -59,6 +58,7 @@ def cli_start(args):
     with open(configfile, "r") as read_file:
         config = yaml.safe_load(read_file)
 
+    args = create_parser()  # Get the parser specific to dandere2x
     config['dandere2x']['usersettings']['output_file'] = args.output_file
     config['dandere2x']['usersettings']['input_file'] = args.input_file
 
@@ -102,55 +102,22 @@ def cli_start(args):
 
 
 def start_gui():
-    # load in code to prevent any code from gui_driver from even being loaded, or else it loads the
-    # gui driver itself
-
+    """ Start the dandere2x GUI. We load gui_start inline here, because on import gui_driver gets called and made. """
     from gui_driver import gui_start
-    print("gui start called")
+
+    print("Calling GUI start.")
     gui_start()
 
 
-def debug_start():
-    """
-    Debug function meant for dandere2x development. Starts dandere2x with minimal exterior function calls and
-    will only work based off what's in the yaml.
-    """
-    # get config based on OS
-    configfile = "dandere2x_%s.yaml" % get_operating_system()
-
-    # load yaml
-
-    with open(configfile, "r") as read_file:
-        config = yaml.safe_load(read_file)
-
-    # load the context with yaml stuff
-    context = Context(config)
-
-    # continue d2x
-    d2x = Dandere2x(context)
-    d2x.run_concurrent()
-
-
 def main():
-    """
-    Start a Dandere2x session either through CLI or GUI. Times the session used in either case.
+    """ Start a Dandere2x session either through CLI or GUI. In either event, the total runtime is printed. """
 
-    :return:
-    """
-
-    args = load_parser()
     start = time.time()
 
-    debug = False
-
-    if debug:
-        """Switch to true for debugging. Not really used otherwise."""
-        debug_start()
-        return
-    elif len(sys.argv) == 1:
+    if len(sys.argv) == 1:
         start_gui()
     else:
-        cli_start(args)
+        cli_start()
 
     print("Total runtime duration:", time.time() - start)
 

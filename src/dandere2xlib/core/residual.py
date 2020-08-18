@@ -5,8 +5,7 @@ import math
 import threading
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait, \
-    get_list_from_file_wait_controller
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait
 from dandere2xlib.utils.thread_utils import CancellationToken
 from wrappers.frame.frame import DisplacementVector, Frame
 
@@ -68,11 +67,11 @@ class Residual(threading.Thread):
                                            self.context.controller)
 
             # Load the neccecary lists to compute this iteration of residual making
-            residual_data = get_list_from_file_wait_controller(self.residual_data_dir + "residual_" + str(x) + ".txt",
-                                                               self.context.controller)
+            residual_data = get_list_from_file_and_wait(self.residual_data_dir + "residual_" + str(x) + ".txt",
+                                                        self.context.controller)
 
-            prediction_data = get_list_from_file_wait_controller(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                                                                 self.context.controller)
+            prediction_data = get_list_from_file_and_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
+                                                          self.context.controller)
 
             # stop if thread is killed
             if not self.context.controller.is_alive():
