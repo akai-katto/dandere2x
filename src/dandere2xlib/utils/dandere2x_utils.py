@@ -92,7 +92,7 @@ def get_list_from_file_and_wait(text_file: str, controller=Controller()):
     return text_list
 
 
-def wait_on_file_controller(file_string: str, controller: Controller):
+def wait_on_file_controller(file_string: str, controller = Controller()):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
@@ -105,7 +105,7 @@ def wait_on_file_controller(file_string: str, controller: Controller):
 
 
 # for renaming function, break when either file exists
-def wait_on_either_file_controller(file_1: str, file_2: str, controller: Controller):
+def wait_on_either_file_controller(file_1: str, file_2: str, controller = Controller()):
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)
