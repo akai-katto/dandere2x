@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from dandere2xlib.utils.dandere2x_utils import get_list_from_file_wait
 from wrappers.frame.frame import DisplacementVector
 from wrappers.frame.frame import Frame
 
@@ -48,19 +47,3 @@ def correct_image(context, frame_base: Frame, list_correction: list):
                              vector.y_1 * scale_factor)
 
     return out_image
-
-
-def main():
-    block_size = 4
-    scale_factor = 2
-
-    frame_base = Frame()
-    frame_base.load_from_string("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\merged2x.jpg")
-    list_predictive = get_list_from_file_wait("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\correction.txt")
-    out_location = ("C:\\Users\\windwoz\\Desktop\\image_research\\shelter\\new_correction.jpg")
-
-    correct_image(block_size, scale_factor, frame_base, list_predictive, out_location)
-
-
-if __name__ == "__main__":
-    main()

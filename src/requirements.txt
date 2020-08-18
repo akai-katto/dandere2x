@@ -1,6 +1,6 @@
 opencv-contrib-python
 numpy==1.16.2
-imageio==2.5.0
+imageio==2.9.0
 Pillow==6.2.0
 PyQt5==5.12.2
 dataclasses==0.6

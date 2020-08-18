@@ -3,11 +3,12 @@ import os
 import pathlib
 import sys
 import tempfile
+
 import yaml
 
+from controller import Controller
 from dandere2xlib.utils.yaml_utils import absolutify_yaml
 from wrappers.ffmpeg.videosettings import VideoSettings
-from controller import Controller
 
 
 class Context:
@@ -74,7 +75,7 @@ class Context:
             self.realsr_ncnn_vulkan_file_name = self.config_yaml['realsr_ncnn_vulkan'][
                 'realsr_ncnn_vulkan_file_name']
             self.realsr_ncnn_vulkan_file_path = os.path.join(self.realsr_ncnn_vulkan_path,
-                                                                     self.realsr_ncnn_vulkan_file_name)
+                                                             self.realsr_ncnn_vulkan_file_name)
 
         if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "caffe":
             self.waifu2x_caffe_cui_dir = self.config_yaml['waifu2x_caffe']['waifu2x_caffe_path']
@@ -189,7 +190,6 @@ class Context:
 
         # create and set the log file
         self.set_logger()
-
 
     def load_video_settings(self, file: str):
         self.video_settings = VideoSettings(self.ffprobe_dir, file)

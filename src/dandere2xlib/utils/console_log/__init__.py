@@ -19,8 +19,7 @@ Purpose:
 
 import datetime
 
-from sty import fg, bg, ef, rs
-
+from sty import fg
 
 
 class ConsoleLogger:

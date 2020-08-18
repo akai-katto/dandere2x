@@ -78,8 +78,8 @@ def absolutify_yaml(unparsed_yaml: yaml, current_folder: str, absolutify_key="..
         fixed_name = regex.sub('', name)
 
         print("You've encountered a known dandere2x bug I am currently fixing!")
-        print("Try renaming youre input file from %s to %s" % (name,fixed_name))
-        raise Exception("Try renaming youre input file from %s to %s" % (name,fixed_name))
+        print("Try renaming youre input file from %s to %s" % (name, fixed_name))
+        raise Exception("Try renaming youre input file from %s to %s" % (name, fixed_name))
 
     # load the yaml back into the config
     return yaml.safe_load(parsed_yaml_str)

@@ -38,7 +38,7 @@ def trim_video(context: Context, output_file: str):
     subprocess.call(trim_video_command, shell=False, stderr=console_output, stdout=console_output)
 
 
-def re_encode_video(context: Context, input_file: str, output_file: str, throw_exception = False):
+def re_encode_video(context: Context, input_file: str, output_file: str, throw_exception=False):
     """
     Using the "re_encode_video" commands in the yaml to re-encode the input video in an opencv2 friendly
     manner. Without this step, certain containers might not be compatible with opencv2, and will cause
@@ -77,7 +77,8 @@ def re_encode_video(context: Context, input_file: str, output_file: str, throw_e
 
                 raise TypeError
 
-def check_if_file_is_video(ffprobe_dir: str, input_video:str):
+
+def check_if_file_is_video(ffprobe_dir: str, input_video: str):
     execute = [
         ffprobe_dir,
         "-i", input_video,
@@ -200,7 +201,7 @@ def concat_encoded_vids(context: Context, output_file: str):
     subprocess.call(concat_videos_command, shell=False, stderr=console_output, stdout=console_output)
 
 
-def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str, copy_if_failed = False):
+def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str, copy_if_failed=False):
     """
     Add the audio tracks from the original video to the output video.
     """
@@ -238,18 +239,18 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
                 os.remove(output_file)
                 shutil.copy(no_audio, output_file)
 
+
 def concat_two_videos(context: Context, video_1: str, video_2: str, output_video: str):
     # load context
-
+    log = logging.getLogger()
     workspace = context.workspace
     temp_concat_file = workspace + "concat_list.txt"
 
+    # we need to create a text file for ffmpeg's concat function to work properly.
     file = open(temp_concat_file, "a")
-
     file.write("file " + "'" + video_1 + "'" + "\n")
     file.write("file " + "'" + video_2 + "'" + "\n")
     file.close()
-
     concat_command = [context.ffmpeg_dir,
                       "-f",
                       "concat",
@@ -261,6 +262,7 @@ def concat_two_videos(context: Context, video_1: str, video_2: str, output_video
                       "copy",
                       output_video]
 
+    log.info("concat_command: %s" % str(concat_command))
     console_output = open(context.console_output_dir + "concat_video_from_text_file.txt", "w")
     console_output.write(str(concat_command))
     subprocess.call(concat_command, shell=False, stderr=console_output, stdout=console_output)
