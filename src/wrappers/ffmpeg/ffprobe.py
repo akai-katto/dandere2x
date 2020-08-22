@@ -116,7 +116,7 @@ def get_frame_rate(ffprobe_dir, input_video):
         '-select_streams',
         'v:0',
         '-show_entries',
-        'stream=r_frame_rate',
+        'stream=avg_frame_rate',
         '-of',
         'csv=p=0',
         input_video
