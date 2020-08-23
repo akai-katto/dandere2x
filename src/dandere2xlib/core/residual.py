@@ -1,13 +1,29 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+    This file is part of the Dandere2x project.
+    Dandere2x is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Dandere2x is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Dandere2x.  If not, see <https://www.gnu.org/licenses/>.
+""""""
+========= Copyright aka_katto 2018, All rights reserved. ============
+Original Author: aka_katto 
+Purpose: 
+====================================================================="""
+
 import logging
 import math
 import threading
-
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_wait, \
-    get_list_from_file_wait_controller
-from dandere2xlib.utils.thread_utils import CancellationToken
+
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait
 from wrappers.frame.frame import DisplacementVector, Frame
 
 
@@ -33,10 +49,6 @@ class Residual(threading.Thread):
         self.start_frame = self.context.start_frame
 
         # Threading Specific
-
-        self.alive = True
-        self.cancel_token = CancellationToken()
-        self._stopevent = threading.Event()
         threading.Thread.__init__(self, name="ResidualThread")
 
     def join(self, timeout=None):
@@ -44,35 +56,28 @@ class Residual(threading.Thread):
         threading.Thread.join(self, timeout)
         self.log.info("Join finished.")
 
-    def kill(self):
-        self.log.info("Kill called.")
-        self.alive = False
-        self.cancel_token.cancel()
-        self._stopevent.set()
-
     def set_start_frame(self, start_frame: int):
         self.start_frame = start_frame
 
     def run(self):
         self.log.info("Run called.")
-        # for every frame in the video, create a residual_frame given the text files.
+
         for x in range(self.start_frame, self.frame_count):
 
-            # stop if thread is killed
+            # Stop if thread is killed
             if not self.context.controller.is_alive():
                 break
 
-            # loading files area
+            # Files needed to create a residual image
             f1 = Frame()
             f1.load_from_string_controller(self.input_frames_dir + "frame" + str(x + 1) + self.extension_type,
                                            self.context.controller)
-
             # Load the neccecary lists to compute this iteration of residual making
-            residual_data = get_list_from_file_wait_controller(self.residual_data_dir + "residual_" + str(x) + ".txt",
-                                                               self.context.controller)
+            residual_data = get_list_from_file_and_wait(self.residual_data_dir + "residual_" + str(x) + ".txt",
+                                                        self.context.controller)
 
-            prediction_data = get_list_from_file_wait_controller(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                                                                 self.context.controller)
+            prediction_data = get_list_from_file_and_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
+                                                          self.context.controller)
 
             # stop if thread is killed
             if not self.context.controller.is_alive():
@@ -107,7 +112,6 @@ class Residual(threading.Thread):
                 out_image.save_image_temp(output_file, self.temp_image)
 
             # With this change the wrappers must be modified to not try deleting the non existing residual file
-
             if self.context.debug == 1:
                 self.debug_image(self.block_size, f1, prediction_data, residual_data, debug_output_file)
 
@@ -127,30 +131,36 @@ class Residual(threading.Thread):
             - frame(x)_residual
         """
 
-        residual_vectors = []
-        buffer = 5
-        block_size = context.block_size
-        bleed = context.bleed
-
-        # first make a 'bleeded' version of input_frame, as we need to create a buffer in the event the 'bleed'
-        # ends up going out of bounds.
-        bleed_frame = raw_frame.create_bleeded_image(buffer)
-
-        # if there are no items in 'list_residuals' but have list_predictives
-        # then the two frames are identical, so no residual image needed.
+        # Some conditions to check before making a residual image, in both cases, we don't need to do any actual
+        # processing in the function call, if these conditions hold true.
         if not list_residual and list_predictive:
+            """
+            If there are no items in 'list_residuals' but have list_predictives then the two frames are identical,
+            so no residual image needed.
+            """
             residual_image = Frame()
             residual_image.create_new(1, 1)
             return residual_image
 
-        # if there are neither any predictive or inversions
-        # then the frame is a brand new frame with no resemblence to previous frame.
-        # in this case copy the entire frame over
         if not list_residual and not list_predictive:
+            """ 
+            If there are neither any predictive or inversions, then the frame is a brand new frame with no resemblence
+            to previous frame. In this case, copy the entire frame over.
+            """
             residual_image = Frame()
             residual_image.create_new(raw_frame.width, raw_frame.height)
             residual_image.copy_image(raw_frame)
             return residual_image
+
+        buffer = 5
+        block_size = context.block_size
+        bleed = context.bleed
+        """
+        First make a 'bleeded' version of input_frame, as we need to create a buffer in the event the 'bleed'
+        ends up going out of bounds. In other words, crop the image into an even larger image, so that if if we need
+        to access out of bounds pixels, and place black pixels where it would be out of bounds. 
+        """
+        bleed_frame = raw_frame.create_bleeded_image(buffer)
 
         # size of output image is determined based off how many residuals there are
         image_size = int(math.sqrt(len(list_residual) / 4) + 1) * (block_size + bleed * 2)
@@ -164,7 +174,7 @@ class Residual(threading.Thread):
                                         int(list_residual[x * 4 + 2]),
                                         int(list_residual[x * 4 + 3]))
 
-            # apply that vector to the image
+            # apply that vector to the image by copying over their respective blocks.
             residual_image.copy_block(bleed_frame, block_size + bleed * 2,
                                       vector.x_1 + buffer - bleed, vector.y_1 + buffer + - bleed,
                                       vector.x_2 * (block_size + bleed * 2), vector.y_2 * (block_size + bleed * 2))

@@ -1,7 +1,7 @@
+import logging
 import subprocess
 import threading
 import time
-import logging
 
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 

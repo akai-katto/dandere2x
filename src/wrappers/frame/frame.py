@@ -201,7 +201,7 @@ class Frame:
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
         else:
-            #todo, fix this
+            # todo, fix this
             self.logger.error("Aka-katto has removed this customization you added - he's going to re-add it later.")
             self.logger.error('Sorry about that : \\')
             raise ValueError('See Console')

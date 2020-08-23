@@ -38,26 +38,14 @@ dandere2x:
     quality_minimum: 5
     scale_factor: 2
 
-  min_disk_settings:
-    #        use_min_disk: Use min_disk or not.
-    #                       Options: [True, False]
-
-    #        max_frames_ahead: How many frames to have extracted at a given time. Keeping this value small decreases
-    #                          maximum hard-drive usage but makes preformance slightly slower.
-    #                          Options: [20,1000]
-
-
-    max_frames_ahead: 20
-
-
   developer_settings:
 
+    max_frames_ahead: 20
     pre_process: True
     processed_video: None
     debug: false
     workspace: ../workspace/example_workspace/ # path to the workspace folder (lots of files will be written here)
     dandere2x_cpp_dir: ../externals/dandere2x_cpp # path to dandere2x_cpp binary file
-    workspace_use_temp: false
     delete_workspace_after: true
     extension_type: .jpg
     bleed: 1

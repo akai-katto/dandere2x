@@ -41,4 +41,4 @@ class VideoSettings:
 
         log.info("Loaded Video Settings for %s :" % video_file)
         for item in self.__dict__:
-            log.info("%s : %s" % (item,  self.__dict__[item]))
+            log.info("%s : %s" % (item, self.__dict__[item]))

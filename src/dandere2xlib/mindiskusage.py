@@ -1,3 +1,26 @@
+"""
+    This file is part of the Dandere2x project.
+    Dandere2x is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Dandere2x is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Dandere2x.  If not, see <https://www.gnu.org/licenses/>.
+""""""
+========= Copyright aka_katto 2018, All rights reserved. ============
+Original Author: aka_katto 
+Purpose: This class is responsible for cleaning up files that are no
+         longer being used for dandere2x, as well as extracting 
+         frames during runtime to allow dandere2x to progress forward.
+         
+         This has the affect of keeping the files stored on disk
+         to a minimum, thus allowing a smaller workspace. 
+====================================================================="""
+
 import logging
 import os
 import threading
@@ -5,11 +28,10 @@ import time
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2xlib.utils.thread_utils import CancellationToken
-# from wrappers.cv2.progress_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
 from wrappers.cv2.progressive_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
 
 
+# todo, seperate this class into two different threads (frame extractor and file removal).
 class MinDiskUsage(threading.Thread):
     """
     A class to facilitate the actions needed to operate min_disk_usage.
@@ -29,19 +51,10 @@ class MinDiskUsage(threading.Thread):
         self.start_frame = self.context.start_frame
 
         # Threading Specific
-
-        self.alive = True
-        self.cancel_token = CancellationToken()
-        self._stopevent = threading.Event()
         threading.Thread.__init__(self, name="Min Disk Thread")
 
     def join(self, timeout=None):
         threading.Thread.join(self, timeout)
-
-    def kill(self):
-        self.alive = False
-        self.cancel_token.cancel()
-        self._stopevent.set()
 
     def set_start_frame(self, start_frame):
         self.start_frame = start_frame

@@ -80,11 +80,6 @@ class Context:
             self.waifu2x_caffe_cui_dir = self.config_yaml['waifu2x_caffe']['waifu2x_caffe_path']
 
         self.workspace = self.config_yaml['dandere2x']['developer_settings']['workspace']
-        self.workspace_use_temp = self.config_yaml['dandere2x']['developer_settings']['workspace_use_temp']
-
-        # if we're using a temporary workspace, assign workspace to be in the temp folder
-        if self.workspace_use_temp:
-            self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()), 'dandere2x') + os.path.sep
 
         # setup directories
         self.log_folder_dir = self.config_yaml['dandere2x']['usersettings']['log_folder']
@@ -159,7 +154,7 @@ class Context:
         #   noisey.mkv and have that be the primarly used video we need to refer back to the original
         #   video file in order for audio track migrations to work properly.
 
-        self.max_frames_ahead = self.config_yaml['dandere2x']['min_disk_settings']['max_frames_ahead']
+        self.max_frames_ahead = self.config_yaml['dandere2x']['developer_settings']['max_frames_ahead']
         self.sound_file = self.config_yaml['dandere2x']['usersettings']['input_file']
 
         self.start_frame = self.config_yaml['resume_settings']['last_saved_frame']

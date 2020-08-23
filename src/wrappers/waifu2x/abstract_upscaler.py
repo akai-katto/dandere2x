@@ -16,24 +16,24 @@ Original Author: aka_katto
 Purpose: 
  
 ====================================================================="""
+import logging
 import os
 import time
-import logging
 from abc import ABC, abstractmethod
 from threading import Thread
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_file_controller, file_exists
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_file, file_exists
 from wrappers.frame.frame import Frame
 
 
 class AbstractUpscaler(Thread, ABC):
-
     """
     Notes: When instantiating an AbstractUpscaler type, super().__init__(context) goes last since
     self._construct_upscale_command() is an implemented method and needs the instantiated variables in the inheriting
     class.
     """
+
     def __init__(self, context: Context):
         super().__init__()
 
@@ -69,8 +69,9 @@ class AbstractUpscaler(Thread, ABC):
 
         if not file_exists(test_file_upscaled):
             self.log.error("Your computer could not upscale a test image, which is required for dandere2x to work.")
-            self.log.error("This may be a hardware issue or a software issue - verify your computer is capable of upscaling "
-                           "images using the selected upscaler.")
+            self.log.error(
+                "This may be a hardware issue or a software issue - verify your computer is capable of upscaling "
+                "images using the selected upscaler.")
 
             raise Exception("Your computer could not upscale the test file.")
 
@@ -155,7 +156,7 @@ class RemoveUpscaledFiles(Thread):
             residual_file = self.context.residual_images_dir + name.replace(".png", ".jpg")
             residual_upscaled_file = self.context.residual_upscaled_dir + name.replace(".jpg", ".png")
 
-            wait_on_file_controller(residual_upscaled_file, self.context.controller)
+            wait_on_file(residual_upscaled_file, self.context.controller)
             if not self.context.controller.is_alive():
                 return
 

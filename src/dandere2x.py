@@ -13,8 +13,20 @@
 """"""
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
-Purpose: 
+<<<<<<< HEAD
+Purpose: The 'dandere2x thread' for dandere2x, which is largely a 
+         controller for starting and ending all the sub-threads dandere2x
+         uses during it's runtime. 
+         
+         If you're looking to understand how dandere2x works, this is
+         the starting point.
+=======
+Purpose: This is the ultimate driver class that facilitates all the 
+         major operations for Dandere2x to work. If you're looking
+         to understand how Dandere2x works, this is the best starting
+         point. 
  
+>>>>>>> 2b3741da2dacb3cb8ba9b27c2450d32737734f2e
 ====================================================================="""
 import logging
 import os
@@ -31,7 +43,7 @@ from dandere2xlib.core.residual import Residual
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
 from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, create_directories, \
-    valid_input_resolution, rename_file, force_delete_directory, wait_on_file_controller
+    valid_input_resolution, rename_file, force_delete_directory, wait_on_file
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks, append_video_resize_filter, concat_two_videos
 from wrappers.waifu2x.realsr_ncnn_vulkan import RealSRNCNNVulkan
@@ -54,10 +66,10 @@ class Dandere2x(threading.Thread):
         self.alive = False
         self.log = logging.getLogger()
 
-        # Class Specific Declarations
+        # Class Specific Future Declarations
         """ 
         These are re-set later, but due to lack of python member-variable declarations, they're initially set here so the IDE can 
-        do autocomplete corrections / predictions. It's important they're correctly assigned when self.run() is called. 
+        do autocomplete corrections / predictions. It's important they're correctly re-assigned when self.run() is called. 
         """
         self.min_disk_demon = MinDiskUsage(self.context)
         self.status_thread = Status(self.context)
@@ -93,6 +105,7 @@ class Dandere2x(threading.Thread):
 
         self.alive = True
 
+    # todo, need to implement DAR fix bug.
     def _pre_processing(self):
         """
         This MUST be the first thing `run` calls, or else dandere2x.py will not work!
@@ -116,7 +129,8 @@ class Dandere2x(threading.Thread):
             need to resize the video in that scenario.
             """
 
-            self.log.warning("Input video needs to be resized to be compatible with block-size - this is expected behaviour.")
+            self.log.warning(
+                "Input video needs to be resized to be compatible with block-size - this is expected behaviour.")
             append_video_resize_filter(self.context)
 
         create_directories(self.context.workspace, self.context.directories)
@@ -135,13 +149,16 @@ class Dandere2x(threading.Thread):
         re_encode_video(self.context, input_file, unmigrated, throw_exception=True)
         migrate_tracks(self.context, unmigrated, input_file, pre_processed_video, copy_if_failed=True)
         os.remove(unmigrated)
-        wait_on_file_controller(pre_processed_video, controller=self.context.controller)
+        wait_on_file(pre_processed_video, controller=self.context.controller)
         self.context.load_video_settings(file=pre_processed_video)
 
     def kill(self):
         """
-        Kill Dandere2x entirely. Everything started as a thread can be killed with controller.kill() except for
-        d2x_cpp, since that runs as a subprocess.
+        Kill Dandere2x entirely. Everything started as a thread within the scope of dandere2x.py can be killed with
+        controller.kill() except for d2x_cpp, since that runs as a subprocess.
+
+        As an analogy, imagine `controller` is a fishline that is passed to all threads, and we can `pull the cord` on
+        all the threads back at once, eliminating the need to chase after all N threads.
         """
         self.log.warning("Dandere2x Killed - Standby")
         self.dandere2x_cpp_thread.kill()
@@ -168,17 +185,23 @@ class Dandere2x(threading.Thread):
         self.log.info("Join finished.")
 
     def _successful_completion(self):
-
+        """
+        This is called when Dandere2x 'finishes' successfully, and the finishing conditions (such as making sure
+        subtitles get migrated, merging videos (if necessary), and deleting the workspace.
+        """
         self.log.info("It seems Dandere2x has finished successfully. Starting the final steps to complete your video.")
 
         if self.context.resume_session:
+            """
+            In the event if Dandere2x is resuming a session, it'll need to merge `incomplete_video` (see yaml) with
+            the current session's video, in order to make a complete video. 
+            """
+
             self.log.info("This session is a resume session. Dandere2x will need to merge the two videos. ")
             file_to_be_concat = self.context.workspace + "file_to_be_concat.mp4"
 
             rename_file(self.context.nosound_file, file_to_be_concat)
-            concat_two_videos(self.context, self.context.incomplete_video,
-                              file_to_be_concat,
-                              self.context.nosound_file)
+            concat_two_videos(self.context, self.context.incomplete_video, file_to_be_concat, self.context.nosound_file)
             self.log.info("Merging the two videos is done. ")
 
         migrate_tracks(self.context, self.context.nosound_file,
@@ -196,7 +219,7 @@ class Dandere2x(threading.Thread):
 
         self.log.warning("Starting Kill Conditions...")
         self.log.warning("Dandere2x is saving the meta-data needed to resume this session later.")
-        
+
         suspended_file = self.context.workspace + str(self.context.controller.get_current_frame() + 1) + ".mp4"
         os.rename(self.context.nosound_file, suspended_file)
         self.context.nosound_file = suspended_file

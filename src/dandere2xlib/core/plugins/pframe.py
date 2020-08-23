@@ -28,13 +28,16 @@ def pframe_image(context,
     bleed = context.bleed
 
     for x in range(int(len(list_predictive) / 4)):
+        """
+        Neat optimization trick - there's no need for pframe to copy over a block if the vectors
+        point to the same place. In merge.py we just need to load the previous frame into the current frame
+        to reach this optimization.
+        """
 
-        # Neat optimization trick - there's no need for pframe to copy over a block if the vectors
-        # point to the same place. In merge.py we just need to load the previous frame into the current frame
-        # to reach this optimization.
         if int(list_predictive[x * 4 + 0]) != int(list_predictive[x * 4 + 1]) \
-                and \
-                int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
+           or \
+           int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
+
             # load the vector
             vector = DisplacementVector(int(list_predictive[x * 4 + 0]),
                                         int(list_predictive[x * 4 + 1]),

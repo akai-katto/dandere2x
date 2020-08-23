@@ -1,7 +1,6 @@
 import logging
 import subprocess
 import threading
-import psutil
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_operating_system
