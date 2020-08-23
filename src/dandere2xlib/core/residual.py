@@ -22,8 +22,8 @@ import logging
 import math
 import threading
 from context import Context
-
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait
+
 from wrappers.frame.frame import DisplacementVector, Frame
 
 

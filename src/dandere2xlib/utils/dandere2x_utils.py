@@ -55,9 +55,6 @@ def force_delete_directory(directory):
 
 
 from controller import Controller
-
-
-
 def get_list_from_file_and_wait(text_file: str, controller=Controller()):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
@@ -105,7 +102,6 @@ def wait_on_file(file_string: str, controller=Controller()):
 
 
 # for renaming function, break when either file exists
-
 def wait_on_either_file_controller(file_1: str, file_2: str, controller=Controller()):
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)

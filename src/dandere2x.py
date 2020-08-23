@@ -13,20 +13,12 @@
 """"""
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
-<<<<<<< HEAD
 Purpose: The 'dandere2x thread' for dandere2x, which is largely a 
          controller for starting and ending all the sub-threads dandere2x
          uses during it's runtime. 
          
          If you're looking to understand how dandere2x works, this is
          the starting point.
-=======
-Purpose: This is the ultimate driver class that facilitates all the 
-         major operations for Dandere2x to work. If you're looking
-         to understand how Dandere2x works, this is the best starting
-         point. 
- 
->>>>>>> 2b3741da2dacb3cb8ba9b27c2450d32737734f2e
 ====================================================================="""
 import logging
 import os
