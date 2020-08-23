@@ -133,8 +133,7 @@ class Merge(threading.Thread):
             # Load the needed vectors to create the merged image.
 
             prediction_data_list = get_list_from_file_and_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                self.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                self.context.controller)
+                                                               self.context.controller)
             residual_data_list = get_list_from_file_and_wait(
                 self.residual_data_dir + "residual_" + str(x) + ".txt",
                 self.context.controller)

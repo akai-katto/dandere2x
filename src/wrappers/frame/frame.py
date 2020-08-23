@@ -10,7 +10,7 @@ import numpy
 import numpy as np
 from PIL import Image
 
-from dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file_controller
+from dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file
 
 
 # fuck this function, lmao. Credits to
@@ -160,13 +160,13 @@ class Frame:
         if 'jpg' in extension:
             jpegsave = self.get_pil_image()
             jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=100)
-            wait_on_file_controller(out_location + "temp" + extension)
+            wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
         else:
             save_image = self.get_pil_image()
             save_image.save(out_location + "temp" + extension, format='PNG')
-            wait_on_file_controller(out_location + "temp" + extension)
+            wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
 
     def get_res(self):
@@ -184,7 +184,7 @@ class Frame:
         """
 
         self.save_image(temp_location)
-        wait_on_file_controller(temp_location)
+        wait_on_file(temp_location)
         rename_file(temp_location, out_location)
 
     def save_image_quality(self, out_location, quality_per):
@@ -198,7 +198,7 @@ class Frame:
         if 'jpg' in extension:
             jpegsave = Image.fromarray(self.frame.astype(np.uint8))
             jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=quality_per)
-            wait_on_file_controller(out_location + "temp" + extension)
+            wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
         else:
             # todo, fix this
