@@ -85,7 +85,7 @@ class MinDiskUsage(threading.Thread):
 
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
-            self.__delete_used_files(x)
+            #self.__delete_used_files(x)
 
         self.progressive_frame_extractor.release_capture()
 
@@ -115,7 +115,6 @@ class MinDiskUsage(threading.Thread):
         fade_data_dir = self.context.fade_data_dir
         input_frames_dir = self.context.input_frames_dir
         compressed_static_dir = self.context.compressed_static_dir
-        compressed_moving_dir = self.context.compressed_moving_dir
         residual_upscaled_dir = self.context.residual_upscaled_dir
 
         # get the files to delete "_r(emove)"
@@ -130,12 +129,11 @@ class MinDiskUsage(threading.Thread):
         input_image_r = input_frames_dir + "frame" + index_to_remove + ".jpg"
 
         compressed_file_static_r = compressed_static_dir + "compressed_" + index_to_remove + ".jpg"
-        compressed_file_moving_r = compressed_moving_dir + "compressed_" + index_to_remove + ".jpg"
 
         # "mark" them
         remove = [prediction_data_file_r, residual_data_file_r, correction_data_file_r,
                   fade_data_file_r, input_image_r,  # upscaled_file_r,
-                  compressed_file_static_r, compressed_file_moving_r]
+                  compressed_file_static_r]
 
         upscaled_file_r = residual_upscaled_dir + "output_" + get_lexicon_value(6, int(remove_before)) + ".png"
         remove.append(upscaled_file_r)

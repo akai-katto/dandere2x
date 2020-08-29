@@ -49,7 +49,6 @@ dandere2x:
     delete_workspace_after: true
     extension_type: .jpg
     bleed: 1
-    quality_moving_ratio: 0.55
     step_size: 8
 
 # don't touch these unless you know what you're doing!

@@ -46,10 +46,9 @@ dandere2x:
     debug: false
     workspace: ..\workspace\sideways_vid\ # path to the workspace folder (lots of files will be written here)
     dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
-    delete_workspace_after: true
+    delete_workspace_after: False
     extension_type: .jpg
     bleed: 1
-    quality_moving_ratio: 0.55
     step_size: 8
 
 # don't touch these unless you know what you're doing!

@@ -42,3 +42,10 @@ class VideoSettings:
         log.info("Loaded Video Settings for %s :" % video_file)
         for item in self.__dict__:
             log.info("%s : %s" % (item, self.__dict__[item]))
+
+    def log_all_variables(self):
+        log = logging.getLogger()
+
+        log.info("Context Settings:")
+        for item in self.__dict__:
+            print("%s : %s" % (item, self.__dict__[item]))

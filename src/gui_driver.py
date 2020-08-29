@@ -35,7 +35,7 @@ class QtDandere2xThread(QtCore.QThread):
             except PermissionError:
                 print("Trying to delete workspace via RM tree threw PermissionError - Dandere2x may not work.")
 
-            while (file_exists(self.dandere2x.context.workspace)):
+            while file_exists(self.dandere2x.context.workspace):
                 time.sleep(1)
 
         try:
@@ -60,6 +60,7 @@ class AppWindow(QMainWindow):
     """
     Note; I don't maintain this class. It's half assed in the grand scheme of things, and it'd probably be re-made later.
     """
+
 
     def __init__(self):
         super().__init__()

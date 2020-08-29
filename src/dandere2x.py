@@ -142,7 +142,7 @@ class Dandere2x(threading.Thread):
         migrate_tracks(self.context, unmigrated, input_file, pre_processed_video, copy_if_failed=True)
         os.remove(unmigrated)
         wait_on_file(pre_processed_video, controller=self.context.controller)
-        self.context.load_video_settings(file=pre_processed_video)
+        self.context.load_video_settings(file=pre_processed_video, load_type="cv2")
 
     def kill(self):
         """
