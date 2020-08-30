@@ -160,7 +160,7 @@ class Merge(threading.Thread):
             # Manually write the image if we're preserving frames (this is for enthusiasts / debugging).
             if self.preserve_frames:
                 output_file = self.workspace + "merged/merged_" + str(x + 1) + self.extension_type
-                background_frame_write = AsyncFrameWrite(current_upscaled_residuals, output_file)
+                background_frame_write = AsyncFrameWrite(current_frame, output_file)
                 background_frame_write.start()
 
             #######################################
