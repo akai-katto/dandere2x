@@ -112,7 +112,13 @@ class Dandere2x(threading.Thread):
                       " container formats.")
 
         force_delete_directory(self.context.workspace)
-        self.context.load_video_settings(file=self.context.input_file)
+
+        try:
+            self.context.load_video_settings(file=self.context.input_file)
+        except FileNotFoundError as e:
+            self.log.error("Caught FileNotFoundError. This is likeley caused by 'externals' missing a neccecary file.")
+            self.log.error("Are you sure you hit the 'download externals' button?")
+            exit(1)
 
         if not valid_input_resolution(self.context.width, self.context.height, self.context.block_size):
             """ 
