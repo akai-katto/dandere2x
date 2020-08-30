@@ -85,7 +85,7 @@ class MinDiskUsage(threading.Thread):
 
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
-            #self.__delete_used_files(x)
+            self.__delete_used_files(x)
 
         self.progressive_frame_extractor.release_capture()
 

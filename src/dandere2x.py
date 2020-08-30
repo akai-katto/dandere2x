@@ -116,6 +116,7 @@ class Dandere2x(threading.Thread):
         try:
             self.context.load_video_settings(file=self.context.input_file)
         except FileNotFoundError as e:
+            from sys import exit
             self.log.error("Caught FileNotFoundError. This is likeley caused by 'externals' missing a neccecary file.")
             self.log.error("Are you sure you hit the 'download externals' button?")
             exit(1)
