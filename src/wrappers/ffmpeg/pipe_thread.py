@@ -80,7 +80,7 @@ class Pipe(threading.Thread):
         frame_rate = str(self.context.frame_rate)
         output_no_sound = output_no_sound
         ffmpeg_dir = self.context.ffmpeg_dir
-        # dar = self.context.dar
+        dar = self.context.dar
 
         # constructing the pipe command...
         ffmpeg_pipe_command = [ffmpeg_dir, "-r", frame_rate]
@@ -93,13 +93,14 @@ class Pipe(threading.Thread):
         ffmpeg_pipe_command.append("-r")
         ffmpeg_pipe_command.append(frame_rate)
 
-        # if dar:
-        #     ffmpeg_pipe_command.append("-vf")
-        #     ffmpeg_pipe_command.append("setdar=" + dar.replace(":", "/"))
+        if dar:
+            ffmpeg_pipe_command.append("-vf")
+            ffmpeg_pipe_command.append("setdar=" + dar.replace(":", "/"))
 
         ffmpeg_pipe_command.append(output_no_sound)
 
         # Starting the Pipe Command
         console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
+        console_output.write(str(ffmpeg_pipe_command))
         self.ffmpeg_pipe_subprocess = subprocess.Popen(ffmpeg_pipe_command, stdin=subprocess.PIPE,
                                                        stdout=console_output)

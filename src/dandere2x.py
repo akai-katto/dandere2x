@@ -51,7 +51,10 @@ class Dandere2x(threading.Thread):
         import sys
         sys.excepthook = show_exception_and_exit  # set a custom except hook to prevent window from closing.
         threading.Thread.__init__(self, name="Dandere2x Thread")
-        self.set_logging()
+        self.color_log_format = "%(log_color)s%(asctime)-8s%(reset)s %(log_color)s%(levelname)-8s%(reset)s %(log_color)s%(filename)-8s%(reset)s %(log_color)s%(funcName)-8s%(reset)s: %(log_color)s%(message)s"
+        self.file_log_format = "%(asctime)s %(levelname)s %(filename)s %(funcName)s %(message)s"
+        self.set_console_logger()
+        self.fh = None  # File Handler for log
 
         # Class Specific
         self.context = context
@@ -114,7 +117,7 @@ class Dandere2x(threading.Thread):
         force_delete_directory(self.context.workspace)
 
         try:
-            self.context.load_video_settings(file=self.context.input_file)
+            self.context.load_video_settings_ffprobe(file=self.context.input_file)
         except FileNotFoundError as e:
             from sys import exit
             self.log.error("Caught FileNotFoundError. This is likeley caused by 'externals' missing a neccecary file.")
@@ -133,6 +136,8 @@ class Dandere2x(threading.Thread):
             append_video_resize_filter(self.context)
 
         create_directories(self.context.workspace, self.context.directories)
+        self.set_file_logger(self.context.workspace + "log.txt")  # write to a log file in the workspace
+
         self.waifu2x.verify_upscaling_works()
 
         """ 
@@ -149,7 +154,7 @@ class Dandere2x(threading.Thread):
         migrate_tracks(self.context, unmigrated, input_file, pre_processed_video, copy_if_failed=True)
         os.remove(unmigrated)
         wait_on_file(pre_processed_video, controller=self.context.controller)
-        self.context.load_video_settings(file=pre_processed_video, load_type="cv2")
+        self.context.load_video_settings_cv2(file=pre_processed_video)
 
     def kill(self):
         """
@@ -203,8 +208,17 @@ class Dandere2x(threading.Thread):
             concat_two_videos(self.context, self.context.incomplete_video, file_to_be_concat, self.context.nosound_file)
             self.log.info("Merging the two videos is done. ")
 
-        migrate_tracks(self.context, self.context.nosound_file,
-                       self.context.sound_file, self.context.output_file)
+        migrate_tracks(self.context, self.context.nosound_file, self.context.sound_file, self.context.output_file)
+        """
+        At this point, dandere2x is "done" with the video, and all there is left is to clean up the files we used
+        during runtime.
+        """
+
+        # Close the file handler for log (since it's going to get deleted).
+        self.log.info("Release log file... ")
+        self.fh.close()
+        self.log.removeHandler(self.fh)
+        del self.fh
 
         if self.context.delete_workspace_after:
             self.log.info("Dandere2x will now delete the workspace it used.")
@@ -290,8 +304,15 @@ class Dandere2x(threading.Thread):
 
         self.log.info("Time to upscale a single frame: %s " % str(round(time.time() - one_frame_time, 2)))
 
-    @staticmethod
-    def set_logging():
+    def set_file_logger(self, file: str):
+        self.log.info("Writing log-file at %s" % file)
+        formatter = logging.Formatter(self.file_log_format)
+        self.fh = logging.FileHandler(file)
+        self.fh.setFormatter(formatter)
+        self.log.addHandler(self.fh)
+        self.log.info("Log-file set.")
+
+    def set_console_logger(self):
         """
         Create the logging class to be format print statements the dandere2x way.
 
@@ -302,7 +323,7 @@ class Dandere2x(threading.Thread):
         """
 
         formatter = ColoredFormatter(
-            "%(log_color)s%(asctime)-8s%(reset)s %(log_color)s%(levelname)-8s%(reset)s %(log_color)s%(filename)-8s%(reset)s %(log_color)s%(funcName)-8s%(reset)s: %(log_color)s%(message)s",
+            self.color_log_format,
             datefmt=None,
             reset=True,
             log_colors={
@@ -316,10 +337,10 @@ class Dandere2x(threading.Thread):
             style='%'
         )
 
-        handler = colorlog.StreamHandler()
-        handler.setFormatter(formatter)
+        self.handler = colorlog.StreamHandler()
+        self.handler.setFormatter(formatter)
 
         logger = colorlog.getLogger()
         logger.setLevel(logging.INFO)
-        logger.addHandler(handler)
+        logger.addHandler(self.handler)
         logging.info("Dandere2x Console Logger Set")

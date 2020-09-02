@@ -89,6 +89,8 @@ class Dandere2xCppWrapper(threading.Thread):
         self.dandere2x_cpp_subprocess.wait()
 
         if self.dandere2x_cpp_subprocess.returncode == 0:
-            logger.info("d2xcpp finished correctly.")
-        else:
-            logger.warning("d2xcpp ended unexpectedly.")
+            logger.info("D2xcpp finished correctly.")
+        elif self.dandere2x_cpp_subprocess.returncode != 0 and self.context.controller.is_alive():
+            logger.error("D2xcpp ended unexpectedly.")
+            logger.error("Dandere2x will suspend the current session.")
+            self.context.controller.kill()

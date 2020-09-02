@@ -51,7 +51,7 @@ class Context:
 
         self.this_folder = None
 
-        # load 'this folder' in a pyinstaller friendly way
+        # load 'this_folder' in a pyinstaller friendly way
         if getattr(sys, 'frozen', False):
             self.this_folder = os.path.dirname(sys.executable)
         elif __file__:
@@ -159,11 +159,13 @@ class Context:
         # Video Settings #
         ##################
 
-        # load the needed video settings
-        self.video_settings = None
-        self.frame_rate = None
+        # ffprobe video settings
         self.width, self.height = None, None
         self.dar = None
+        self.rotate = None
+        self.frame_rate = None
+
+        # cv2 video settings
         self.frame_count = None
 
         ###################
@@ -173,29 +175,21 @@ class Context:
         self.last_saved_frame = self.config_yaml['resume_settings']['last_saved_frame']
         self.incomplete_video = self.config_yaml['resume_settings']['incomplete_video']
 
-        #########
-        # Other #
-        #########
-
-        # create and set the log file
-        self.set_logger()
-
-    def load_video_settings(self, file: str, load_type="ffprobe"):
+    def load_video_settings_ffprobe(self, file: str):
         """
         file: what to video file to load
         load_type: whether to load video settings with cv2 or ffprobe
         """
+        video_settings = VideoSettings(self.ffprobe_dir, file)
+        self.width, self.height = video_settings.width, video_settings.height
+        self.dar = video_settings.dar
+        self.rotate = video_settings.rotate
+        self.frame_rate = video_settings.frame_rate
 
-        self.video_settings = VideoSettings(self.ffprobe_dir, file)
-        self.frame_rate = self.video_settings.frame_rate
-        self.width, self.height = self.video_settings.width, self.video_settings.height
-        self.dar = self.video_settings.dar
-        self.rotate = self.video_settings.rotate
-        self.frame_count = self.video_settings.frame_count
+    def load_video_settings_cv2(self, file: str):
+        video_settings_cv2 = VideoSettingsCV2(file)
+        self.frame_count = video_settings_cv2.frame_count
 
-        if load_type == "cv2":
-            self.video_settings = VideoSettingsCV2(file)
-            self.frame_count = self.video_settings.frame_count
 
     def log_all_variables(self):
         log = logging.getLogger()
@@ -203,14 +197,6 @@ class Context:
         log.info("Context Settings:")
         for item in self.__dict__:
             log.info("%s : %s" % (item, self.__dict__[item]))
-
-    # the workspace folder needs to exist before creating the log file, hence the method
-    def set_logger(self):
-        pass
-        # import time
-        # from dandere2xlib.utils.console_log import ConsoleLogger
-        #
-        # self.logger = ConsoleLogger(10)
 
     def update_frame_count(self):
         """
