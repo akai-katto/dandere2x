@@ -25,7 +25,7 @@ dandere2x:
     #                        caffe: [1, 2, 3, 4]
     #                        converter_cpp: [1,2,3,4]
 
-    input_file: C:\Users\windwoz\Documents\GitHub\dandere2x\src\workspace\yn_moving_480.mkv
+    input_file: ..\workspace\yn_moving_480.mkv
     output_file: ..\workspace\odd_res_output.mp4
     input_folder: ..\workspace\multiple_videos\
     output_folder: ..\workspace\multiple_videos_output\
@@ -38,30 +38,17 @@ dandere2x:
     quality_minimum: 5
     scale_factor: 2
 
-  min_disk_settings:
-    #        use_min_disk: Use min_disk or not.
-    #                       Options: [True, False]
-
-    #        max_frames_ahead: How many frames to have extracted at a given time. Keeping this value small decreases
-    #                          maximum hard-drive usage but makes preformance slightly slower.
-    #                          Options: [20,1000]
-
-
-    max_frames_ahead: 20
-
-
   developer_settings:
 
     pre_process: True
+    max_frames_ahead: 20
     processed_video: None
     debug: false
     workspace: ..\workspace\sideways_vid\ # path to the workspace folder (lots of files will be written here)
     dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
-    workspace_use_temp: false
-    delete_workspace_after: true
+    delete_workspace_after: False
     extension_type: .jpg
     bleed: 1
-    quality_moving_ratio: 0.55
     step_size: 8
 
 # don't touch these unless you know what you're doing!

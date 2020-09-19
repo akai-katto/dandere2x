@@ -1,14 +1,36 @@
+"""
+    This file is part of the Dandere2x project.
+    Dandere2x is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Dandere2x is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Dandere2x.  If not, see <https://www.gnu.org/licenses/>.
+""""""
+========= Copyright aka_katto 2018, All rights reserved. ============
+Original Author: aka_katto 
+Purpose: 'Context' serves as a controller-class wherein variables
+          are all stored in here, and passed to dandere2x objects
+          to avoid needing to pass a million variables. Each variable
+          is assumed to be static (with exception to video_settings, 
+          which is loaded during runtime), as well as 
+====================================================================="""
+
 import logging
 import os
 import pathlib
 import sys
-import tempfile
 
 import yaml
 
-from dandere2xlib.utils.yaml_utils import absolutify_yaml
-from wrappers.ffmpeg.videosettings import VideoSettings
 from controller import Controller
+from dandere2xlib.utils.yaml_utils import absolutify_yaml
+from wrappers.cv2.videosettingscv2 import VideoSettingsCV2
+from wrappers.ffmpeg.videosettings import VideoSettings
 
 
 class Context:
@@ -29,7 +51,7 @@ class Context:
 
         self.this_folder = None
 
-        # load 'this folder' in a pyinstaller friendly way
+        # load 'this_folder' in a pyinstaller friendly way
         if getattr(sys, 'frozen', False):
             self.this_folder = os.path.dirname(sys.executable)
         elif __file__:
@@ -44,48 +66,24 @@ class Context:
         ################################
         #  setup all the directories.. #
         ################################
+        self.waifu2x_converter_cpp_path = self.config_yaml['waifu2x_converter']['waifu2x_converter_path']
+        self.waifu2x_converter_file_name = self.config_yaml['waifu2x_converter']['waifu2x_converter_file_name']
+        self.waifu2x_converter_cpp_file_path = os.path.join(self.waifu2x_converter_cpp_path,
+                                                            self.waifu2x_converter_file_name)
 
-        # TODO: since this is a fail-safe method on loading the waifu2x clients
-        # we gotta check at least one is ok before running dandere2x?
+        self.waifu2x_ncnn_vulkan_path = self.config_yaml['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
+        self.waifu2x_ncnn_vulkan_file_name = self.config_yaml['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_file_name']
+        self.waifu2x_ncnn_vulkan_legacy_file_name = os.path.join(self.waifu2x_ncnn_vulkan_path,
+                                                                 self.waifu2x_ncnn_vulkan_file_name)
 
-        if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "converter_cpp":
-            self.waifu2x_converter_cpp_path = self.config_yaml['waifu2x_converter']['waifu2x_converter_path']
-            self.waifu2x_converter_file_name = self.config_yaml['waifu2x_converter']['waifu2x_converter_file_name']
-            self.waifu2x_converter_cpp_file_path = os.path.join(self.waifu2x_converter_cpp_path,
-                                                                self.waifu2x_converter_file_name)
+        self.realsr_ncnn_vulkan_path = self.config_yaml['realsr_ncnn_vulkan']['realsr_ncnn_vulkan_path']
+        self.realsr_ncnn_vulkan_file_name = self.config_yaml['realsr_ncnn_vulkan']['realsr_ncnn_vulkan_file_name']
+        self.realsr_ncnn_vulkan_file_path = os.path.join(self.realsr_ncnn_vulkan_path,
+                                                         self.realsr_ncnn_vulkan_file_name)
 
-        if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "vulkan":
-            self.waifu2x_ncnn_vulkan_path = self.config_yaml['waifu2x_ncnn_vulkan']['waifu2x_ncnn_vulkan_path']
-            self.waifu2x_ncnn_vulkan_file_name = self.config_yaml['waifu2x_ncnn_vulkan'][
-                'waifu2x_ncnn_vulkan_file_name']
-            self.waifu2x_ncnn_vulkan_legacy_file_name = os.path.join(self.waifu2x_ncnn_vulkan_path,
-                                                                     self.waifu2x_ncnn_vulkan_file_name)
-
-        if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "vulkan_legacy":
-            self.waifu2x_ncnn_vulkan_legacy_path = self.config_yaml['waifu2x_ncnn_vulkan_legacy'][
-                'waifu2x_ncnn_vulkan_legacy_path']
-            self.waifu2x_ncnn_vulkan_legacy_file_name = self.config_yaml['waifu2x_ncnn_vulkan_legacy'][
-                'waifu2x_ncnn_vulkan_legacy_file_name']
-            self.waifu2x_ncnn_vulkan_legacy_file_path = os.path.join(self.waifu2x_ncnn_vulkan_legacy_path,
-                                                                     self.waifu2x_ncnn_vulkan_legacy_file_name)
-
-        if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "realsr_ncnn_vulkan":
-            self.realsr_ncnn_vulkan_path = self.config_yaml['realsr_ncnn_vulkan'][
-                'realsr_ncnn_vulkan_path']
-            self.realsr_ncnn_vulkan_file_name = self.config_yaml['realsr_ncnn_vulkan'][
-                'realsr_ncnn_vulkan_file_name']
-            self.realsr_ncnn_vulkan_file_path = os.path.join(self.realsr_ncnn_vulkan_path,
-                                                                     self.realsr_ncnn_vulkan_file_name)
-
-        if self.config_yaml['dandere2x']['usersettings']['waifu2x_type'] == "caffe":
-            self.waifu2x_caffe_cui_dir = self.config_yaml['waifu2x_caffe']['waifu2x_caffe_path']
+        self.waifu2x_caffe_cui_dir = self.config_yaml['waifu2x_caffe']['waifu2x_caffe_path']
 
         self.workspace = self.config_yaml['dandere2x']['developer_settings']['workspace']
-        self.workspace_use_temp = self.config_yaml['dandere2x']['developer_settings']['workspace_use_temp']
-
-        # if we're using a temporary workspace, assign workspace to be in the temp folder
-        if self.workspace_use_temp:
-            self.workspace = os.path.join(pathlib.Path(tempfile.gettempdir()), 'dandere2x') + os.path.sep
 
         # setup directories
         self.log_folder_dir = self.config_yaml['dandere2x']['usersettings']['log_folder']
@@ -100,7 +98,6 @@ class Context:
         self.debug_dir = self.workspace + "debug" + os.path.sep
         self.console_output_dir = self.workspace + "console_output" + os.path.sep
         self.compressed_static_dir = self.workspace + "compressed_static" + os.path.sep
-        self.compressed_moving_dir = self.workspace + "compressed_moving" + os.path.sep
         self.encoded_dir = self.workspace + "encoded" + os.path.sep
         self.temp_image_folder = self.workspace + "temp_image_folder" + os.path.sep
 
@@ -114,8 +111,7 @@ class Context:
                             self.pframe_data_dir,
                             self.debug_dir,
                             self.console_output_dir,
-                            self.compressed_static_dir,
-                            self.compressed_moving_dir,
+                            self.compressed_static_dir, 
                             self.fade_data_dir,
                             self.encoded_dir,
                             self.temp_image_folder}
@@ -143,26 +139,19 @@ class Context:
 
         # Developer Settings
         self.pre_process = self.config_yaml['dandere2x']['developer_settings']['pre_process']
-        self.quality_moving_ratio = self.config_yaml['dandere2x']['developer_settings']['quality_moving_ratio']
         self.step_size = self.config_yaml['dandere2x']['developer_settings']['step_size']
         self.bleed = self.config_yaml['dandere2x']['developer_settings']['bleed']
         self.extension_type = self.config_yaml['dandere2x']['developer_settings']['extension_type']
         self.debug = self.config_yaml['dandere2x']['developer_settings']['debug']
         self.dandere2x_cpp_dir = self.config_yaml['dandere2x']['developer_settings']['dandere2x_cpp_dir']
         self.correction_block_size = 2
-        self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
-        self.pre_processed_video = self.workspace + "pre_processed" + self.output_extension
         self.delete_workspace_after = self.config_yaml['dandere2x']['developer_settings']['delete_workspace_after']
-        #####################
-        # MIN DISK SETTINGS #
-        #####################
-        # - Side Note, sound_file is a work around for the time being, since the advent of min disk we need to use
-        #   noisey.mkv and have that be the primarly used video we need to refer back to the original
-        #   video file in order for audio track migrations to work properly.
-
-        self.max_frames_ahead = self.config_yaml['dandere2x']['min_disk_settings']['max_frames_ahead']
+        self.max_frames_ahead = self.config_yaml['dandere2x']['developer_settings']['max_frames_ahead']
         self.sound_file = self.config_yaml['dandere2x']['usersettings']['input_file']
 
+        # Session Related Variables
+        self.nosound_file = os.path.join(self.workspace, "nosound" + self.output_extension)
+        self.pre_processed_video = self.workspace + "pre_processed" + self.output_extension
         self.start_frame = self.config_yaml['resume_settings']['last_saved_frame']
         self.controller = Controller()
 
@@ -170,11 +159,13 @@ class Context:
         # Video Settings #
         ##################
 
-        # load the needed video settings
-        self.video_settings = None
-        self.frame_rate = None
+        # ffprobe video settings
         self.width, self.height = None, None
         self.dar = None
+        self.rotate = None
+        self.frame_rate = None
+
+        # cv2 video settings
         self.frame_count = None
 
         ###################
@@ -184,35 +175,28 @@ class Context:
         self.last_saved_frame = self.config_yaml['resume_settings']['last_saved_frame']
         self.incomplete_video = self.config_yaml['resume_settings']['incomplete_video']
 
-        #########
-        # Other #
-        #########
+    def load_video_settings_ffprobe(self, file: str):
+        """
+        file: what to video file to load
+        load_type: whether to load video settings with cv2 or ffprobe
+        """
+        video_settings = VideoSettings(self.ffprobe_dir, file)
+        self.width, self.height = video_settings.width, video_settings.height
+        self.dar = video_settings.dar
+        self.rotate = video_settings.rotate
+        self.frame_rate = video_settings.frame_rate
 
-        # create and set the log file
-        self.set_logger()
-
-
-    def load_video_settings(self, file: str):
-        self.video_settings = VideoSettings(self.ffprobe_dir, file)
-        self.frame_rate = self.video_settings.frame_rate
-        self.width, self.height = self.video_settings.width, self.video_settings.height
-        self.dar = self.video_settings.dar
-        self.rotate = self.video_settings.rotate
-
-        # self.frame_count = ffmpeg.count(frames)
-        self.frame_count = self.video_settings.frame_count
+    def load_video_settings_cv2(self, file: str):
+        video_settings_cv2 = VideoSettingsCV2(file)
+        self.frame_count = video_settings_cv2.frame_count
 
 
-    # the workspace folder needs to exist before creating the log file, hence the method
-    def set_logger(self):
-        pass
-        # import time
-        # from dandere2xlib.utils.console_log import ConsoleLogger
-        #
-        # self.logger = ConsoleLogger(10)
+    def log_all_variables(self):
+        log = logging.getLogger()
 
-    def close_logger(self):
-        logging.shutdown()
+        log.info("Context Settings:")
+        for item in self.__dict__:
+            log.info("%s : %s" % (item, self.__dict__[item]))
 
     def update_frame_count(self):
         """

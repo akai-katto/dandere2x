@@ -1,3 +1,4 @@
+import logging
 from fractions import Fraction
 
 from wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate, get_frame_count, get_aspect_ratio
@@ -12,6 +13,7 @@ class VideoSettings:
         A simple class to get the video settings needed for dandere2x using ffprobe.
         """
 
+        log = logging.getLogger()
         self.ffprobe_dir = ffprobe_dir
         self.settings_json = get_video_info(self.ffprobe_dir, video_file)
         self.frame_count = int(get_frame_count(self.ffprobe_dir, video_file))
@@ -26,7 +28,7 @@ class VideoSettings:
             self.dar = self.settings_json['streams'][0]['display_aspect_ratio']
 
         except KeyError:
-            print("key error")
+            log.warning("Warning, getting video information from ffprobe failed. Using backup commands.")
             self.width, self.height = get_width_height(self.ffprobe_dir, video_file)
             self.frame_rate = float(Fraction(get_frame_rate(self.ffprobe_dir, video_file)))
             self.dar = get_aspect_ratio(self.ffprobe_dir, video_file)
@@ -36,3 +38,14 @@ class VideoSettings:
             self.rotate = int(self.settings_json['streams'][0]["tags"]["rotate"])
         except KeyError:
             self.rotate = int(0)
+
+        log.info("Loaded Video Settings for %s :" % video_file)
+        for item in self.__dict__:
+            log.info("%s : %s" % (item, self.__dict__[item]))
+
+    def log_all_variables(self):
+        log = logging.getLogger()
+
+        log.info("Context Settings:")
+        for item in self.__dict__:
+            print("%s : %s" % (item, self.__dict__[item]))

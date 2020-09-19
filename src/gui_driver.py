@@ -1,10 +1,10 @@
 import glob
 import os
-import sys
 import shutil
-import yaml
+import sys
 import time
 
+import yaml
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
@@ -35,7 +35,7 @@ class QtDandere2xThread(QtCore.QThread):
             except PermissionError:
                 print("Trying to delete workspace via RM tree threw PermissionError - Dandere2x may not work.")
 
-            while(file_exists(self.dandere2x.context.workspace)):
+            while file_exists(self.dandere2x.context.workspace):
                 time.sleep(1)
 
         try:
@@ -61,6 +61,7 @@ class AppWindow(QMainWindow):
     Note; I don't maintain this class. It's half assed in the grand scheme of things, and it'd probably be re-made later.
     """
 
+
     def __init__(self):
         super().__init__()
 
@@ -78,7 +79,6 @@ class AppWindow(QMainWindow):
         # load 'this folder' in a pyinstaller friendly way
         self.this_folder = os.getcwd()
         self.ui.suspend_button.setEnabled(True)
-
 
         # Note: At the moment running d2x from venv on windows 10 is having issues with this
         # segment of code. I've left it commented for the time being since I'm unsure if pyinstaller
@@ -211,9 +211,8 @@ class AppWindow(QMainWindow):
 
         print(os.getcwd())
 
-        if get_operating_system() == 'win32':
-            with open(os.path.join(self.this_folder, self.config_file), "r") as read_file:
-                config_yaml = yaml.safe_load(read_file)
+        with open(os.path.join(self.this_folder, self.config_file), "r") as read_file:
+            config_yaml = yaml.safe_load(read_file)
 
         if self.is_suspend_file(self.input_file):
             print("is suspend file")
@@ -230,7 +229,6 @@ class AppWindow(QMainWindow):
             config_yaml['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
             config_yaml['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
             config_yaml['dandere2x']['usersettings']['denoise_level'] = self.noise_level
-
 
         print("output_file = " + config_yaml['dandere2x']['usersettings']['output_file'])
         print("input_file = " + config_yaml['dandere2x']['usersettings']['input_file'])
@@ -405,12 +403,15 @@ class AppWindow(QMainWindow):
         filename = QFileDialog.getOpenFileName(w, 'Open File', self.this_folder)
         return filename
 
+
 app = QApplication(sys.argv)
 w = AppWindow()
+
 
 def gui_start():
     w.show()
     sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     gui_start()

@@ -9,7 +9,6 @@ import imageio
 import numpy
 import numpy as np
 from PIL import Image
-from scipy import misc  # pip install Pillow
 
 from dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file
 
@@ -135,7 +134,7 @@ class Frame:
         count = 0
         while not exists and controller.is_alive():
             if count % 10000 == 0:
-                logger.info(input_string + " dne")
+                logger.debug(input_string + " dne")
             exists = os.path.isfile(input_string)
             count += 1
             time.sleep(.2)
@@ -146,10 +145,10 @@ class Frame:
                 self.load_from_string(input_string)
                 loaded = True
             except PermissionError:
-                logger.info("Permission Error")
+                logger.debug("Permission Error")
                 loaded = False
             except ValueError:
-                logger.info("Value Error")
+                logger.debug("Value Error")
                 loaded = False
 
     def save_image(self, out_location):
@@ -202,9 +201,10 @@ class Frame:
             wait_on_file(out_location + "temp" + extension)
             rename_file(out_location + "temp" + extension, out_location)
         else:
-            misc.imsave(out_location + "temp" + extension, self.frame)
-            wait_on_file(out_location + "temp" + extension)
-            rename_file(out_location + "temp" + extension, out_location)
+            # todo, fix this
+            self.logger.error("Aka-katto has removed this customization you added - he's going to re-add it later.")
+            self.logger.error('Sorry about that : \\')
+            raise ValueError('See Console')
 
     def copy_image(self, frame_other):
         """

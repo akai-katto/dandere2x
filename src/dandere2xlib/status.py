@@ -1,15 +1,16 @@
+import ctypes
+import logging
 import os
 import sys
 import threading
 import time
 
 from context import Context
-from dandere2xlib.utils.thread_utils import CancellationToken
-
-
 # todo
 # This could probably be improved visually for the user.. it's not the most pleasing to look at
 # Also, in a very niche case the GUI didn't catch up with the deletion of files, so it ceased updating
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
+from dandere2xlib.utils.thread_utils import CancellationToken
 
 
 class Status(threading.Thread):
@@ -22,18 +23,18 @@ class Status(threading.Thread):
         self.is_alive = True
         self._is_stopped = False
         self.start_frame = self.context.start_frame
+        self.log = logging.getLogger()
 
         # Threading Specific
-
-        self.alive = True
-        self.cancel_token = CancellationToken()
-        self._stopevent = threading.Event()
         threading.Thread.__init__(self, name="StatusTHread")
 
     def join(self, timeout=None):
+        self.log.info("Join called.")
         threading.Thread.join(self, timeout)
+        self.log.info("Join finished.")
 
     def kill(self):
+        self.log.info("Kill called.")
         self.alive = False
         self.cancel_token.cancel()
         self._stopevent.set()
@@ -42,17 +43,17 @@ class Status(threading.Thread):
         self.start_frame = start_frame
 
     def run(self):
-
+        self.log.info("Run called.")
         last_10 = [0]
 
-        path, name = os.path.split(self.context.input_file) # get file name only
+        path, name = os.path.split(self.context.input_file)  # get file name only
 
         for x in range(self.start_frame, self.frame_count - 1):
 
             if not self.context.controller.is_alive():
                 break
 
-            percent = int(((x+1) / self.frame_count) * 100)
+            percent = int(((x + 1) / self.frame_count) * 100)
 
             average = 0
             for time_count in last_10:
@@ -60,8 +61,17 @@ class Status(threading.Thread):
 
             average = round(average / len(last_10), 2)
 
-            sys.stdout.write('\r')
-            sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
+            # sys.stdout.write('\r')
+            # sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
+
+            if get_operating_system() == 'win32':
+                ctypes.windll.kernel32.SetConsoleTitleW(
+                    "[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (
+                        name, x, percent, average))
+            else:
+                sys.stdout.write('\r')
+                sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (
+                    name, x, percent, average))
 
             if len(last_10) == 10:
                 last_10.pop(0)
@@ -74,4 +84,3 @@ class Status(threading.Thread):
             later = time.time()
             difference = float(later - now)
             last_10.append(difference)
-

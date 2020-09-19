@@ -1,8 +1,8 @@
 import threading
 
-from dandere2xlib.utils.thread_utils import CancellationToken
-from wrappers.frame.frame import Frame
 from controller import Controller
+from wrappers.frame.frame import Frame
+
 
 class AsyncFrameRead(threading.Thread):
     """

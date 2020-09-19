@@ -4,9 +4,10 @@ import os
 import shutil
 import time
 
-from dandere2x import Dandere2x
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import wait_on_file, dir_exists, file_exists
+from dandere2x import Dandere2x
+from dandere2xlib.utils.dandere2x_utils import dir_exists, file_exists
+
 
 class Dandere2xUpscaleFolder:
     """

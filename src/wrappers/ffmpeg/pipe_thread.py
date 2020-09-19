@@ -1,3 +1,4 @@
+import logging
 import subprocess
 import threading
 import time
@@ -17,6 +18,7 @@ class Pipe(threading.Thread):
         # load context
         self.context = context
         self.output_no_sound = output_no_sound
+        self.log = logging.getLogger()
 
         # class specific
         self.ffmpeg_pipe_subprocess = None
@@ -26,12 +28,17 @@ class Pipe(threading.Thread):
         self.lock_buffer = False
 
     def kill(self) -> None:
+        self.log.info("Kill called.")
         self.alive = False
 
     def join(self, timeout=None) -> None:
+        self.log.info("Join called.")
         threading.Thread.join(self)
+        self.log.info("Join finished.")
 
     def run(self) -> None:
+        self.log.info("Run Called")
+
         self.alive = True
         self._setup_pipe()
 
@@ -94,5 +101,6 @@ class Pipe(threading.Thread):
 
         # Starting the Pipe Command
         console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
+        console_output.write(str(ffmpeg_pipe_command))
         self.ffmpeg_pipe_subprocess = subprocess.Popen(ffmpeg_pipe_command, stdin=subprocess.PIPE,
                                                        stdout=console_output)

@@ -16,23 +16,24 @@ Original Author: aka_katto
 Purpose: 
  
 ====================================================================="""
+import logging
 import os
 import time
 from abc import ABC, abstractmethod
 from threading import Thread
 
 from context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_file_controller, file_exists
+from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_file, file_exists
 from wrappers.frame.frame import Frame
 
 
 class AbstractUpscaler(Thread, ABC):
-
     """
     Notes: When instantiating an AbstractUpscaler type, super().__init__(context) goes last since
     self._construct_upscale_command() is an implemented method and needs the instantiated variables in the inheriting
     class.
     """
+
     def __init__(self, context: Context):
         super().__init__()
 
@@ -45,6 +46,7 @@ class AbstractUpscaler(Thread, ABC):
         self.scale_factor = context.scale_factor
         self.workspace = context.workspace
         self.frame_count = context.frame_count
+        self.log = logging.getLogger()
 
         self.upscale_command = self._construct_upscale_command()
 
@@ -60,14 +62,20 @@ class AbstractUpscaler(Thread, ABC):
         test_frame.create_new(2, 2)
         test_frame.save_image(test_file)
 
+        self.log.info("Attempting to upscale file %s into %s to ensure waifu2x is working..."
+                      % (test_file, test_file_upscaled))
+
         self.upscale_file(test_file, test_file_upscaled)
 
         if not file_exists(test_file_upscaled):
-            print("Your computer could not upscale a test image, which is required for dandere2x to work.")
-            print("This may be a hardware issue or a software issue - verify your computer is capable of upscaling "
-                  "images using the selected upscaler.")
+            self.log.error("Your computer could not upscale a test image, which is required for dandere2x to work.")
+            self.log.error(
+                "This may be a hardware issue or a software issue - verify your computer is capable of upscaling "
+                "images using the selected upscaler.")
 
             raise Exception("Your computer could not upscale the test file.")
+
+        self.log.info("Upscaling *seems* successful. Deleting files and continuing forward. ")
 
         os.remove(test_file)
         os.remove(test_file_upscaled)
@@ -82,7 +90,7 @@ class AbstractUpscaler(Thread, ABC):
         As a result, I've abstracted this into the abstract class, so every upscaler to behave in this way
         to keep the variation of upscalers consistent across variations.
         """
-
+        self.log.info("Run called.")
         remove_thread = RemoveUpscaledFiles(context=self.context)
         remove_thread.start()
 
@@ -90,8 +98,11 @@ class AbstractUpscaler(Thread, ABC):
             self.repeated_call()
 
     def join(self, timeout=None) -> None:
+        self.log.info("Join called.")
         while self.controller.is_alive() and not self.check_if_done():
             time.sleep(0.05)
+
+        self.log.info("Join finished.")
 
     def check_if_done(self) -> bool:
         if self.controller.get_current_frame() >= self.frame_count - 1:
@@ -145,7 +156,7 @@ class RemoveUpscaledFiles(Thread):
             residual_file = self.context.residual_images_dir + name.replace(".png", ".jpg")
             residual_upscaled_file = self.context.residual_upscaled_dir + name.replace(".jpg", ".png")
 
-            wait_on_file_controller(residual_upscaled_file, self.context.controller)
+            wait_on_file(residual_upscaled_file, self.context.controller)
             if not self.context.controller.is_alive():
                 return
 
