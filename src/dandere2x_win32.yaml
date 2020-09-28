@@ -44,9 +44,9 @@ dandere2x:
     max_frames_ahead: 20
     processed_video: None
     debug: false
-    workspace: ..\workspace\sideways_vid\ # path to the workspace folder (lots of files will be written here)
+    workspace: ..\workspace\default_workspace\ # path to the workspace folder (lots of files will be written here)
     dandere2x_cpp_dir: ..\externals\dandere2x_cpp.exe # path to dandere2x_cpp binary file
-    delete_workspace_after: False
+    delete_workspace_after: True
     extension_type: .jpg
     bleed: 1
     step_size: 8
@@ -160,5 +160,6 @@ ffmpeg:
     output_options:
       -pix_fmt: null
       -vsync: "cfr"
+      -crf : 17
       -vf:
         - noise=c1s=8:c0f=u
