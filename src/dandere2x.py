@@ -150,11 +150,12 @@ class Dandere2x(threading.Thread):
         unmigrated = workspace + "d2x_input_video_nonmigrated.mkv"
         pre_processed_video = self.context.pre_processed_video
 
+        # have dandere2x load up the pre-processed video and re-assign video settings to use that instead
         re_encode_video(self.context, input_file, unmigrated, throw_exception=True)
         migrate_tracks(self.context, unmigrated, input_file, pre_processed_video, copy_if_failed=True)
         os.remove(unmigrated)
         wait_on_file(pre_processed_video, controller=self.context.controller)
-        self.context.load_video_settings_cv2(file=pre_processed_video)
+        self.context.load_pre_processed_video(file=pre_processed_video)
 
     def kill(self):
         """
