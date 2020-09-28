@@ -24,7 +24,7 @@ class VideoSettings:
         try:
             self.height = self.settings_json['streams'][0]['height']
             self.width = self.settings_json['streams'][0]['width']
-            self.frame_rate = float(Fraction(self.settings_json['streams'][0]['r_frame_rate']))
+            self.frame_rate = float(Fraction(self.settings_json['streams'][0]['avg_frame_rate']))
             self.dar = self.settings_json['streams'][0]['display_aspect_ratio']
 
         except KeyError:
