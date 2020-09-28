@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import subprocess
+import string
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
@@ -164,11 +165,8 @@ def append_video_resize_filter(context: Context):
     log.info("New width -> %s " % str(width))
     log.info("New height -> %s " % str(height))
 
-    context.width = width
-    context.height = height
-
     context.config_yaml['ffmpeg']['re_encode_video']['output_options']['-vf'] \
-        .append("scale=" + str(context.width) + ":" + str(context.height))
+        .append("scale=" + str(width) + ":" + str(height))
 
 
 def concat_encoded_vids(context: Context, output_file: str):
@@ -200,11 +198,16 @@ def concat_encoded_vids(context: Context, output_file: str):
     console_output.write((str(concat_videos_command)))
     subprocess.call(concat_videos_command, shell=False, stderr=console_output, stdout=console_output)
 
-
 def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str, copy_if_failed=False):
     """
     Add the audio tracks from the original video to the output video.
     """
+
+    # to remove
+    def convert(lst):
+        return ' '.join(lst)
+
+    log = logging.getLogger()
 
     migrate_tracks_command = [context.ffmpeg_dir,
                               "-i", no_audio,
@@ -225,7 +228,11 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
 
     migrate_tracks_command.extend([str(output_file)])
 
-    console_output = open(context.console_output_dir + "migrate_tracks_command.txt", "w")
+    console_file_dir = context.console_output_dir + "migrate_tracks_command.txt"
+    log.info("Writing files to %s" % console_file_dir)
+    log.info("Migrate Command: %s" % convert(migrate_tracks_command) )
+
+    console_output = open(console_file_dir, "w")
     console_output.write(str(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
 

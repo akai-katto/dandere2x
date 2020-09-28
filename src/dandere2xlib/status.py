@@ -53,7 +53,7 @@ class Status(threading.Thread):
             if not self.context.controller.is_alive():
                 break
 
-            percent = int(((x + 1) / self.frame_count) * 100)
+            percent = int(((x + 1) / (self.frame_count-1)) * 100)
 
             average = 0
             for time_count in last_10:
