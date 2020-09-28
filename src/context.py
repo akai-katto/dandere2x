@@ -186,9 +186,11 @@ class Context:
         self.rotate = video_settings.rotate
         self.frame_rate = video_settings.frame_rate
 
-    def load_video_settings_cv2(self, file: str):
-        video_settings_cv2 = VideoSettingsCV2(file)
-        self.frame_count = video_settings_cv2.frame_count
+    def load_pre_processed_video(self, file: str):
+        video_settings = VideoSettings(self.ffprobe_dir, file)
+        self.width, self.height = video_settings.width, video_settings.height
+        self.frame_rate = video_settings.frame_rate
+        self.frame_count = video_settings.frame_count
 
 
     def log_all_variables(self):
