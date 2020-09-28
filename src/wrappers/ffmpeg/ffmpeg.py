@@ -165,11 +165,8 @@ def append_video_resize_filter(context: Context):
     log.info("New width -> %s " % str(width))
     log.info("New height -> %s " % str(height))
 
-    context.width = width
-    context.height = height
-
     context.config_yaml['ffmpeg']['re_encode_video']['output_options']['-vf'] \
-        .append("scale=" + str(context.width) + ":" + str(context.height))
+        .append("scale=" + str(width) + ":" + str(height))
 
 
 def concat_encoded_vids(context: Context, output_file: str):
