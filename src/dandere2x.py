@@ -308,7 +308,7 @@ class Dandere2x(threading.Thread):
     def set_file_logger(self, file: str):
         self.log.info("Writing log-file at %s" % file)
         formatter = logging.Formatter(self.file_log_format)
-        self.fh = logging.FileHandler(file)
+        self.fh = logging.FileHandler(file, "w", "utf-8")
         self.fh.setFormatter(formatter)
         self.log.addHandler(self.fh)
         self.log.info("Log-file set.")
