@@ -66,12 +66,12 @@ def re_encode_video(context: Context, input_file: str, output_file: str, throw_e
     extract_frames_command.extend([output_file])
 
     log_file = context.console_output_dir + "ffmpeg_convert_video.txt"
-    console_output = open(log_file, "w")
+    console_output = open(log_file, "w", encoding="utf8")
     console_output.write(str(extract_frames_command))
     subprocess.call(extract_frames_command, shell=False, stderr=console_output, stdout=console_output)
 
     if throw_exception:
-        with open(context.console_output_dir + "ffmpeg_convert_video.txt") as f:
+        with open(context.console_output_dir + "ffmpeg_convert_video.txt", encoding="utf8") as f:
             if 'Conversion failed!' in f.read():
                 print("Failed to convert: " + input_file + " -> " + output_file + ".")
                 print("Check the output file for more information: " + log_file)
@@ -232,12 +232,12 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
     log.info("Writing files to %s" % console_file_dir)
     log.info("Migrate Command: %s" % convert(migrate_tracks_command) )
 
-    console_output = open(console_file_dir, "w")
+    console_output = open(console_file_dir, "w", encoding="utf8")
     console_output.write(str(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
 
     if copy_if_failed:
-        with open(context.console_output_dir + "migrate_tracks_command.txt") as f:
+        with open(context.console_output_dir + "migrate_tracks_command.txt", encoding="utf8") as f:
             if 'Conversion failed!' in f.read():
                 import os
                 import shutil
