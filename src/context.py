@@ -27,9 +27,8 @@ import sys
 
 import yaml
 
-from controller import Controller
+from dandere2x.controller import Controller
 from dandere2xlib.utils.yaml_utils import absolutify_yaml
-from wrappers.cv2.videosettingscv2 import VideoSettingsCV2
 from wrappers.ffmpeg.videosettings import VideoSettings
 
 

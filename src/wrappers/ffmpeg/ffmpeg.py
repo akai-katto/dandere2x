@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import logging
 import subprocess
-import string
 
 from context import Context
 from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution

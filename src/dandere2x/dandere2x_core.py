@@ -44,7 +44,7 @@ from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 
 
-class Dandere2x(threading.Thread):
+class Dandere2xCore(threading.Thread):
 
     def __init__(self, context: Context):
         # Administrative Stuff
@@ -103,7 +103,7 @@ class Dandere2x(threading.Thread):
     # todo, need to implement DAR fix bug.
     def _pre_processing(self):
         """
-        This MUST be the first thing `run` calls, or else dandere2x.py will not work!
+        This MUST be the first thing `run` calls, or else dandere2x_core.py will not work!
 
         Description: This function is a series of instructions dandere2x MUST perform before the main threads
                      are able to be called, and serves as a preliminary "health checker" for dandere2x to diagnose
@@ -159,7 +159,7 @@ class Dandere2x(threading.Thread):
 
     def kill(self):
         """
-        Kill Dandere2x entirely. Everything started as a thread within the scope of dandere2x.py can be killed with
+        Kill Dandere2x entirely. Everything started as a thread within the scope of dandere2x_core.py can be killed with
         controller.kill() except for d2x_cpp, since that runs as a subprocess.
 
         As an analogy, imagine `controller` is a fishline that is passed to all threads, and we can `pull the cord` on
@@ -318,9 +318,9 @@ class Dandere2x(threading.Thread):
         Create the logging class to be format print statements the dandere2x way.
 
         The formatted output resembles the following (roughly):
-            2020-08-01 16:03:39,455 INFO     dandere2x.py : Hewwooo
-            2020-08-01 16:03:39,456 WARNING  dandere2x.py : jeeez fuck this warning
-            2020-08-01 16:03:39,456 ERROR    dandere2x.py : oh fuck fuck fuck stop the program an error occurred
+            2020-08-01 16:03:39,455 INFO     dandere2x_core.py : Hewwooo
+            2020-08-01 16:03:39,456 WARNING  dandere2x_core.py : jeeez fuck this warning
+            2020-08-01 16:03:39,456 ERROR    dandere2x_core.py : oh fuck fuck fuck stop the program an error occurred
         """
 
         formatter = ColoredFormatter(

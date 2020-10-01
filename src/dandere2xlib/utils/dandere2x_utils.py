@@ -54,7 +54,7 @@ def force_delete_directory(directory):
             time.sleep(1)
 
 
-from controller import Controller
+from dandere2x.controller import Controller
 def get_list_from_file_and_wait(text_file: str, controller=Controller()):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)

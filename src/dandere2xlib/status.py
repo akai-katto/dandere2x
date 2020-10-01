@@ -10,7 +10,6 @@ from context import Context
 # This could probably be improved visually for the user.. it's not the most pleasing to look at
 # Also, in a very niche case the GUI didn't catch up with the deletion of files, so it ceased updating
 from dandere2xlib.utils.dandere2x_utils import get_operating_system
-from dandere2xlib.utils.thread_utils import CancellationToken
 
 
 class Status(threading.Thread):

@@ -1,17 +1,14 @@
-import argparse
 import os
-import shutil
 import sys
 import time
 import random
 import yaml
 
 from context import Context
-from dandere2x import Dandere2x
-from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
-from wrappers.dandere2x_wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
+from dandere2x.dandere2x_core import Dandere2xCore
+from dandere2xlib.utils.dandere2x_utils import get_operating_system, file_exists
 
-from wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks, append_video_resize_filter, concat_two_videos
+from wrappers.ffmpeg.ffmpeg import migrate_tracks
 
 skip = True
 
@@ -76,7 +73,7 @@ dandere2x = None
 
 try:
     context = Context(config)
-    dandere2x = Dandere2x(context=context)
+    dandere2x = Dandere2xCore(context=context)
 except:
     print("Loading %s failed!" % dandere2x_config_file)
 

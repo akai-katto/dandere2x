@@ -5,7 +5,7 @@ import shutil
 import time
 
 from context import Context
-from dandere2x import Dandere2x
+from dandere2x.dandere2x_core import Dandere2xCore
 from dandere2xlib.utils.dandere2x_utils import dir_exists, file_exists
 
 
@@ -60,6 +60,6 @@ class Dandere2xUpscaleFolder:
                 while (file_exists(context.workspace)):
                     time.sleep(1)
 
-            d2x = Dandere2x(context)
+            d2x = Dandere2xCore(context)
             d2x.start()
             d2x.join()
