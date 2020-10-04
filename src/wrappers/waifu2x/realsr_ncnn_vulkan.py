@@ -21,7 +21,7 @@ import subprocess
 import time
 from threading import Thread
 
-from context import Context
+from dandere2x.context import Context
 from dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
     rename_file, wait_on_either_file_controller
 from dandere2xlib.utils.yaml_utils import get_options_from_section

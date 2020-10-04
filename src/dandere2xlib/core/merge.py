@@ -35,7 +35,7 @@ Comments / Notes: This is probably the most difficult to understand
 import logging
 import threading
 
-from context import Context
+from dandere2x.context import Context
 from dandere2xlib.core.plugins.correction import correct_image
 from dandere2xlib.core.plugins.fade import fade_image
 from dandere2xlib.core.plugins.pframe import pframe_image

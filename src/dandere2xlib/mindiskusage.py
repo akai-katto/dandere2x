@@ -26,7 +26,7 @@ import os
 import threading
 import time
 
-from context import Context
+from dandere2x.context import Context
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 from wrappers.cv2.progressive_frame_extractor_cv2 import ProgressiveFramesExtractorCV2
 

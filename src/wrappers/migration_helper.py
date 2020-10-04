@@ -4,7 +4,7 @@ import time
 import random
 import yaml
 
-from context import Context
+from dandere2x.context import Context
 from dandere2x.dandere2x_core import Dandere2xCore
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, file_exists
 

@@ -8,7 +8,7 @@ import yaml
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
-from context import Context
+from dandere2x.context import Context
 from dandere2x.dandere2x_core import Dandere2xCore
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 from gui.Dandere2xGUI import Ui_Dandere2xGUI

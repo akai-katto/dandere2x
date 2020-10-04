@@ -21,5 +21,9 @@ class Dandere2xInterface(ABC):
         pass
 
     @abstractmethod
+    def on_completion(self):
+        pass
+
+    @abstractmethod
     def join(self):
         pass

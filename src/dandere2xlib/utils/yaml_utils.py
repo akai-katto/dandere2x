@@ -1,9 +1,15 @@
+import os
+from pathlib import Path
+
 import yaml
 
 
 # given a list like ["hi", "bye", "kyle"],
 # return a list in the shape "hi, bye, kyle"
 # This is because ffmpeg expects it in this format
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
+
+
 def list_to_string(list_input: list):
     return_str = ''
     for item in list_input:
@@ -38,9 +44,32 @@ def get_options_from_section(section: yaml, ffmpeg_command=False):
 
     return execute
 
-    # absolutify a json method by replacing ".." into "current_folder".
-    # there's some trickery to do this, but it works
 
+def load_directories_yaml_with_absolute_paths() -> dict:
+    """
+    Load the dandere2x_directories yaml file, but replace all the relative path definitions with absolute
+    definitions.
+    """
+    from os import path
+    from pathlib import Path
+    import sys
+
+    # get location of dandere2x directories (will be in the same folder as main)
+    configfile = "dandere2x_directories_%s.yaml" % get_operating_system()
+    main_path = Path(path.abspath(sys.modules['__main__'].__file__)).parent
+    directory_file = os.path.join(main_path, configfile)
+
+    # load yaml
+    with open(directory_file, "r") as read_file:
+        config = yaml.safe_load(read_file)
+
+    print( os.path.isabs("this is not a path"))
+    # replace each relative path with it's absolute counter-part (if applicable)
+    for key in config:
+        if not os.path.isabs(config[key]):
+            config[key] = os.path.join(main_path, config[key])
+
+    return config
 
 def absolutify_yaml(unparsed_yaml: yaml, current_folder: str, absolutify_key=".."):
     """

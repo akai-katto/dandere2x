@@ -19,7 +19,7 @@ import logging
 import subprocess
 import threading
 
-from context import Context
+from dandere2x.context import Context
 from dandere2xlib.utils.thread_utils import CancellationToken
 
 

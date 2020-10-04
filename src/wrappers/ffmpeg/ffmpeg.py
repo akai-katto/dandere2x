@@ -3,7 +3,7 @@
 import logging
 import subprocess
 
-from context import Context
+from dandere2x.context import Context
 from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 
