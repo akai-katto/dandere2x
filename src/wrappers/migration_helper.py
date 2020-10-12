@@ -5,7 +5,7 @@ import random
 import yaml
 
 from dandere2x.context import Context
-from dandere2x.dandere2x_core import Dandere2xCore
+from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, file_exists
 
 from wrappers.ffmpeg.ffmpeg import migrate_tracks
@@ -73,7 +73,7 @@ dandere2x = None
 
 try:
     context = Context(config)
-    dandere2x = Dandere2xCore(context=context)
+    dandere2x = Dandere2xServiceThread(context=context)
 except:
     print("Loading %s failed!" % dandere2x_config_file)
 

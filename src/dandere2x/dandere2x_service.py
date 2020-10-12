@@ -25,27 +25,101 @@ import os
 import sys
 import threading
 import time
+from typing import final
 
 import colorlog
 from colorlog import ColoredFormatter
+from typing import Final
 
 from dandere2x.context import Context
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2xlib.core.merge import Merge
 from dandere2xlib.core.residual import Residual
 from dandere2xlib.mindiskusage import MinDiskUsage
 from dandere2xlib.status import Status
 from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, rename_file, force_delete_directory
+from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import migrate_tracks, concat_two_videos
+from wrappers.ffmpeg.videosettings import VideoSettings
 from wrappers.waifu2x.realsr_ncnn_vulkan import RealSRNCNNVulkan
 from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 
 
-class Dandere2xCore(threading.Thread):
+class Dandere2xController:
+    def __init__(self):
+        self._is_alive = True
+        self._current_frame = 1
 
-    def __init__(self, context: Context):
+    def update_frame_count(self, set_frame: int):
+        self._current_frame = set_frame
+
+    def get_current_frame(self):
+        return self._current_frame
+
+    def kill(self):
+        self._is_alive = False
+
+    def is_alive(self):
+        return self._is_alive
+
+class Dandere2xServiceContext:
+    """
+    Once this is instantiated, it's to be treated as 'effectively final' meaning that none of the variables will
+    change after they're declared.
+
+    See this as a set of variables that, once set, will become the variables that facilate that dandere2x upscale process
+    for this session.
+    """
+
+    def __init__(self, service_request: Dandere2xServiceRequest):
+
+        self.service_request: Final = service_request
+
+        self.input_frames_dir = os.path.join(service_request.workspace, "inputs")
+        self.residual_images_dir = os.path.join(service_request.workspace, "residual_images")
+        self.residual_upscaled_dir = os.path.join(service_request.workspace, "residual_upscaled")
+        self.residual_data_dir = os.path.join(service_request.workspace, "residual_data")
+        self.pframe_data_dir = os.path.join(service_request.workspace, "pframe_data")
+        self.correction_data_dir = os.path.join(service_request.workspace, "correction_data")
+        self.merged_dir = os.path.join(service_request.workspace, "merged")
+        self.fade_data_dir = os.path.join(service_request.workspace, "fade_data")
+        self.debug_dir = os.path.join(service_request.workspace, "debug")
+        self.console_output_dir = os.path.join(service_request.workspace, "console_output")
+        self.compressed_static_dir = os.path.join(service_request.workspace, "compressed_static")
+        self.encoded_dir = os.path.join(service_request.workspace, "encoded")
+        self.temp_image_folder = os.path.join(service_request.workspace, "temp_image_folder")
+
+        self.directories = {self.input_frames_dir,
+                            self.correction_data_dir,
+                            self.residual_images_dir,
+                            self.residual_upscaled_dir,
+                            self.merged_dir,
+                            self.residual_data_dir,
+                            self.pframe_data_dir,
+                            self.debug_dir,
+                            self.console_output_dir,
+                            self.compressed_static_dir,
+                            self.fade_data_dir,
+                            self.encoded_dir,
+                            self.temp_image_folder}
+
+        ffprobe_path = load_executable_paths_yaml()['ffprobe']
+        video_settings = VideoSettings(ffprobe_path, self.service_request.input_file)
+        self.width, self.height = video_settings.width, video_settings.height
+        self.frame_count = video_settings.frame_count
+
+        # static-ish settings < add to a yaml somewhere >
+        self.bleed = 1
+        self.temp_image = self.temp_image_folder + "tempimage.jpg"
+        self.debug = True
+
+class Dandere2xServiceThread(threading.Thread):
+
+
+    def __init__(self, service_request: Dandere2xServiceRequest):
         # Administrative Stuff
         import sys
         sys.excepthook = show_exception_and_exit  # set a custom except hook to prevent window from closing.
@@ -56,7 +130,7 @@ class Dandere2xCore(threading.Thread):
         self.fh = None  # File Handler for log
 
         # Class Specific
-        self.context = context
+        self.context = Dandere2xServiceContext(service_request)
         self.alive = False
         self.log = logging.getLogger()
 
@@ -99,7 +173,7 @@ class Dandere2xCore(threading.Thread):
 
     def kill(self):
         """
-        Kill Dandere2x entirely. Everything started as a thread within the scope of dandere2x_core.py can be killed with
+        Kill Dandere2x entirely. Everything started as a thread within the scope of dandere2x_service.py can be killed with
         controller.kill() except for d2x_cpp, since that runs as a subprocess.
 
         As an analogy, imagine `controller` is a fishline that is passed to all threads, and we can `pull the cord` on
@@ -258,9 +332,9 @@ class Dandere2xCore(threading.Thread):
         Create the logging class to be format print statements the dandere2x way.
 
         The formatted output resembles the following (roughly):
-            2020-08-01 16:03:39,455 INFO     dandere2x_core.py : Hewwooo
-            2020-08-01 16:03:39,456 WARNING  dandere2x_core.py : jeeez fuck this warning
-            2020-08-01 16:03:39,456 ERROR    dandere2x_core.py : oh fuck fuck fuck stop the program an error occurred
+            2020-08-01 16:03:39,455 INFO     dandere2x_service.py : Hewwooo
+            2020-08-01 16:03:39,456 WARNING  dandere2x_service.py : jeeez fuck this warning
+            2020-08-01 16:03:39,456 ERROR    dandere2x_service.py : oh fuck fuck fuck stop the program an error occurred
         """
 
         formatter = ColoredFormatter(

@@ -7,7 +7,7 @@ import time
 import yaml
 
 from dandere2x.context import Context
-from dandere2x.dandere2x_core import Dandere2xCore
+from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 from wrappers.dandere2x_wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
 
@@ -96,7 +96,7 @@ def cli_start():
             while (file_exists(context.workspace)):
                 time.sleep(1)
 
-        d2x = Dandere2xCore(context)
+        d2x = Dandere2xServiceThread(context)
         d2x.start()
         d2x.join()
 

@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from dandere2x.context import Context
-from dandere2x.dandere2x_core import Dandere2xCore
+from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 
@@ -21,7 +21,7 @@ class QtDandere2xThread(QtCore.QThread):
         super(QtDandere2xThread, self).__init__(parent)
 
         context = Context(config_yaml)
-        self.dandere2x = Dandere2xCore(context)
+        self.dandere2x = Dandere2xServiceThread(context)
 
     def run(self):
 

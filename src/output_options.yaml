@@ -1,0 +1,30 @@
+realsr_ncnn_vulkan:
+  output_options:
+    -g: null
+    -load-proc-save_threads: null
+    -model-path: null
+    -tile-size: 200  # note: if you get black images try lowering this tile argument to some lower value.
+    -verbose: null
+
+ffmpeg:
+  -hwaccel: true
+  pre_process_video:
+    output_options:
+      -pix_fmt: null
+      -vsync: "cfr"
+      -crf: 17
+      -vf:
+        - noise=c1s=8:c0f=u
+
+  pipe_video:
+    output_options:
+      -loglevel: panic
+      -y: -f
+      image2pipe: True
+      -i: '-'
+      -vcodec: libx264
+      -preset: medium
+      -qscale: 5
+      -crf: 17
+      -vf:
+        - ' deband=range=8:blur=false, pp7=qp=2:mode=medium'

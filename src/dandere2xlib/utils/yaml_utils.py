@@ -45,7 +45,7 @@ def get_options_from_section(section: yaml, ffmpeg_command=False):
     return execute
 
 
-def load_directories_yaml_with_absolute_paths() -> dict:
+def load_executable_paths_yaml() -> dict:
     """
     Load the dandere2x_directories yaml file, but replace all the relative path definitions with absolute
     definitions.
@@ -55,7 +55,7 @@ def load_directories_yaml_with_absolute_paths() -> dict:
     import sys
 
     # get location of dandere2x directories (will be in the same folder as main)
-    configfile = "dandere2x_directories_%s.yaml" % get_operating_system()
+    configfile = "executable_paths.yaml"
     main_path = Path(path.abspath(sys.modules['__main__'].__file__)).parent
     directory_file = os.path.join(main_path, configfile)
 
@@ -63,9 +63,13 @@ def load_directories_yaml_with_absolute_paths() -> dict:
     with open(directory_file, "r") as read_file:
         config = yaml.safe_load(read_file)
 
-    print( os.path.isabs("this is not a path"))
     # replace each relative path with it's absolute counter-part (if applicable)
     for key in config:
+        if get_operating_system() == "win32":
+            """ Modifications needed to take place if we're not unix-based """
+            config[key] = config[key].replace("/", "\\")
+            config[key] = config[key] + ".exe"
+
         if not os.path.isabs(config[key]):
             config[key] = os.path.join(main_path, config[key])
 

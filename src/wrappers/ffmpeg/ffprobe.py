@@ -22,7 +22,7 @@ def get_video_info(ffprobe_dir, input_video):
     execute = [
         ffprobe_dir,
         '-v',
-        'quiet',
+        'panic',
         '-print_format',
         'json',
         '-show_format',
@@ -54,7 +54,7 @@ def get_aspect_ratio(ffprobe_dir, input_video):
     execute = [
         ffprobe_dir,
         '-v',
-        'error',
+        'panic',
         '-select_streams',
         'v:0',
         '-show_entries',
@@ -138,7 +138,7 @@ def get_frame_count(ffprobe_dir, input_video):
     execute = [
         ffprobe_dir,
         '-v',
-        'error',
+        'panic',
         '-count_frames',
         '-select_streams',
         'v:0',

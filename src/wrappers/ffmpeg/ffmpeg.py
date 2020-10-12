@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import logging
+import os
 import subprocess
 
 from dandere2x.context import Context
 from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
 from dandere2xlib.utils.yaml_utils import get_options_from_section
+from wrappers.ffmpeg.videosettings import VideoSettings
 
 
 def trim_video(context: Context, output_file: str):
@@ -36,6 +38,42 @@ def trim_video(context: Context, output_file: str):
     console_output = open(context.console_output_dir + "ffmpeg_trim_video_command.txt", "w")
     console_output.write(str(trim_video_command))
     subprocess.call(trim_video_command, shell=False, stderr=console_output, stdout=console_output)
+
+
+def re_encode_video_contextless(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, input_file: str, output_file: str, throw_exception=False):
+    """
+    Using the "re_encode_video" commands in the yaml to re-encode the input video in an opencv2 friendly
+    manner. Without this step, certain containers might not be compatible with opencv2, and will cause
+    a plethora of errors.
+
+    throw_exception: Will throw a detailed exception and print statement if conversion failed.
+    """
+    logger = logging.getLogger(__name__)
+    video_settings = VideoSettings(ffprobe_dir=ffprobe_dir, video_file=input_file)
+    frame_rate = video_settings.frame_rate
+
+    extract_frames_command = [ffmpeg_dir,
+                              "-i", input_file]
+
+    extract_frames_options = \
+        get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],
+                                 ffmpeg_command=True)
+
+    for element in extract_frames_options:
+        extract_frames_command.append(element)
+
+    extract_frames_command.append("-r")
+    extract_frames_command.append(str(frame_rate))
+    extract_frames_command.extend([output_file])
+
+    print(extract_frames_command)
+    log_file ="ffmpeg_convert_video.txt"
+    console_output = open(log_file, "w", encoding="utf8")
+    console_output.write(str(extract_frames_command))
+
+    process = subprocess.Popen(extract_frames_command, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=False)
+    stdout, stderr = process.communicate()
+
 
 
 def re_encode_video(context: Context, input_file: str, output_file: str, throw_exception=False):
@@ -168,6 +206,21 @@ def append_video_resize_filter(context: Context):
         .append("scale=" + str(width) + ":" + str(height))
 
 
+def append_resize_filter_to_pre_process(output_options: dict, width: int, height: int, block_size: int):
+    """
+    < to do >
+    """
+    log = logging.getLogger()
+    width, height = get_a_valid_input_resolution(width, height, block_size)
+
+    log.info("Dandere2x is resizing the video in order to make the resolution compatible with your settings... ")
+    log.info("New width -> %s " % str(width))
+    log.info("New height -> %s " % str(height))
+
+    output_options['ffmpeg']['pre_process_video']['output_options']['-vf'] \
+        .append("scale=" + str(width) + ":" + str(height))
+
+
 def concat_encoded_vids(context: Context, output_file: str):
     """
     Concatonate a video using 2) in this stackoverflow post.
@@ -196,6 +249,7 @@ def concat_encoded_vids(context: Context, output_file: str):
     console_output = open(context.console_output_dir + "ffmpeg_concat_videos_command.txt", "w")
     console_output.write((str(concat_videos_command)))
     subprocess.call(concat_videos_command, shell=False, stderr=console_output, stdout=console_output)
+
 
 def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str, copy_if_failed=False):
     """
@@ -229,7 +283,7 @@ def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: 
 
     console_file_dir = context.console_output_dir + "migrate_tracks_command.txt"
     log.info("Writing files to %s" % console_file_dir)
-    log.info("Migrate Command: %s" % convert(migrate_tracks_command) )
+    log.info("Migrate Command: %s" % convert(migrate_tracks_command))
 
     console_output = open(console_file_dir, "w", encoding="utf8")
     console_output.write(str(migrate_tracks_command))
