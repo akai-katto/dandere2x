@@ -39,7 +39,6 @@ dandere2x:
     scale_factor: 2
 
   developer_settings:
-
     max_frames_ahead: 20
     pre_process: True
     processed_video: None
@@ -132,11 +131,10 @@ ffmpeg:
     -y: true
     output_options:
       -b:v: null
-      -crf: 17
-      -pix_fmt: null
+      -crf: 15
+      -pix_fmt: rgba64le
       -vcodec: libx264
-      -vf:
-        - ' deband=range=8:blur=false, pp7=qp=2:mode=medium'
+      -vf: deband=range=8:blur=false, pp7=qp=2:mode=medium
   pipe_video:
     -y: true
     output_options:
@@ -147,9 +145,8 @@ ffmpeg:
       -vcodec: libx264
       -preset: medium
       -qscale: 5
-      -crf: 17
-      -vf:
-        - ' deband=range=8:blur=false, pp7=qp=2:mode=medium'
+      -crf: 15
+      -vf: deband=range=8:blur=false, pp7=qp=2:mode=medium'
   migrating_tracks:
     output_options:
       -pix_fmt: null
@@ -158,7 +155,6 @@ ffmpeg:
 
   re_encode_video:
     output_options:
-      -pix_fmt: null
-      -vsync: "cfr"
-      -vf:
-        - noise=c1s=8:c0f=u
+      -pix_fmt: rgba64le
+      -vsync: 0
+      -vf: noise=c0s=8:c0f=u
