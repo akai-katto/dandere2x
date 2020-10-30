@@ -1,7 +1,6 @@
 import os
 from abc import ABC, abstractmethod
 
-
 # Abstract Class
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process

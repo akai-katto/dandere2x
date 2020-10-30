@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import logging
 
 from wrappers.frame.frame import DisplacementVector
 from wrappers.frame.frame import Frame

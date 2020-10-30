@@ -1,18 +1,18 @@
 import os
+import random
 import sys
 import time
-import random
+
 import yaml
 
 from dandere2x.context import Context
 from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, file_exists
-
 from wrappers.ffmpeg.ffmpeg import migrate_tracks
 
 skip = True
 
-random_words = ["help", "me", "im", "stuck", "in","a","bad","dream","i","want","to","wake","up","help"]
+random_words = ["help", "me", "im", "stuck", "in", "a", "bad", "dream", "i", "want", "to", "wake", "up", "help"]
 intro_paragraph = "Welcome to the Dandere2x stuck at 99 bug fixer!"
 intro_paragraph = intro_paragraph.lower()
 
@@ -24,13 +24,14 @@ if not skip:
     print("can you hear me?")
     time.sleep(1.2)
 
-    for x  in range(0, int(len(random_words) / 2)):
+    for x in range(0, int(len(random_words) / 2)):
 
-        w1 = random_words[x*2]
-        w2 = random_words[x*2+1]
+        w1 = random_words[x * 2]
+        w2 = random_words[x * 2 + 1]
 
         intro_paragraph_split = intro_paragraph.split(" ")
-        random_swap_pos = random.randint(int (len(intro_paragraph_split) / 2) - 3, int (len(intro_paragraph_split) / 2) + 3)
+        random_swap_pos = random.randint(int(len(intro_paragraph_split) / 2) - 3,
+                                         int(len(intro_paragraph_split) / 2) + 3)
         intro_paragraph_split[random_swap_pos] = "%s"
         intro_paragraph_split[random_swap_pos + 1] = "%s"
 
@@ -46,14 +47,18 @@ sys.stdout.write('\r')
 sys.stdout.write(intro_paragraph)
 time.sleep(1)
 print("\n")
-print("-----------------------------------------------------------------------------------------------------------------------------")
-print("This program will attempt to fix your video by manually completing the dandere2x process, what it should of done at 99%.")
-print("I've been unable to replicate this bug on any of my window's versions (i've gone through 3 different versions of windows over the past year).")
+print(
+    "-----------------------------------------------------------------------------------------------------------------------------")
+print(
+    "This program will attempt to fix your video by manually completing the dandere2x process, what it should of done at 99%.")
+print(
+    "I've been unable to replicate this bug on any of my window's versions (i've gone through 3 different versions of windows over the past year).")
 print("What we're going to do is manually try to migrate the audio tracks using what I know (I being the developer)")
 print("Be sure to be run this program as administrator by the way. ")
-print("----------------------------------------------------------------------------------------------------------------------------")
+print(
+    "----------------------------------------------------------------------------------------------------------------------------")
 
-dandere2x_config_file =  "dandere2x_%s.yaml" % get_operating_system()
+dandere2x_config_file = "dandere2x_%s.yaml" % get_operating_system()
 print(" > Attempting to read %s" % dandere2x_config_file)
 
 config = None
@@ -69,6 +74,7 @@ except:
 print(" > Attempting to load context / dandere2x with this file...")
 
 import logging
+
 dandere2x = None
 
 try:
@@ -86,7 +92,8 @@ log.info("Haha gotcha")
 time.sleep(0.1)
 print("----------------------------------------------------")
 
-log.info("Ok first things first I'm going to make sure your workspace exists, the one found in %s" %dandere2x_config_file)
+log.info(
+    "Ok first things first I'm going to make sure your workspace exists, the one found in %s" % dandere2x_config_file)
 log.info("It is %s, is this what you want? (Exit the program if not) " % dandere2x.context.workspace)
 log.info("(If it is not, you can always change it manually to point to the workspace you would like to fix)")
 
@@ -97,7 +104,7 @@ log.info("Searching directory....")
 
 import glob
 
-directory_files = glob.glob(os.path.join(dandere2x.context.workspace,"*"))
+directory_files = glob.glob(os.path.join(dandere2x.context.workspace, "*"))
 
 pre_processed_file = ""
 for item in directory_files:
@@ -135,7 +142,7 @@ output_file = dandere2x.context.workspace + "outputfile" + output_extension
 log.info("We will now begin to try to manually migrate the tracks... standby")
 log.info("Output video will be at %s " % output_file)
 
-migrate_tracks(context = dandere2x.context, no_audio=nosound_file, file_dir=pre_processed_file, output_file=output_file)
+migrate_tracks(context=dandere2x.context, no_audio=nosound_file, file_dir=pre_processed_file, output_file=output_file)
 
 if file_exists(output_file):
     log.info("It seems migration succeeded? Check %s to see if it finished." % output_file)

@@ -1,12 +1,9 @@
-import sys
-from os import path
-
 from dandere2x.dandere2x_interface import Dandere2xInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from wrappers.ffmpeg.videosettings import VideoSettings
+from dandere2xlib.utils.dandere2x_utils import valid_input_resolution
 from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from dandere2xlib.utils.dandere2x_utils import force_delete_directory, valid_input_resolution, create_directories
 from wrappers.ffmpeg.ffmpeg import append_video_resize_filter
+from wrappers.ffmpeg.videosettings import VideoSettings
 
 
 class Dandere2xSingleProcess(Dandere2xInterface):
@@ -15,7 +12,6 @@ class Dandere2xSingleProcess(Dandere2xInterface):
         super().__init__(service_request=service_request)
 
     def pre_process(self):
-
         ffprobe_path = load_executable_paths_yaml()['ffprobe']
         video_settings = VideoSettings(ffprobe_path, self.service_request.input_file)
 
@@ -28,9 +24,9 @@ class Dandere2xSingleProcess(Dandere2xInterface):
             need to resize the video in that scenario.
             """
 
-            self.log.warning("Input video needs to be resized to be compatible with block-size - this is expected behaviour.")
+            self.log.warning(
+                "Input video needs to be resized to be compatible with block-size - this is expected behaviour.")
             append_video_resize_filter(self.context)
-
 
     def join(self):
         pass

@@ -1,3 +1,4 @@
+from dandere2x.dandere2x_service import Dandere2xServiceContext
 from wrappers.frame.frame import DisplacementVector
 from wrappers.frame.frame import Frame
 
@@ -6,7 +7,7 @@ from wrappers.frame.frame import Frame
 # Dandere2x_CPP tells us how to take apart an image using vectors, this tells us how to put the upscaled version
 # back together.
 
-def pframe_image(context,
+def pframe_image(context: Dandere2xServiceContext,
                  frame_next: Frame, frame_previous: Frame, frame_residual: Frame,
                  list_residual: list, list_predictive: list):
     """
@@ -23,8 +24,8 @@ def pframe_image(context,
     """
 
     # load context
-    scale_factor = int(context.scale_factor)
-    block_size = context.block_size
+    scale_factor = int(context.service_request.scale_factor)
+    block_size = context.service_request.block_size
     bleed = context.bleed
 
     for x in range(int(len(list_predictive) / 4)):
@@ -35,9 +36,8 @@ def pframe_image(context,
         """
 
         if int(list_predictive[x * 4 + 0]) != int(list_predictive[x * 4 + 1]) \
-           or \
-           int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
-
+                or \
+                int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3]):
             # load the vector
             vector = DisplacementVector(int(list_predictive[x * 4 + 0]),
                                         int(list_predictive[x * 4 + 1]),

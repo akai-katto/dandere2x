@@ -160,6 +160,6 @@ ffmpeg:
     output_options:
       -pix_fmt: null
       -vsync: "cfr"
-      -crf : 17
+      -crf: 17
       -vf:
         - noise=c1s=8:c0f=u

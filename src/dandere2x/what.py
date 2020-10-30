@@ -3,9 +3,8 @@ import os
 
 from dandere2x.dandere2x_interface import Dandere2xInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2xlib.utils.dandere2x_utils import valid_input_resolution
 from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process, re_encode_video_contextless
+from wrappers.ffmpeg.ffmpeg import re_encode_video_contextless
 
 
 class What(Dandere2xInterface):

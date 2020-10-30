@@ -1,8 +1,6 @@
 import os
-from pathlib import Path
 
 import yaml
-
 
 # given a list like ["hi", "bye", "kyle"],
 # return a list in the shape "hi, bye, kyle"
@@ -74,6 +72,7 @@ def load_executable_paths_yaml() -> dict:
             config[key] = os.path.join(main_path, config[key])
 
     return config
+
 
 def absolutify_yaml(unparsed_yaml: yaml, current_folder: str, absolutify_key=".."):
     """

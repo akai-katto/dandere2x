@@ -1,7 +1,7 @@
 gui_settings:
   input_file: ./workspace/input.mp4
   output_file: ./workspace/output.mp4
-  quality_factor: 95
+  quality_factor: 2
   block_size: 20
   upscale_folder: False
   n_processes: 1

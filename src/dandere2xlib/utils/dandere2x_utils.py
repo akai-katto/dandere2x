@@ -55,6 +55,8 @@ def force_delete_directory(directory):
 
 
 from dandere2x.controller import Controller
+
+
 def get_list_from_file_and_wait(text_file: str, controller=Controller()):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
@@ -88,6 +90,7 @@ def get_list_from_file_and_wait(text_file: str, controller=Controller()):
         return []
 
     return text_list
+
 
 def wait_on_file(file_string: str, controller=Controller()):
     logger = logging.getLogger(__name__)

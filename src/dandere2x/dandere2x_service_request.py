@@ -12,7 +12,6 @@ class Dandere2xServiceRequest:
                  quality_minimum: int,
                  scale_factor: int,
                  output_options: dict):
-
         self.workspace = workspace
         self.scale_factor = scale_factor
         self.quality_minimum = quality_minimum

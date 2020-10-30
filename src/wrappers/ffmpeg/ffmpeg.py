@@ -40,7 +40,8 @@ def trim_video(context: Context, output_file: str):
     subprocess.call(trim_video_command, shell=False, stderr=console_output, stdout=console_output)
 
 
-def re_encode_video_contextless(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, input_file: str, output_file: str, throw_exception=False):
+def re_encode_video_contextless(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, input_file: str,
+                                output_file: str, throw_exception=False):
     """
     Using the "re_encode_video" commands in the yaml to re-encode the input video in an opencv2 friendly
     manner. Without this step, certain containers might not be compatible with opencv2, and will cause
@@ -67,13 +68,13 @@ def re_encode_video_contextless(ffmpeg_dir: str, ffprobe_dir: str, output_option
     extract_frames_command.extend([output_file])
 
     print(extract_frames_command)
-    log_file ="ffmpeg_convert_video.txt"
+    log_file = "ffmpeg_convert_video.txt"
     console_output = open(log_file, "w", encoding="utf8")
     console_output.write(str(extract_frames_command))
 
-    process = subprocess.Popen(extract_frames_command, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=False)
+    process = subprocess.Popen(extract_frames_command, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE,
+                               stdin=subprocess.PIPE, shell=False)
     stdout, stderr = process.communicate()
-
 
 
 def re_encode_video(context: Context, input_file: str, output_file: str, throw_exception=False):

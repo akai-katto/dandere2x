@@ -25,99 +25,28 @@ import os
 import sys
 import threading
 import time
-from typing import final
 
 import colorlog
 from colorlog import ColoredFormatter
-from typing import Final
 
-from dandere2x.context import Context
+from dandere2x.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2xlib.core.merge import Merge
-from dandere2xlib.core.residual import Residual
-from dandere2xlib.mindiskusage import MinDiskUsage
-from dandere2xlib.status import Status
-from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, rename_file, force_delete_directory
-from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from wrappers.dandere2x_cpp import Dandere2xCppWrapper
+from dandere2x.dandere2x_service_controller import Dandere2xController
+from dandere2xlib.core.merge_new import Merge
+from dandere2xlib.core.residual_new import Residual
+from dandere2xlib.mindiskusage_new import MinDiskUsage
+from dandere2xlib.status_new import Status
+from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, rename_file, \
+    force_delete_directory, create_directories
+from wrappers.dandere2x_cpp_new import Dandere2xCppWrapper
 from wrappers.ffmpeg.ffmpeg import migrate_tracks, concat_two_videos
-from wrappers.ffmpeg.videosettings import VideoSettings
-from wrappers.waifu2x.realsr_ncnn_vulkan import RealSRNCNNVulkan
-from wrappers.waifu2x.waifu2x_caffe import Waifu2xCaffe
-from wrappers.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
-from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
+from wrappers.waifu2x_new.realsr_ncnn_vulkan import RealSRNCNNVulkan
+from wrappers.waifu2x_new.waifu2x_caffe import Waifu2xCaffe
+from wrappers.waifu2x_new.waifu2x_converter_cpp import Waifu2xConverterCpp
+from wrappers.waifu2x_new.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 
-
-class Dandere2xController:
-    def __init__(self):
-        self._is_alive = True
-        self._current_frame = 1
-
-    def update_frame_count(self, set_frame: int):
-        self._current_frame = set_frame
-
-    def get_current_frame(self):
-        return self._current_frame
-
-    def kill(self):
-        self._is_alive = False
-
-    def is_alive(self):
-        return self._is_alive
-
-class Dandere2xServiceContext:
-    """
-    Once this is instantiated, it's to be treated as 'effectively final' meaning that none of the variables will
-    change after they're declared.
-
-    See this as a set of variables that, once set, will become the variables that facilate that dandere2x upscale process
-    for this session.
-    """
-
-    def __init__(self, service_request: Dandere2xServiceRequest):
-
-        self.service_request: Final = service_request
-
-        self.input_frames_dir = os.path.join(service_request.workspace, "inputs")
-        self.residual_images_dir = os.path.join(service_request.workspace, "residual_images")
-        self.residual_upscaled_dir = os.path.join(service_request.workspace, "residual_upscaled")
-        self.residual_data_dir = os.path.join(service_request.workspace, "residual_data")
-        self.pframe_data_dir = os.path.join(service_request.workspace, "pframe_data")
-        self.correction_data_dir = os.path.join(service_request.workspace, "correction_data")
-        self.merged_dir = os.path.join(service_request.workspace, "merged")
-        self.fade_data_dir = os.path.join(service_request.workspace, "fade_data")
-        self.debug_dir = os.path.join(service_request.workspace, "debug")
-        self.console_output_dir = os.path.join(service_request.workspace, "console_output")
-        self.compressed_static_dir = os.path.join(service_request.workspace, "compressed_static")
-        self.encoded_dir = os.path.join(service_request.workspace, "encoded")
-        self.temp_image_folder = os.path.join(service_request.workspace, "temp_image_folder")
-
-        self.directories = {self.input_frames_dir,
-                            self.correction_data_dir,
-                            self.residual_images_dir,
-                            self.residual_upscaled_dir,
-                            self.merged_dir,
-                            self.residual_data_dir,
-                            self.pframe_data_dir,
-                            self.debug_dir,
-                            self.console_output_dir,
-                            self.compressed_static_dir,
-                            self.fade_data_dir,
-                            self.encoded_dir,
-                            self.temp_image_folder}
-
-        ffprobe_path = load_executable_paths_yaml()['ffprobe']
-        video_settings = VideoSettings(ffprobe_path, self.service_request.input_file)
-        self.width, self.height = video_settings.width, video_settings.height
-        self.frame_count = video_settings.frame_count
-
-        # static-ish settings < add to a yaml somewhere >
-        self.bleed = 1
-        self.temp_image = self.temp_image_folder + "tempimage.jpg"
-        self.debug = True
 
 class Dandere2xServiceThread(threading.Thread):
-
 
     def __init__(self, service_request: Dandere2xServiceRequest):
         # Administrative Stuff
@@ -131,31 +60,34 @@ class Dandere2xServiceThread(threading.Thread):
 
         # Class Specific
         self.context = Dandere2xServiceContext(service_request)
-        self.alive = False
+        self.controller = Dandere2xController()
         self.log = logging.getLogger()
+        self.threads_active = False
 
         # Class Specific Future Declarations
         """ 
         These are re-set later, but due to lack of python member-variable declarations, they're initially set here so the IDE can 
         do autocomplete corrections / predictions. It's important they're correctly re-assigned when self.run() is called. 
         """
-        self.min_disk_demon = MinDiskUsage(self.context)
-        self.status_thread = Status(self.context)
-        self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
-        self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
-        self.residual_thread = Residual(self.context)
-        self.merge_thread = Merge(self.context)
+        self.min_disk_demon = MinDiskUsage(self.context, self.controller)
+        self.status_thread = Status(self.context, self.controller)
+        self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context, self.controller)
+        self.waifu2x = Waifu2xNCNNVulkan(context=self.context, controller=self.controller)
+        self.residual_thread = Residual(self.context, self.controller)
+        self.merge_thread = Merge(context=self.context, controller=self.controller)
 
     def run(self):
         self.log.info("Thread Started")
+        create_directories(self.context.service_request.workspace, self.context.directories)
+        time.sleep(2)
 
         # Assigning classes now that context is properly set.
-        self.min_disk_demon = MinDiskUsage(self.context)
-        self.status_thread = Status(self.context)
-        self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
-        self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
-        self.residual_thread = Residual(self.context)
-        self.merge_thread = Merge(self.context)
+        # self.min_disk_demon = MinDiskUsage(self.context)
+        # self.status_thread = Status(self.context)
+        # self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
+        # self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
+        # self.residual_thread = Residual(self.context)
+        # self.merge_thread = Merge(self.context)
 
         self.log.info("Dandere2x Threads Set.. going live with the following context file.")
         self.context.log_all_variables()
@@ -169,7 +101,7 @@ class Dandere2xServiceThread(threading.Thread):
         self.residual_thread.start()
         self.waifu2x.start()
         self.status_thread.start()
-
+        self.threads_active = True
 
     def kill(self):
         """
@@ -181,12 +113,12 @@ class Dandere2xServiceThread(threading.Thread):
         """
         self.log.warning("Dandere2x Killed - Standby")
         self.dandere2x_cpp_thread.kill()
-        self.context.controller.kill()
+        self.controller.kill()
 
     def join(self, timeout=None):
         self.log.info("Joined called.")
 
-        while not self.alive and self.context.controller.is_alive():
+        while not self.threads_active:
             time.sleep(1)
 
         self.min_disk_demon.join()
@@ -195,13 +127,8 @@ class Dandere2xServiceThread(threading.Thread):
         self.residual_thread.join()
         self.waifu2x.join()
         self.status_thread.join()
+        self.log.info("Joined finished.")
 
-        if self.context.controller.is_alive():
-            self._successful_completion()
-        else:
-            self._kill_conditions()
-
-        self.log.info("Join finished.")
 
     def _successful_completion(self):
         """
@@ -291,9 +218,9 @@ class Dandere2xServiceThread(threading.Thread):
     def __extract_frames(self):
         """ Extract the initial frames needed for a dandere2x to run depending on session type. """
 
-        if self.context.start_frame != 1:
-            self.log.info("This is a resume session, extracting frames to where you left off.")
-            self.min_disk_demon.progressive_frame_extractor.extract_frames_to(self.context.start_frame)
+        # if self.context.start_frame != 1:
+        #     self.log.info("This is a resume session, extracting frames to where you left off.")
+        #     self.min_disk_demon.progressive_frame_extractor.extract_frames_to(self.context.start_frame)
 
         self.min_disk_demon.extract_initial_frames()
 
@@ -305,12 +232,12 @@ class Dandere2xServiceThread(threading.Thread):
         one_frame_time = time.time()
         self.waifu2x.upscale_file(
             input_image=self.context.input_frames_dir + "frame" + str(
-                self.context.start_frame) + self.context.extension_type,
+                1) + ".jpg",
             output_image=self.context.merged_dir + "merged_" + str(
-                self.context.start_frame) + self.context.extension_type)
+                1) + ".png")
 
         if not file_exists(
-                self.context.merged_dir + "merged_" + str(self.context.start_frame) + self.context.extension_type):
+                self.context.merged_dir + "merged_" + str(1) + ".jpg"):
             """ Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't. """
             self.log.error("Could not upscale first file. Dandere2x CANNOT continue.")
             self.log.error("Have you tried making sure your waifu2x works?")

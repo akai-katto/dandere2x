@@ -61,7 +61,6 @@ class AppWindow(QMainWindow):
     Note; I don't maintain this class. It's half assed in the grand scheme of things, and it'd probably be re-made later.
     """
 
-
     def __init__(self):
         super().__init__()
 

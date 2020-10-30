@@ -28,3 +28,11 @@ ffmpeg:
       -crf: 17
       -vf:
         - ' deband=range=8:blur=false, pp7=qp=2:mode=medium'
+
+waifu2x_ncnn_vulkan:
+  output_options:
+    -g: null
+    -load-proc-save_threads: null
+#    -model-path: ..\externals\waifu2x-ncnn-vulkan\models-upconv_7_anime_style_art_rgb
+    -tile-size: 200  # note: if you get black images try lowering this tile argument to some lower value.
+    -verbose: null

@@ -22,18 +22,16 @@ import logging
 import math
 import threading
 
-from typing import Final
 from dandere2x.context import Context
 from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait
-
 from wrappers.frame.frame import DisplacementVector, Frame
 
 
-class ResidualNew(threading.Thread):
+class Residual(threading.Thread):
 
     def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
-        self.con: Final = context
+        self.con = context
         self.controller = controller
         self.log = logging.getLogger()
 
@@ -44,7 +42,6 @@ class ResidualNew(threading.Thread):
         self.log.info("Join called.")
         threading.Thread.join(self, timeout)
         self.log.info("Join finished.")
-
 
     def run(self):
         self.log.info("Run called.")
@@ -60,7 +57,7 @@ class ResidualNew(threading.Thread):
             f1.load_from_string_controller(self.con.input_frames_dir + "frame" + str(x + 1) + ".jpg",
                                            self.controller)
             # Load the neccecary lists to compute this iteration of residual making
-            residual_data = get_list_from_file_and_wait(self.con.residual_images_dir + "residual_" + str(x) + ".txt",
+            residual_data = get_list_from_file_and_wait(self.con.residual_data_dir + "residual_" + str(x) + ".txt",
                                                         self.controller)
 
             prediction_data = get_list_from_file_and_wait(self.con.pframe_data_dir + "pframe_" + str(x) + ".txt",
@@ -75,7 +72,7 @@ class ResidualNew(threading.Thread):
             output_file = self.con.residual_images_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
 
             # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
-            out_image = self.make_residual_image(self.con.residual_images_dir, f1, residual_data, prediction_data)
+            out_image = self.make_residual_image(self.con, f1, residual_data, prediction_data)
 
             if out_image.get_res() == (1, 1):
                 """
@@ -96,14 +93,16 @@ class ResidualNew(threading.Thread):
 
             else:
                 # This image has things to upscale, continue normally
-                out_image.save_image_temp(output_file, self.con.temp_image)
+                out_image.save_image_temp(out_location=output_file, temp_location=self.con.temp_image)
 
             # With this change the wrappers must be modified to not try deleting the non existing residual file
             if self.con.debug == 1:
-                self.debug_image(self.con.block_size, f1, prediction_data, residual_data, debug_output_file)
+                self.debug_image(block_size=self.con.service_request.block_size, frame_base=f1,
+                                 list_predictive=prediction_data, list_residuals=residual_data,
+                                 output_location=debug_output_file)
 
     @staticmethod
-    def make_residual_image(context: Context, raw_frame: Frame, list_residual: list, list_predictive: list):
+    def make_residual_image(context: Dandere2xServiceContext, raw_frame: Frame, list_residual: list, list_predictive: list):
         """
         This section can best be explained through pictures. A visual way of expressing what 'make_residual_image'
         is doing is this section in the wiki.
@@ -140,7 +139,7 @@ class ResidualNew(threading.Thread):
             return residual_image
 
         buffer = 5
-        block_size = context.block_size
+        block_size = context.service_request.block_size
         bleed = context.bleed
         """
         First make a 'bleeded' version of input_frame, as we need to create a buffer in the event the 'bleed'
@@ -169,7 +168,7 @@ class ResidualNew(threading.Thread):
         return residual_image
 
     @staticmethod
-    def debug_image(block_size, frame_base, list_predictive, list_differences, output_location):
+    def debug_image(block_size, frame_base, list_predictive, list_residuals, output_location):
         """
         Note:
             I haven't made an effort to maintain this method, as it's only for debugging.
@@ -199,21 +198,21 @@ class ResidualNew(threading.Thread):
         black_image = Frame()
         black_image.create_new(frame_base.width, frame_base.height)
 
-        if not list_predictive and not list_differences:
+        if not list_predictive and not list_residuals:
             out_image.save_image(output_location)
             return
 
-        if list_predictive and not list_differences:
+        if list_predictive and not list_residuals:
             out_image.copy_image(frame_base)
             out_image.save_image(output_location)
             return
 
         # load list into vector displacements
-        for x in range(int(len(list_differences) / 4)):
-            difference_vectors.append(DisplacementVector(int(list_differences[x * 4]),
-                                                         int(list_differences[x * 4 + 1]),
-                                                         int(list_differences[x * 4 + 2]),
-                                                         int(list_differences[x * 4 + 3])))
+        for x in range(int(len(list_residuals) / 4)):
+            difference_vectors.append(DisplacementVector(int(list_residuals[x * 4]),
+                                                         int(list_residuals[x * 4 + 1]),
+                                                         int(list_residuals[x * 4 + 2]),
+                                                         int(list_residuals[x * 4 + 3])))
         for x in range(int(len(list_predictive) / 4)):
             if (int(list_predictive[x * 4 + 0]) != int(list_predictive[x * 4 + 1])) and \
                     (int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3])):
