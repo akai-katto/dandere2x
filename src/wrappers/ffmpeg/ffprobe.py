@@ -67,6 +67,9 @@ def get_aspect_ratio(ffprobe_dir, input_video):
     return_bytes = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
     return_string = return_bytes.decode("utf-8")
 
+    if "N/A" in return_string:
+        return None
+
     return return_string
 
 
