@@ -1,27 +1,4 @@
-"""
-    This file is part of the Dandere2x project.
-    Dandere2x is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    Dandere2x is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Dandere2x.  If not, see <https://www.gnu.org/licenses/>.
-""""""
-========= Copyright aka_katto 2018, All rights reserved. ============
-Original Author: aka_katto 
-Purpose: The 'dandere2x thread' for dandere2x, which is largely a 
-         controller for starting and ending all the sub-threads dandere2x
-         uses during it's runtime. 
-         
-         If you're looking to understand how dandere2x works, this is
-         the starting point.
-====================================================================="""
 import logging
-import os
 import sys
 import threading
 import time
@@ -30,16 +7,14 @@ import colorlog
 from colorlog import ColoredFormatter
 
 from dandere2x.dandere2x_service_context import Dandere2xServiceContext
-from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2x_service_controller import Dandere2xController
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2xlib.core.merge_new import Merge
 from dandere2xlib.core.residual_new import Residual
 from dandere2xlib.mindiskusage_new import MinDiskUsage
 from dandere2xlib.status_new import Status
-from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, rename_file, \
-    force_delete_directory, create_directories
+from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, create_directories
 from wrappers.dandere2x_cpp_new import Dandere2xCppWrapper
-from wrappers.ffmpeg.ffmpeg import migrate_tracks, concat_two_videos
 from wrappers.waifu2x_new.realsr_ncnn_vulkan import RealSRNCNNVulkan
 from wrappers.waifu2x_new.waifu2x_caffe import Waifu2xCaffe
 from wrappers.waifu2x_new.waifu2x_converter_cpp import Waifu2xConverterCpp
@@ -79,15 +54,6 @@ class Dandere2xServiceThread(threading.Thread):
     def run(self):
         self.log.info("Thread Started")
         create_directories(self.context.service_request.workspace, self.context.directories)
-        time.sleep(2)
-
-        # Assigning classes now that context is properly set.
-        # self.min_disk_demon = MinDiskUsage(self.context)
-        # self.status_thread = Status(self.context)
-        # self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context)
-        # self.waifu2x = self._get_waifu2x_class(self.context.waifu2x_type)
-        # self.residual_thread = Residual(self.context)
-        # self.merge_thread = Merge(self.context)
 
         self.log.info("Dandere2x Threads Set.. going live with the following context file.")
         self.context.log_all_variables()
@@ -128,72 +94,6 @@ class Dandere2xServiceThread(threading.Thread):
         self.waifu2x.join()
         self.status_thread.join()
         self.log.info("Joined finished.")
-
-
-    def _successful_completion(self):
-        """
-        This is called when Dandere2x 'finishes' successfully, and the finishing conditions (such as making sure
-        subtitles get migrated, merging videos (if necessary), and deleting the workspace.
-        """
-        self.log.info("It seems Dandere2x has finished successfully. Starting the final steps to complete your video.")
-
-        if self.context.resume_session:
-            """
-            In the event if Dandere2x is resuming a session, it'll need to merge `incomplete_video` (see yaml) with
-            the current session's video, in order to make a complete video. 
-            """
-
-            self.log.info("This session is a resume session. Dandere2x will need to merge the two videos. ")
-            file_to_be_concat = self.context.workspace + "file_to_be_concat.mp4"
-
-            rename_file(self.context.nosound_file, file_to_be_concat)
-            concat_two_videos(self.context, self.context.incomplete_video, file_to_be_concat, self.context.nosound_file)
-            self.log.info("Merging the two videos is done. ")
-
-        migrate_tracks(self.context, self.context.nosound_file, self.context.sound_file, self.context.output_file)
-        """
-        At this point, dandere2x is "done" with the video, and all there is left is to clean up the files we used
-        during runtime.
-        """
-
-        # Close the file handler for log (since it's going to get deleted).
-        self.log.info("Release log file... ")
-        self.fh.close()
-        self.log.removeHandler(self.fh)
-        del self.fh
-
-        if self.context.delete_workspace_after:
-            self.log.info("Dandere2x will now delete the workspace it used.")
-            force_delete_directory(self.context.workspace)
-
-    def _kill_conditions(self):
-        """ Begin a series of kill conditions that will prepare dandere2x to resume the session once suspended.
-        For the most part, this involves documenting all the variables needed for dandere2x to know where the last
-        session left off at. """
-        import yaml
-
-        self.log.warning("Starting Kill Conditions...")
-        self.log.warning("Dandere2x is saving the meta-data needed to resume this session later.")
-
-        suspended_file = self.context.workspace + str(self.context.controller.get_current_frame() + 1) + ".mp4"
-        os.rename(self.context.nosound_file, suspended_file)
-        self.context.nosound_file = suspended_file
-
-        saved_session = self.context.workspace + "suspended_session_data.yaml"
-        file = open(saved_session, "a")
-
-        config_file_unparsed = self.context.config_file_unparsed
-        config_file_unparsed['resume_settings']['last_saved_frame'] = self.context.controller.get_current_frame() + 1
-        config_file_unparsed['resume_settings']['incomplete_video'] = self.context.nosound_file
-        config_file_unparsed['resume_settings']['resume_session'] = True
-
-        config_file_unparsed['dandere2x']['developer_settings']['workspace'] = \
-            config_file_unparsed['dandere2x']['developer_settings']['workspace'] + \
-            str(self.context.controller.get_current_frame() + 1) + os.path.sep
-
-        yaml.dump(config_file_unparsed, file, sort_keys=False)
-
-        self.log.warning("The current metadata for this session is saved in %s." % saved_session)
 
     # todo, remove this dependency.
     def _get_waifu2x_class(self, name: str):

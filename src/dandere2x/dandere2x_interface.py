@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 # Abstract Class
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
+from dandere2xlib.utils.dandere2x_utils import force_delete_directory
 from wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process
 
 
@@ -17,10 +18,26 @@ class Dandere2xInterface(ABC):
         self.service_request = service_request
 
         if os.path.exists(self.service_request.workspace):
-            print('error')
-            exit(1)
+            print("Workspace already exists.. deleting")
+            force_delete_directory(self.service_request.workspace)
 
         os.makedirs(service_request.workspace)
+
+    @abstractmethod
+    def _pre_process(self):
+        pass
+
+    @abstractmethod
+    def start(self):
+        pass
+
+    @abstractmethod
+    def on_completion(self):
+        pass
+    #
+    # @abstractmethod
+    # def join(self):
+    #     pass
 
     @staticmethod
     def check_and_fix_resolution(input_file: str, block_size: int, output_options_original: dict) -> dict:
@@ -46,19 +63,3 @@ class Dandere2xInterface(ABC):
             # implement dar here later
 
         return new_output_options
-
-    @abstractmethod
-    def pre_process(self):
-        pass
-
-    @abstractmethod
-    def start(self):
-        pass
-
-    @abstractmethod
-    def on_completion(self):
-        pass
-
-    @abstractmethod
-    def join(self):
-        pass

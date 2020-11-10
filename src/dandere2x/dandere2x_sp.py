@@ -11,7 +11,7 @@ class Dandere2xSingleProcess(Dandere2xInterface):
     def __init__(self, service_request: Dandere2xServiceRequest):
         super().__init__(service_request=service_request)
 
-    def pre_process(self):
+    def _pre_process(self):
         ffprobe_path = load_executable_paths_yaml()['ffprobe']
         video_settings = VideoSettings(ffprobe_path, self.service_request.input_file)
 

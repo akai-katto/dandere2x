@@ -3,6 +3,7 @@
 import logging
 import os
 import subprocess
+import sys
 
 from dandere2x.context import Context
 from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
@@ -41,14 +42,15 @@ def trim_video(context: Context, output_file: str):
 
 
 def re_encode_video_contextless(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, input_file: str,
-                                output_file: str, throw_exception=False):
+                                output_file: str, console_output = None):
     """
-    Using the "re_encode_video" commands in the yaml to re-encode the input video in an opencv2 friendly
-    manner. Without this step, certain containers might not be compatible with opencv2, and will cause
-    a plethora of errors.
+    #todo
+    """
 
-    throw_exception: Will throw a detailed exception and print statement if conversion failed.
-    """
+    if console_output:
+        assert type(console_output) == str
+
+
     logger = logging.getLogger(__name__)
     video_settings = VideoSettings(ffprobe_dir=ffprobe_dir, video_file=input_file)
     frame_rate = video_settings.frame_rate
@@ -251,6 +253,46 @@ def concat_encoded_vids(context: Context, output_file: str):
     console_output.write((str(concat_videos_command)))
     subprocess.call(concat_videos_command, shell=False, stderr=console_output, stdout=console_output)
 
+
+def get_console_output(method_name: str, console_output_dir=None):
+    if console_output_dir:
+        assert type(console_output_dir) == str
+
+        log_file = os.path.join(console_output_dir, method_name + "output.txt")
+        console_output = open(log_file, "w", encoding="utf8")
+        return console_output
+
+    return open(os.devnull, 'w')
+
+
+def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, output_file: str, console_output_dir=None):
+    """
+    Add the audio tracks from the original video to the output video.
+    """
+
+    # to remove
+    def convert(lst):
+        return ' '.join(lst)
+
+    log = logging.getLogger()
+
+    migrate_tracks_command = [ffmpeg_dir,
+                              "-i", no_audio,
+                              "-i", file_dir,
+                              "-map", "0:v?",
+                              "-map", "1:a?",
+                              "-map", "1:s?",
+                              "-map", "1:d?",
+                              "-map", "1:t?"
+                              ]
+
+    migrate_tracks_command.extend([str(output_file)])
+
+    console_output = get_console_output(__name__, console_output_dir)
+
+    log.info("Writing files to %s" % str(console_output_dir))
+    log.info("Migrate Command: %s" % convert(migrate_tracks_command))
+    subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
 
 def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str, copy_if_failed=False):
     """

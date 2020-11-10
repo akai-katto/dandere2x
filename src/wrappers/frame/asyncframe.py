@@ -1,6 +1,6 @@
 import threading
 
-from dandere2x.controller import Controller
+from dandere2x.dandere2x_service_controller import Dandere2xController
 from wrappers.frame.frame import Frame
 
 
@@ -9,7 +9,7 @@ class AsyncFrameRead(threading.Thread):
     Read an image asynchronously
     """
 
-    def __init__(self, input_image: str, controller=Controller()):
+    def __init__(self, input_image: str, controller=Dandere2xController()):
         # calling superclass init
         threading.Thread.__init__(self, name="asyncframeread")
         self.input_image = input_image

@@ -9,7 +9,7 @@ class Raw(Dandere2xInterface):
         super().__init__(service_request=service_request)
         self.thread = Dandere2xServiceThread(service_request=service_request)
 
-    def pre_process(self):
+    def _pre_process(self):
         pass
 
     def start(self):

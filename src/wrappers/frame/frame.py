@@ -126,8 +126,8 @@ class Frame:
                 logger.info("Value Error")
                 loaded = False
 
-    from dandere2x.controller import Controller
-    def load_from_string_controller(self, input_string, controller=Controller()):
+    from dandere2x.dandere2x_service_controller import Dandere2xController
+    def load_from_string_controller(self, input_string, controller=Dandere2xController()):
 
         logger = logging.getLogger(__name__)
         exists = exists = os.path.isfile(input_string)
@@ -145,11 +145,11 @@ class Frame:
                 self.load_from_string(input_string)
                 loaded = True
             except PermissionError:
-                logger.debug("Permission Error")
-                loaded = False
+                logger.debug("Permission Error - trying again ")
             except ValueError:
-                logger.debug("Value Error")
-                loaded = False
+                logger.debug("Value Error - trying again")
+            except SyntaxError:
+                logger.warning("Caught Syntax error - trying again")
 
     def save_image(self, out_location):
         """
