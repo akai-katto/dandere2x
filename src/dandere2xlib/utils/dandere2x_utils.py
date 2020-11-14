@@ -166,7 +166,7 @@ def get_valid_block_sizes(width: int, height: int, minimum=1):
     larger_val = [width, height][height > width]
 
     for x in range(minimum, larger_val):
-        if width % x == 0 and height % x == 0:
+        if width % x == 0 and height % x == 0 and width % 2 == 0 and height % 2 == 0:
             valid_sizes.append(str(x))
 
     return valid_sizes
