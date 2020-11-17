@@ -11,7 +11,8 @@ class Dandere2xServiceRequest:
                  denoise_level: int,
                  quality_minimum: int,
                  scale_factor: int,
-                 output_options: dict):
+                 output_options: dict,
+                 name: str):
         self.workspace = workspace
         self.scale_factor = scale_factor
         self.quality_minimum = quality_minimum
@@ -19,4 +20,5 @@ class Dandere2xServiceRequest:
         self.block_size = block_size
         self.output_file = output_file
         self.input_file = input_file
-        self.output_options = copy.copy(output_options)
+        self.output_options = copy.deepcopy(output_options)
+        self.name = name

@@ -54,6 +54,8 @@ class Merge(threading.Thread):
     """
 
     def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
+        # Threading Specific
+        threading.Thread.__init__(self, name="MergeThread")
 
         self.context = context
         self.controller = controller
@@ -63,8 +65,6 @@ class Merge(threading.Thread):
         # setup the pipe for merging
         self.pipe = Pipe(self.context.service_request.output_file, context=context, controller=controller)
 
-        # Threading Specific
-        threading.Thread.__init__(self, name="MergeThread")
 
     def join(self, timeout=None):
         self.log.info("Join called.")
@@ -73,7 +73,6 @@ class Merge(threading.Thread):
         self.log.info("Join finished.")
 
     def run(self):
-        global background_frame_load
         self.log.info("Started")
         self.pipe.start()
 

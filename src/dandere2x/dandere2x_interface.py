@@ -1,13 +1,14 @@
 import os
 from abc import ABC, abstractmethod
 
-# Abstract Class
+from threading import Thread
+
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2xlib.utils.dandere2x_utils import force_delete_directory
-from wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process
+from wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process, append_dar_filter_to_pipe_process
 
 
-class Dandere2xInterface(ABC):
+class Dandere2xInterface(Thread):
     """
     Dandere2x now has two routes of operations (starting N different dandere2x instances, or one single instance)
     and functions needs to be abstracted outwards as a result. Unfortunately, starting dandere2x requires two different
@@ -15,6 +16,8 @@ class Dandere2xInterface(ABC):
     """
 
     def __init__(self, service_request: Dandere2xServiceRequest):
+        super().__init__()
+
         self.service_request = service_request
 
         if os.path.exists(self.service_request.workspace):
@@ -28,19 +31,21 @@ class Dandere2xInterface(ABC):
         pass
 
     @abstractmethod
-    def start(self):
+    def on_completion(self):
         pass
 
     @abstractmethod
-    def on_completion(self):
+    def run(self):
         pass
-    #
-    # @abstractmethod
-    # def join(self):
-    #     pass
 
     @staticmethod
     def check_and_fix_resolution(input_file: str, block_size: int, output_options_original: dict) -> dict:
+        """
+        Returns a dictionary containing the output settings, taking into consideration if the video needs to be resized,
+        and if it does, changes the pipe_video commands to include dar.
+
+
+        """
         import copy
         from wrappers.ffmpeg.videosettings import VideoSettings
         from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
@@ -60,6 +65,8 @@ class Dandere2xInterface(ABC):
                                                 width=width,
                                                 height=height,
                                                 block_size=block_size)
-            # implement dar here later
+            append_dar_filter_to_pipe_process(output_options=new_output_options,
+                                              width=width,
+                                              height=height)
 
         return new_output_options

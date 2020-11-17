@@ -224,6 +224,18 @@ def append_resize_filter_to_pre_process(output_options: dict, width: int, height
         .append("scale=" + str(width) + ":" + str(height))
 
 
+def append_dar_filter_to_pipe_process(output_options: dict, width: int, height: int) -> None:
+    """
+    < to do >
+    """
+
+    # reduce width and height down
+    from fractions import Fraction
+    frac = Fraction(width, height)
+    frac_str = str(frac.numerator) + "/" + str(frac.denominator)
+
+    output_options['ffmpeg']['pipe_video']['output_options']['-vf'].append("setdar=" + frac_str)
+
 def concat_encoded_vids(context: Context, output_file: str):
     """
     Concatonate a video using 2) in this stackoverflow post.
@@ -293,6 +305,7 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
     log.info("Writing files to %s" % str(console_output_dir))
     log.info("Migrate Command: %s" % convert(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
+    log.info("Finished migrating to file: %s" % output_file)
 
 def migrate_tracks(context: Context, no_audio: str, file_dir: str, output_file: str, copy_if_failed=False):
     """

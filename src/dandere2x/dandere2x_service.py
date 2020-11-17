@@ -24,10 +24,11 @@ from wrappers.waifu2x_new.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 class Dandere2xServiceThread(threading.Thread):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
+        super().__init__(name=service_request.name)
         # Administrative Stuff
-        import sys
-        sys.excepthook = show_exception_and_exit  # set a custom except hook to prevent window from closing.
-        threading.Thread.__init__(self, name="Dandere2x Thread")
+        # import sys
+        # sys.excepthook = show_exception_and_exit  # set a custom except hook to prevent window from closing.
+        # threading.Thread.__init__(self, name="Dandere2x Thread")
         self.color_log_format = "%(log_color)s%(asctime)-8s%(reset)s %(log_color)s%(levelname)-8s%(reset)s %(log_color)s%(filename)-8s%(reset)s %(log_color)s%(funcName)-8s%(reset)s: %(log_color)s%(message)s"
         self.file_log_format = "%(asctime)s %(levelname)s %(filename)s %(funcName)s %(message)s"
         self.set_console_logger()

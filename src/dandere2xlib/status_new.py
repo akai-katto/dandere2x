@@ -15,12 +15,13 @@ from dandere2xlib.utils.dandere2x_utils import get_operating_system
 class Status(threading.Thread):
 
     def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
+        # Threading Specific
+        threading.Thread.__init__(self, name="StatusThread")
+
         self.con = context
         self.controller = controller
         self.log = logging.getLogger()
 
-        # Threading Specific
-        threading.Thread.__init__(self, name="StatusThread")
 
     def join(self, timeout=None):
         self.log.info("Join called.")

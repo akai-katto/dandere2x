@@ -30,12 +30,13 @@ from wrappers.frame.frame import DisplacementVector, Frame
 class Residual(threading.Thread):
 
     def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
+        # Threading Specific
+        threading.Thread.__init__(self, name="ResidualThread")
+
         self.con = context
         self.controller = controller
         self.log = logging.getLogger()
 
-        # Threading Specific
-        threading.Thread.__init__(self, name="ResidualThread")
 
     def join(self, timeout=None):
         self.log.info("Join called.")

@@ -43,6 +43,8 @@ class MinDiskUsage(threading.Thread):
     """
 
     def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
+        # Threading Specific
+        threading.Thread.__init__(self, name="Min Disk Thread")
 
         self.context = context
         self.controller = controller
@@ -54,8 +56,6 @@ class MinDiskUsage(threading.Thread):
                                                                          self.context.service_request.quality_minimum)
         self.start_frame = 1
 
-        # Threading Specific
-        threading.Thread.__init__(self, name="Min Disk Thread")
 
     def join(self, timeout=None):
         threading.Thread.join(self, timeout)
