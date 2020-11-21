@@ -1,4 +1,5 @@
 import os
+import time
 from abc import ABC, abstractmethod
 
 from threading import Thread
@@ -8,6 +9,7 @@ from dandere2xlib.utils.dandere2x_utils import force_delete_directory
 from wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process, append_dar_filter_to_pipe_process
 
 
+# todo, makedir? 
 class Dandere2xInterface(Thread):
     """
     Dandere2x now has two routes of operations (starting N different dandere2x instances, or one single instance)
@@ -18,11 +20,16 @@ class Dandere2xInterface(Thread):
     def __init__(self, service_request: Dandere2xServiceRequest):
         super().__init__()
 
-        self.service_request = service_request
+        self._service_request = service_request
 
-        if os.path.exists(self.service_request.workspace):
+        # meta-data
+        self.__start_time: float = time.time()
+        self.__end_time: float = 0
+
+        # todo this is bad
+        if os.path.exists(self._service_request.workspace):
             print("Workspace already exists.. deleting")
-            force_delete_directory(self.service_request.workspace)
+            force_delete_directory(self._service_request.workspace)
 
         os.makedirs(service_request.workspace)
 
@@ -70,3 +77,14 @@ class Dandere2xInterface(Thread):
                                               height=height)
 
         return new_output_options
+
+    # Final Methods
+
+    def timer_start(self) -> None:
+        self.__start_time = time.time()
+
+    def timer_end(self) -> None:
+        self.__end_time = time.time()
+
+    def timer_get_duration(self) -> float:
+        return self.__end_time - self.__start_time

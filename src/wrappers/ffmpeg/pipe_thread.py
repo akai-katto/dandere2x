@@ -3,7 +3,9 @@ import subprocess
 import threading
 import time
 
-from dandere2xlib.utils.yaml_utils import get_options_from_section
+from dandere2x.dandere2x_service_controller import Dandere2xController
+from dandere2x.dandere2x_service_context import Dandere2xServiceContext
+from dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml
 
 
 class Pipe(threading.Thread):
@@ -12,11 +14,12 @@ class Pipe(threading.Thread):
     images to ffmpeg, thus removing the need for storing the processed images onto the disk.
     """
 
-    def __init__(self, context, output_no_sound: str):
+    def __init__(self, output_no_sound: str, context: Dandere2xServiceContext, controller: Dandere2xController):
         threading.Thread.__init__(self, name="Pipe Thread")
 
         # load context
         self.context = context
+        self.controller = controller
         self.output_no_sound = output_no_sound
         self.log = logging.getLogger()
 
@@ -31,11 +34,6 @@ class Pipe(threading.Thread):
         self.log.info("Kill called.")
         self.alive = False
 
-    def join(self, timeout=None) -> None:
-        self.log.info("Join called.")
-        threading.Thread.join(self)
-        self.log.info("Join finished.")
-
     def run(self) -> None:
         self.log.info("Run Called")
 
@@ -43,7 +41,7 @@ class Pipe(threading.Thread):
         self._setup_pipe()
 
         # keep piping images to ffmpeg while this thread is supposed to be kept alive.
-        while self.alive and self.context.controller.is_alive():
+        while self.alive and self.controller.is_alive():
             if len(self.images_to_pipe) > 0:
                 img = self.images_to_pipe.pop(0).get_pil_image()  # get the first image and remove it from list
                 img.save(self.ffmpeg_pipe_subprocess.stdin, format="jpeg", quality=100)
@@ -74,33 +72,32 @@ class Pipe(threading.Thread):
             time.sleep(0.05)
 
     def _setup_pipe(self) -> None:
-
+        self.log.info("Setting up pipe Called")
         # load variables..
         output_no_sound = self.output_no_sound
         frame_rate = str(self.context.frame_rate)
         output_no_sound = output_no_sound
-        ffmpeg_dir = self.context.ffmpeg_dir
-        dar = self.context.dar
+        ffmpeg_dir = load_executable_paths_yaml()['ffmpeg']
+        dar = self.context.video_settings.dar
 
         # constructing the pipe command...
         ffmpeg_pipe_command = [ffmpeg_dir, "-r", frame_rate]
 
-        options = get_options_from_section(self.context.config_yaml["ffmpeg"]["pipe_video"]['output_options'],
-                                           ffmpeg_command=True)
+        options = get_options_from_section(
+            self.context.service_request.output_options["ffmpeg"]["pipe_video"]['output_options'],
+            ffmpeg_command=True)
         for item in options:
             ffmpeg_pipe_command.append(item)
 
         ffmpeg_pipe_command.append("-r")
         ffmpeg_pipe_command.append(frame_rate)
 
-        if dar:
-            ffmpeg_pipe_command.append("-vf")
-            ffmpeg_pipe_command.append("setdar=" + dar.replace(":", "/"))
-
         ffmpeg_pipe_command.append(output_no_sound)
 
         # Starting the Pipe Command
         console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
         console_output.write(str(ffmpeg_pipe_command))
+
+        self.log.info("ffmpeg_pipe_command %s" % str(ffmpeg_pipe_command))
         self.ffmpeg_pipe_subprocess = subprocess.Popen(ffmpeg_pipe_command, stdin=subprocess.PIPE,
                                                        stdout=console_output)

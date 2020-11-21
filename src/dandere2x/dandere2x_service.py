@@ -9,16 +9,13 @@ from colorlog import ColoredFormatter
 from dandere2x.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2xlib.core.merge_new import Merge
-from dandere2xlib.core.residual_new import Residual
-from dandere2xlib.mindiskusage_new import MinDiskUsage
-from dandere2xlib.status_new import Status
+from dandere2xlib.core.merge import Merge
+from dandere2xlib.core.residual import Residual
+from dandere2xlib.min_disk_usage import MinDiskUsage
+from dandere2xlib.status_thread import Status
 from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, create_directories
-from wrappers.dandere2x_cpp_new import Dandere2xCppWrapper
-from wrappers.waifu2x_new.realsr_ncnn_vulkan import RealSRNCNNVulkan
-from wrappers.waifu2x_new.waifu2x_caffe import Waifu2xCaffe
-from wrappers.waifu2x_new.waifu2x_converter_cpp import Waifu2xConverterCpp
-from wrappers.waifu2x_new.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
+from wrappers.dandere2x_cpp import Dandere2xCppWrapper
+from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 
 
 class Dandere2xServiceThread(threading.Thread):

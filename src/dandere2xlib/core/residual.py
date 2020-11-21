@@ -22,73 +22,56 @@ import logging
 import math
 import threading
 
-from dandere2x.context import Context
+from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait
 from wrappers.frame.frame import DisplacementVector, Frame
 
 
 class Residual(threading.Thread):
 
-    def __init__(self, context):
-        self.context = context
-
-        # load variables from context
-        self.workspace = context.workspace
-        self.residual_upscaled_dir = context.residual_upscaled_dir
-        self.residual_images_dir = context.residual_images_dir
-        self.residual_data_dir = context.residual_data_dir
-        self.pframe_data_dir = context.pframe_data_dir
-        self.input_frames_dir = context.input_frames_dir
-        self.frame_count = context.frame_count
-        self.block_size = context.block_size
-        self.extension_type = context.extension_type
-        self.debug_dir = context.debug_dir
-        self.debug = context.debug
-        self.temp_image = context.temp_image_folder + "tempimage.jpg"
-        self.log = logging.getLogger()
-        self.start_frame = self.context.start_frame
-
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         # Threading Specific
         threading.Thread.__init__(self, name="ResidualThread")
+
+        self.con = context
+        self.controller = controller
+        self.log = logging.getLogger()
 
     def join(self, timeout=None):
         self.log.info("Join called.")
         threading.Thread.join(self, timeout)
         self.log.info("Join finished.")
 
-    def set_start_frame(self, start_frame: int):
-        self.start_frame = start_frame
-
     def run(self):
         self.log.info("Run called.")
 
-        for x in range(self.start_frame, self.frame_count):
+        for x in range(1, self.con.frame_count):
 
             # Stop if thread is killed
-            if not self.context.controller.is_alive():
+            if not self.controller.is_alive():
                 break
 
             # Files needed to create a residual image
             f1 = Frame()
-            f1.load_from_string_controller(self.input_frames_dir + "frame" + str(x + 1) + self.extension_type,
-                                           self.context.controller)
+            f1.load_from_string_controller(self.con.input_frames_dir + "frame" + str(x + 1) + ".jpg",
+                                           self.controller)
             # Load the neccecary lists to compute this iteration of residual making
-            residual_data = get_list_from_file_and_wait(self.residual_data_dir + "residual_" + str(x) + ".txt",
-                                                        self.context.controller)
+            residual_data = get_list_from_file_and_wait(self.con.residual_data_dir + "residual_" + str(x) + ".txt",
+                                                        self.controller)
 
-            prediction_data = get_list_from_file_and_wait(self.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                                                          self.context.controller)
+            prediction_data = get_list_from_file_and_wait(self.con.pframe_data_dir + "pframe_" + str(x) + ".txt",
+                                                          self.controller)
 
             # stop if thread is killed
-            if not self.context.controller.is_alive():
+            if not self.controller.is_alive():
                 break
 
             # Create the output files..
-            debug_output_file = self.debug_dir + "debug" + str(x + 1) + self.extension_type
-            output_file = self.residual_images_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
+            debug_output_file = self.con.debug_dir + "debug" + str(x + 1) + ".jpg"
+            output_file = self.con.residual_images_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
 
             # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
-            out_image = self.make_residual_image(self.context, f1, residual_data, prediction_data)
+            out_image = self.make_residual_image(self.con, f1, residual_data, prediction_data)
 
             if out_image.get_res() == (1, 1):
                 """
@@ -104,19 +87,21 @@ class Residual(threading.Thread):
                 # Location of the 'fake' upscaled image.
                 out_image = Frame()
                 out_image.create_new(2, 2)
-                output_file = self.residual_upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"
+                output_file = self.con.residual_upscaled_dir + "output_" + get_lexicon_value(6, x) + ".png"
                 out_image.save_image(output_file)
 
             else:
                 # This image has things to upscale, continue normally
-                out_image.save_image_temp(output_file, self.temp_image)
+                out_image.save_image_temp(out_location=output_file, temp_location=self.con.temp_image)
 
             # With this change the wrappers must be modified to not try deleting the non existing residual file
-            if self.context.debug == 1:
-                self.debug_image(self.block_size, f1, prediction_data, residual_data, debug_output_file)
+            if self.con.debug == 1:
+                self.debug_image(block_size=self.con.service_request.block_size, frame_base=f1,
+                                 list_predictive=prediction_data, list_residuals=residual_data,
+                                 output_location=debug_output_file)
 
     @staticmethod
-    def make_residual_image(context: Context, raw_frame: Frame, list_residual: list, list_predictive: list):
+    def make_residual_image(context: Dandere2xServiceContext, raw_frame: Frame, list_residual: list, list_predictive: list):
         """
         This section can best be explained through pictures. A visual way of expressing what 'make_residual_image'
         is doing is this section in the wiki.
@@ -153,7 +138,7 @@ class Residual(threading.Thread):
             return residual_image
 
         buffer = 5
-        block_size = context.block_size
+        block_size = context.service_request.block_size
         bleed = context.bleed
         """
         First make a 'bleeded' version of input_frame, as we need to create a buffer in the event the 'bleed'
@@ -182,7 +167,7 @@ class Residual(threading.Thread):
         return residual_image
 
     @staticmethod
-    def debug_image(block_size, frame_base, list_predictive, list_differences, output_location):
+    def debug_image(block_size, frame_base, list_predictive, list_residuals, output_location):
         """
         Note:
             I haven't made an effort to maintain this method, as it's only for debugging.
@@ -212,21 +197,21 @@ class Residual(threading.Thread):
         black_image = Frame()
         black_image.create_new(frame_base.width, frame_base.height)
 
-        if not list_predictive and not list_differences:
+        if not list_predictive and not list_residuals:
             out_image.save_image(output_location)
             return
 
-        if list_predictive and not list_differences:
+        if list_predictive and not list_residuals:
             out_image.copy_image(frame_base)
             out_image.save_image(output_location)
             return
 
         # load list into vector displacements
-        for x in range(int(len(list_differences) / 4)):
-            difference_vectors.append(DisplacementVector(int(list_differences[x * 4]),
-                                                         int(list_differences[x * 4 + 1]),
-                                                         int(list_differences[x * 4 + 2]),
-                                                         int(list_differences[x * 4 + 3])))
+        for x in range(int(len(list_residuals) / 4)):
+            difference_vectors.append(DisplacementVector(int(list_residuals[x * 4]),
+                                                         int(list_residuals[x * 4 + 1]),
+                                                         int(list_residuals[x * 4 + 2]),
+                                                         int(list_residuals[x * 4 + 3])))
         for x in range(int(len(list_predictive) / 4)):
             if (int(list_predictive[x * 4 + 0]) != int(list_predictive[x * 4 + 1])) and \
                     (int(list_predictive[x * 4 + 2]) != int(list_predictive[x * 4 + 3])):

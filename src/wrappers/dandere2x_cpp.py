@@ -19,8 +19,8 @@ import logging
 import subprocess
 import threading
 
-from dandere2x.context import Context
-from dandere2xlib.utils.thread_utils import CancellationToken
+from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
+from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 
 
 class Dandere2xCppWrapper(threading.Thread):
@@ -28,36 +28,23 @@ class Dandere2xCppWrapper(threading.Thread):
     A wrapper for the dandere2x_cpp module. It simply calls the module using information used from the context.
     """
 
-    def __init__(self, context: Context):
-        # load stuff from context
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
+        threading.Thread.__init__(self, name="Dandere2xCpp")
         self.context = context
-        self.workspace = context.workspace
-        self.dandere2x_cpp_dir = context.dandere2x_cpp_dir
-        self.frame_count = context.frame_count
-        self.block_size = context.block_size
-        self.step_size = context.step_size
-        self.extension_type = context.extension_type
-        self.residual_images_dir = context.residual_images_dir
-        self.log_dir = context.console_output_dir
+        self.controller = controller
+
         self.dandere2x_cpp_subprocess = None
-        self.start_frame = self.context.start_frame
         self.log = logging.getLogger()
 
-        self.exec_command = [self.dandere2x_cpp_dir,
-                             self.workspace,
-                             str(self.frame_count),
-                             str(self.block_size),
-                             str(self.step_size),
+        dandere2x_cpp_dir = load_executable_paths_yaml()['dandere2x_cpp']
+        self.exec_command = [dandere2x_cpp_dir,
+                             self.context.service_request.workspace,
+                             str(self.context.frame_count),
+                             str(self.context.service_request.block_size),
+                             str(self.context.step_size),
                              "r",
-                             str(self.start_frame),
-                             self.extension_type]
-
-        # Threading Specific
-
-        self.alive = True
-        self.cancel_token = CancellationToken()
-        self._stopevent = threading.Event()
-        threading.Thread.__init__(self, name="Dandere2xCpp")
+                             str(1),
+                             ".jpg"]
 
     def join(self, timeout=None):
         self.log.info("Thread joined")
@@ -67,21 +54,11 @@ class Dandere2xCppWrapper(threading.Thread):
         self.log.info("Killing thread")
         self.dandere2x_cpp_subprocess.kill()
 
-    def set_start_frame(self, start_frame):
-        self.exec_command = [self.dandere2x_cpp_dir,
-                             self.workspace,
-                             str(self.frame_count),
-                             str(self.block_size),
-                             str(self.step_size),
-                             "r",
-                             str(start_frame),
-                             self.extension_type]
-
     def run(self):
         logger = logging.getLogger(__name__)
         logger.info(self.exec_command)
 
-        console_output = open(self.log_dir + "dandere2x_cpp.txt", "w")
+        console_output = open(self.context.log_dir + "dandere2x_cpp.txt", "w")
         console_output.write(str(self.exec_command))
         self.dandere2x_cpp_subprocess = subprocess.Popen(self.exec_command, shell=False, stderr=console_output,
                                                          stdout=console_output)
@@ -90,7 +67,7 @@ class Dandere2xCppWrapper(threading.Thread):
 
         if self.dandere2x_cpp_subprocess.returncode == 0:
             logger.info("D2xcpp finished correctly.")
-        elif self.dandere2x_cpp_subprocess.returncode != 0 and self.context.controller.is_alive():
+        elif self.dandere2x_cpp_subprocess.returncode != 0 and self.controller.is_alive():
             logger.error("D2xcpp ended unexpectedly.")
             logger.error("Dandere2x will suspend the current session.")
-            self.context.controller.kill()
+            self.controller.kill()

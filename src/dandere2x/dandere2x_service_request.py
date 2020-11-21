@@ -1,5 +1,6 @@
 import copy
-
+import os
+import shutil
 
 class Dandere2xServiceRequest:
 
@@ -22,3 +23,11 @@ class Dandere2xServiceRequest:
         self.input_file = input_file
         self.output_options = copy.deepcopy(output_options)
         self.name = name
+
+    def make_workspace(self):
+        if os.path.exists(self.workspace):
+            shutil.rmtree(self.workspace)
+
+        os.mkdir(self.workspace)
+
+

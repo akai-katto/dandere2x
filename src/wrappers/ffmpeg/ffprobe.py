@@ -100,6 +100,20 @@ def get_width_height(ffprobe_dir, input_video):
 
     return int(return_string[0]), int(return_string[1])
 
+def get_seconds(ffprobe_dir, input_video) -> float:
+    # todo
+
+    execute = [ffprobe_dir,
+               "-i", input_video,
+               "-show_entries",
+               "format=duration",
+               "-v", "quiet",
+               "-of", "csv=p=0"]
+
+    return_bytes = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
+    return_string = return_bytes.decode("utf-8")
+
+    return float(return_string)
 
 def get_frame_rate(ffprobe_dir, input_video):
     """ Gets input video information

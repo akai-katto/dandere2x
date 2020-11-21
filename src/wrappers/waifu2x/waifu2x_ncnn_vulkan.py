@@ -17,23 +17,25 @@ Purpose:
  
 ====================================================================="""
 import copy
+import os
 import subprocess
 from threading import Thread
 
-from dandere2x.context import Context
+from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
     rename_file, wait_on_either_file_controller
-from dandere2xlib.utils.yaml_utils import get_options_from_section
+from dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
 
 
 class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         # implementation specific
         self.active_waifu2x_subprocess = None
+        self.waifu2x_vulkan_path = load_executable_paths_yaml()['waifu2x_vulkan']
 
-        super().__init__(context)
+        super().__init__(context, controller)
         Thread.__init__(self, name="Waifu2x Thread")
 
     # override
@@ -51,14 +53,14 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
             if exec_command[x] == "[input_file]":
-                exec_command[x] = self.residual_images_dir
+                exec_command[x] = self.context.residual_images_dir
 
             if exec_command[x] == "[output_file]":
-                exec_command[x] = self.residual_upscaled_dir
+                exec_command[x] = self.context.residual_upscaled_dir
 
         console_output.write(str(exec_command))
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
-                                                          stdout=console_output)
+                                                          stdout=console_output, cwd=os.path.dirname(self.waifu2x_vulkan_path))
         self.active_waifu2x_subprocess.wait()
 
     # override
@@ -83,20 +85,20 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
 
         console_output.write(str(exec_command))
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
-                                                          stdout=console_output)
+                                                          stdout=console_output, cwd=os.path.dirname(self.waifu2x_vulkan_path))
         self.active_waifu2x_subprocess.wait()
 
         rename_file_wait(output_image, output_image.replace(".png", ".jpg"))
 
     # override
     def _construct_upscale_command(self) -> list:
-        waifu2x_vulkan_upscale_frame_command = [self.context.waifu2x_ncnn_vulkan_legacy_file_name,
+        waifu2x_vulkan_upscale_frame_command = [self.waifu2x_vulkan_path,
                                                 "-i", "[input_file]",
-                                                "-n", str(self.noise_level),
-                                                "-s", str(self.scale_factor)]
+                                                "-n", str(self.context.service_request.denoise_level),
+                                                "-s", str(self.context.service_request.scale_factor)]
 
         waifu2x_vulkan_options = get_options_from_section(
-            self.context.config_yaml["waifu2x_ncnn_vulkan"]["output_options"])
+            self.context.service_request.output_options["waifu2x_ncnn_vulkan"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_vulkan_options:
@@ -122,12 +124,12 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
         """
 
         file_names = []
-        for x in range(self.context.start_frame, self.frame_count):
+        for x in range(1, self.context.frame_count):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.residual_upscaled_dir + file + ".jpg.png"
-            clean_name = self.residual_upscaled_dir + file + ".png"
+            dirty_name = self.context.residual_upscaled_dir + file + ".jpg.png"
+            clean_name = self.context.residual_upscaled_dir + file + ".png"
 
             wait_on_either_file_controller(clean_name, dirty_name, self.controller)
 

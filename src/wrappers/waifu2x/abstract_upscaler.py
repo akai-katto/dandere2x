@@ -22,7 +22,7 @@ import time
 from abc import ABC, abstractmethod
 from threading import Thread
 
-from dandere2x.context import Context
+from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_file, file_exists
 from wrappers.frame.frame import Frame
 
@@ -34,18 +34,12 @@ class AbstractUpscaler(Thread, ABC):
     class.
     """
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         super().__init__()
 
         # load context
         self.context = context
-        self.controller = self.context.controller
-        self.residual_images_dir = context.residual_images_dir
-        self.residual_upscaled_dir = context.residual_upscaled_dir
-        self.noise_level = context.noise_level
-        self.scale_factor = context.scale_factor
-        self.workspace = context.workspace
-        self.frame_count = context.frame_count
+        self.controller = controller
         self.log = logging.getLogger()
 
         self.upscale_command = self._construct_upscale_command()
@@ -55,8 +49,8 @@ class AbstractUpscaler(Thread, ABC):
         """
         Verify the upscaler works by upscaling a very small frame, and throws a descriptive error if it doesn't.
         """
-        test_file = self.context.workspace + "test_frame.jpg"
-        test_file_upscaled = self.context.workspace + "test_frame_upscaled.jpg"
+        test_file = self.context.service_request.workspace + "test_frame.jpg"
+        test_file_upscaled = self.context.service_request.workspace + "test_frame_upscaled.jpg"
 
         test_frame = Frame()
         test_frame.create_new(2, 2)
@@ -91,7 +85,7 @@ class AbstractUpscaler(Thread, ABC):
         to keep the variation of upscalers consistent across variations.
         """
         self.log.info("Run called.")
-        remove_thread = RemoveUpscaledFiles(context=self.context)
+        remove_thread = RemoveUpscaledFiles(context=self.context, controller=self.controller)
         remove_thread.start()
 
         while not self.check_if_done() and self.controller.is_alive():
@@ -105,7 +99,7 @@ class AbstractUpscaler(Thread, ABC):
         self.log.info("Join finished.")
 
     def check_if_done(self) -> bool:
-        if self.controller.get_current_frame() >= self.frame_count - 1:
+        if self.controller.get_current_frame() >= self.context.frame_count - 1:
             return True
 
         return False
@@ -138,15 +132,16 @@ class AbstractUpscaler(Thread, ABC):
 
 
 class RemoveUpscaledFiles(Thread):
-    def __init__(self, context):
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         Thread.__init__(self, name="Remove Upscale Files Thread")
         super().__init__()
 
         self.context = context
+        self.controller = controller
 
         # make a list of names that will eventually (past or future) be upscaled
         self.list_of_names = []
-        for x in range(self.context.start_frame, self.context.frame_count):
+        for x in range(1, self.context.frame_count):
             self.list_of_names.append("output_" + get_lexicon_value(6, x) + ".jpg")
 
     # todo, fix this a bit. This isn't scalable / maintainable
@@ -156,8 +151,8 @@ class RemoveUpscaledFiles(Thread):
             residual_file = self.context.residual_images_dir + name.replace(".png", ".jpg")
             residual_upscaled_file = self.context.residual_upscaled_dir + name.replace(".jpg", ".png")
 
-            wait_on_file(residual_upscaled_file, self.context.controller)
-            if not self.context.controller.is_alive():
+            wait_on_file(residual_upscaled_file, self.controller)
+            if not self.controller.is_alive():
                 return
 
             if os.path.exists(residual_file):

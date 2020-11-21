@@ -9,7 +9,6 @@ import imageio
 import numpy
 import numpy as np
 from PIL import Image
-
 from dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file
 
 
