@@ -26,11 +26,6 @@ class Dandere2xInterface(Thread):
         self.__start_time: float = time.time()
         self.__end_time: float = 0
 
-        # todo this is bad
-        if os.path.exists(self._service_request.workspace):
-            print("Workspace already exists.. deleting")
-            force_delete_directory(self._service_request.workspace)
-
         os.makedirs(service_request.workspace)
 
     @abstractmethod
