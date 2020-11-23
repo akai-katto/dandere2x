@@ -34,6 +34,8 @@ class SingleProcess(Dandere2xInterface):
                         input_file=self._service_request.input_file,
                         output_file=self.child_request.input_file)
 
+        print("re-encode done")
+
         self.dandere2x_service = Dandere2xServiceThread(service_request=self.child_request)
 
     def run(self):

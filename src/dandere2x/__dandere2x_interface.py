@@ -23,10 +23,12 @@ class Dandere2xInterface(Thread):
         self._service_request = service_request
 
         # meta-data
-        self.__start_time: float = time.time()
+        self.__start_time: float = 0
         self.__end_time: float = 0
 
-        os.makedirs(service_request.workspace)
+        # if os.path.exists(self._service_request.workspace):
+        #     print("Workspace already exists.. deleting")
+        #     force_delete_directory(self._service_request.workspace)
 
     @abstractmethod
     def _pre_process(self):

@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 import threading
 import time
@@ -13,7 +14,7 @@ from dandere2xlib.core.merge import Merge
 from dandere2xlib.core.residual import Residual
 from dandere2xlib.min_disk_usage import MinDiskUsage
 from dandere2xlib.status_thread import Status
-from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists, create_directories
+from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists
 from wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 
@@ -22,13 +23,16 @@ class Dandere2xServiceThread(threading.Thread):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
         super().__init__(name=service_request.name)
-        # Administrative Stuff
-        # import sys
-        # sys.excepthook = show_exception_and_exit  # set a custom except hook to prevent window from closing.
-        # threading.Thread.__init__(self, name="Dandere2x Thread")
+        # Administrative Stuff #
+
+        # Set a custom 'except hook' to prevent window from closing on crash.
+        import sys
+        sys.excepthook = show_exception_and_exit
+
+        # Set logger format
         self.color_log_format = "%(log_color)s%(asctime)-8s%(reset)s %(log_color)s%(levelname)-8s%(reset)s %(log_color)s%(filename)-8s%(reset)s %(log_color)s%(funcName)-8s%(reset)s: %(log_color)s%(message)s"
         self.file_log_format = "%(asctime)s %(levelname)s %(filename)s %(funcName)s %(message)s"
-        self.set_console_logger()
+        self.__set_console_logger()
         self.fh = None  # File Handler for log
 
         # Class Specific
@@ -50,8 +54,8 @@ class Dandere2xServiceThread(threading.Thread):
         self.merge_thread = Merge(context=self.context, controller=self.controller)
 
     def run(self):
-        self.log.info("Thread Started")
-        create_directories(self.context.service_request.workspace, self.context.directories)
+        self.log.info("called.")
+        self.__create_directories(self.context.service_request.workspace, self.context.directories)
 
         self.log.info("Dandere2x Threads Set.. going live with the following context file.")
         self.context.log_all_variables()
@@ -65,7 +69,15 @@ class Dandere2xServiceThread(threading.Thread):
         self.residual_thread.start()
         self.waifu2x.start()
         self.status_thread.start()
-        self.threads_active = True
+
+        self.min_disk_demon.join()
+        self.dandere2x_cpp_thread.join()
+        self.merge_thread.join()
+        self.residual_thread.join()
+        self.waifu2x.join()
+        self.status_thread.join()
+
+
 
     def kill(self):
         """
@@ -77,21 +89,8 @@ class Dandere2xServiceThread(threading.Thread):
         """
         self.log.warning("Dandere2x Killed - Standby")
         self.dandere2x_cpp_thread.kill()
-        self.controller.kill()
+        self.controller.killwe()
 
-    def join(self, timeout=None):
-        self.log.info("Joined called.")
-
-        while not self.threads_active:
-            time.sleep(1)
-
-        self.min_disk_demon.join()
-        self.dandere2x_cpp_thread.join()
-        self.merge_thread.join()
-        self.residual_thread.join()
-        self.waifu2x.join()
-        self.status_thread.join()
-        self.log.info("Joined finished.")
 
     # todo, remove this dependency.
     def _get_waifu2x_class(self, name: str):
@@ -144,7 +143,7 @@ class Dandere2xServiceThread(threading.Thread):
 
         self.log.info("Time to upscale a single frame: %s " % str(round(time.time() - one_frame_time, 2)))
 
-    def set_file_logger(self, file: str):
+    def __set_file_logger(self, file: str):
         self.log.info("Writing log-file at %s" % file)
         formatter = logging.Formatter(self.file_log_format)
         self.fh = logging.FileHandler(file, "w", "utf-8")
@@ -152,7 +151,7 @@ class Dandere2xServiceThread(threading.Thread):
         self.log.addHandler(self.fh)
         self.log.info("Log-file set.")
 
-    def set_console_logger(self):
+    def __set_console_logger(self):
         """
         Create the logging class to be format print statements the dandere2x way.
 
@@ -184,3 +183,28 @@ class Dandere2xServiceThread(threading.Thread):
         logger.setLevel(logging.INFO)
         logger.addHandler(self.handler)
         logging.info("Dandere2x Console Logger Set")
+
+    @staticmethod
+    def __create_directories(workspace: str, directories_list: list):
+        """
+        In dandere2x's context file, there's a list of directories"""
+        log = logging.getLogger()
+        log.info("Creating directories. Starting with %s first" % workspace)
+
+        if os.path.exists(workspace):
+            log.error("Workspace '%s' already exists - fatal error. Exiting" % workspace)
+            raise Exception
+
+        # need to create workspace first or else subdirectories wont get made correctly
+        try:
+            os.makedirs(workspace)
+        except:
+            log.warning("Creation of directory %s failed.. dandere2x may still work but be advised. " % workspace)
+        # create each directory
+        for subdirectory in directories_list:
+            try:
+                os.makedirs(subdirectory)
+            except OSError:
+                log.warning("Creation of the directory %s failed.. dandere2x may still work but be advised. " % workspace)
+            else:
+                log.info("Successfully created the directory %s " % subdirectory)

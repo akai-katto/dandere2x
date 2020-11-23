@@ -1,5 +1,6 @@
 from dandere2x import Dandere2x
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
+from dandere2x.singleprocess import SingleProcess
 
 
 

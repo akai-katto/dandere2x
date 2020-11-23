@@ -61,8 +61,8 @@ class Dandere2xServiceRequest:
 
         request = \
             Dandere2xServiceRequest(
-                input_file=args.input_file,
-                output_file=args.output_file,
+                input_file=os.path.abspath(args.input_file),
+                output_file=os.path.abspath(args.output_file),
                 workspace=os.path.abspath(args.workspace),
                 block_size=args.block_size,
                 denoise_level=args.noise_level,
@@ -112,6 +112,8 @@ class Dandere2xServiceRequest:
         return args
 
     def make_workspace(self):
+
+        print("attempting to make % s"  % self.workspace)
         if os.path.exists(self.workspace):
             shutil.rmtree(self.workspace)
 

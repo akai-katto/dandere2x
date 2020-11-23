@@ -4,6 +4,7 @@ from threading import Thread
 from dandere2x.__dandere2x_interface import Dandere2xInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
 
+# todo
 
 class Dandere2x(Thread):
     """
@@ -18,8 +19,8 @@ class Dandere2x(Thread):
 
         self._service_request = service_request
 
-        anonymous_dandere2x_class = self._determine_root_request(self._service_request)
-        self._root_request = anonymous_dandere2x_class(service_request=self._service_request)
+        anonymous_dandere2x_service = self._determine_root_request(self._service_request)
+        self._root_service_thread = anonymous_dandere2x_service(service_request=self._service_request)
 
     @staticmethod
     def _determine_root_request(request) -> Type[Dandere2xInterface]:
@@ -28,7 +29,7 @@ class Dandere2x(Thread):
         the user was intending for dandere2x to return given the initial service request.
 
         @param request: The root service request.
-        @return: A Dandere2xInterface-inherited class.
+        @return: A Dandere2xInterface-inherited subclass.
         """
 
         if request.processing_type == ProcessingType.MULTI_PROCESS:
@@ -40,5 +41,5 @@ class Dandere2x(Thread):
             from dandere2x.singleprocess import SingleProcess
             return SingleProcess
 
-    def start(self) -> None:
-        self._root_request.start()
+    def run(self) -> None:
+        self._root_service_thread.run()
