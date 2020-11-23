@@ -21,8 +21,10 @@ class ProcessingType(Enum):
 
         raise Exception("processing type not found %s" % input)
 
+
 class Dandere2xServiceRequest:
 
+    # todo, rename quality_minimum -> image_quality
     def __init__(self,
                  input_file: str,
                  output_file: str,
@@ -32,16 +34,19 @@ class Dandere2xServiceRequest:
                  quality_minimum: int,
                  scale_factor: int,
                  output_options: dict,
-                 name: str):
-        self.workspace = workspace
-        self.scale_factor = scale_factor
-        self.quality_minimum = quality_minimum
-        self.denoise_level = denoise_level
-        self.block_size = block_size
-        self.output_file = output_file
-        self.input_file = input_file
-        self.output_options = copy.deepcopy(output_options)
-        self.name = name
+                 name: str,
+                 processing_type: ProcessingType):
+
+        self.workspace: str = workspace
+        self.scale_factor: int = scale_factor
+        self.quality_minimum: int = quality_minimum
+        self.denoise_level: int = denoise_level
+        self.block_size: int = block_size
+        self.output_file: str = output_file
+        self.input_file: str = input_file
+        self.output_options: dict = copy.deepcopy(output_options)
+        self.name: str = name
+        self.processing_type: ProcessingType = processing_type
 
     @classmethod
     def load_from_args(cls, args):
@@ -118,4 +123,3 @@ class Dandere2xServiceRequest:
         for item in self.__dict__:
             # log.info("%s : %s" % (item, self.__dict__[item]))
             print("%s : %s" % (item, self.__dict__[item]))
-
