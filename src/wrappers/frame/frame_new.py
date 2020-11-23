@@ -3,7 +3,7 @@ import logging
 import imageio
 import numpy as np
 
-from dandere2x.dandere2x_service_controller import Dandere2xController
+from dandere2x.__dandere2x_service_controller import Dandere2xController
 
 
 class Frame:

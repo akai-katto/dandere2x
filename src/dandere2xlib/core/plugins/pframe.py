@@ -1,4 +1,4 @@
-from dandere2x.dandere2x_service import Dandere2xServiceContext
+from dandere2x.__dandere2x_service import Dandere2xServiceContext
 from wrappers.frame.frame import DisplacementVector
 from wrappers.frame.frame import Frame
 

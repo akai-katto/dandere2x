@@ -35,8 +35,8 @@ Comments / Notes: This is probably the most difficult to understand
 import logging
 import threading
 
-from dandere2x.dandere2x_service_context import Dandere2xServiceContext
-from dandere2x.dandere2x_service_controller import Dandere2xController
+from dandere2x.__dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.__dandere2x_service_controller import Dandere2xController
 from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
 from wrappers.ffmpeg.pipe_thread import Pipe

@@ -5,7 +5,7 @@ import shutil
 import time
 
 from dandere2x.context import Context
-from dandere2x.dandere2x_service import Dandere2xServiceThread
+from dandere2x.__dandere2x_service import Dandere2xServiceThread
 from dandere2xlib.utils.dandere2x_utils import dir_exists, file_exists
 
 

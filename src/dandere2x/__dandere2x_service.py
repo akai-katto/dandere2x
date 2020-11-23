@@ -6,8 +6,8 @@ import time
 import colorlog
 from colorlog import ColoredFormatter
 
-from dandere2x.dandere2x_service_context import Dandere2xServiceContext
-from dandere2x.dandere2x_service_controller import Dandere2xController
+from dandere2x.__dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.__dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2xlib.core.merge import Merge
 from dandere2xlib.core.residual import Residual
@@ -69,7 +69,7 @@ class Dandere2xServiceThread(threading.Thread):
 
     def kill(self):
         """
-        Kill Dandere2x entirely. Everything started as a thread within the scope of dandere2x_service.py can be killed with
+        Kill Dandere2x entirely. Everything started as a thread within the scope of __dandere2x_service.py can be killed with
         controller.kill() except for d2x_cpp, since that runs as a subprocess.
 
         As an analogy, imagine `controller` is a fishline that is passed to all threads, and we can `pull the cord` on
@@ -157,9 +157,9 @@ class Dandere2xServiceThread(threading.Thread):
         Create the logging class to be format print statements the dandere2x way.
 
         The formatted output resembles the following (roughly):
-            2020-08-01 16:03:39,455 INFO     dandere2x_service.py : Hewwooo
-            2020-08-01 16:03:39,456 WARNING  dandere2x_service.py : jeeez fuck this warning
-            2020-08-01 16:03:39,456 ERROR    dandere2x_service.py : oh fuck fuck fuck stop the program an error occurred
+            2020-08-01 16:03:39,455 INFO     __dandere2x_service.py : Hewwooo
+            2020-08-01 16:03:39,456 WARNING  __dandere2x_service.py : jeeez fuck this warning
+            2020-08-01 16:03:39,456 ERROR    __dandere2x_service.py : oh fuck fuck fuck stop the program an error occurred
         """
 
         formatter = ColoredFormatter(

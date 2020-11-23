@@ -1,6 +1,6 @@
 import threading
 
-from dandere2x.dandere2x_service_controller import Dandere2xController
+from dandere2x.__dandere2x_service_controller import Dandere2xController
 from wrappers.frame.frame import Frame
 
 

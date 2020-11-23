@@ -1,7 +1,7 @@
 import yaml
 
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2x.dandere2x_service import Dandere2xServiceThread
+from dandere2x.__dandere2x_service import Dandere2xServiceThread
 from dandere2x.MultiProcess import MultiProcess
 from dandere2x.SingleProcess import SingleProcess
 

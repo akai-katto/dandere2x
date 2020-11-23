@@ -54,7 +54,7 @@ def force_delete_directory(directory):
             time.sleep(1)
 
 
-from dandere2x.dandere2x_service_controller import Dandere2xController
+from dandere2x.__dandere2x_service_controller import Dandere2xController
 
 
 def get_list_from_file_and_wait(text_file: str, controller=Dandere2xController()):
