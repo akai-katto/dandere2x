@@ -3,9 +3,9 @@ import copy
 import logging
 import os
 import shutil
-from enum import Enum
-
 import yaml
+
+from enum import Enum
 
 
 class ProcessingType(Enum):
@@ -56,7 +56,7 @@ class Dandere2xServiceRequest:
         @return: The "root" Dandere2xServiceRequest, using the args object as it's input.
         """
 
-        with open("output_options.yaml", "r") as read_file:
+        with open("config_files/output_options.yaml", "r") as read_file:
             output_config = yaml.safe_load(read_file)
 
         request = \

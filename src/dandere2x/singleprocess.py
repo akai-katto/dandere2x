@@ -21,9 +21,9 @@ class SingleProcess(Dandere2xInterface):
         self.dandere2x_service = None
 
     def _pre_process(self):
-        resized_output_options = Dandere2xInterface.check_and_fix_resolution(input_file=self._service_request.input_file,
-                                                                             block_size=self._service_request.block_size,
-                                                                             output_options_original=self._service_request.output_options)
+        resized_output_options = Dandere2xInterface._check_and_fix_resolution(input_file=self._service_request.input_file,
+                                                                              block_size=self._service_request.block_size,
+                                                                              output_options_original=self._service_request.output_options)
 
         ffprobe_path = load_executable_paths_yaml()['ffprobe']
         ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
@@ -42,9 +42,9 @@ class SingleProcess(Dandere2xInterface):
         self._pre_process()
         self.dandere2x_service.start()
         self.dandere2x_service.join()
-        self.on_completion()
+        self._on_completion()
 
-    def on_completion(self):
+    def _on_completion(self):
         ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
 
         migrate_tracks_contextless(ffmpeg_dir=ffmpeg_path, no_audio=self.child_request.output_file,

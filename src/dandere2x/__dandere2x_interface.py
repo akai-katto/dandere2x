@@ -8,8 +8,6 @@ from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2xlib.utils.dandere2x_utils import force_delete_directory
 from wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process, append_dar_filter_to_pipe_process
 
-
-# todo, makedir? 
 class Dandere2xInterface(Thread):
     """
     Dandere2x now has two routes of operations (starting N different dandere2x instances, or one single instance)
@@ -26,24 +24,34 @@ class Dandere2xInterface(Thread):
         self.__start_time: float = 0
         self.__end_time: float = 0
 
-        # if os.path.exists(self._service_request.workspace):
-        #     print("Workspace already exists.. deleting")
-        #     force_delete_directory(self._service_request.workspace)
+
+    # Public Methods
+
+    def timer_start(self) -> None:
+        self.__start_time = time.time()
+
+    def timer_end(self) -> None:
+        self.__end_time = time.time()
+
+    def timer_get_duration(self) -> float:
+        return self.__end_time - self.__start_time
+
+    @abstractmethod
+    def run(self):
+        pass
+
+    # Protected Methods
 
     @abstractmethod
     def _pre_process(self):
         pass
 
     @abstractmethod
-    def on_completion(self):
-        pass
-
-    @abstractmethod
-    def run(self):
+    def _on_completion(self):
         pass
 
     @staticmethod
-    def check_and_fix_resolution(input_file: str, block_size: int, output_options_original: dict) -> dict:
+    def _check_and_fix_resolution(input_file: str, block_size: int, output_options_original: dict) -> dict:
         """
         Returns a dictionary containing the output settings, taking into consideration if the video needs to be resized,
         and if it does, changes the pipe_video commands to include dar.
@@ -74,14 +82,3 @@ class Dandere2xInterface(Thread):
                                               height=height)
 
         return new_output_options
-
-    # Final Methods
-
-    def timer_start(self) -> None:
-        self.__start_time = time.time()
-
-    def timer_end(self) -> None:
-        self.__end_time = time.time()
-
-    def timer_get_duration(self) -> float:
-        return self.__end_time - self.__start_time

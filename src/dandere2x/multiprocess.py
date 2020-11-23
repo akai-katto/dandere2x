@@ -17,7 +17,7 @@ class MultiProcess(Dandere2xInterface):
         self.divided_videos_upscaled: list = []
 
     def _pre_process(self):
-        resized_output_options = Dandere2xInterface.check_and_fix_resolution(
+        resized_output_options = Dandere2xInterface._check_and_fix_resolution(
             input_file=self._service_request.input_file,
             block_size=self._service_request.block_size,
             output_options_original=self._service_request.output_options)
@@ -51,9 +51,9 @@ class MultiProcess(Dandere2xInterface):
         for request in self.child_requests:
             request.join()
 
-        self.on_completion()
+        self._on_completion()
 
-    def on_completion(self):
+    def _on_completion(self):
         ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
 
         no_audio = os.path.join(self._service_request.workspace, "noaudio.mkv")

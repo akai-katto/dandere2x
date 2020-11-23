@@ -55,7 +55,8 @@ def load_executable_paths_yaml() -> dict:
     # get location of dandere2x directories (will be in the same folder as main)
     configfile = "executable_paths.yaml"
     main_path = Path(path.abspath(sys.modules['__main__'].__file__)).parent
-    directory_file = os.path.join(main_path, configfile)
+    config_path = Path(path.join(main_path, "config_files"))
+    directory_file = os.path.join(config_path, configfile)
 
     # load yaml
     with open(directory_file, "r") as read_file:

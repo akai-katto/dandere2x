@@ -5,7 +5,7 @@ from dandere2x.__dandere2x_service import Dandere2xServiceThread
 from dandere2x.MultiProcess import MultiProcess
 from dandere2x.SingleProcess import SingleProcess
 
-with open("output_options.yaml", "r") as read_file:
+with open("config_files/output_options.yaml", "r") as read_file:
     output_config = yaml.safe_load(read_file)
 
 # service_request1 = \
@@ -33,7 +33,6 @@ service_request1 = \
         name="service_request1")
 
 service_request1.make_workspace()
-
 
 sp1 = SingleProcess(service_request1)
 
