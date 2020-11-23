@@ -1,9 +1,11 @@
 import argparse
 import os
+from typing import Type
+
 import yaml
 
-from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType, \
-    get_root_thread_from_root_service_request
+from dandere2x.dandere2x_interface import Dandere2xInterface
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
 
 
 def create_parser():
@@ -69,20 +71,38 @@ def service_request_from_args(args) -> Dandere2xServiceRequest:
     return request
 
 
+def get_root_service(request: Dandere2xServiceRequest) -> Type[Dandere2xInterface]:
+    """
+    A wrapper to determine what the root service should be - i.e a logical set of operations to determine what
+    the user was intending for dandere2x to return given the initial service request.
+
+    @param request: The root service request.
+    @return: A Dandere2xInterface-inherited class.
+    """
+    if request.processing_type == ProcessingType.MULTI_PROCESS:
+        from dandere2x.multiprocess import MultiProcess
+        return MultiProcess
+
+    if request.processing_type == ProcessingType.SINGLE_PROCESS:
+        from dandere2x.singleprocess import SingleProcess
+        return SingleProcess
+
+
+"""
+Sample Args / Useful for Development
+"""
+
 def main():
     args = create_parser()  # Get the parser specific to dandere2x
     root_service_request = service_request_from_args(args)
 
     root_service_request.log_all_variables()
 
-    AnonymousDandere2xService = get_root_thread_from_root_service_request(root_service_request)
-
-    root_thread = AnonymousDandere2xService(service_request=root_service_request)
+    anonymous_dandere2x_service = get_root_service(root_service_request)
+    root_thread = anonymous_dandere2x_service(service_request=root_service_request)
 
     root_thread.start()
     root_thread.join()
-
-
 
 
 if __name__ == '__main__':

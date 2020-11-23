@@ -4,8 +4,6 @@ import os
 import shutil
 from enum import Enum
 
-# code from https://docs.python.org/3/library/enum.html
-
 class ProcessingType(Enum):
     SINGLE_PROCESS = "single"
     MULTI_PROCESS = "multi"
@@ -58,13 +56,3 @@ class Dandere2xServiceRequest:
         for item in self.__dict__:
             # log.info("%s : %s" % (item, self.__dict__[item]))
             print("%s : %s" % (item, self.__dict__[item]))
-
-
-def get_root_thread_from_root_service_request(request: Dandere2xServiceRequest):
-    if request.processing_type == ProcessingType.MULTI_PROCESS:
-        from dandere2x.multiprocess import MultiProcess
-        return MultiProcess
-
-    if request.processing_type == ProcessingType.SINGLE_PROCESS:
-        from dandere2x.singleprocess import SingleProcess
-        return SingleProcess
