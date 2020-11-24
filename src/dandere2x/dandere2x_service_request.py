@@ -9,14 +9,14 @@ from enum import Enum
 
 
 class ProcessingType(Enum):
-    SINGLE_PROCESS = "single"
-    MULTI_PROCESS = "multi"
+    SINGLE_PROCESS = "singleprocess"
+    MULTI_PROCESS = "multiprocess"
 
     @staticmethod
     def from_str(input: str):
-        if input == "single":
+        if input == "singleprocess":
             return ProcessingType.SINGLE_PROCESS
-        if input == "multi":
+        if input == "multiprocess":
             return ProcessingType.MULTI_PROCESS
 
         raise Exception("processing type not found %s" % input)
