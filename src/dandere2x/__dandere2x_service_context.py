@@ -60,7 +60,7 @@ class Dandere2xServiceContext:
         self.temp_image = self.temp_image_folder + "tempimage.jpg"
         self.debug = True
         self.step_size = 4
-        self.max_frames_ahead = 20
+        self.max_frames_ahead = 100
 
     def log_all_variables(self):
         log = logging.getLogger()

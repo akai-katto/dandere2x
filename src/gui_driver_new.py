@@ -8,7 +8,9 @@ import yaml
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
-from dandere2x.__dandere2x_service import Dandere2xServiceThread
+from dandere2x import Dandere2x
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
+
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 
@@ -16,42 +18,21 @@ from gui.Dandere2xGUI import Ui_Dandere2xGUI
 class QtDandere2xThread(QtCore.QThread):
     finished = QtCore.pyqtSignal()
 
-    def __init__(self, parent, config_yaml):
+    def __init__(self, parent, service_request: Dandere2xServiceRequest):
         super(QtDandere2xThread, self).__init__(parent)
 
-        self.dandere2x = Dandere2xServiceThread(context)
+        self.service_request = service_request
+        self.dandere2x = Dandere2x(service_request)
 
     def run(self):
-
-        if dir_exists(self.dandere2x.context.workspace):
-            print("Deleted Folder")
-
-            # This is a recurring bug that seems to be popping up on other people's operating systems.
-            # I'm unsure if this will fix it, but it could provide a solution for people who can't even get d2x to work.
-            try:
-                shutil.rmtree(self.dandere2x.context.workspace)
-            except PermissionError:
-                print("Trying to delete workspace via RM tree threw PermissionError - Dandere2x may not work.")
-
-            while file_exists(self.dandere2x.context.workspace):
-                time.sleep(1)
-
-        try:
-            self.dandere2x.start()
-
-        except:
-            print("dandere2x failed to work correctly")
-            sys.exit(1)
-
+        self.service_request.make_workspace()
+        self.dandere2x.start()
         self.join()
 
     def join(self):
         self.dandere2x.join()
         self.finished.emit()
 
-    def kill(self):
-        self.dandere2x.kill()
-        # self.dandere2x.join()
 
 
 class AppWindow(QMainWindow):
@@ -206,36 +187,22 @@ class AppWindow(QMainWindow):
 
         self.parse_gui_inputs()
 
-        print(os.getcwd())
+        with open("config_files/output_options.yaml", "r") as read_file:
+            output_config = yaml.safe_load(read_file)
 
-        with open(os.path.join(self.this_folder, self.config_file), "r") as read_file:
-            config_yaml = yaml.safe_load(read_file)
+        service_request = Dandere2xServiceRequest(input_file=self.input_file,
+                                                  output_file=self.output_file,
+                                                  workspace="./workspace/gui",
+                                                  block_size=int(self.block_size),
+                                                  denoise_level=self.noise_level,
+                                                  quality_minimum=self.image_quality,
+                                                  scale_factor=self.scale_factor,
+                                                  output_options=output_config,
+                                                  name="Gui Call",
+                                                  processing_type=ProcessingType.from_str(self.config_file)
+                                                  )
 
-        if self.is_suspend_file(self.input_file):
-            print("is suspend file")
-            print("input file: " + str(self.input_file))
-            with open(self.input_file, "r") as read_file:
-                config_yaml = yaml.safe_load(read_file)
-        else:
-            print("is not suspend file")
-            # if user selected video file
-            config_yaml['dandere2x']['usersettings']['output_file'] = self.output_file
-            config_yaml['dandere2x']['usersettings']['input_file'] = self.input_file
-            config_yaml['dandere2x']['usersettings']['block_size'] = self.block_size
-            config_yaml['dandere2x']['usersettings']['quality_minimum'] = self.image_quality
-            config_yaml['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
-            config_yaml['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
-            config_yaml['dandere2x']['usersettings']['denoise_level'] = self.noise_level
-
-        print("output_file = " + config_yaml['dandere2x']['usersettings']['output_file'])
-        print("input_file = " + config_yaml['dandere2x']['usersettings']['input_file'])
-        print("block_size = " + str(config_yaml['dandere2x']['usersettings']['block_size']))
-        print("block_size = " + str(config_yaml['dandere2x']['usersettings']['block_size']))
-        print("image_quality = " + str(config_yaml['dandere2x']['usersettings']['quality_minimum']))
-        print("waifu2x_type = " + config_yaml['dandere2x']['usersettings']['waifu2x_type'])
-        print("workspace = " + config_yaml['dandere2x']['developer_settings']['workspace'])
-
-        self.thread = QtDandere2xThread(self, config_yaml)
+        self.thread = QtDandere2xThread(self, service_request)
         self.thread.finished.connect(self.update)
 
         self.disable_buttons()

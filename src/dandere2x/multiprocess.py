@@ -13,7 +13,7 @@ class MultiProcess(Dandere2xInterface):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
         super().__init__(service_request=copy.deepcopy(service_request))
-        self.child_requests = []
+        self._child_requests = []
         self.divided_videos_upscaled: list = []
 
     def _pre_process(self):
@@ -40,15 +40,15 @@ class MultiProcess(Dandere2xInterface):
             child_request.workspace = os.path.join(self._service_request.workspace, "subworkspace%d" % x)
 
             self.divided_videos_upscaled.append(child_request.output_file)
-            self.child_requests.append(Dandere2xServiceThread(child_request))
+            self._child_requests.append(Dandere2xServiceThread(child_request))
 
     def run(self):
         self._pre_process()
 
-        for request in self.child_requests:
+        for request in self._child_requests:
             request.start()
 
-        for request in self.child_requests:
+        for request in self._child_requests:
             request.join()
 
         self._on_completion()

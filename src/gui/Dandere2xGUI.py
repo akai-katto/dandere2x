@@ -997,8 +997,9 @@ class Ui_Dandere2xGUI(object):
         self.config_select_box.setGeometry(QtCore.QRect(260, 60, 171, 21))
 
         # CUSTOM
-        for item in config_names:
-            self.config_select_box.addItem(item)
+        self.config_select_box.addItem("single")
+        self.config_select_box.addItem("multi")
+
 
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
@@ -1112,5 +1113,5 @@ class Ui_Dandere2xGUI(object):
             _translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
         self.upscale_status_label.setText(_translate("Dandere2xGUI", "No files selected"))
         self.suspend_button.setText(_translate("Dandere2xGUI", "Suspend Session"))
-        self.label.setText(_translate("Dandere2xGUI", "Dandere2x Config"))
+        self.label.setText(_translate("Dandere2xGUI", "Process Type"))
         self.download_externals_button.setText(_translate("Dandere2xGUI", "Download Externals"))

@@ -1,1 +1,0 @@
-ffmpeg -i steal.mkv -f segment -segment_time 10 -c copy output%d.mkv

@@ -37,7 +37,7 @@ class Dandere2xServiceRequest:
                  name: str,
                  processing_type: ProcessingType):
 
-        self.workspace: str = workspace
+        self.workspace: str = os.path.abspath(workspace)
         self.scale_factor: int = scale_factor
         self.quality_minimum: int = quality_minimum
         self.denoise_level: int = denoise_level

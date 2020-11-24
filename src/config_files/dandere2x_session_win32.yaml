@@ -10,3 +10,5 @@ gui_settings:
     waifu2x_type: vulkan
     scale_factor: 2
     denoise_level: 3
+
+
