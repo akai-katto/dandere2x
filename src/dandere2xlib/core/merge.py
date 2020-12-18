@@ -60,7 +60,7 @@ class Merge(threading.Thread):
         self.context = context
         self.controller = controller
         # load variables from context
-        self.log = logging.getLogger()
+        self.log = logging.getLogger(name=context.service_request.input_file)
 
         # setup the pipe for merging
         self.pipe = Pipe(self.context.service_request.output_file, context=context, controller=controller)

@@ -1,4 +1,4 @@
-import logging
+from colorlog import logging
 import subprocess
 import threading
 import time
@@ -21,7 +21,7 @@ class Pipe(threading.Thread):
         self.context = context
         self.controller = controller
         self.output_no_sound = output_no_sound
-        self.log = logging.getLogger()
+        self.log = logging.getLogger(name=self.context.service_request.input_file)
 
         # class specific
         self.ffmpeg_pipe_subprocess = None

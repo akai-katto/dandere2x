@@ -23,7 +23,7 @@ from threading import Thread
 
 from dandere2x.__dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
-    rename_file, wait_on_either_file_controller
+    rename_file, wait_on_either_file_controller, get_operating_system
 from dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
 
@@ -34,6 +34,9 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
         # implementation specific
         self.active_waifu2x_subprocess = None
         self.waifu2x_vulkan_path = load_executable_paths_yaml()['waifu2x_vulkan']
+
+        assert get_operating_system() != "win32" or os.path.exists(self.waifu2x_vulkan_path),\
+            "%s does not exist!" % self.waifu2x_vulkan_path
 
         super().__init__(context, controller)
         Thread.__init__(self, name="Waifu2x Thread")

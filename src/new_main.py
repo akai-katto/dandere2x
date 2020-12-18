@@ -3,6 +3,7 @@ import time
 
 from dandere2x import Dandere2x
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
+from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit
 
 
 def cli_start():
@@ -26,6 +27,11 @@ def start_gui():
 
 def main():
     """ Start a Dandere2x session either through CLI or GUI. In either event, the total runtime is printed. """
+
+    # Administrative Stuff #
+    # Set a custom 'except hook' to prevent window from closing on crash.
+    import sys
+    sys.excepthook = show_exception_and_exit
 
     start = time.time()
 

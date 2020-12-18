@@ -3,10 +3,12 @@ import os
 import sys
 import threading
 import time
+from pathlib import Path
 
 import colorlog
 from colorlog import ColoredFormatter
 
+from dandere2x.__dandere2x_logger__ import set_dandere2x_logger
 from dandere2x.__dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.__dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
@@ -23,22 +25,14 @@ class Dandere2xServiceThread(threading.Thread):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
         super().__init__(name=service_request.name)
-        # Administrative Stuff #
-
-        # Set a custom 'except hook' to prevent window from closing on crash.
-        import sys
-        sys.excepthook = show_exception_and_exit
 
         # Set logger format
-        self.color_log_format = "%(log_color)s%(asctime)-8s%(reset)s %(log_color)s%(levelname)-8s%(reset)s %(log_color)s%(filename)-8s%(reset)s %(log_color)s%(funcName)-8s%(reset)s: %(log_color)s%(message)s"
-        self.file_log_format = "%(asctime)s %(levelname)s %(filename)s %(funcName)s %(message)s"
-        self.__set_console_logger()
-        self.fh = None  # File Handler for log
+        set_dandere2x_logger(input_file_path=service_request.input_file)
+        self.log = logging.getLogger(name=service_request.input_file)
 
         # Class Specific
         self.context = Dandere2xServiceContext(service_request)
         self.controller = Dandere2xController()
-        self.log = logging.getLogger()
         self.threads_active = False
 
         # Class Specific Future Declarations
@@ -78,7 +72,6 @@ class Dandere2xServiceThread(threading.Thread):
         self.status_thread.join()
 
 
-
     def kill(self):
         """
         Kill Dandere2x entirely. Everything started as a thread within the scope of __dandere2x_service.py can be killed with
@@ -89,8 +82,7 @@ class Dandere2xServiceThread(threading.Thread):
         """
         self.log.warning("Dandere2x Killed - Standby")
         self.dandere2x_cpp_thread.kill()
-        self.controller.killwe()
-
+        self.controller.kill()
 
     # todo, remove this dependency.
     def _get_waifu2x_class(self, name: str):
@@ -143,52 +135,10 @@ class Dandere2xServiceThread(threading.Thread):
 
         self.log.info("Time to upscale a single frame: %s " % str(round(time.time() - one_frame_time, 2)))
 
-    def __set_file_logger(self, file: str):
-        self.log.info("Writing log-file at %s" % file)
-        formatter = logging.Formatter(self.file_log_format)
-        self.fh = logging.FileHandler(file, "w", "utf-8")
-        self.fh.setFormatter(formatter)
-        self.log.addHandler(self.fh)
-        self.log.info("Log-file set.")
-
-    def __set_console_logger(self):
-        """
-        Create the logging class to be format print statements the dandere2x way.
-
-        The formatted output resembles the following (roughly):
-            2020-08-01 16:03:39,455 INFO     __dandere2x_service.py : Hewwooo
-            2020-08-01 16:03:39,456 WARNING  __dandere2x_service.py : jeeez fuck this warning
-            2020-08-01 16:03:39,456 ERROR    __dandere2x_service.py : oh fuck fuck fuck stop the program an error occurred
-        """
-
-        formatter = ColoredFormatter(
-            self.color_log_format,
-            datefmt=None,
-            reset=True,
-            log_colors={
-                'DEBUG': 'cyan',
-                'INFO': 'green',
-                'WARNING': 'yellow',
-                'ERROR': 'red',
-                'CRITICAL': 'red,bg_white',
-            },
-            secondary_log_colors={},
-            style='%'
-        )
-
-        self.handler = colorlog.StreamHandler()
-        self.handler.setFormatter(formatter)
-
-        logger = colorlog.getLogger()
-        logger.setLevel(logging.INFO)
-        logger.addHandler(self.handler)
-        logging.info("Dandere2x Console Logger Set")
-
-    @staticmethod
-    def __create_directories(workspace: str, directories_list: list):
+    def __create_directories(self, workspace: str, directories_list: list):
         """
         In dandere2x's context file, there's a list of directories"""
-        log = logging.getLogger()
+        log = logging.getLogger(name=self.context.service_request.input_file)
         log.info("Creating directories. Starting with %s first" % workspace)
 
         if os.path.exists(workspace):

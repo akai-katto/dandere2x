@@ -35,7 +35,7 @@ class Residual(threading.Thread):
 
         self.con = context
         self.controller = controller
-        self.log = logging.getLogger()
+        self.log = logging.getLogger(name=context.service_request.input_file)
 
     def join(self, timeout=None):
         self.log.info("Join called.")

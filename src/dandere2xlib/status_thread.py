@@ -20,7 +20,7 @@ class Status(threading.Thread):
 
         self.con = context
         self.controller = controller
-        self.log = logging.getLogger()
+        self.log = logging.getLogger(name=self.con.service_request.input_file)
 
 
     def join(self, timeout=None):
@@ -47,17 +47,8 @@ class Status(threading.Thread):
 
             average = round(average / len(last_10), 2)
 
-            # sys.stdout.write('\r')
-            # sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name,x, percent, average))
-
-            if get_operating_system() == 'win32':
-                ctypes.windll.kernel32.SetConsoleTitleW(
-                    "[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (
-                        name, x, percent, average))
-            else:
-                sys.stdout.write('\r')
-                sys.stdout.write("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (
-                    name, x, percent, average))
+            if x % 10 == 0:
+                self.log.info("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name, x, percent, average))
 
             if len(last_10) == 10:
                 last_10.pop(0)

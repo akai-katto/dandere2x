@@ -40,7 +40,7 @@ class AbstractUpscaler(Thread, ABC):
         # load context
         self.context = context
         self.controller = controller
-        self.log = logging.getLogger()
+        self.log = logging.getLogger(name=context.service_request.input_file)
 
         self.upscale_command = self._construct_upscale_command()
 

@@ -21,7 +21,7 @@ Purpose: This class is responsible for cleaning up files that are no
          to a minimum, thus allowing a smaller workspace. 
 ====================================================================="""
 
-import logging
+from colorlog import logging
 import os
 import threading
 import time
@@ -46,6 +46,7 @@ class MinDiskUsage(threading.Thread):
         # Threading Specific
         threading.Thread.__init__(self, name="Min Disk Thread")
 
+        self.log = logging.getLogger(name=context.service_request.input_file)
         self.context = context
         self.controller = controller
         self.max_frames_ahead = self.context.max_frames_ahead
@@ -75,9 +76,8 @@ class MinDiskUsage(threading.Thread):
         Waits on the 'signal_merged_count' to change, which originates from the merge.py class.
         When it does, delete the used files and extract the needed frame.
         """
-        logger = logging.getLogger(__name__)
         for x in range(self.start_frame, self.frame_count - self.context.max_frames_ahead + 1):
-            logger.debug("on frame x: " + str(x))
+            self.log.debug("Processing frame x: " + str(x))
 
             # wait for signal to get ahead of MinDiskUsage
             while x >= self.controller.get_current_frame() and self.controller.is_alive():
@@ -96,14 +96,11 @@ class MinDiskUsage(threading.Thread):
     def extract_initial_frames(self):
         """
         Extract 'max_frames_ahead' needed for Dandere2x to start with.
-
-        Author: Tremex. 
         """
-        print("extracting initial frames")
+
         max_frames_ahead = self.context.max_frames_ahead
 
         for x in range(max_frames_ahead):
-            print("on x %d" % x)
             self.progressive_frame_extractor.next_frame()
 
     def __delete_used_files(self, remove_before):

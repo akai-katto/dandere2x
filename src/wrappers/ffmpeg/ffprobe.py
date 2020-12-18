@@ -1,6 +1,9 @@
 import json
 import logging
+import os
 import subprocess
+
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
 
 
 # Credit: https://github.com/k4yt3x/video2x
@@ -16,6 +19,8 @@ def get_video_info(ffprobe_dir, input_video):
     Returns:
         dictionary -- JSON text of input video information
     """
+
+    assert get_operating_system() != "win32" or os.path.exists(ffprobe_dir), "%s does not exist!" % ffprobe_dir
 
     # this execution command needs to be hard-coded
     # since video2x only strictly recignizes this one format
