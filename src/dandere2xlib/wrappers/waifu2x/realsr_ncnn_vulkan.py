@@ -17,37 +17,56 @@ Purpose:
  
 ====================================================================="""
 import copy
-import os
 import subprocess
+import time
 from threading import Thread
 
 from dandere2x.context import Context
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, file_exists, \
+
+from dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
     rename_file, wait_on_either_file_controller
 from dandere2xlib.utils.yaml_utils import get_options_from_section
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
 
 
-class Waifu2xConverterCpp(AbstractUpscaler, Thread):
+class RealSRNCNNVulkan(AbstractUpscaler, Thread):
 
     def __init__(self, context: Context):
-        super().__init__(context)
-        Thread.__init__(self, name="Waifu2x Converter Cpp Thread")
+
+        # load context specific to implementation
+        self.frame_count = context.frame_count
+        self.realsr_ncnn_vulkan_file_name = context.realsr_ncnn_vulkan_file_name
+        self.realsr_ncnn_vulkan_file_path = context.realsr_ncnn_vulkan_file_path
+        self.realsr_ncnn_vulkan_path = context.realsr_ncnn_vulkan_path
+
+        self.residual_images_dir = context.residual_images_dir
+        self.residual_upscaled_dir = context.residual_upscaled_dir
+        self.workspace = context.workspace
+        self.start_frame = context.start_frame
+        self.context = context
 
         # implementation specific
         self.active_waifu2x_subprocess = None
 
+        super().__init__(context)
+        Thread.__init__(self, name="RealSR-NCNN-Vulkan Thread")
+
     # override
     def run(self, timeout=None) -> None:
-        fix_w2x_ncnn_vulkan_names = Thread(target=self.__fix_waifu2x_converter_cpp_names,
-                                           name="Waifu2x Converter CPP Fix Names")
+        fix_w2x_ncnn_vulkan_names = Thread(target=self.__fix_waifu2x_ncnn_vulkan_names,
+                                           name="Waifu2xNCNNVulkan Fix Names")
         fix_w2x_ncnn_vulkan_names.start()
         super().run()
 
-    # override
+    def join(self, timeout=None) -> None:
+
+        while self.controller.is_alive() and not self.check_if_done():
+            time.sleep(0.05)
+
     def repeated_call(self) -> None:
+        """ Call the "upscale folder" command. """
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "waifu2x_converter_cpp_output.txt", "w")
+        console_output = open(self.context.console_output_dir + "vulkan_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
@@ -58,16 +77,19 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
                 exec_command[x] = self.residual_upscaled_dir
 
         console_output.write(str(exec_command))
-        os.chdir(self.context.waifu2x_converter_cpp_path)
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
                                                           stdout=console_output)
         self.active_waifu2x_subprocess.wait()
 
-    # override
     def upscale_file(self, input_image: str, output_image: str) -> None:
+        """ Upscale a single file using the implemented upscaling program. """
 
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "waifu2x-converter-cpp-output.txt", "w")
+        console_output = open(self.context.console_output_dir + "realsr_vulkan_upscale_frames.txt", "w")
+
+        # notes - so waifu2x-ncnn-vulkan actually doesn't allow jpg outputs. We have to work around this by
+        #         simply renaming it as png here, then changing it to jpg (for consistency elsewhere)
+        output_image = output_image.replace(".jpg", ".png")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
@@ -77,47 +99,59 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
             if exec_command[x] == "[output_file]":
                 exec_command[x] = output_image
 
-        os.chdir(self.context.waifu2x_converter_cpp_path)
-
         console_output.write(str(exec_command))
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
                                                           stdout=console_output)
         self.active_waifu2x_subprocess.wait()
 
-    # override
-    def _construct_upscale_command(self) -> list:
-        waifu2x_converter_cpp_upscale_command = [self.context.waifu2x_converter_cpp_file_path,
-                                                 "-i", "[input_file]",
-                                                 "--noise-level", str(self.noise_level),
-                                                 "--scale-ratio", str(self.scale_factor)]
+        rename_file_wait(output_image, output_image.replace(".png", ".jpg"))
 
-        waifu2x_conv_options = get_options_from_section(self.context.config_yaml["waifu2x_converter"]["output_options"])
+    # Private Methods
+
+    def _construct_upscale_command(self) -> list:
+        """ A generic, recyclable upscale command that can be used for single-file upscaling or batch upscaling. """
+        waifu2x_vulkan_upscale_frame_command = [self.realsr_ncnn_vulkan_file_path,
+                                                "-i", "[input_file]"]
+
+        waifu2x_vulkan_options = get_options_from_section(
+            self.context.config_yaml["realsr_ncnn_vulkan"]["output_options"])
 
         # add custom options to waifu2x_vulkan
-        for element in waifu2x_conv_options:
-            waifu2x_converter_cpp_upscale_command.append(element)
+        for element in waifu2x_vulkan_options:
+            waifu2x_vulkan_upscale_frame_command.append(element)
 
-        waifu2x_converter_cpp_upscale_command.extend(["-o", "[output_file]"])
+        waifu2x_vulkan_upscale_frame_command.extend(["-o", "[output_file]"])
+        return waifu2x_vulkan_upscale_frame_command
 
-        return waifu2x_converter_cpp_upscale_command
-
-    # TODO, update waifu2x-conveter-cpp from legacy to newer to eliminate this subthread.
-    def __fix_waifu2x_converter_cpp_names(self):
+    def __fix_waifu2x_ncnn_vulkan_names(self):
         """
-            Waifu2x-Conveter-Cpp (legacy) will output the file names in a format that needs to be fixed for
-            dandere2x to work. I believe this is fixed in later versions, hence the TODO
+        Waifu2x-ncnn-vulkan will accept a file as "file.jpg" and output as "file.jpg.png".
+
+        Unfortunately, dandere2x wouldn't recognize this, so this function renames each name to the correct naming
+        convention. This function will iteratiate through every file needing to be upscaled waifu2x-ncnn-vulkan,
+        and change it's name after it's done saving
+
+        Comments:
+
+        - There's a really complicated try / except that exists because, even though a file may exist,
+          the file handle may still be used by waifu2x-ncnn-vulkan (it hasn't released it yet). As a result,
+          we need to try / except it until it's released, allowing us to rename it.
+
         """
 
         file_names = []
-        for x in range(1, self.frame_count):
+        for x in range(self.start_frame, self.frame_count):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.residual_upscaled_dir + file + '_[NS-L' + str(self.noise_level) + '][x' + str(
-                self.scale_factor) + '.000000]' + ".png"
+            dirty_name = self.residual_upscaled_dir + file + ".jpg.png"
             clean_name = self.residual_upscaled_dir + file + ".png"
 
+            # TODO - IMPLEMENT WITH CONTROLLER
             wait_on_either_file_controller(clean_name, dirty_name, self.controller)
+
+            if not self.controller.is_alive():
+                return
 
             if file_exists(clean_name):
                 pass

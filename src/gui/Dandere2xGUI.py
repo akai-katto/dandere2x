@@ -1273,9 +1273,10 @@ class Ui_Dandere2xGUI(object):
         self.image_quality_box.setItemText(3, _translate("Dandere2xGUI", "98"))
         self.image_quality_box.setItemText(4, _translate("Dandere2xGUI", "99"))
         self.video_label_5.setText(_translate("Dandere2xGUI", "Image Quality"))
-        self.video_label_6.setToolTip(_translate("Dandere2xGUI", "Block size Dandere2x will use to compute blocks. You NEED to select a video first before\n"
-"                        selecting this.,\n"
-"                    "))
+        self.video_label_6.setToolTip(_translate("Dandere2xGUI",
+                                                 "Block size Dandere2x will use to compute blocks. You NEED to select a video first before\n"
+                                                 "                        selecting this.,\n"
+                                                 "                    "))
         self.video_label_6.setText(_translate("Dandere2xGUI", "Block Size"))
         self.block_size_combo_box.setCurrentText(_translate("Dandere2xGUI", "10"))
         self.block_size_combo_box.setItemText(0, _translate("Dandere2xGUI", "10"))
@@ -1286,13 +1287,15 @@ class Ui_Dandere2xGUI(object):
         self.block_size_combo_box.setItemText(5, _translate("Dandere2xGUI", "60"))
         self.video_label_7.setText(_translate("Dandere2xGUI", "Settings"))
         self.block_help.setToolTip(_translate("Dandere2xGUI", "The block size Dandere2x will use in computing blocks.\n"
-"                        If your input video\'s resolution does not evenly divide the block size,\n"
-"                        then Dandere2x will resize the video to the dimensions closest\n"
-"                    "))
+                                                              "                        If your input video\'s resolution does not evenly divide the block size,\n"
+                                                              "                        then Dandere2x will resize the video to the dimensions closest\n"
+                                                              "                    "))
         self.block_help.setText(_translate("Dandere2xGUI", "?"))
-        self.quality_help.setToolTip(_translate("Dandere2xGUI", "The amount of loss occured when attempting to preserve blocks between frames. The developer recommends 95-99."))
+        self.quality_help.setToolTip(_translate("Dandere2xGUI",
+                                                "The amount of loss occured when attempting to preserve blocks between frames. The developer recommends 95-99."))
         self.quality_help.setText(_translate("Dandere2xGUI", "?"))
-        self.upscale_status_label.setWhatsThis(_translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
+        self.upscale_status_label.setWhatsThis(
+            _translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
         self.upscale_status_label.setText(_translate("Dandere2xGUI", "No files selected"))
         self.suspend_button.setText(_translate("Dandere2xGUI", "Suspend Session"))
         self.label.setText(_translate("Dandere2xGUI", "Process Type"))
@@ -1300,5 +1303,6 @@ class Ui_Dandere2xGUI(object):
         self.config_select_box.setCurrentText(_translate("Dandere2xGUI", "singleprocess"))
         self.config_select_box.setItemText(0, _translate("Dandere2xGUI", "singleprocess"))
         self.config_select_box.setItemText(1, _translate("Dandere2xGUI", "multiprocess"))
-        self.quality_help_2.setToolTip(_translate("Dandere2xGUI", "Multi-processing is highly experimental and consumes a lot of system resources."))
+        self.quality_help_2.setToolTip(_translate("Dandere2xGUI",
+                                                  "Multi-processing is highly experimental and consumes a lot of system resources."))
         self.quality_help_2.setText(_translate("Dandere2xGUI", "?"))

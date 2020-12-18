@@ -3,9 +3,9 @@ import copy
 import logging
 import os
 import shutil
-import yaml
-
 from enum import Enum
+
+import yaml
 
 
 class ProcessingType(Enum):
@@ -113,7 +113,7 @@ class Dandere2xServiceRequest:
 
     def make_workspace(self):
 
-        print("attempting to make % s"  % self.workspace)
+        print("attempting to make % s" % self.workspace)
         if os.path.exists(self.workspace):
             shutil.rmtree(self.workspace)
 

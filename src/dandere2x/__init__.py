@@ -1,8 +1,9 @@
-from typing import Type
 from threading import Thread
+from typing import Type
 
 from dandere2x.__dandere2x_interface import Dandere2xInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
+
 
 # todo
 
@@ -29,8 +30,8 @@ class Dandere2x(Thread):
         A wrapper to determine what the root service should be - i.e a logical set of operations to determine what
         the user was intending for dandere2x to return given the initial service request.
 
-        @param request: The root service request.
-        @return: A Dandere2xInterface-inherited subclass.
+        :param request: The root service request.
+        :return: A Dandere2xInterface-inherited subclass.
         """
 
         if request.processing_type == ProcessingType.MULTI_PROCESS:
@@ -38,7 +39,6 @@ class Dandere2x(Thread):
             return MultiProcess
 
         if request.processing_type == ProcessingType.SINGLE_PROCESS:
-
             from dandere2x.singleprocess import SingleProcess
             return SingleProcess
 

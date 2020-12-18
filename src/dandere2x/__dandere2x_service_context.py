@@ -3,7 +3,7 @@ import os
 
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from wrappers.ffmpeg.videosettings import VideoSettings
+from dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
 
 
 class Dandere2xServiceContext:

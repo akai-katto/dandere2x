@@ -1,8 +1,6 @@
 import glob
 import os
-import shutil
 import sys
-import time
 
 import yaml
 from PyQt5 import QtCore, QtGui
@@ -10,8 +8,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from dandere2x import Dandere2x
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
-
-from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
+from dandere2xlib.utils.dandere2x_utils import get_operating_system
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 
 
@@ -32,7 +29,6 @@ class QtDandere2xThread(QtCore.QThread):
     def join(self):
         self.dandere2x.join()
         self.finished.emit()
-
 
 
 class AppWindow(QMainWindow):

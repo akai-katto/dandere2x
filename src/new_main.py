@@ -1,4 +1,3 @@
-import sys
 import time
 
 from dandere2x import Dandere2x

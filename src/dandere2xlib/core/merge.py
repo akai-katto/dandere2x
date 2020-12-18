@@ -39,9 +39,9 @@ from dandere2x.__dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.__dandere2x_service_controller import Dandere2xController
 from dandere2xlib.core.plugins.pframe import pframe_image
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
-from wrappers.ffmpeg.pipe_thread import Pipe
-from wrappers.frame.asyncframe import AsyncFrameRead, AsyncFrameWrite
-from wrappers.frame.frame import Frame
+from dandere2xlib.wrappers.ffmpeg.pipe_thread import Pipe
+from dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead
+from dandere2xlib.wrappers.frame.frame import Frame
 
 
 class Merge(threading.Thread):
@@ -64,7 +64,6 @@ class Merge(threading.Thread):
 
         # setup the pipe for merging
         self.pipe = Pipe(self.context.service_request.output_file, context=context, controller=controller)
-
 
     def join(self, timeout=None):
         self.log.info("Join called.")
@@ -134,7 +133,6 @@ class Merge(threading.Thread):
             fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt",
                                                          self.controller)
 
-
             # Create the actual image itself.
             current_frame = self.make_merge_image(self.context, current_upscaled_residuals, frame_previous,
                                                   prediction_data_list, residual_data_list, correction_data_list,
@@ -146,7 +144,7 @@ class Merge(threading.Thread):
             self.pipe.save(current_frame)
 
             # Manually write the image if we're preserving frames (this is for enthusiasts / debugging).
-            #if self.preserve_frames:
+            # if self.preserve_frames:
             # if True:
             #     output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".jpg"
             #     background_frame_write = AsyncFrameWrite(current_frame, output_file)

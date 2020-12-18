@@ -4,11 +4,11 @@ import sys
 import time
 
 import yaml
-
 from dandere2x.context import Context
+
 from dandere2x.__dandere2x_service import Dandere2xServiceThread
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, file_exists
-from wrappers.ffmpeg.ffmpeg import migrate_tracks
+from dandere2xlib.wrappers.ffmpeg.ffmpeg import migrate_tracks
 
 skip = True
 

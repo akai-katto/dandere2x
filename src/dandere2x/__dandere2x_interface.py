@@ -1,12 +1,10 @@
-import os
 import time
-from abc import ABC, abstractmethod
-
+from abc import abstractmethod
 from threading import Thread
 
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2xlib.utils.dandere2x_utils import force_delete_directory
-from wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process, append_dar_filter_to_pipe_process
+from dandere2xlib.wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process, append_dar_filter_to_pipe_process
+
 
 class Dandere2xInterface(Thread):
     """
@@ -23,7 +21,6 @@ class Dandere2xInterface(Thread):
         # meta-data
         self.__start_time: float = 0
         self.__end_time: float = 0
-
 
     # Public Methods
 
@@ -59,7 +56,7 @@ class Dandere2xInterface(Thread):
 
         """
         import copy
-        from wrappers.ffmpeg.videosettings import VideoSettings
+        from dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
         from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 
         def valid_input_resolution(width: int, height: int, block_size: int):

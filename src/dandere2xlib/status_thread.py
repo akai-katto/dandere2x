@@ -1,7 +1,5 @@
-import ctypes
 import logging
 import os
-import sys
 import threading
 import time
 
@@ -9,7 +7,6 @@ import time
 # This could probably be improved visually for the user.. it's not the most pleasing to look at
 # Also, in a very niche case the GUI didn't catch up with the deletion of files, so it ceased updating
 from dandere2x.__dandere2x_service import Dandere2xServiceContext, Dandere2xController
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
 
 
 class Status(threading.Thread):
@@ -21,7 +18,6 @@ class Status(threading.Thread):
         self.con = context
         self.controller = controller
         self.log = logging.getLogger(name=self.con.service_request.input_file)
-
 
     def join(self, timeout=None):
         self.log.info("Join called.")
@@ -45,7 +41,8 @@ class Status(threading.Thread):
             average = round(average / len(last_10), 2)
 
             if x % 10 == 0:
-                self.log.info("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (name, x, percent, average))
+                self.log.info("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (
+                name, x, percent, average))
 
             if len(last_10) == 10:
                 last_10.pop(0)

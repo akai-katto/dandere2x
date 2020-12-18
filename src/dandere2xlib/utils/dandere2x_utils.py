@@ -237,7 +237,7 @@ def get_a_valid_input_resolution(width: int, height: int, block_size: int):
 # TODO bring this to ffprobe's modern settings
 # TODO Very outdated!
 def verify_user_settings(context):
-    from wrappers.frame.frame import Frame
+    from dandere2xlib.wrappers.frame.frame import Frame
 
     input_frames_dir = context.input_frames_dir
     extension_type = context.extension_type

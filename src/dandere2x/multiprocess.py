@@ -6,7 +6,7 @@ from dandere2x.__dandere2x_interface import Dandere2xInterface
 from dandere2x.__dandere2x_service import Dandere2xServiceThread
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from wrappers.ffmpeg.ffmpeg import divide_and_reencode_video, concat_n_videos, migrate_tracks_contextless
+from dandere2xlib.wrappers.ffmpeg.ffmpeg import divide_and_reencode_video, concat_n_videos, migrate_tracks_contextless
 
 
 class MultiProcess(Dandere2xInterface):
@@ -33,7 +33,6 @@ class MultiProcess(Dandere2xInterface):
         divided_re_encoded_videos = glob.glob(os.path.join(self._service_request.workspace, "*.mkv"))
 
         for x in range(0, len(divided_re_encoded_videos)):
-
             child_request = copy.deepcopy(self._service_request)
             child_request.input_file = os.path.join(divided_re_encoded_videos[x])
             child_request.output_file = os.path.join(self._service_request.workspace, "non_migrated%d.mkv" % x)
@@ -62,4 +61,5 @@ class MultiProcess(Dandere2xInterface):
                         output_file=no_audio)
 
         migrate_tracks_contextless(ffmpeg_dir=ffmpeg_path, no_audio=no_audio,
-                                   file_dir=self._service_request.input_file, output_file=self._service_request.output_file)
+                                   file_dir=self._service_request.input_file,
+                                   output_file=self._service_request.output_file)

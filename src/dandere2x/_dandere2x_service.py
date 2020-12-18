@@ -15,8 +15,8 @@ from dandere2xlib.core.residual import Residual
 from dandere2xlib.min_disk_usage import MinDiskUsage
 from dandere2xlib.status_thread import Status
 from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit, file_exists
-from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-
+from dandere2xlib.wrappers.dandere2x_cpp import Dandere2xCppWrapper
+from dandere2xlib.wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 
 class Dandere2xServiceThread(threading.Thread):
 
@@ -39,7 +39,6 @@ class Dandere2xServiceThread(threading.Thread):
         self.file_log_format = "%(asctime)s %(levelname)s %(filename)s %(funcName)s %(message)s"
         self.__set_console_logger()
         self.fh = None  # File Handler for log
-
 
         # Class Specific Future Declarations
         """ 
@@ -77,8 +76,6 @@ class Dandere2xServiceThread(threading.Thread):
         self.waifu2x.join()
         self.status_thread.join()
 
-
-
     def kill(self):
         """
         Kill Dandere2x entirely. Everything started as a thread within the scope of _dandere2x_service.py can be killed with
@@ -91,10 +88,8 @@ class Dandere2xServiceThread(threading.Thread):
         self.dandere2x_cpp_thread.kill()
         self.controller.kill()
 
-
     # todo, remove this dependency.
     def _get_waifu2x_class(self, name: str):
-        from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 
         """ Returns a waifu2x object depending on what the user selected. """
 
@@ -209,6 +204,7 @@ class Dandere2xServiceThread(threading.Thread):
             try:
                 os.makedirs(subdirectory)
             except OSError:
-                log.warning("Creation of the directory %s failed.. dandere2x may still work but be advised. " % workspace)
+                log.warning(
+                    "Creation of the directory %s failed.. dandere2x may still work but be advised. " % workspace)
             else:
                 log.info("Successfully created the directory %s " % subdirectory)

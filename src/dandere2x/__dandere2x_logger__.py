@@ -1,7 +1,7 @@
-from pathlib import Path
-import colorlog
 import logging
+from pathlib import Path
 
+import colorlog
 from colorlog import ColoredFormatter
 
 
@@ -39,7 +39,6 @@ def set_dandere2x_logger(input_file_path: str) -> None:
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     logger.info("Dandere2x Console Logger Set")
-
 
 # def __set_file_logger(self, file: str):
 #     self.log.info("Writing log-file at %s" % file)

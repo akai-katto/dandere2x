@@ -12,7 +12,7 @@ class Frame:
     fail safe checks that are much needed for dandere2x development.
     """
 
-    def __init__(self, width: int, height: int, frame_name = None):
+    def __init__(self, width: int, height: int, frame_name=None):
         """
         Instantiates a blank frame with bounds (height, width).
 
@@ -60,7 +60,6 @@ class Frame:
 
         logger = logging.getLogger(__name__)
         pass
-
 
     # Getters #
     @property

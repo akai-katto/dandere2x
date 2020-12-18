@@ -1,6 +1,6 @@
 from dandere2x.__dandere2x_service import Dandere2xServiceContext
-from wrappers.frame.frame import DisplacementVector
-from wrappers.frame.frame import Frame
+from dandere2xlib.wrappers.frame.frame import DisplacementVector
+from dandere2xlib.wrappers.frame.frame import Frame
 
 
 # This is the inversion (sort of) function of what Dandere2x_cpp's pframe does (which is more commented).

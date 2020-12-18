@@ -21,14 +21,15 @@ Purpose: This class is responsible for cleaning up files that are no
          to a minimum, thus allowing a smaller workspace. 
 ====================================================================="""
 
-from colorlog import logging
 import os
 import threading
 import time
 
+from colorlog import logging
+
 from dandere2x.__dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from wrappers.cv2.progressive_frame_extractor_cv2_new import ProgressiveFramesExtractorCV2
+from dandere2xlib.wrappers.cv2.progressive_frame_extractor_cv2_new import ProgressiveFramesExtractorCV2
 
 
 # todo, seperate this class into two different threads (frame extractor and file removal).
@@ -56,7 +57,6 @@ class MinDiskUsage(threading.Thread):
                                                                          self.context.compressed_static_dir,
                                                                          self.context.service_request.quality_minimum)
         self.start_frame = 1
-
 
     def join(self, timeout=None):
         threading.Thread.join(self, timeout)
@@ -95,10 +95,11 @@ class MinDiskUsage(threading.Thread):
 
     def extract_initial_frames(self):
         """
-        Extract 'max_frames_ahead' needed for Dandere2x to start with.
+        Extract 'max_frames_ahead' needed for Dandere2x to start with. Floors to frame_count if max_frames_ahead
+        is longer than the video itself.
         """
 
-        max_frames_ahead = self.context.max_frames_ahead
+        max_frames_ahead = min(self.context.max_frames_ahead, self.context.video_settings.frame_count)
 
         for x in range(max_frames_ahead):
             self.progressive_frame_extractor.next_frame()
@@ -128,9 +129,7 @@ class MinDiskUsage(threading.Thread):
         residual_data_file_r = residual_data_dir + "residual_" + index_to_remove + ".txt"
         correction_data_file_r = correction_data_dir + "correction_" + index_to_remove + ".txt"
         fade_data_file_r = fade_data_dir + "fade_" + index_to_remove + ".txt"
-
         input_image_r = input_frames_dir + "frame" + index_to_remove + ".jpg"
-
         compressed_file_static_r = compressed_static_dir + "compressed_" + index_to_remove + ".jpg"
 
         # "mark" them

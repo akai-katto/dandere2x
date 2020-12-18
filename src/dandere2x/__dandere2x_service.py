@@ -13,8 +13,8 @@ from dandere2xlib.core.residual import Residual
 from dandere2xlib.min_disk_usage import MinDiskUsage
 from dandere2xlib.status_thread import Status
 from dandere2xlib.utils.dandere2x_utils import file_exists
-from wrappers.dandere2x_cpp import Dandere2xCppWrapper
-from wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
+from dandere2xlib.wrappers.dandere2x_cpp import Dandere2xCppWrapper
+from dandere2xlib.wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
 
 
 class Dandere2xServiceThread(threading.Thread):

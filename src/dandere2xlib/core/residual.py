@@ -24,7 +24,7 @@ import threading
 
 from dandere2x.__dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait
-from wrappers.frame.frame import DisplacementVector, Frame
+from dandere2xlib.wrappers.frame.frame import DisplacementVector, Frame
 
 
 class Residual(threading.Thread):
@@ -46,7 +46,6 @@ class Residual(threading.Thread):
         self.log.info("Run called.")
 
         for x in range(1, self.con.frame_count):
-
 
             # Files needed to create a residual image
             f1 = Frame()
@@ -94,7 +93,8 @@ class Residual(threading.Thread):
                                  output_location=debug_output_file)
 
     @staticmethod
-    def make_residual_image(context: Dandere2xServiceContext, raw_frame: Frame, list_residual: list, list_predictive: list):
+    def make_residual_image(context: Dandere2xServiceContext, raw_frame: Frame, list_residual: list,
+                            list_predictive: list):
         """
         This section can best be explained through pictures. A visual way of expressing what 'make_residual_image'
         is doing is this section in the wiki.

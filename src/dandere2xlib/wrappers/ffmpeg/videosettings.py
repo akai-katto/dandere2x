@@ -1,7 +1,7 @@
 import logging
 from fractions import Fraction
 
-from wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate, get_frame_count, get_aspect_ratio
+from dandere2xlib.wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate, get_frame_count, get_aspect_ratio
 
 
 # A simple way to just have a class w/ the contents we need to operate dandere2x

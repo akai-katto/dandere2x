@@ -22,9 +22,10 @@ import time
 from abc import ABC, abstractmethod
 from threading import Thread
 
-from dandere2x._dandere2x_service import Dandere2xServiceContext, Dandere2xController
+from dandere2x.__dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.__dandere2x_service_controller import Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_file, file_exists
-from wrappers.frame.frame import Frame
+from dandere2xlib.wrappers.frame.frame import Frame
 
 
 class AbstractUpscaler(Thread, ABC):

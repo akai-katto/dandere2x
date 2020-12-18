@@ -1,6 +1,6 @@
 import cv2
-
 from dandere2x.context import Context
+
 from dandere2xlib.utils.dandere2x_utils import rename_file_wait
 
 
