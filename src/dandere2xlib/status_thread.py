@@ -36,9 +36,6 @@ class Status(threading.Thread):
 
         for x in range(1, self.con.frame_count - 1):
 
-            if not self.controller.is_alive():
-                break
-
             percent = int(((x + 1) / (self.con.frame_count - 1)) * 100)
 
             average = 0
@@ -55,7 +52,7 @@ class Status(threading.Thread):
 
             now = time.time()
 
-            while x >= self.controller.get_current_frame() and self.controller.is_alive():
+            while x >= self.controller.get_current_frame():
                 time.sleep(.00001)
 
             later = time.time()

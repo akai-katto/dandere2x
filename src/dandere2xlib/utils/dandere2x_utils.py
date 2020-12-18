@@ -61,15 +61,12 @@ def get_list_from_file_and_wait(text_file: str, controller=Dandere2xController()
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
-    while not exists and controller.is_alive():
+    while not exists:
         if count / 500 == 0:
             logger.debug(text_file + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
-
-    if not controller.is_alive():
-        return
 
     file = None
     try:
@@ -96,7 +93,7 @@ def wait_on_file(file_string: str, controller=Dandere2xController()):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
-    while not exists and controller.is_alive():
+    while not exists:
         if count / 500 == 0:
             logger.debug(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
@@ -110,7 +107,7 @@ def wait_on_either_file_controller(file_1: str, file_2: str, controller=Dandere2
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)
     count = 0
-    while not (exists_1 or exists_2) and controller.is_alive():
+    while not (exists_1 or exists_2):
         if count / 500 == 0:
             logger.debug(file_1 + " does not exist, waiting")
         exists_1 = os.path.isfile(file_1)

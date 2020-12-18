@@ -131,7 +131,7 @@ class Frame:
         logger = logging.getLogger(__name__)
         exists = exists = os.path.isfile(input_string)
         count = 0
-        while not exists and controller.is_alive():
+        while not exists:
             if count % 10000 == 0:
                 logger.debug(input_string + " dne")
             exists = os.path.isfile(input_string)
@@ -139,7 +139,7 @@ class Frame:
             time.sleep(.2)
 
         loaded = False
-        while not loaded and controller.is_alive():
+        while not loaded:
             try:
                 self.load_from_string(input_string)
                 loaded = True

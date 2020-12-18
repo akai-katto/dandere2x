@@ -41,7 +41,7 @@ class Pipe(threading.Thread):
         self._setup_pipe()
 
         # keep piping images to ffmpeg while this thread is supposed to be kept alive.
-        while self.alive and self.controller.is_alive():
+        while self.alive:
             if len(self.images_to_pipe) > 0:
                 img = self.images_to_pipe.pop(0).get_pil_image()  # get the first image and remove it from list
                 img.save(self.ffmpeg_pipe_subprocess.stdin, format="jpeg", quality=100)

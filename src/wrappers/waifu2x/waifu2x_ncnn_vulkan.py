@@ -62,8 +62,9 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
                 exec_command[x] = self.context.residual_upscaled_dir
 
         console_output.write(str(exec_command))
-        self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
-                                                          stdout=console_output, cwd=os.path.dirname(self.waifu2x_vulkan_path))
+        self.active_waifu2x_subprocess = subprocess.Popen(args=exec_command, shell=False,
+                                                          stderr=console_output, stdout=console_output,
+                                                          cwd=os.path.dirname(self.waifu2x_vulkan_path))
         self.active_waifu2x_subprocess.wait()
 
     # override
@@ -87,8 +88,9 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
                 exec_command[x] = output_image
 
         console_output.write(str(exec_command))
-        self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
-                                                          stdout=console_output, cwd=os.path.dirname(self.waifu2x_vulkan_path))
+        self.active_waifu2x_subprocess = subprocess.Popen(exec_command,
+                                                          shell=False, stderr=console_output, stdout=console_output,
+                                                          cwd=os.path.dirname(self.waifu2x_vulkan_path))
         self.active_waifu2x_subprocess.wait()
 
         rename_file_wait(output_image, output_image.replace(".png", ".jpg"))
@@ -135,9 +137,6 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             clean_name = self.context.residual_upscaled_dir + file + ".png"
 
             wait_on_either_file_controller(clean_name, dirty_name, self.controller)
-
-            if not self.controller.is_alive():
-                return
 
             if file_exists(clean_name):
                 pass

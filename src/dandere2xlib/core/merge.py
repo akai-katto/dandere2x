@@ -134,9 +134,6 @@ class Merge(threading.Thread):
             fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt",
                                                          self.controller)
 
-            if not self.controller.is_alive():
-                self.log.info(" Merge thread killed at frame %s " % str(x))
-                break
 
             # Create the actual image itself.
             current_frame = self.make_merge_image(self.context, current_upscaled_residuals, frame_previous,

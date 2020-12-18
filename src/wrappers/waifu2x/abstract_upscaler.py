@@ -22,7 +22,7 @@ import time
 from abc import ABC, abstractmethod
 from threading import Thread
 
-from dandere2x.__dandere2x_service import Dandere2xServiceContext, Dandere2xController
+from dandere2x._dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, wait_on_file, file_exists
 from wrappers.frame.frame import Frame
 
@@ -40,7 +40,7 @@ class AbstractUpscaler(Thread, ABC):
         # load context
         self.context = context
         self.controller = controller
-        self.log = logging.getLogger(name=context.service_request.input_file)
+        self.log = logging.getLogger()
 
         self.upscale_command = self._construct_upscale_command()
 
@@ -88,12 +88,12 @@ class AbstractUpscaler(Thread, ABC):
         remove_thread = RemoveUpscaledFiles(context=self.context, controller=self.controller)
         remove_thread.start()
 
-        while not self.check_if_done() and self.controller.is_alive():
+        while not self.check_if_done():
             self.repeated_call()
 
     def join(self, timeout=None) -> None:
         self.log.info("Join called.")
-        while self.controller.is_alive() and not self.check_if_done():
+        while not self.check_if_done():
             time.sleep(0.05)
 
         self.log.info("Join finished.")
@@ -152,8 +152,6 @@ class RemoveUpscaledFiles(Thread):
             residual_upscaled_file = self.context.residual_upscaled_dir + name.replace(".jpg", ".png")
 
             wait_on_file(residual_upscaled_file, self.controller)
-            if not self.controller.is_alive():
-                return
 
             if os.path.exists(residual_file):
                 os.remove(residual_file)

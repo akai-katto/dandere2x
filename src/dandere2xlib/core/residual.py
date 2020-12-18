@@ -47,9 +47,6 @@ class Residual(threading.Thread):
 
         for x in range(1, self.con.frame_count):
 
-            # Stop if thread is killed
-            if not self.controller.is_alive():
-                break
 
             # Files needed to create a residual image
             f1 = Frame()
@@ -61,10 +58,6 @@ class Residual(threading.Thread):
 
             prediction_data = get_list_from_file_and_wait(self.con.pframe_data_dir + "pframe_" + str(x) + ".txt",
                                                           self.controller)
-
-            # stop if thread is killed
-            if not self.controller.is_alive():
-                break
 
             # Create the output files..
             debug_output_file = self.con.debug_dir + "debug" + str(x + 1) + ".jpg"

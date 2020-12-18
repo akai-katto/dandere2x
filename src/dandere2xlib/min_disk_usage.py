@@ -80,7 +80,7 @@ class MinDiskUsage(threading.Thread):
             self.log.debug("Processing frame x: " + str(x))
 
             # wait for signal to get ahead of MinDiskUsage
-            while x >= self.controller.get_current_frame() and self.controller.is_alive():
+            while x >= self.controller.get_current_frame():
                 time.sleep(.00001)
 
             if not self.is_alive():
@@ -152,7 +152,7 @@ class MinDiskUsage(threading.Thread):
         """
         for item in files:
             c = 0
-            while True and self.controller.is_alive():
+            while True:
                 if os.path.isfile(item):
                     try:
                         os.remove(item)
