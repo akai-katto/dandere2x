@@ -8,10 +8,10 @@ from dandere2x.dandere2x_logger__ import set_dandere2x_logger
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2xlib.core.merge import Merge
-from dandere2xlib.core.residual import Residual
-from dandere2xlib.min_disk_usage import MinDiskUsage
-from dandere2xlib.status_thread import Status
+from dandere2x.core.merge import Merge
+from dandere2x.core.residual import Residual
+from dandere2x.core.min_disk_usage import MinDiskUsage
+from dandere2x.core.status_thread import Status
 from dandere2xlib.utils.dandere2x_utils import file_exists
 from dandere2xlib.wrappers.dandere2x_cpp import Dandere2xCppWrapper
 from dandere2xlib.wrappers.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
