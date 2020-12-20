@@ -5,9 +5,6 @@ import yaml
 # given a list like ["hi", "bye", "kyle"],
 # return a list in the shape "hi, bye, kyle"
 # This is because ffmpeg expects it in this format
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
-
-
 def list_to_string(list_input: list):
     return_str = ''
     for item in list_input:
@@ -51,6 +48,7 @@ def load_executable_paths_yaml() -> dict:
     from os import path
     from pathlib import Path
     import sys
+    from dandere2xlib.utils.dandere2x_utils import get_operating_system
 
     # get location of dandere2x directories (will be in the same folder as main)
     configfile = "executable_paths.yaml"

@@ -16,6 +16,11 @@ ffmpeg:
       -vf:
         - noise=c1s=8:c0f=u
 
+  convert_video_to_gif:
+    output_options:
+      -pix_fmt: "yuv420p"
+      -r: 15
+
   pipe_video:
     output_options:
       -loglevel: panic

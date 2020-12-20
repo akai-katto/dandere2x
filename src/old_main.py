@@ -8,7 +8,7 @@ import yaml
 from dandere2x.context import Context
 from wrappers.dandere2x_wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
 
-from dandere2x.__dandere2x_service import Dandere2xServiceThread
+from dandere2x.dandere2x_service.__init__ import Dandere2xServiceThread
 from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 
 

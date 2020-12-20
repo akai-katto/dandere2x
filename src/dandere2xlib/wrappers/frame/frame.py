@@ -126,7 +126,7 @@ class Frame:
                 logger.info("Value Error")
                 loaded = False
 
-    from dandere2x.__dandere2x_service_controller import Dandere2xController
+    from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
     def load_from_string_controller(self, input_string, controller=Dandere2xController()):
 
         logger = logging.getLogger(__name__)

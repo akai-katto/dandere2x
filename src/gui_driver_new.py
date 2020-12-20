@@ -144,12 +144,17 @@ class AppWindow(QMainWindow):
         path, name = os.path.split(self.input_file)
         name_only = name.split(".")[0]
 
+        extension = ".mkv"
+
+        if self.input_file.endswith(".gif"):
+            extension = ".gif"
+
         self.output_file = os.path.join(path, (name_only + "_"
                                                + "[" + str(self.waifu2x_type) + "]"
                                                + "[s" + str(self.scale_factor) + "]"
                                                + "[n" + str(self.noise_level) + "]"
                                                + "[b" + str(self.block_size) + "]"
-                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
+                                               + "[q" + str(self.image_quality) + "]" + extension))
 
         self.set_output_file_name()
 

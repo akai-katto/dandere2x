@@ -1,7 +1,7 @@
 from threading import Thread
 from typing import Type
 
-from dandere2x.__dandere2x_interface import Dandere2xInterface
+from dandere2x.dandere2x_service.dandere2x_service_interface import Dandere2xInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
 
 
@@ -34,12 +34,16 @@ class Dandere2x(Thread):
         :return: A Dandere2xInterface-inherited subclass.
         """
 
+        if request.processing_type == ProcessingType.SINGLE_PROCESS and request.input_file.endswith("gif"):
+            from dandere2x.process_types.gif_process import GifProcess
+            return GifProcess
+
         if request.processing_type == ProcessingType.MULTI_PROCESS:
-            from dandere2x.multiprocess import MultiProcess
+            from dandere2x.process_types.multiprocess import MultiProcess
             return MultiProcess
 
         if request.processing_type == ProcessingType.SINGLE_PROCESS:
-            from dandere2x.singleprocess import SingleProcess
+            from dandere2x.process_types.singleprocess import SingleProcess
             return SingleProcess
 
     def run(self) -> None:
