@@ -48,7 +48,7 @@ def load_executable_paths_yaml() -> dict:
     from os import path
     from pathlib import Path
     import sys
-    from dandere2xlib.utils.dandere2x_utils import get_operating_system
+    from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
 
     # get location of dandere2x directories (will be in the same folder as main)
     configfile = "executable_paths.yaml"

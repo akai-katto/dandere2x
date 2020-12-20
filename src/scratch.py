@@ -1,10 +1,9 @@
 import yaml
 
-from dandere2x import Dandere2x
-from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from dandere2xlib.wrappers.ffmpeg.ffmpeg import convert_video_to_gif, convert_gif_to_video
+from dandere2x.dandere2xlib import load_executable_paths_yaml
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import convert_gif_to_video
 
-from dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
+from dandere2x.dandere2xlib import VideoSettings
 
 ffprobe = load_executable_paths_yaml()['ffprobe']
 

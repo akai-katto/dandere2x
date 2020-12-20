@@ -2,7 +2,7 @@ import time
 
 from dandere2x import Dandere2x
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2xlib.utils.dandere2x_utils import show_exception_and_exit
+from dandere2x.dandere2xlib.utils.dandere2x_utils import show_exception_and_exit
 
 
 def cli_start():

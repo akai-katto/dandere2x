@@ -3,7 +3,7 @@ import logging
 import os
 import subprocess
 
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
 
 
 # Credit: https://github.com/k4yt3x/video2x

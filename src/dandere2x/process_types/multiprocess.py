@@ -5,8 +5,8 @@ import os
 from dandere2x.dandere2x_service.dandere2x_service_interface import Dandere2xInterface
 from dandere2x.dandere2x_service.__init__ import Dandere2xServiceThread
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from dandere2xlib.wrappers.ffmpeg.ffmpeg import divide_and_reencode_video, concat_n_videos, migrate_tracks_contextless
+from dandere2x.dandere2xlib import load_executable_paths_yaml
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import divide_and_reencode_video, concat_n_videos, migrate_tracks_contextless
 
 
 class MultiProcess(Dandere2xInterface):

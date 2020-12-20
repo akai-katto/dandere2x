@@ -4,8 +4,8 @@ import os
 from dandere2x.dandere2x_service.dandere2x_service_interface import Dandere2xInterface
 from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from dandere2xlib.wrappers.ffmpeg.ffmpeg import convert_gif_to_video, convert_video_to_gif
+from dandere2x.dandere2xlib import load_executable_paths_yaml
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import convert_gif_to_video, convert_video_to_gif
 
 
 class GifProcess(Dandere2xInterface):

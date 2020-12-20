@@ -2,10 +2,10 @@ import logging
 import os
 import subprocess
 
-from dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
-from dandere2xlib.utils.yaml_utils import get_options_from_section
-from dandere2xlib.wrappers.ffmpeg.ffprobe import get_seconds
-from dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
+from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_seconds
+from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
 
 
 def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, input_file: str,

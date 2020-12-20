@@ -7,8 +7,8 @@ import yaml
 from dandere2x.context import Context
 
 from dandere2x.dandere2x_service.__init__ import Dandere2xServiceThread
-from dandere2xlib.utils.dandere2x_utils import get_operating_system, file_exists
-from dandere2xlib.wrappers.ffmpeg.ffmpeg import migrate_tracks
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system, file_exists
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import migrate_tracks
 
 skip = True
 

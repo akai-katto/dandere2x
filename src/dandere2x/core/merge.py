@@ -37,11 +37,10 @@ import threading
 
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
-from dandere2x.core.plugins.pframe import pframe_image
-from dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
-from dandere2xlib.wrappers.ffmpeg.pipe_thread import Pipe
-from dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead
-from dandere2xlib.wrappers.frame.frame import Frame
+from dandere2x.core.residual_plugins.pframe import pframe_image
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
+from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead
+from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
 
 
 class Merge(threading.Thread):
@@ -207,7 +206,7 @@ class Merge(threading.Thread):
         # Plugins Section #
         ###################
 
-        # Note: Run the plugins in the SAME order it was ran in dandere2x_cpp. If not, it won't work correctly.
+        # Note: Run the residual_plugins in the SAME order it was ran in dandere2x_cpp. If not, it won't work correctly.
         out_image = pframe_image(context, out_image, frame_previous, frame_residual, list_residual, list_predictive)
         # out_image = fade_image(context, out_image, list_fade)
         # out_image = correct_image(context, out_image, list_corrections)

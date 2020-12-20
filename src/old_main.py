@@ -9,7 +9,7 @@ from dandere2x.context import Context
 from wrappers.dandere2x_wrappers.dandere2x_gui_upscale_folder_wrapper import Dandere2xUpscaleFolder
 
 from dandere2x.dandere2x_service.__init__ import Dandere2xServiceThread
-from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
 
 
 def create_parser():
@@ -103,7 +103,7 @@ def cli_start():
 
 def start_gui():
     """ Start the dandere2x GUI. We load gui_start inline here, because on import gui_driver gets called and made. """
-    from dandere2xlib.wrappers.gui_driver import gui_start
+    from dandere2x.dandere2xlib import gui_start
 
     print("Calling GUI start.")
     gui_start()

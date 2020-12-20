@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from dandere2xlib.wrappers.frame.frame import Frame
+from dandere2x.dandere2xlib import Frame
 
 
 # A simple struct to hold the data to produce a fade.

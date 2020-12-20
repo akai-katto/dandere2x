@@ -1,6 +1,6 @@
 import cv2
 
-from dandere2xlib.utils.dandere2x_utils import rename_file_wait
+from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait
 
 
 class ProgressiveFramesExtractorCV2:

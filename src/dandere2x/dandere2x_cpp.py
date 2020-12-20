@@ -20,7 +20,7 @@ import subprocess
 import threading
 
 from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
-from dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
+from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 
 
 class Dandere2xCppWrapper(threading.Thread):

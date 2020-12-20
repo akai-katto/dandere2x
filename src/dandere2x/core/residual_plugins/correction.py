@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from dandere2xlib.wrappers.frame.frame import DisplacementVector
-from dandere2xlib.wrappers.frame.frame import Frame
+from dandere2x.dandere2xlib import DisplacementVector
+from dandere2x.dandere2xlib import Frame
 
 
 # See "corrections.cpp" in dandere2x_cpp for more in depth documentation.

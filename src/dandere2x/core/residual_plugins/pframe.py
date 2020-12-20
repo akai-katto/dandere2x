@@ -1,11 +1,11 @@
 from dandere2x.dandere2x_service import Dandere2xServiceContext
-from dandere2xlib.wrappers.frame.frame import DisplacementVector
-from dandere2xlib.wrappers.frame.frame import Frame
 
 
 # This is the inversion (sort of) function of what Dandere2x_cpp's pframe does (which is more commented).
 # Dandere2x_CPP tells us how to take apart an image using vectors, this tells us how to put the upscaled version
 # back together.
+from dandere2x.dandere2xlib.wrappers.frame.frame import Frame, DisplacementVector
+
 
 def pframe_image(context: Dandere2xServiceContext,
                  frame_next: Frame, frame_previous: Frame, frame_residual: Frame,

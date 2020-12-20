@@ -17,39 +17,29 @@ Purpose:
  
 ====================================================================="""
 import copy
+import os
 import subprocess
-import time
 from threading import Thread
 
-from dandere2x.context import Context
-
-from dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
-    rename_file, wait_on_either_file_controller
-from dandere2xlib.utils.yaml_utils import get_options_from_section
+from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
+from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
+    rename_file, wait_on_either_file_controller, get_operating_system
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
+from ...dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml
 
 
-class RealSRNCNNVulkan(AbstractUpscaler, Thread):
+class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
 
-    def __init__(self, context: Context):
-
-        # load context specific to implementation
-        self.frame_count = context.frame_count
-        self.realsr_ncnn_vulkan_file_name = context.realsr_ncnn_vulkan_file_name
-        self.realsr_ncnn_vulkan_file_path = context.realsr_ncnn_vulkan_file_path
-        self.realsr_ncnn_vulkan_path = context.realsr_ncnn_vulkan_path
-
-        self.residual_images_dir = context.residual_images_dir
-        self.residual_upscaled_dir = context.residual_upscaled_dir
-        self.workspace = context.workspace
-        self.start_frame = context.start_frame
-        self.context = context
-
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         # implementation specific
         self.active_waifu2x_subprocess = None
+        self.waifu2x_vulkan_path = load_executable_paths_yaml()['waifu2x_vulkan']
 
-        super().__init__(context)
-        Thread.__init__(self, name="RealSR-NCNN-Vulkan Thread")
+        assert get_operating_system() != "win32" or os.path.exists(self.waifu2x_vulkan_path), \
+            "%s does not exist!" % self.waifu2x_vulkan_path
+
+        super().__init__(context, controller)
+        Thread.__init__(self, name="Waifu2x Thread")
 
     # override
     def run(self, timeout=None) -> None:
@@ -58,37 +48,35 @@ class RealSRNCNNVulkan(AbstractUpscaler, Thread):
         fix_w2x_ncnn_vulkan_names.start()
         super().run()
 
-    def join(self, timeout=None) -> None:
-
-        while self.controller.is_alive() and not self.check_if_done():
-            time.sleep(0.05)
-
+    # override
     def repeated_call(self) -> None:
-        """ Call the "upscale folder" command. """
         exec_command = copy.copy(self.upscale_command)
         console_output = open(self.context.console_output_dir + "vulkan_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
             if exec_command[x] == "[input_file]":
-                exec_command[x] = self.residual_images_dir
+                exec_command[x] = self.context.residual_images_dir
 
             if exec_command[x] == "[output_file]":
-                exec_command[x] = self.residual_upscaled_dir
+                exec_command[x] = self.context.residual_upscaled_dir
 
         console_output.write(str(exec_command))
-        self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
-                                                          stdout=console_output)
+        self.active_waifu2x_subprocess = subprocess.Popen(args=exec_command, shell=False,
+                                                          stderr=console_output, stdout=console_output,
+                                                          cwd=os.path.dirname(self.waifu2x_vulkan_path))
         self.active_waifu2x_subprocess.wait()
 
+    # override
     def upscale_file(self, input_image: str, output_image: str) -> None:
-        """ Upscale a single file using the implemented upscaling program. """
-
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "realsr_vulkan_upscale_frames.txt", "w")
+        console_output = open(self.context.console_output_dir + "vulkan_upscale_frames.txt", "w")
 
-        # notes - so waifu2x-ncnn-vulkan actually doesn't allow jpg outputs. We have to work around this by
-        #         simply renaming it as png here, then changing it to jpg (for consistency elsewhere)
+        """  
+        note: 
+        so waifu2x-ncnn-vulkan actually doesn't allow jpg outputs. We have to work around this by
+        simply renaming it as png here, then changing it to jpg (for consistency elsewhere) """
+
         output_image = output_image.replace(".jpg", ".png")
 
         # replace the exec command with the files we're concerned with
@@ -100,21 +88,22 @@ class RealSRNCNNVulkan(AbstractUpscaler, Thread):
                 exec_command[x] = output_image
 
         console_output.write(str(exec_command))
-        self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
-                                                          stdout=console_output)
+        self.active_waifu2x_subprocess = subprocess.Popen(exec_command,
+                                                          shell=False, stderr=console_output, stdout=console_output,
+                                                          cwd=os.path.dirname(self.waifu2x_vulkan_path))
         self.active_waifu2x_subprocess.wait()
 
         rename_file_wait(output_image, output_image.replace(".png", ".jpg"))
 
-    # Private Methods
-
+    # override
     def _construct_upscale_command(self) -> list:
-        """ A generic, recyclable upscale command that can be used for single-file upscaling or batch upscaling. """
-        waifu2x_vulkan_upscale_frame_command = [self.realsr_ncnn_vulkan_file_path,
-                                                "-i", "[input_file]"]
+        waifu2x_vulkan_upscale_frame_command = [self.waifu2x_vulkan_path,
+                                                "-i", "[input_file]",
+                                                "-n", str(self.context.service_request.denoise_level),
+                                                "-s", str(self.context.service_request.scale_factor)]
 
         waifu2x_vulkan_options = get_options_from_section(
-            self.context.config_yaml["realsr_ncnn_vulkan"]["output_options"])
+            self.context.service_request.output_options["waifu2x_ncnn_vulkan"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_vulkan_options:
@@ -140,18 +129,14 @@ class RealSRNCNNVulkan(AbstractUpscaler, Thread):
         """
 
         file_names = []
-        for x in range(self.start_frame, self.frame_count):
+        for x in range(1, self.context.frame_count):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.residual_upscaled_dir + file + ".jpg.png"
-            clean_name = self.residual_upscaled_dir + file + ".png"
+            dirty_name = self.context.residual_upscaled_dir + file + ".jpg.png"
+            clean_name = self.context.residual_upscaled_dir + file + ".png"
 
-            # TODO - IMPLEMENT WITH CONTROLLER
             wait_on_either_file_controller(clean_name, dirty_name, self.controller)
-
-            if not self.controller.is_alive():
-                return
 
             if file_exists(clean_name):
                 pass

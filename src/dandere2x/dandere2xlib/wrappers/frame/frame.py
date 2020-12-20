@@ -10,7 +10,7 @@ import numpy
 import numpy as np
 from PIL import Image
 
-from dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file
+from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file, wait_on_file
 
 
 # fuck this function, lmao. Credits to
@@ -100,31 +100,6 @@ class Frame:
         self.width = self.frame.shape[1]
         self.string_name = input_string
 
-    # Wait on a file if it does not exist yet. Wait can be cancelled via a cancellation token
-    from dandere2xlib.utils.thread_utils import CancellationToken
-    def load_from_string_wait(self, input_string, cancel_token=CancellationToken()):
-
-        logger = logging.getLogger(__name__)
-        exists = exists = os.path.isfile(input_string)
-        count = 0
-        while not exists and not cancel_token.is_cancelled:
-            if count % 10000 == 0:
-                logger.info(input_string + " dne")
-            exists = os.path.isfile(input_string)
-            count += 1
-            time.sleep(.2)
-
-        loaded = False
-        while not loaded and not cancel_token.is_cancelled:
-            try:
-                self.load_from_string(input_string)
-                loaded = True
-            except PermissionError:
-                logger.info("Permission Error")
-                loaded = False
-            except ValueError:
-                logger.info("Value Error")
-                loaded = False
 
     from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
     def load_from_string_controller(self, input_string, controller=Dandere2xController()):

@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from dandere2x import Dandere2x
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
-from dandere2xlib.utils.dandere2x_utils import get_operating_system
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 
 
@@ -92,7 +92,7 @@ class AppWindow(QMainWindow):
         self.thread.kill()
 
     def press_download_externals_button(self):
-        from dandere2xlib.utils.dandere2x_utils import download_and_extract_externals
+        from dandere2x.dandere2xlib.utils.dandere2x_utils import download_and_extract_externals
         download_and_extract_externals(os.getcwd())
 
     # Setup connections for each button
