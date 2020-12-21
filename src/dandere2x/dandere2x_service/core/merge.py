@@ -122,16 +122,12 @@ class Merge(threading.Thread):
             # Load the needed vectors to create the merged image.
 
             prediction_data_list = get_list_from_file_and_wait(
-                self.context.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                self.controller)
+                self.context.pframe_data_dir + "pframe_" + str(x) + ".txt")
             residual_data_list = get_list_from_file_and_wait(
-                self.context.residual_data_dir + "residual_" + str(x) + ".txt",
-                self.controller)
+                self.context.residual_data_dir + "residual_" + str(x) + ".txt")
             correction_data_list = get_list_from_file_and_wait(
-                self.context.correction_data_dir + "correction_" + str(x) + ".txt",
-                self.controller)
-            fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt",
-                                                         self.controller)
+                self.context.correction_data_dir + "correction_" + str(x) + ".txt")
+            fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt")
 
             # Create the actual image itself.
             current_frame = self.make_merge_image(self.context, current_upscaled_residuals, frame_previous,
@@ -156,8 +152,7 @@ class Merge(threading.Thread):
             if not last_frame:
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
-                    wait_on_file(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
-                                 self.controller)
+                    wait_on_file(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
 
             """
             Now that we're all done with the current frame, the current `current_frame` is now the frame_previous

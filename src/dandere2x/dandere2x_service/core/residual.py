@@ -53,11 +53,9 @@ class Residual(threading.Thread):
             f1.load_from_string_controller(self.con.input_frames_dir + "frame" + str(x + 1) + ".jpg",
                                            self.controller)
             # Load the neccecary lists to compute this iteration of residual making
-            residual_data = get_list_from_file_and_wait(self.con.residual_data_dir + "residual_" + str(x) + ".txt",
-                                                        self.controller)
+            residual_data = get_list_from_file_and_wait(self.con.residual_data_dir + "residual_" + str(x) + ".txt")
 
-            prediction_data = get_list_from_file_and_wait(self.con.pframe_data_dir + "pframe_" + str(x) + ".txt",
-                                                          self.controller)
+            prediction_data = get_list_from_file_and_wait(self.con.pframe_data_dir + "pframe_" + str(x) + ".txt")
 
             # Create the output files..
             debug_output_file = self.con.debug_dir + "debug" + str(x + 1) + ".jpg"

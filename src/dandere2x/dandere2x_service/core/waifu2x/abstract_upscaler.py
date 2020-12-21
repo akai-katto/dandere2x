@@ -152,7 +152,7 @@ class RemoveUpscaledFiles(Thread):
             residual_file = self.context.residual_images_dir + name.replace(".png", ".jpg")
             residual_upscaled_file = self.context.residual_upscaled_dir + name.replace(".jpg", ".png")
 
-            wait_on_file(residual_upscaled_file, self.controller)
+            wait_on_file(residual_upscaled_file)
 
             if os.path.exists(residual_file):
                 os.remove(residual_file)

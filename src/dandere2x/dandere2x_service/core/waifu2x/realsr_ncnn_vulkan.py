@@ -24,7 +24,7 @@ from threading import Thread
 from dandere2x.context import Context
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
-    rename_file, wait_on_either_file_controller
+    rename_file, wait_on_either_file
 from dandere2x.dandere2xlib import get_options_from_section
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
 
@@ -148,7 +148,7 @@ class RealSRNCNNVulkan(AbstractUpscaler, Thread):
             clean_name = self.residual_upscaled_dir + file + ".png"
 
             # TODO - IMPLEMENT WITH CONTROLLER
-            wait_on_either_file_controller(clean_name, dirty_name, self.controller)
+            wait_on_either_file(clean_name, dirty_name, self.controller)
 
             if not self.controller.is_alive():
                 return

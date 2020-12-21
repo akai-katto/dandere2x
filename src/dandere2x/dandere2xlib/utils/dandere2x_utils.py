@@ -54,10 +54,8 @@ def force_delete_directory(directory):
             time.sleep(1)
 
 
-from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
+def get_list_from_file_and_wait(text_file: str):
 
-
-def get_list_from_file_and_wait(text_file: str, controller=Dandere2xController()):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
@@ -89,7 +87,7 @@ def get_list_from_file_and_wait(text_file: str, controller=Dandere2xController()
     return text_list
 
 
-def wait_on_file(file_string: str, controller=Dandere2xController()):
+def wait_on_file(file_string: str):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
@@ -102,7 +100,7 @@ def wait_on_file(file_string: str, controller=Dandere2xController()):
 
 
 # for renaming function, break when either file exists
-def wait_on_either_file_controller(file_1: str, file_2: str, controller=Dandere2xController()):
+def wait_on_either_file(file_1: str, file_2: str):
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)

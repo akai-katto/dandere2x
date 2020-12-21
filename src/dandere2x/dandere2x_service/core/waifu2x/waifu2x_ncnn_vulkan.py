@@ -23,7 +23,7 @@ from threading import Thread
 
 from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
-    rename_file, wait_on_either_file_controller, get_operating_system
+    rename_file, wait_on_either_file, get_operating_system
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml
 
@@ -136,7 +136,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             dirty_name = self.context.residual_upscaled_dir + file + ".jpg.png"
             clean_name = self.context.residual_upscaled_dir + file + ".png"
 
-            wait_on_either_file_controller(clean_name, dirty_name, self.controller)
+            wait_on_either_file(clean_name, dirty_name)
 
             if file_exists(clean_name):
                 pass
