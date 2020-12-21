@@ -22,7 +22,8 @@ import logging
 import math
 import threading
 
-from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
+from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait
 from dandere2x.dandere2xlib.wrappers.frame.frame import Frame, DisplacementVector
 

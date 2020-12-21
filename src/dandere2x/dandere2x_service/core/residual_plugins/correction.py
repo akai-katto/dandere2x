@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from dandere2x.dandere2xlib import DisplacementVector
-from dandere2x.dandere2xlib import Frame
 
 
 # See "corrections.cpp" in dandere2x_cpp for more in depth documentation.
 
 # todo- correction size needs to be added to config file
+from dandere2x.dandere2xlib.wrappers.frame.frame import Frame, DisplacementVector
+
 
 def correct_image(context, frame_base: Frame, list_correction: list):
     """

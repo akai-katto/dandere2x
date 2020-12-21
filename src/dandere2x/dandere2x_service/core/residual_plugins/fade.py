@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 
-from dandere2x.dandere2xlib import Frame
 
 
 # A simple struct to hold the data to produce a fade.
+from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
+
+
 @dataclass
 class FadeData:
     x: int

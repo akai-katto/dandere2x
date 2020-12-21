@@ -15,11 +15,13 @@
 Original Author: aka_katto 
 Purpose: Simply put, very expensive computations for Dandere2x are
 ====================================================================="""
+from __future__ import annotations
 import logging
 import subprocess
 import threading
 
-from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
+from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
+from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 
 
