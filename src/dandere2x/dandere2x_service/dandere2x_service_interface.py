@@ -3,7 +3,9 @@ from abc import abstractmethod
 from threading import Thread
 
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
+from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process, append_dar_filter_to_pipe_process
+from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
 
 
 class Dandere2xInterface(Thread):
@@ -56,8 +58,7 @@ class Dandere2xInterface(Thread):
 
         """
         import copy
-        from dandere2x.dandere2xlib import VideoSettings
-        from dandere2x.dandere2xlib import load_executable_paths_yaml
+
 
         def valid_input_resolution(width: int, height: int, block_size: int):
             return width % block_size == 0 and height % block_size == 0

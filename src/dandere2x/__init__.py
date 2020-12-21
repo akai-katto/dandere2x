@@ -5,9 +5,6 @@ from dandere2x.dandere2x_service.dandere2x_service_interface import Dandere2xInt
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
 
 
-# todo
-
-
 class Dandere2x(Thread):
     """
     Accepts a "root"-level request and will handle all the logic in spawning the child-dandere2x sessions.
@@ -21,11 +18,14 @@ class Dandere2x(Thread):
 
         self._service_request = service_request
 
-        anonymous_dandere2x_service = self._determine_root_request(self._service_request)
+        # discover which dandere2x-process the user wants to use.
+        anonymous_dandere2x_service = self._determine_process_type(self._service_request)
+
+        # start a child-thread of the selected process.
         self._root_service_thread = anonymous_dandere2x_service(service_request=self._service_request)
 
     @staticmethod
-    def _determine_root_request(request) -> Type[Dandere2xInterface]:
+    def _determine_process_type(request) -> Type[Dandere2xInterface]:
         """
         A wrapper to determine what the root service should be - i.e a logical set of operations to determine what
         the user was intending for dandere2x to return given the initial service request.

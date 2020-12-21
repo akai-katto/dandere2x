@@ -4,7 +4,7 @@ import sys
 import threading
 import time
 
-from dandere2x.dandere2x_logger__ import set_dandere2x_logger
+from dandere2x.dandere2x_logger import set_dandere2x_logger
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest

@@ -6,7 +6,7 @@ from colorlog import logging
 
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
-from dandere2x.dandere2xlib import get_options_from_section, load_executable_paths_yaml
+from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml, get_options_from_section
 
 
 class Pipe(threading.Thread):

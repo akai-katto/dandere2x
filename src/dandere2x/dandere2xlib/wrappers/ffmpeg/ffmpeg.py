@@ -35,11 +35,6 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
     extract_frames_command.append(str(frame_rate))
     extract_frames_command.extend([output_file])
 
-    print(extract_frames_command)
-    log_file = "ffmpeg_convert_video.txt"
-    console_output = open(log_file, "w", encoding="utf8")
-    console_output.write(str(extract_frames_command))
-
     process = subprocess.Popen(extract_frames_command, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE,
                                stdin=subprocess.PIPE, shell=False)
 
