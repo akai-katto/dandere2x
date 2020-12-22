@@ -2,10 +2,12 @@ import glob
 import os
 import sys
 
+
 import yaml
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
+from pathlib import Path
 from dandere2x import Dandere2x
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
@@ -105,7 +107,6 @@ class AppWindow(QMainWindow):
         self.ui.download_externals_button.clicked.connect(self.press_download_externals_button)
 
         # The following connects are to re-adjust the file name
-
         noise_radio_list = [self.ui.noise_0_radio_button, self.ui.noise_1_radio_button,
                             self.ui.noise_2_radio_button, self.ui.noise_3_radio_button]
 
@@ -190,6 +191,18 @@ class AppWindow(QMainWindow):
 
         with open("config_files/output_options.yaml", "r") as read_file:
             output_config = yaml.safe_load(read_file)
+
+        if self.ui.select_folder_instead_box.isChecked():
+            print("experimental upscale folder selected")
+
+            # re-define input and output files to be relative paths pointing to their location
+            self.input_file = Path(self.input_file).parent.absolute()
+            self.output_file = Path(self.output_file).parent.absolute()
+
+            print("input %s" %self.input_file)
+            print("output %s" % self.output_file)
+
+
 
         service_request = Dandere2xServiceRequest(input_file=self.input_file,
                                                   output_file=self.output_file,

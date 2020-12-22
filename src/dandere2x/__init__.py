@@ -1,3 +1,4 @@
+import os
 from threading import Thread
 from typing import Type
 
@@ -32,6 +33,10 @@ class Dandere2x(Thread):
         :param request: The root service request.
         :return: A Dandere2xInterface-inherited subclass.
         """
+
+        if os.path.isdir(request.input_file):
+            from dandere2x.process_types.folder_process import FolderProcess
+            return FolderProcess
 
         if request.input_file.endswith("gif"):
             from dandere2x.process_types.gif_process import GifProcess

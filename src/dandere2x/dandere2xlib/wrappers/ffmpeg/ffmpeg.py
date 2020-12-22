@@ -148,9 +148,11 @@ def divide_and_reencode_video(ffmpeg_dir: str, ffprobe_path: str,
 
     seconds = int(get_seconds(ffprobe_dir=ffprobe_path, input_video=input_video))
     ratio = math.ceil(seconds / divide)
+    frame_rate = VideoSettings(ffprobe_dir=ffprobe_path, video_file=input_video).frame_rate
 
     execute = [ffmpeg_dir,
                "-i", input_video,
+               "-r", frame_rate,
                "-f", "segment",
                "-segment_time", str(ratio)]
 
