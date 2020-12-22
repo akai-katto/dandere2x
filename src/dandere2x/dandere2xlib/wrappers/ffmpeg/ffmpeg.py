@@ -152,7 +152,7 @@ def divide_and_reencode_video(ffmpeg_dir: str, ffprobe_path: str,
 
     execute = [ffmpeg_dir,
                "-i", input_video,
-               "-r", frame_rate,
+               "-r", str(frame_rate),
                "-f", "segment",
                "-segment_time", str(ratio)]
 
