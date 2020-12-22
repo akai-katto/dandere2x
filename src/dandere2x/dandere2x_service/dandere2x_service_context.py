@@ -58,7 +58,7 @@ class Dandere2xServiceContext:
         # todo static-ish settings < add to a yaml somewhere >
         self.bleed = 1
         self.temp_image = self.temp_image_folder + "tempimage.jpg"
-        self.debug = True
+        self.debug = False
         self.step_size = 4
         self.max_frames_ahead = 100
 
