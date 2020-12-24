@@ -1,0 +1,14 @@
+gui_settings:
+  input_file: ./workspace/input.mp4
+  output_file: ./workspace/output.mp4
+  quality_factor: 2
+  block_size: 20
+  upscale_folder: False
+  n_processes: 1
+
+  waifu2x_settings:
+    waifu2x_type: vulkan
+    scale_factor: 2
+    denoise_level: 3
+
+
