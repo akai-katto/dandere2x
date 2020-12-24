@@ -66,6 +66,16 @@ def load_executable_paths_yaml() -> dict:
             """ Modifications needed to take place if we're not unix-based """
             config[key] = config[key].replace("/", "\\")
             config[key] = config[key] + ".exe"
+            continue
+
+        # use system binaries if on linux for ffmpeg / ffprobe
+        if key == "ffmpeg" and get_operating_system() == "linux":
+            config[key] = "ffmpeg"
+            continue
+
+        if key == "ffprobe" and get_operating_system() == "linux":
+            config[key] = "ffprobe"
+            continue
 
         if not os.path.isabs(config[key]):
             config[key] = os.path.join(main_path, config[key])

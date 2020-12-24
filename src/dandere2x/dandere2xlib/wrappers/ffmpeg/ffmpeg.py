@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 
-from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution, get_operating_system
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_seconds
 from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
@@ -42,7 +42,7 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
 
 
 def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, output_options = None) -> None:
-    assert os.path.exists(ffmpeg_dir), "% does not exist" % ffmpeg_dir
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), "% does not exist" % ffmpeg_dir
 
     execute = [
         ffmpeg_dir,
@@ -65,7 +65,7 @@ def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, out
 
 
 def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, output_options = None) -> None:
-    assert os.path.exists(ffmpeg_dir), "% does not exist" % ffmpeg_dir
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), "%s does not exist" % ffmpeg_dir
 
     execute = [
         ffmpeg_dir,
