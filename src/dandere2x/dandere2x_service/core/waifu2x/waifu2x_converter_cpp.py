@@ -19,30 +19,36 @@ Purpose:
 import copy
 import os
 import subprocess
+from pathlib import Path
 from threading import Thread
 
-from dandere2x.context import Context
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, file_exists, \
-    rename_file, wait_on_either_file
-from dandere2x.dandere2xlib import get_options_from_section
+    rename_file, wait_on_either_file, get_operating_system
+from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml, get_options_from_section
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
+from ... import Dandere2xServiceContext, Dandere2xController
 
 
 class Waifu2xConverterCpp(AbstractUpscaler, Thread):
 
-    def __init__(self, context: Context):
-        super().__init__(context)
-        Thread.__init__(self, name="Waifu2x Converter Cpp Thread")
-
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         # implementation specific
         self.active_waifu2x_subprocess = None
+        self.waifu2x_converter_cpp_path = load_executable_paths_yaml()['waifu2x_converter_cpp']
+        self.waifu2x_converter_cpp_parent = Path(self.waifu2x_converter_cpp_path).parent
+
+        assert get_operating_system() != "win32" or os.path.exists(self.waifu2x_converter_cpp_path), \
+            "%s does not exist!" % self.waifu2x_converter_cpp_path
+
+        super().__init__(context, controller)
+        Thread.__init__(self, name="Waifu2x Thread")
 
     # override
     def run(self, timeout=None) -> None:
-        fix_w2x_ncnn_vulkan_names = Thread(target=self.__fix_waifu2x_converter_cpp_names,
-                                           name="Waifu2x Converter CPP Fix Names")
-        fix_w2x_ncnn_vulkan_names.start()
+        fix_names_thread = Thread(target=self.__fix_waifu2x_converter_cpp_names,
+                                  name="Waifu2x Converter CPP Fix Names")
+        fix_names_thread.start()
         super().run()
 
     # override
@@ -53,13 +59,13 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
             if exec_command[x] == "[input_file]":
-                exec_command[x] = self.residual_images_dir
+                exec_command[x] = self.context.residual_images_dir
 
             if exec_command[x] == "[output_file]":
-                exec_command[x] = self.residual_upscaled_dir
+                exec_command[x] = self.context.residual_upscaled_dir
 
         console_output.write(str(exec_command))
-        os.chdir(self.context.waifu2x_converter_cpp_path)
+        os.chdir(self.waifu2x_converter_cpp_parent)
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
                                                           stdout=console_output)
         self.active_waifu2x_subprocess.wait()
@@ -78,21 +84,19 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
             if exec_command[x] == "[output_file]":
                 exec_command[x] = output_image
 
-        os.chdir(self.context.waifu2x_converter_cpp_path)
-
-        console_output.write(str(exec_command))
+        os.chdir(self.waifu2x_converter_cpp_parent)
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
                                                           stdout=console_output)
         self.active_waifu2x_subprocess.wait()
 
     # override
     def _construct_upscale_command(self) -> list:
-        waifu2x_converter_cpp_upscale_command = [self.context.waifu2x_converter_cpp_file_path,
+        waifu2x_converter_cpp_upscale_command = [self.waifu2x_converter_cpp_path,
                                                  "-i", "[input_file]",
-                                                 "--noise-level", str(self.noise_level),
-                                                 "--scale-ratio", str(self.scale_factor)]
+                                                 "--noise-level", str(self.context.service_request.denoise_level),
+                                                 "--scale-ratio", str(self.context.service_request.scale_factor)]
 
-        waifu2x_conv_options = get_options_from_section(self.context.config_yaml["waifu2x_converter"]["output_options"])
+        waifu2x_conv_options = get_options_from_section(self.context.service_request.output_options["waifu2x_converter"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_conv_options:
@@ -110,15 +114,15 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
         """
 
         file_names = []
-        for x in range(1, self.frame_count):
+        for x in range(1, self.context.frame_count):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.residual_upscaled_dir + file + '_[NS-L' + str(self.noise_level) + '][x' + str(
-                self.scale_factor) + '.000000]' + ".png"
-            clean_name = self.residual_upscaled_dir + file + ".png"
+            dirty_name = self.context.residual_upscaled_dir + file + '_[NS-L' + str(self.context.service_request.denoise_level) + '][x' + str(
+                self.context.service_request.scale_factor) + '.000000]' + ".png"
+            clean_name = self.context.residual_upscaled_dir + file + ".png"
 
-            wait_on_either_file(clean_name, dirty_name, self.controller)
+            wait_on_either_file(clean_name, dirty_name)
 
             if file_exists(clean_name):
                 pass

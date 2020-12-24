@@ -3,19 +3,22 @@ import os
 import sys
 import threading
 import time
+from typing import Type
 
+from dandere2x.dandere2x_service.core.waifu2x.abstract_upscaler import AbstractUpscaler
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2x_logger import set_dandere2x_logger
 from dandere2x.dandere2x_service.core.dandere2x_cpp import Dandere2xCppWrapper
 from dandere2x.dandere2x_service.core.min_disk_usage import MinDiskUsage
 from dandere2x.dandere2x_service.core.residual import Residual
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
-from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, UpscalingEngineType
 from dandere2x.dandere2x_service.core.merge import Merge
 from dandere2x.dandere2x_service.core.status_thread import Status
 from dandere2x.dandere2xlib.utils.dandere2x_utils import file_exists
 from dandere2x.dandere2x_service.core.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
-
+from dandere2x.dandere2x_service.core.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
+from dandere2x.dandere2x_service.core.waifu2x.waifu2x_caffe import Waifu2xCaffe
 
 class Dandere2xServiceThread(threading.Thread):
 
@@ -35,7 +38,10 @@ class Dandere2xServiceThread(threading.Thread):
         self.min_disk_demon = MinDiskUsage(self.context, self.controller)
         self.status_thread = Status(self.context, self.controller)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context, self.controller)
-        self.waifu2x = Waifu2xNCNNVulkan(context=self.context, controller=self.controller)
+
+        selected_waifu2x = self._get_upscale_engine(service_request.upscale_engine)
+        self.waifu2x = selected_waifu2x(context=self.context, controller=self.controller)
+
         self.residual_thread = Residual(self.context, self.controller)
         self.merge_thread = Merge(context=self.context, controller=self.controller)
 
@@ -65,20 +71,29 @@ class Dandere2xServiceThread(threading.Thread):
         self.status_thread.join()
 
     # todo, remove this dependency.
-    def _get_waifu2x_class(self, name: str):
-        """ Returns a waifu2x object depending on what the user selected. """
+    def _get_upscale_engine(self, selected_engine: UpscalingEngineType) -> Type[AbstractUpscaler]:
 
-        if name == "caffe":
-            return Waifu2xCaffe(self.context)
+        if selected_engine == UpscalingEngineType.CONVERTER_CPP:
+            return Waifu2xConverterCpp
 
-        elif name == "converter_cpp":
-            return Waifu2xConverterCpp(self.context)
+        if selected_engine == UpscalingEngineType.VULKAN:
+            return Waifu2xNCNNVulkan
 
-        elif name == "vulkan":
-            return Waifu2xNCNNVulkan(self.context)
+        if selected_engine == UpscalingEngineType.CAFFE:
+            return Waifu2xCaffe
 
-        elif name == "realsr_ncnn_vulkan":
-            return RealSRNCNNVulkan(self.context)
+
+        # if selected_engine.ty == "caffe":
+        #     return Waifu2xCaffe(self.context)
+        #
+        # elif name == "converter_cpp":
+        #     return Waifu2xConverterCpp
+        #
+        # elif name == "vulkan":
+        #     return Waifu2xNCNNVulkan
+        #
+        # elif name == "realsr_ncnn_vulkan":
+        #     return RealSRNCNNVulkan(self.context)
 
         else:
             print("no valid waifu2x selected")
@@ -94,7 +109,7 @@ class Dandere2xServiceThread(threading.Thread):
         one_frame_time = time.time()
         self.waifu2x.upscale_file(
             input_image=self.context.input_frames_dir + "frame" + str(1) + ".jpg",
-            output_image=self.context.merged_dir + "merged_" + str(1) + ".png")
+            output_image=self.context.merged_dir + "merged_" + str(1) + ".jpg")
 
         if not file_exists(
                 self.context.merged_dir + "merged_" + str(1) + ".jpg"):

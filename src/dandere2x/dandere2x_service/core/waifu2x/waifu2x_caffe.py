@@ -17,22 +17,27 @@ Purpose: Caffe implementation of abstract_upscaler
  
 ====================================================================="""
 import copy
+import os
 import subprocess
 from threading import Thread
 
-from dandere2x.context import Context
-
-from dandere2x.dandere2xlib import get_options_from_section
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
+from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml, get_options_from_section
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
+from ... import Dandere2xServiceContext, Dandere2xController
 
 
 class Waifu2xCaffe(AbstractUpscaler, Thread):
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         # implementation specific
         self.active_waifu2x_subprocess = None
+        self.waifu2x_caffe_path = load_executable_paths_yaml()['waifu2x_caffe']
 
-        super().__init__(context)
+        assert get_operating_system() != "win32" or os.path.exists(self.waifu2x_caffe_path), \
+            "%s does not exist!" % self.waifu2x_caffe_path
+
+        super().__init__(context, controller)
         Thread.__init__(self, name="Waifu2x Thread")
 
     # override
@@ -43,10 +48,10 @@ class Waifu2xCaffe(AbstractUpscaler, Thread):
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
             if exec_command[x] == "[input_file]":
-                exec_command[x] = self.residual_images_dir
+                exec_command[x] = self.context.residual_images_dir
 
             if exec_command[x] == "[output_file]":
-                exec_command[x] = self.residual_upscaled_dir
+                exec_command[x] = self.context.residual_upscaled_dir
 
         console_output.write(str(exec_command))
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
@@ -74,13 +79,13 @@ class Waifu2xCaffe(AbstractUpscaler, Thread):
 
     # override
     def _construct_upscale_command(self) -> list:
-        upscale_command = [self.context.waifu2x_caffe_cui_dir,
+        upscale_command = [self.waifu2x_caffe_path,
                            "-i", "[input_file]",
-                           "-n", str(self.noise_level),
-                           "-s", str(self.scale_factor)]
+                           "-n", str(self.context.service_request.denoise_level),
+                           "-s", str(self.context.service_request.scale_factor)]
 
         optional_paramaters = get_options_from_section(
-            self.context.config_yaml["waifu2x_caffe"]["output_options"])
+            self.context.service_request.output_options["waifu2x_caffe"]["output_options"])
 
         # add optional paramaters to upscaling command.
         for element in optional_paramaters:

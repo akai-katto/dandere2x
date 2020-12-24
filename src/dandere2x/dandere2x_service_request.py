@@ -22,6 +22,23 @@ class ProcessingType(Enum):
         raise Exception("processing type not found %s" % input)
 
 
+class UpscalingEngineType(Enum):
+    VULKAN = "vulkan"
+    CONVERTER_CPP = "converter_cpp"
+    CAFFE = "caffe"
+
+    @staticmethod
+    def from_str(input: str):
+        if input == "vulkan":
+            return UpscalingEngineType.VULKAN
+        if input == "converter_cpp":
+            return UpscalingEngineType.CONVERTER_CPP
+        if input == "caffe":
+            return UpscalingEngineType.CAFFE
+
+        raise Exception("UpscalingEngineType not found %s" % input)
+
+
 class Dandere2xServiceRequest:
 
     # todo, rename quality_minimum -> image_quality
@@ -35,7 +52,8 @@ class Dandere2xServiceRequest:
                  scale_factor: int,
                  output_options: dict,
                  name: str,
-                 processing_type: ProcessingType):
+                 processing_type: ProcessingType,
+                 upscale_engine: UpscalingEngineType):
 
         self.workspace: str = os.path.abspath(workspace)
         self.scale_factor: int = scale_factor
@@ -47,6 +65,7 @@ class Dandere2xServiceRequest:
         self.output_options: dict = copy.deepcopy(output_options)
         self.name: str = name
         self.processing_type: ProcessingType = processing_type
+        self.upscale_engine: UpscalingEngineType = upscale_engine
 
     @classmethod
     def load_from_args(cls, args):
@@ -70,7 +89,8 @@ class Dandere2xServiceRequest:
                 scale_factor=args.scale_factor,
                 output_options=output_config,
                 processing_type=ProcessingType.from_str(args.processing_type),
-                name="Master Service Request")
+                name="Master Service Request",
+                upscale_engine=UpscalingEngineType.from_str(args.waifu2x_type))
 
         return request
 
@@ -94,7 +114,7 @@ class Dandere2xServiceRequest:
                             help='Image Quality (Default 85)')
 
         parser.add_argument('-w', '--waifu2x_type', action="store", dest="waifu2x_type", type=str, default="vulkan",
-                            help='Waifu2x Type. Options: "vulkan" "converter-cpp" "caffe". Default: "vulkan"')
+                            help='Waifu2x Type. Options: "vulkan" "converter_cpp" "caffe". Default: "vulkan"')
 
         parser.add_argument('-s', '--scale_factor', action="store", dest="scale_factor", type=int, default=2,
                             help='Scale Factor (Default 2)')

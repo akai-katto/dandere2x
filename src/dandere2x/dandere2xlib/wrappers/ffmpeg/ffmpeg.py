@@ -152,10 +152,14 @@ def divide_and_reencode_video(ffmpeg_dir: str, ffprobe_path: str,
 
     execute = [ffmpeg_dir,
                "-i", input_video,
-               "-r", str(frame_rate),
                "-f", "segment",
-               "-segment_time", str(ratio)]
+               "-segment_time", str(ratio),
+               "-g", str(ratio),
+               "-r", str(frame_rate),
+               "-force_key_frames", "expr:gte(t,n_forced*%s)" % ratio,
+               "-sc_threshold", "0"]
 
+    print("execute %s" % str(execute))
     options = get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],
                                        ffmpeg_command=True)
 

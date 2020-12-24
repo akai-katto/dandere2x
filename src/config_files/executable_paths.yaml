@@ -5,6 +5,9 @@
 # windows pathing being frustrating to work with (\ being an escape character) and not wanting to have to
 # maintain two different yaml files for each operating system.
 # Furthermore, .exe will be added if the system is windows.
+#
+# This allows one executable file to work on both operating systems, removing the need for having to maintain
+# two separate configurations.
 
 # ~Sorry, I promise there isn't more hidden complexities for yaml files beyond this.
 
@@ -14,3 +17,5 @@ ffmpeg: "externals/ffmpeg"
 
 dandere2x_cpp: "externals/dandere2x_cpp"
 waifu2x_vulkan: "externals/waifu2x-ncnn-vulkan/waifu2x-ncnn-vulkan"
+waifu2x_converter_cpp: "externals/waifu2x-converter-cpp/waifu2x-converter-cpp"
+waifu2x_caffe: "externals/waifu2x-caffe/waifu2x-caffe-cui"

@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from pathlib import Path
 from dandere2x import Dandere2x
-from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType, UpscalingEngineType
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 
@@ -213,7 +213,8 @@ class AppWindow(QMainWindow):
                                                   scale_factor=self.scale_factor,
                                                   output_options=output_config,
                                                   name="Gui Call",
-                                                  processing_type=ProcessingType.from_str(self.config_file)
+                                                  processing_type=ProcessingType.from_str(self.config_file),
+                                                  upscale_engine=UpscalingEngineType.from_str(self.waifu2x_type)
                                                   )
 
         self.thread = QtDandere2xThread(self, service_request)
