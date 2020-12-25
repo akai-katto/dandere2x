@@ -23,6 +23,15 @@ from dandere2x.dandere2x_service.core.waifu2x.waifu2x_caffe import Waifu2xCaffe
 class Dandere2xServiceThread(threading.Thread):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
+        """
+        A thread that will produce service_request.output_file's video. This is the lowest-level dandere2x-related
+        object, and handles all the core-logic associated with dandere2x.
+
+        This assume's that service_request.workspace is empty, and may throw unexpected behaviour if it is not.
+        Args:
+
+            service_request: Dandere2xServiceRequest object.
+        """
         super().__init__(name=service_request.name)
 
         # Set logger format
@@ -46,6 +55,11 @@ class Dandere2xServiceThread(threading.Thread):
         self.merge_thread = Merge(context=self.context, controller=self.controller)
 
     def run(self):
+        """
+        Creates a series of child-threads that are used to create an upscaled folder.
+        Returns:
+
+        """
         self.log.info("called.")
         self.__create_directories(workspace=self.context.service_request.workspace,
                                   directories_list=self.context.directories)

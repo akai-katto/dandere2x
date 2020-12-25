@@ -39,11 +39,3 @@ def set_dandere2x_logger(input_file_path: str) -> None:
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     logger.info("Dandere2x Console Logger Set")
-
-# def __set_file_logger(self, file: str):
-#     self.log.info("Writing log-file at %s" % file)
-#     formatter = logging.Formatter(self.file_log_format)
-#     self.fh = logging.FileHandler(file, "w", "utf-8")
-#     self.fh.setFormatter(formatter)
-#     self.log.addHandler(self.fh)
-#     self.log.info("Log-file set.")

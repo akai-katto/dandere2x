@@ -68,7 +68,7 @@ class Dandere2xServiceContext:
         self.max_frames_ahead = 100
 
     def log_all_variables(self):
-        log = logging.getLogger()
+        log = logging.getLogger(name=self.service_request.input_file)
 
         log.info("Context Settings:")
         for item in self.__dict__:
