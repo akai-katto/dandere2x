@@ -11,9 +11,9 @@ def cli_start():
     root_service_request.log_all_variables()
     root_service_request.make_workspace()
 
-    young_dandere2x = Dandere2x(service_request=root_service_request)
-    young_dandere2x.start()
-    young_dandere2x.join()
+    dandere2x_session = Dandere2x(service_request=root_service_request)
+    dandere2x_session.start()
+    dandere2x_session.join()
 
 
 def start_gui():
@@ -27,7 +27,6 @@ def start_gui():
 def main():
     """ Start a Dandere2x session either through CLI or GUI. In either event, the total runtime is printed. """
 
-    # Administrative Stuff #
     # Set a custom 'except hook' to prevent window from closing on crash.
     import sys
     sys.excepthook = show_exception_and_exit

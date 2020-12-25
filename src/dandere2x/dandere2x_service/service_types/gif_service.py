@@ -1,8 +1,8 @@
 import copy
 import os
 
-from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service import Dandere2xServiceThread
+from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import convert_gif_to_video, convert_video_to_gif
@@ -20,7 +20,6 @@ class GifService(Dandere2xServiceInterface):
         self.dandere2x_service = None
 
     def _pre_process(self):
-
         resized_output_options = Dandere2xServiceInterface._check_and_fix_resolution(
             input_file=self._service_request.input_file,
             block_size=self._service_request.block_size,

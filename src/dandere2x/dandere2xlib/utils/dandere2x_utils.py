@@ -55,7 +55,6 @@ def force_delete_directory(directory):
 
 
 def get_list_from_file_and_wait(text_file: str):
-
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0

@@ -41,10 +41,9 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
     stdout, stderr = process.communicate()
 
 
-def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, output_options = None) -> None:
-
-    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir),\
-           "%s does not exist" % ffmpeg_dir
+def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, output_options=None) -> None:
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), \
+        "%s does not exist" % ffmpeg_dir
 
     execute = [
         ffmpeg_dir,
@@ -66,9 +65,9 @@ def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, out
     stdout, stderr = process.communicate()
 
 
-def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, output_options = None) -> None:
-    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir),\
-           "%s does not exist" % ffmpeg_dir
+def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, output_options=None) -> None:
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), \
+        "%s does not exist" % ffmpeg_dir
 
     execute = [
         ffmpeg_dir,

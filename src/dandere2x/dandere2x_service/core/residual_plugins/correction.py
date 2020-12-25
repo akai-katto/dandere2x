@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 # See "corrections.cpp" in dandere2x_cpp for more in depth documentation.
 
 # todo- correction size needs to be added to config file

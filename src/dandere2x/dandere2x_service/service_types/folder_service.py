@@ -1,12 +1,11 @@
 import copy
 import glob
 import os
-
 from pathlib import Path
 from typing import List
 
-from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 
 
 class FolderService(Dandere2xServiceInterface):
@@ -16,9 +15,9 @@ class FolderService(Dandere2xServiceInterface):
         self.service_request_list: List[Dandere2xServiceRequest] = []
 
     def _pre_process(self):
-        assert os.path.isdir(self._service_request.input_file),\
+        assert os.path.isdir(self._service_request.input_file), \
             "%s file not a directory!" % self._service_request.input_file
-        assert os.path.isdir(self._service_request.output_file),\
+        assert os.path.isdir(self._service_request.output_file), \
             "%s is not a directory!" % self._service_request.output_file
 
         # get a list of file names in a folder
@@ -29,7 +28,6 @@ class FolderService(Dandere2xServiceInterface):
 
         print("list of files %s" % str(list_of_files))
         for item in list_of_files:
-
             # create a new service request for each file in a folder, replacing the input_file and output file for each.
             current_request: Dandere2xServiceRequest = copy.deepcopy(self._service_request)
             current_request.input_file = item
@@ -39,7 +37,6 @@ class FolderService(Dandere2xServiceInterface):
             current_request.output_file = output_path_name
 
             self.service_request_list.append(current_request)
-
 
     def run(self):
         from dandere2x import Dandere2x

@@ -61,9 +61,6 @@ class MinDiskUsage(threading.Thread):
     def join(self, timeout=None):
         threading.Thread.join(self, timeout)
 
-    def set_start_frame(self, start_frame):
-        self.start_frame = start_frame
-
     """
     todo:
     - Rather than extracting frame by frame, look into the applications of extracting every N frames rather than every

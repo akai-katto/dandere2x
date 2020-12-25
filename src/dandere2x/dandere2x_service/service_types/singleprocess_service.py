@@ -1,8 +1,8 @@
 import copy
 import os
 
-from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service import Dandere2xServiceThread
+from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks_contextless

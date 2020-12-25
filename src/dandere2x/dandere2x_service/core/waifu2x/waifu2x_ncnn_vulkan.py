@@ -24,8 +24,8 @@ from threading import Thread
 from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
     rename_file, wait_on_either_file, get_operating_system
-from ..waifu2x.abstract_upscaler import AbstractUpscaler
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml
+from ..waifu2x.abstract_upscaler import AbstractUpscaler
 
 
 class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):

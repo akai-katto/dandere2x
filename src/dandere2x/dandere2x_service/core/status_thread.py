@@ -42,7 +42,7 @@ class Status(threading.Thread):
 
             if x % 10 == 0:
                 self.log.info("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (
-                name, x, percent, average))
+                    name, x, percent, average))
 
             if len(last_10) == 10:
                 last_10.pop(0)

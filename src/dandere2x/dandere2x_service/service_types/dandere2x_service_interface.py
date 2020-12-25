@@ -64,7 +64,6 @@ class Dandere2xServiceInterface(Thread, ABC):
         from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
         import copy
 
-
         def valid_input_resolution(width: int, height: int, block_size: int):
             return width % block_size == 0 and height % block_size == 0
 

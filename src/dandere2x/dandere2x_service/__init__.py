@@ -5,20 +5,21 @@ import threading
 import time
 from typing import Type
 
-from dandere2x.dandere2x_service.core.waifu2x.abstract_upscaler import AbstractUpscaler
-from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2x_logger import set_dandere2x_logger
 from dandere2x.dandere2x_service.core.dandere2x_cpp import Dandere2xCppWrapper
+from dandere2x.dandere2x_service.core.merge import Merge
 from dandere2x.dandere2x_service.core.min_disk_usage import MinDiskUsage
 from dandere2x.dandere2x_service.core.residual import Residual
-from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
-from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, UpscalingEngineType
-from dandere2x.dandere2x_service.core.merge import Merge
 from dandere2x.dandere2x_service.core.status_thread import Status
-from dandere2x.dandere2xlib.utils.dandere2x_utils import file_exists
-from dandere2x.dandere2x_service.core.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
-from dandere2x.dandere2x_service.core.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
+from dandere2x.dandere2x_service.core.waifu2x.abstract_upscaler import AbstractUpscaler
 from dandere2x.dandere2x_service.core.waifu2x.waifu2x_caffe import Waifu2xCaffe
+from dandere2x.dandere2x_service.core.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
+from dandere2x.dandere2x_service.core.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
+from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, UpscalingEngineType
+from dandere2x.dandere2xlib.utils.dandere2x_utils import file_exists
+
 
 class Dandere2xServiceThread(threading.Thread):
 
@@ -96,22 +97,9 @@ class Dandere2xServiceThread(threading.Thread):
         if selected_engine == UpscalingEngineType.CAFFE:
             return Waifu2xCaffe
 
-
-        # if selected_engine.ty == "caffe":
-        #     return Waifu2xCaffe(self.context)
-        #
-        # elif name == "converter_cpp":
-        #     return Waifu2xConverterCpp
-        #
-        # elif name == "vulkan":
-        #     return Waifu2xNCNNVulkan
-        #
-        # elif name == "realsr_ncnn_vulkan":
-        #     return RealSRNCNNVulkan(self.context)
-
         else:
             print("no valid waifu2x selected")
-            sys.exit(1)
+            raise Exception
 
     def __upscale_first_frame(self):
         """

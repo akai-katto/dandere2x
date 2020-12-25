@@ -16,12 +16,13 @@ Original Author: aka_katto
 Purpose: Simply put, very expensive computations for Dandere2x are
 ====================================================================="""
 from __future__ import annotations
+
 import logging
 import subprocess
 import threading
 
-from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 
 
@@ -51,10 +52,6 @@ class Dandere2xCppWrapper(threading.Thread):
     def join(self, timeout=None):
         self.log.info("Thread joined")
         threading.Thread.join(self, timeout)
-
-    def kill(self):
-        self.log.info("Killing thread")
-        self.dandere2x_cpp_subprocess.kill()
 
     def run(self):
         logger = logging.getLogger(__name__)
