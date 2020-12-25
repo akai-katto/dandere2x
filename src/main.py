@@ -18,7 +18,7 @@ def cli_start():
 
 def start_gui():
     """ Start the dandere2x GUI. We load gui_start inline here, because on import gui_driver gets called and made. """
-    from gui_driver_new import gui_start
+    from gui_driver import gui_start
 
     print("Calling GUI start.")
     gui_start()

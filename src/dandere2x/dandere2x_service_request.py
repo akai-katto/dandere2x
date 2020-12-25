@@ -54,6 +54,24 @@ class Dandere2xServiceRequest:
                  name: str,
                  processing_type: ProcessingType,
                  upscale_engine: UpscalingEngineType):
+        """
+        The highest-level of abstraction Dandere2x uses to upscale a video file. These variables are set explicitly
+        by the user, and may be modified by the program in lower-levels of the program to meet the needs of the
+        process_type selected (i.e behaviour of a gif / video will differ).
+
+        Args:
+            input_file:
+            output_file:
+            workspace:
+            block_size:
+            denoise_level:
+            quality_minimum:
+            scale_factor:
+            output_options:
+            name: Name string used 
+            processing_type:
+            upscale_engine:
+        """
 
         self.workspace: str = os.path.abspath(workspace)
         self.scale_factor: int = scale_factor

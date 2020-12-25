@@ -1,15 +1,21 @@
 import time
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from threading import Thread
 
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 
 
-class Dandere2xInterface(Thread):
+class Dandere2xInterface(Thread, ABC):
     """
-    Dandere2x now has two routes of operations (starting N different dandere2x instances, or one single instance)
-    and functions needs to be abstracted outwards as a result. Unfortunately, starting dandere2x requires two different
-    interfaces that will work with dandere2x differently in order to correctly handle both instances.
+    An abstract-base-class dictating how dandere2x_service should be utilized.
+
+    As an example, a singleprocess_service will only use one dandere2x-thread to upscale a video file, where as
+    multiprocess_service will use multiple. In either case, an upscaled video will still be produced, but the black
+    box implementation in between will change.
+
+    This abstract-interface gives enough shared functions / descriptions of how the black-box should be implemented,
+    See singleprocess_service.py or gif_service.py for examples of how to use these shared functions / see why they
+    exist.
     """
 
     def __init__(self, service_request: Dandere2xServiceRequest):

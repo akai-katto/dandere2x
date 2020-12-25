@@ -9,7 +9,7 @@ from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
 
 
 def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, input_file: str,
-                    output_file: str, console_output=None):
+                    output_file: str, console_output=None) -> None:
     """
     #todo
     """
@@ -42,7 +42,9 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
 
 
 def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, output_options = None) -> None:
-    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), "% does not exist" % ffmpeg_dir
+
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir),\
+           "%s does not exist" % ffmpeg_dir
 
     execute = [
         ffmpeg_dir,
@@ -65,7 +67,8 @@ def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, out
 
 
 def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, output_options = None) -> None:
-    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), "%s does not exist" % ffmpeg_dir
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir),\
+           "%s does not exist" % ffmpeg_dir
 
     execute = [
         ffmpeg_dir,
@@ -87,7 +90,6 @@ def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, out
     stdout, stderr = process.communicate()
 
 
-
 def check_if_file_is_video(ffprobe_dir: str, input_video: str):
     execute = [
         ffprobe_dir,
@@ -103,10 +105,20 @@ def check_if_file_is_video(ffprobe_dir: str, input_video: str):
     return True
 
 
-def append_resize_filter_to_pre_process(output_options: dict, width: int, height: int, block_size: int):
+def append_resize_filter_to_pre_process(output_options: dict, width: int, height: int, block_size: int) -> None:
     """
-    < to do >
+
+    Args:
+        output_options: Dictionary containing the loaded ./config_files/output_options.yaml
+        width: Video Width
+        height: Video Height
+        block_size: Dandere2x Blocksize
+
+    Returns:
+        Nothing, but output_options is modified to containing video filters to resize the pre_processed video
+        to be compatible with the block size.
     """
+
     log = logging.getLogger()
     width, height = get_a_valid_input_resolution(width, height, block_size)
 
@@ -120,7 +132,14 @@ def append_resize_filter_to_pre_process(output_options: dict, width: int, height
 
 def append_dar_filter_to_pipe_process(output_options: dict, width: int, height: int) -> None:
     """
-    < to do >
+
+    Args:
+        output_options: Dictionary containing the loaded ./config_files/output_options.yaml
+        width: Desired width
+        height: Desired height
+
+    Returns:
+        Nothing, but output_option's pipe commands will resize the pipe'd video using the setdar filter.
     """
 
     # reduce width and height down
@@ -131,18 +150,28 @@ def append_dar_filter_to_pipe_process(output_options: dict, width: int, height: 
     output_options['ffmpeg']['pipe_video']['output_options']['-vf'].append("setdar=" + frac_str)
 
 
-def divide_and_reencode_video(ffmpeg_dir: str, ffprobe_path: str,
+def divide_and_reencode_video(ffmpeg_path: str, ffprobe_path: str,
                               input_video: str, output_options: dict,
                               divide: int, output_dir: str):
     """
+    
+    Attempts to divide a video into N different segments, using the ffmpeg segment_time argument. See the reading
+    I referenced here: 
+        https://superuser.com/questions/692714/how-to-split-videos-with-ffmpeg-and-segment-times-option
+    
+    Note that this will not perfectly divide the video into N different, equally sized chunks, but rather will cut them
+    where keyframes allow them to be split. 
 
-    @param ffmpeg_dir:
-    @param ffprobe_path:
-    @param input_video:
-    @param re_encode_settings:
-    @param divide:
-    @param output_dir:
-    @return:
+    Args:
+        ffmpeg_path: ffmpeg binary
+        ffprobe_path: ffprobe binary
+        input_video: File to be split
+        output_options: Dictionary containing the loaded ./config_files/output_options.yaml
+        divide: N divisions.
+        output_dir: Where to save split_video%d.mkv's. 
+
+    Returns:
+        Nothing, but split_video%d.mkv files will appear in output_dir.
     """
     import math
 
@@ -150,23 +179,19 @@ def divide_and_reencode_video(ffmpeg_dir: str, ffprobe_path: str,
     ratio = math.ceil(seconds / divide)
     frame_rate = VideoSettings(ffprobe_dir=ffprobe_path, video_file=input_video).frame_rate
 
-    execute = [ffmpeg_dir,
+    execute = [ffmpeg_path,
                "-i", input_video,
                "-f", "segment",
                "-segment_time", str(ratio),
-               "-g", str(ratio),
-               "-r", str(frame_rate),
-               "-force_key_frames", "expr:gte(t,n_forced*%s)" % ratio,
-               "-sc_threshold", "0"]
+               "-r", str(frame_rate)]
 
-    print("execute %s" % str(execute))
     options = get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],
                                        ffmpeg_command=True)
 
     for element in options:
         execute.append(element)
 
-    execute.append(os.path.join(output_dir, "outputvid%d.mkv"))
+    execute.append(os.path.join(output_dir, "split_video%d.mkv"))
 
     return_bytes = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
     return_string = return_bytes.decode("utf-8")

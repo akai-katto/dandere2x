@@ -7,15 +7,20 @@ from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
 
 
 class Dandere2xServiceContext:
-    """
-    Once this is instantiated, it's to be treated as 'effectively final' meaning that none of the variables will
-    change after they're declared.
-
-    See this as a set of variables that, once set, will become the variables that facilate that dandere2x upscale process
-    for this session.
-    """
 
     def __init__(self, service_request: Dandere2xServiceRequest):
+        """
+
+        Creates struct-like object that serves as a set of constants and directories dandere2x will use. Once this is
+        instantiated, it's to be treated as 'effectively final' meaning that none of the variables will
+        change after they're declared.
+
+        Most dandere2x-core functions will require a Dandere2xServiceContext object in order for it to run.
+
+        Args:
+            service_request: A service_request, which may be produced by the program or the user.
+        """
+
         self.service_request = service_request
 
         self.input_frames_dir = os.path.join(service_request.workspace, "inputs") + os.path.sep

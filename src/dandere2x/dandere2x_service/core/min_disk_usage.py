@@ -30,7 +30,7 @@ from colorlog import logging
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2x.dandere2xlib.wrappers.cv2.progressive_frame_extractor_cv2_new import ProgressiveFramesExtractorCV2
+from dandere2x.dandere2xlib.wrappers.cv2.progressive_frame_extractor import ProgressiveFramesExtractorCV2
 
 
 class MinDiskUsage(threading.Thread):
