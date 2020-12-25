@@ -3,14 +3,14 @@ import glob
 import os
 from typing import List
 
-from dandere2x.service_types.dandere2x_service_interface import Dandere2xInterface
+from dandere2x.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service.__init__ import Dandere2xServiceThread
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import divide_and_reencode_video, concat_n_videos, migrate_tracks_contextless
 
 
-class MultiProcess(Dandere2xInterface):
+class MultiProcessService(Dandere2xServiceInterface):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
         """
@@ -24,7 +24,7 @@ class MultiProcess(Dandere2xInterface):
     def _pre_process(self):
 
         # Resize the video and apply DAR if needed.
-        resized_output_options = Dandere2xInterface._check_and_fix_resolution(
+        resized_output_options = Dandere2xServiceInterface._check_and_fix_resolution(
             input_file=self._service_request.input_file,
             block_size=self._service_request.block_size,
             output_options_original=self._service_request.output_options)

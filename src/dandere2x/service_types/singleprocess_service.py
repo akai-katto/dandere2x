@@ -1,14 +1,14 @@
 import copy
 import os
 
-from dandere2x.service_types.dandere2x_service_interface import Dandere2xInterface
+from dandere2x.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks_contextless
 
 
-class SingleProcess(Dandere2xInterface):
+class SingleProcessService(Dandere2xServiceInterface):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
         """
@@ -33,7 +33,7 @@ class SingleProcess(Dandere2xInterface):
 
         # Checks to see the video needs to be resized in order to conform to the block size. Applies the "DAR"
         # ffmpeg filter to 'pipe_video' in 'output_options.yaml' if the video was resized.
-        resized_output_options = Dandere2xInterface._check_and_fix_resolution(
+        resized_output_options = Dandere2xServiceInterface._check_and_fix_resolution(
             input_file=self._service_request.input_file,
             block_size=self._service_request.block_size,
             output_options_original=self._service_request.output_options)

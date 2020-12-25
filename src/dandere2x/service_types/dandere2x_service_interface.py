@@ -5,7 +5,7 @@ from threading import Thread
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 
 
-class Dandere2xInterface(Thread, ABC):
+class Dandere2xServiceInterface(Thread, ABC):
     """
     An abstract-base-class dictating how dandere2x_service should be utilized.
 
