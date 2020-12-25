@@ -1,66 +1,42 @@
 import glob
 import os
-import shutil
 import sys
-import time
+
 
 import yaml
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
-from context import Context
+from pathlib import Path
 from dandere2x import Dandere2x
-from dandere2xlib.utils.dandere2x_utils import get_operating_system, dir_exists, file_exists
+from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType, UpscalingEngineType
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
 from gui.Dandere2xGUI import Ui_Dandere2xGUI
 
 
 class QtDandere2xThread(QtCore.QThread):
     finished = QtCore.pyqtSignal()
 
-    def __init__(self, parent, config_yaml):
+    def __init__(self, parent, service_request: Dandere2xServiceRequest):
         super(QtDandere2xThread, self).__init__(parent)
 
-        context = Context(config_yaml)
-        self.dandere2x = Dandere2x(context)
+        self.service_request = service_request
+        self.dandere2x = Dandere2x(service_request)
 
     def run(self):
-
-        if dir_exists(self.dandere2x.context.workspace):
-            print("Deleted Folder")
-
-            # This is a recurring bug that seems to be popping up on other people's operating systems.
-            # I'm unsure if this will fix it, but it could provide a solution for people who can't even get d2x to work.
-            try:
-                shutil.rmtree(self.dandere2x.context.workspace)
-            except PermissionError:
-                print("Trying to delete workspace via RM tree threw PermissionError - Dandere2x may not work.")
-
-            while file_exists(self.dandere2x.context.workspace):
-                time.sleep(1)
-
-        try:
-            self.dandere2x.start()
-
-        except:
-            print("dandere2x failed to work correctly")
-            sys.exit(1)
-
+        self.service_request.make_workspace()
+        self.dandere2x.start()
         self.join()
 
     def join(self):
         self.dandere2x.join()
         self.finished.emit()
 
-    def kill(self):
-        self.dandere2x.kill()
-        # self.dandere2x.join()
-
 
 class AppWindow(QMainWindow):
     """
     Note; I don't maintain this class. It's half assed in the grand scheme of things, and it'd probably be re-made later.
     """
-
 
     def __init__(self):
         super().__init__()
@@ -71,7 +47,7 @@ class AppWindow(QMainWindow):
             config_names.append(file)
 
         self.ui = Ui_Dandere2xGUI()
-        self.ui.setupUi(self, config_names)
+        self.ui.setupUi(self)
 
         _translate = QtCore.QCoreApplication.translate
         self.ui.config_select_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Caffe"))
@@ -105,7 +81,7 @@ class AppWindow(QMainWindow):
 
         # theres a bug with qt designer and '80' for default quality needs to be set elsewhere
         _translate = QtCore.QCoreApplication.translate
-        self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "95"))
+        self.ui.image_quality_box.setCurrentText(_translate("Dandere2xGUI", "98"))
         self.ui.block_size_combo_box.setCurrentText(_translate("Dandere2xGUI", "20"))
         self.ui.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Vulkan"))
         # self.ui.video_icon.setPixmap(QtGui.QPixmap("assets\\aka.png"))
@@ -118,7 +94,7 @@ class AppWindow(QMainWindow):
         self.thread.kill()
 
     def press_download_externals_button(self):
-        from dandere2xlib.utils.dandere2x_utils import download_and_extract_externals
+        from dandere2x.dandere2xlib.utils.dandere2x_utils import download_and_extract_externals
         download_and_extract_externals(os.getcwd())
 
     # Setup connections for each button
@@ -131,7 +107,6 @@ class AppWindow(QMainWindow):
         self.ui.download_externals_button.clicked.connect(self.press_download_externals_button)
 
         # The following connects are to re-adjust the file name
-
         noise_radio_list = [self.ui.noise_0_radio_button, self.ui.noise_1_radio_button,
                             self.ui.noise_2_radio_button, self.ui.noise_3_radio_button]
 
@@ -170,12 +145,17 @@ class AppWindow(QMainWindow):
         path, name = os.path.split(self.input_file)
         name_only = name.split(".")[0]
 
+        extension = ".mkv"
+
+        if self.input_file.endswith(".gif"):
+            extension = ".gif"
+
         self.output_file = os.path.join(path, (name_only + "_"
                                                + "[" + str(self.waifu2x_type) + "]"
                                                + "[s" + str(self.scale_factor) + "]"
                                                + "[n" + str(self.noise_level) + "]"
                                                + "[b" + str(self.block_size) + "]"
-                                               + "[q" + str(self.image_quality) + "]" + ".mkv"))
+                                               + "[q" + str(self.image_quality) + "]" + extension))
 
         self.set_output_file_name()
 
@@ -209,36 +189,35 @@ class AppWindow(QMainWindow):
 
         self.parse_gui_inputs()
 
-        print(os.getcwd())
+        with open("config_files/output_options.yaml", "r") as read_file:
+            output_config = yaml.safe_load(read_file)
 
-        with open(os.path.join(self.this_folder, self.config_file), "r") as read_file:
-            config_yaml = yaml.safe_load(read_file)
+        if self.ui.select_folder_instead_box.isChecked():
+            print("experimental upscale folder selected")
 
-        if self.is_suspend_file(self.input_file):
-            print("is suspend file")
-            print("input file: " + str(self.input_file))
-            with open(self.input_file, "r") as read_file:
-                config_yaml = yaml.safe_load(read_file)
-        else:
-            print("is not suspend file")
-            # if user selected video file
-            config_yaml['dandere2x']['usersettings']['output_file'] = self.output_file
-            config_yaml['dandere2x']['usersettings']['input_file'] = self.input_file
-            config_yaml['dandere2x']['usersettings']['block_size'] = self.block_size
-            config_yaml['dandere2x']['usersettings']['quality_minimum'] = self.image_quality
-            config_yaml['dandere2x']['usersettings']['waifu2x_type'] = self.waifu2x_type
-            config_yaml['dandere2x']['usersettings']['scale_factor'] = self.scale_factor
-            config_yaml['dandere2x']['usersettings']['denoise_level'] = self.noise_level
+            # re-define input and output files to be relative paths pointing to their location
+            self.input_file = Path(self.input_file).parent.absolute()
+            self.output_file = Path(self.output_file).parent.absolute()
 
-        print("output_file = " + config_yaml['dandere2x']['usersettings']['output_file'])
-        print("input_file = " + config_yaml['dandere2x']['usersettings']['input_file'])
-        print("block_size = " + str(config_yaml['dandere2x']['usersettings']['block_size']))
-        print("block_size = " + str(config_yaml['dandere2x']['usersettings']['block_size']))
-        print("image_quality = " + str(config_yaml['dandere2x']['usersettings']['quality_minimum']))
-        print("waifu2x_type = " + config_yaml['dandere2x']['usersettings']['waifu2x_type'])
-        print("workspace = " + config_yaml['dandere2x']['developer_settings']['workspace'])
+            print("input %s" %self.input_file)
+            print("output %s" % self.output_file)
 
-        self.thread = QtDandere2xThread(self, config_yaml)
+
+
+        service_request = Dandere2xServiceRequest(input_file=self.input_file,
+                                                  output_file=self.output_file,
+                                                  workspace="./workspace/gui",
+                                                  block_size=int(self.block_size),
+                                                  denoise_level=self.noise_level,
+                                                  quality_minimum=self.image_quality,
+                                                  scale_factor=self.scale_factor,
+                                                  output_options=output_config,
+                                                  name="Gui Call",
+                                                  processing_type=ProcessingType.from_str(self.config_file),
+                                                  upscale_engine=UpscalingEngineType.from_str(self.waifu2x_type)
+                                                  )
+
+        self.thread = QtDandere2xThread(self, service_request)
         self.thread.finished.connect(self.update)
 
         self.disable_buttons()
