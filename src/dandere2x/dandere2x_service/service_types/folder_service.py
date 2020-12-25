@@ -3,13 +3,10 @@ import glob
 import os
 
 from pathlib import Path
-from typing import Type, List
+from typing import List
 
-from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
-from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import convert_gif_to_video, convert_video_to_gif
-from dandere2x.service_types.dandere2x_service_interface import Dandere2xServiceInterface
+from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 
 
 class FolderService(Dandere2xServiceInterface):

@@ -2,7 +2,7 @@ import os
 from threading import Thread
 from typing import Type
 
-from dandere2x.service_types.dandere2x_service_interface import Dandere2xServiceInterface
+from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
 
 
@@ -35,19 +35,19 @@ class Dandere2x(Thread):
         """
 
         if os.path.isdir(request.input_file):
-            from dandere2x.service_types.folder_service import FolderService
+            from dandere2x.dandere2x_service.service_types.folder_service import FolderService
             return FolderService
 
         if request.input_file.endswith("gif"):
-            from dandere2x.service_types.gif_service import GifService
+            from dandere2x.dandere2x_service.service_types.gif_service import GifService
             return GifService
 
         if request.processing_type == ProcessingType.MULTI_PROCESS:
-            from dandere2x.service_types.multiprocess_service import MultiProcessService
+            from dandere2x.dandere2x_service.service_types.multiprocess_service import MultiProcessService
             return MultiProcessService
 
         if request.processing_type == ProcessingType.SINGLE_PROCESS:
-            from dandere2x.service_types.singleprocess_service import SingleProcessService
+            from dandere2x.dandere2x_service.service_types.singleprocess_service import SingleProcessService
             return SingleProcessService
 
     def run(self) -> None:
