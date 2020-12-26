@@ -35,14 +35,9 @@ You can read more about how Dandere2x does this <a href="https://github.com/aka-
 
 # Downloads
 
-## Latest and Most Recommended (2.0 wip)
+## The latest version can be found here:
 
-https://github.com/aka-katto/dandere2x/releases/tag/2.0
-
-## Oldest and Most Tested (1.3.1)
-
-https://github.com/aka-katto/dandere2x/releases/tag/1.3.1
-
+https://github.com/aka-katto/dandere2x/releases/tag/3.0
 
 ## Linux
 
