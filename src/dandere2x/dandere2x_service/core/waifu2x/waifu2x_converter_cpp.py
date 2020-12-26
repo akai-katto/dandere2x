@@ -65,9 +65,8 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
                 exec_command[x] = self.context.residual_upscaled_dir
 
         console_output.write(str(exec_command))
-        os.chdir(self.waifu2x_converter_cpp_parent)
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
-                                                          stdout=console_output)
+                                                          stdout=console_output, cwd=self.waifu2x_converter_cpp_parent)
         self.active_waifu2x_subprocess.wait()
 
     # override
@@ -84,9 +83,8 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
             if exec_command[x] == "[output_file]":
                 exec_command[x] = output_image
 
-        os.chdir(self.waifu2x_converter_cpp_parent)
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command, shell=False, stderr=console_output,
-                                                          stdout=console_output)
+                                                          stdout=console_output, cwd=self.waifu2x_converter_cpp_parent)
         self.active_waifu2x_subprocess.wait()
 
     # override
