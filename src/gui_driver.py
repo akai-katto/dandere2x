@@ -54,7 +54,6 @@ class AppWindow(QMainWindow):
 
         # load 'this folder' in a pyinstaller friendly way
         self.this_folder = os.getcwd()
-        self.ui.suspend_button.setEnabled(True)
 
         # Note: At the moment running d2x from venv on windows 10 is having issues with this
         # segment of code. I've left it commented for the time being since I'm unsure if pyinstaller
@@ -90,8 +89,6 @@ class AppWindow(QMainWindow):
         self.refresh_scale_factor()
         self.show()
 
-    def press_suspend_button(self):
-        self.thread.kill()
 
     def press_download_externals_button(self):
         from dandere2x.dandere2xlib.utils.dandere2x_utils import download_and_extract_externals
@@ -103,7 +100,6 @@ class AppWindow(QMainWindow):
         self.ui.select_output_button.clicked.connect(self.press_select_output_button)
         self.ui.upscale_button.clicked.connect(self.press_upscale_button)
         self.ui.waifu2x_type_combo_box.currentIndexChanged.connect(self.refresh_scale_factor)
-        self.ui.suspend_button.clicked.connect(self.press_suspend_button)
         self.ui.download_externals_button.clicked.connect(self.press_download_externals_button)
 
         # The following connects are to re-adjust the file name
@@ -173,13 +169,6 @@ class AppWindow(QMainWindow):
             self.ui.scale_3_radio_button.setEnabled(True)
             self.ui.scale_4_radio_button.setEnabled(True)
             self.ui.scale_1_radio_button.setEnabled(True)
-
-    def is_suspend_file(self, file):
-        path, name = os.path.split(file)
-
-        if name == "suspended_session_data.yaml":
-            return True
-        return False
 
     def press_upscale_button(self):
 

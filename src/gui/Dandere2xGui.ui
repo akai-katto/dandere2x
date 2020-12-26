@@ -3164,62 +3164,6 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="suspend_button">
-    <property name="geometry">
-     <rect>
-      <x>490</x>
-      <y>50</y>
-      <width>171</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="palette">
-     <palette>
-      <active>
-       <colorrole role="Mid">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>4</red>
-          <green>79</green>
-          <blue>160</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </active>
-      <inactive>
-       <colorrole role="Mid">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>4</red>
-          <green>79</green>
-          <blue>160</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </inactive>
-      <disabled>
-       <colorrole role="Mid">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>4</red>
-          <green>79</green>
-          <blue>160</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </disabled>
-     </palette>
-    </property>
-    <property name="font">
-     <font>
-      <family>Microsoft YaHei Light</family>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Suspend Session</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -3363,7 +3307,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>10</y>
+      <y>50</y>
       <width>171</width>
       <height>31</height>
      </rect>
@@ -3913,7 +3857,7 @@
     <property name="geometry">
      <rect>
       <x>670</x>
-      <y>10</y>
+      <y>50</y>
       <width>41</width>
       <height>20</height>
      </rect>
