@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\gui\Dandere2xGui.ui'
+# Form implementation generated from reading ui file './gui/Dandere2xGui.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -438,7 +438,6 @@ class Ui_Dandere2xGUI(object):
         font.setWeight(50)
         self.waifu2x_type_combo_box.setFont(font)
         self.waifu2x_type_combo_box.setObjectName("waifu2x_type_combo_box")
-        self.waifu2x_type_combo_box.addItem("")
         self.waifu2x_type_combo_box.addItem("")
         self.waifu2x_type_combo_box.addItem("")
         self.waifu2x_type_combo_box.addItem("")
@@ -1297,6 +1296,53 @@ class Ui_Dandere2xGUI(object):
         font.setWeight(50)
         self.select_folder_tip.setFont(font)
         self.select_folder_tip.setObjectName("select_folder_tip")
+        self.externals_help = QtWidgets.QLabel(self.centralwidget)
+        self.externals_help.setGeometry(QtCore.QRect(670, 10, 41, 20))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Text, brush)
+        brush = QtGui.QBrush(QtGui.QColor(88, 78, 0))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 128))
+        brush.setStyle(QtCore.Qt.NoBrush)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.PlaceholderText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Text, brush)
+        brush = QtGui.QBrush(QtGui.QColor(88, 78, 0))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 128))
+        brush.setStyle(QtCore.Qt.NoBrush)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.PlaceholderText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
+        brush = QtGui.QBrush(QtGui.QColor(72, 58, 88))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 128))
+        brush.setStyle(QtCore.Qt.NoBrush)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.PlaceholderText, brush)
+        self.externals_help.setPalette(palette)
+        font = QtGui.QFont()
+        font.setFamily("Yu Gothic UI Semilight")
+        font.setPointSize(9)
+        font.setBold(False)
+        font.setWeight(50)
+        self.externals_help.setFont(font)
+        self.externals_help.setObjectName("externals_help")
         Dandere2xGUI.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Dandere2xGUI)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 688, 21))
@@ -1324,9 +1370,8 @@ class Ui_Dandere2xGUI(object):
         self.video_label_2.setText(_translate("Dandere2xGUI", "Denoise Level"))
         self.waifu2x_type_combo_box.setCurrentText(_translate("Dandere2xGUI", "Waifu2x-Caffe"))
         self.waifu2x_type_combo_box.setItemText(0, _translate("Dandere2xGUI", "Waifu2x-Caffe"))
-        self.waifu2x_type_combo_box.setItemText(1, _translate("Dandere2xGUI", "Waifu2x-Vulkan-Legacy"))
-        self.waifu2x_type_combo_box.setItemText(2, _translate("Dandere2xGUI", "Waifu2x-Vulkan"))
-        self.waifu2x_type_combo_box.setItemText(3, _translate("Dandere2xGUI", "Waifu2x-Converter-Cpp"))
+        self.waifu2x_type_combo_box.setItemText(1, _translate("Dandere2xGUI", "Waifu2x-Vulkan"))
+        self.waifu2x_type_combo_box.setItemText(2, _translate("Dandere2xGUI", "Waifu2x-Converter-Cpp"))
         self.video_label_3.setText(_translate("Dandere2xGUI", "Waifu2x - Type"))
         self.video_label_4.setText(_translate("Dandere2xGUI", "Scale Factor"))
         self.scale_1_radio_button.setText(_translate("Dandere2xGUI", "1 x"))
@@ -1340,10 +1385,9 @@ class Ui_Dandere2xGUI(object):
         self.image_quality_box.setItemText(3, _translate("Dandere2xGUI", "98"))
         self.image_quality_box.setItemText(4, _translate("Dandere2xGUI", "99"))
         self.video_label_5.setText(_translate("Dandere2xGUI", "Image Quality"))
-        self.video_label_6.setToolTip(_translate("Dandere2xGUI",
-                                                 "Block size Dandere2x will use to compute blocks. You NEED to select a video first before\n"
-                                                 "                        selecting this.,\n"
-                                                 "                    "))
+        self.video_label_6.setToolTip(_translate("Dandere2xGUI", "Block size Dandere2x will use to compute blocks. You NEED to select a video first before\n"
+"                        selecting this.,\n"
+"                    "))
         self.video_label_6.setText(_translate("Dandere2xGUI", "Block Size"))
         self.block_size_combo_box.setCurrentText(_translate("Dandere2xGUI", "10"))
         self.block_size_combo_box.setItemText(0, _translate("Dandere2xGUI", "10"))
@@ -1354,17 +1398,15 @@ class Ui_Dandere2xGUI(object):
         self.block_size_combo_box.setItemText(5, _translate("Dandere2xGUI", "60"))
         self.video_label_7.setText(_translate("Dandere2xGUI", "Settings"))
         self.block_help.setToolTip(_translate("Dandere2xGUI", "The block size Dandere2x will use in computing blocks.\n"
-                                                              "                        If your input video\'s resolution does not evenly divide the block size,\n"
-                                                              "                        then Dandere2x will resize the video to the dimensions closest\n"
-                                                              "                    "))
+"                        If your input video\'s resolution does not evenly divide the block size,\n"
+"                        then Dandere2x will resize the video to the dimensions closest\n"
+"                    "))
         self.block_help.setText(_translate("Dandere2xGUI", "?"))
-        self.quality_help.setToolTip(_translate("Dandere2xGUI",
-                                                "The amount of loss occured when attempting to preserve blocks between frames. The developer\n"
-                                                "                        recommends 95-99.\n"
-                                                "                    "))
+        self.quality_help.setToolTip(_translate("Dandere2xGUI", "The amount of loss occured when attempting to preserve blocks between frames. The developer\n"
+"                        recommends 95-99.\n"
+"                    "))
         self.quality_help.setText(_translate("Dandere2xGUI", "?"))
-        self.upscale_status_label.setWhatsThis(
-            _translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
+        self.upscale_status_label.setWhatsThis(_translate("Dandere2xGUI", "Yo u need to select a video and select a workspace to proceed"))
         self.upscale_status_label.setText(_translate("Dandere2xGUI", "No files selected"))
         self.suspend_button.setText(_translate("Dandere2xGUI", "Suspend Session"))
         self.label.setText(_translate("Dandere2xGUI", "Process Type"))
@@ -1372,10 +1414,13 @@ class Ui_Dandere2xGUI(object):
         self.config_select_box.setCurrentText(_translate("Dandere2xGUI", "singleprocess"))
         self.config_select_box.setItemText(0, _translate("Dandere2xGUI", "singleprocess"))
         self.config_select_box.setItemText(1, _translate("Dandere2xGUI", "multiprocess"))
-        self.quality_help_2.setToolTip(_translate("Dandere2xGUI",
-                                                  "Multi-processing is highly experimental and consumes a lot of system resources."))
+        self.quality_help_2.setToolTip(_translate("Dandere2xGUI", "Multi-processing is highly experimental and consumes a lot of system resources."))
         self.quality_help_2.setText(_translate("Dandere2xGUI", "?"))
         self.select_folder_instead_box.setText(_translate("Dandere2xGUI", "Select Folder Instead"))
-        self.select_folder_tip.setToolTip(_translate("Dandere2xGUI",
-                                                     "Will upscale every file in the selected video\'s folder, and will treat the output file as an output folder. Use this when you want to upscale every file in a folder. Does not check if files are video\'s are not. "))
+        self.select_folder_tip.setToolTip(_translate("Dandere2xGUI", "Will upscale every file in the selected video\'s folder, and will treat the output file as an\n"
+"                        output folder. Use this when you want to upscale every file in a folder. Does not check if files\n"
+"                        are video\'s are not.\n"
+"                    "))
         self.select_folder_tip.setText(_translate("Dandere2xGUI", "?"))
+        self.externals_help.setToolTip(_translate("Dandere2xGUI", "Download the external binaries (such as waifu2x-ncnn-vulkan, ffmpeg) to use for dandere2x. You only need to do this once. "))
+        self.externals_help.setText(_translate("Dandere2xGUI", "?"))
