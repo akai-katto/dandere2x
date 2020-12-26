@@ -41,34 +41,9 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
     stdout, stderr = process.communicate()
 
 
-def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, output_options = None) -> None:
-
-    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir),\
-           "%s does not exist" % ffmpeg_dir
-
-    execute = [
-        ffmpeg_dir,
-        "-i", input_path,
-    ]
-
-    options = get_options_from_section(output_options["ffmpeg"]['convert_video_to_gif']['output_options'],
-                                       ffmpeg_command=True)
-
-    for item in options:
-        execute.append(item)
-
-    execute.append(output_path)
-
-    print(execute)
-    process = subprocess.Popen(execute, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE,
-                               stdin=subprocess.PIPE, shell=False)
-
-    stdout, stderr = process.communicate()
-
-
-def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, output_options = None) -> None:
-    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir),\
-           "%s does not exist" % ffmpeg_dir
+def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, output_options=None) -> None:
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), \
+        "%s does not exist" % ffmpeg_dir
 
     execute = [
         ffmpeg_dir,
@@ -90,7 +65,31 @@ def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, out
     stdout, stderr = process.communicate()
 
 
-def check_if_file_is_video(ffprobe_dir: str, input_video: str):
+def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, output_options=None) -> None:
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), \
+        "%s does not exist" % ffmpeg_dir
+
+    execute = [
+        ffmpeg_dir,
+        "-i", input_path,
+    ]
+
+    options = get_options_from_section(output_options["ffmpeg"]['convert_video_to_gif']['output_options'],
+                                       ffmpeg_command=True)
+
+    for item in options:
+        execute.append(item)
+
+    execute.append(output_path)
+
+    print(execute)
+    process = subprocess.Popen(execute, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE,
+                               stdin=subprocess.PIPE, shell=False)
+
+    stdout, stderr = process.communicate()
+
+
+def is_file_video(ffprobe_dir: str, input_video: str):
     execute = [
         ffprobe_dir,
         "-i", input_video,

@@ -22,12 +22,12 @@ import subprocess
 from pathlib import Path
 from threading import Thread
 
-
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, file_exists, \
     rename_file, wait_on_either_file, get_operating_system
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml, get_options_from_section
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
-from ... import Dandere2xServiceContext, Dandere2xController
+from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 
 
 class Waifu2xConverterCpp(AbstractUpscaler, Thread):
@@ -96,7 +96,8 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
                                                  "--noise-level", str(self.context.service_request.denoise_level),
                                                  "--scale-ratio", str(self.context.service_request.scale_factor)]
 
-        waifu2x_conv_options = get_options_from_section(self.context.service_request.output_options["waifu2x_converter"]["output_options"])
+        waifu2x_conv_options = get_options_from_section(
+            self.context.service_request.output_options["waifu2x_converter"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_conv_options:
@@ -118,7 +119,8 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.context.residual_upscaled_dir + file + '_[NS-L' + str(self.context.service_request.denoise_level) + '][x' + str(
+            dirty_name = self.context.residual_upscaled_dir + file + '_[NS-L' + str(
+                self.context.service_request.denoise_level) + '][x' + str(
                 self.context.service_request.scale_factor) + '.000000]' + ".png"
             clean_name = self.context.residual_upscaled_dir + file + ".png"
 

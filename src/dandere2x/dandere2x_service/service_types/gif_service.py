@@ -1,17 +1,21 @@
 import copy
 import os
 
-from dandere2x.service_types.dandere2x_service_interface import Dandere2xInterface
 from dandere2x.dandere2x_service import Dandere2xServiceThread
+from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import convert_gif_to_video, convert_video_to_gif
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import convert_gif_to_video, convert_video_to_gif, is_file_video
 
 
-class GifProcess(Dandere2xInterface):
+class GifService(Dandere2xServiceInterface):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
         super().__init__(service_request=copy.deepcopy(service_request))
+
+        assert is_file_video(ffprobe_dir=load_executable_paths_yaml()['ffprobe'],
+                             input_video=self._service_request.input_file),\
+            "%s is not a video file!" % self._service_request.input_file
 
         self.child_request = copy.deepcopy(service_request)
         self.child_request.input_file = os.path.join(service_request.workspace, "pre_processed.mkv")
@@ -20,8 +24,7 @@ class GifProcess(Dandere2xInterface):
         self.dandere2x_service = None
 
     def _pre_process(self):
-
-        resized_output_options = Dandere2xInterface._check_and_fix_resolution(
+        resized_output_options = Dandere2xServiceInterface._check_and_fix_resolution(
             input_file=self._service_request.input_file,
             block_size=self._service_request.block_size,
             output_options_original=self._service_request.output_options)

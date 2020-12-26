@@ -6,7 +6,8 @@ import time
 # todo
 # This could probably be improved visually for the user.. it's not the most pleasing to look at
 # Also, in a very niche case the GUI didn't catch up with the deletion of files, so it ceased updating
-from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
+from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 
 
 class Status(threading.Thread):
@@ -42,7 +43,7 @@ class Status(threading.Thread):
 
             if x % 10 == 0:
                 self.log.info("[File: %s][Frame: [%s] %i%%]    Average of Last 10 Frames: %s sec / frame" % (
-                name, x, percent, average))
+                    name, x, percent, average))
 
             if len(last_10) == 10:
                 last_10.pop(0)

@@ -37,12 +37,11 @@ import threading
 
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
-from dandere2x.dandere2x_service.core.residual_plugins.pframe import pframe_image
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
 from dandere2x.dandere2xlib.wrappers.ffmpeg.pipe_thread import Pipe
 from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead
 from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
-
+from dandere2x.dandere2x_service.core.residual_plugins.pframe import pframe_image
 
 class Merge(threading.Thread):
     """
@@ -208,15 +207,3 @@ class Merge(threading.Thread):
         # out_image = correct_image(context, out_image, list_corrections)
 
         return out_image
-
-    def set_start_frame(self, start_frame):
-        self.start_frame = start_frame
-
-
-# For debugging
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    main()

@@ -100,7 +100,6 @@ class Frame:
         self.width = self.frame.shape[1]
         self.string_name = input_string
 
-
     from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
     def load_from_string_controller(self, input_string, controller=Dandere2xController()):
 

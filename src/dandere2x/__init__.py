@@ -2,7 +2,7 @@ import os
 from threading import Thread
 from typing import Type
 
-from dandere2x.service_types.dandere2x_service_interface import Dandere2xInterface
+from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
 
 
@@ -25,7 +25,7 @@ class Dandere2x(Thread):
         self._root_service_thread = anonymous_dandere2x_service(service_request=self._service_request)
 
     @staticmethod
-    def _determine_process_type(request) -> Type[Dandere2xInterface]:
+    def _determine_process_type(request) -> Type[Dandere2xServiceInterface]:
         """
         A wrapper to determine what the root service should be - i.e a logical set of operations to determine what
         the user was intending for dandere2x to return given the initial service request.
@@ -35,20 +35,22 @@ class Dandere2x(Thread):
         """
 
         if os.path.isdir(request.input_file):
-            from dandere2x.service_types.folder_service import FolderProcess
-            return FolderProcess
+            from dandere2x.dandere2x_service.service_types.folder_service import FolderService
+            return FolderService
 
         if request.input_file.endswith("gif"):
-            from dandere2x.service_types.gif_service import GifProcess
-            return GifProcess
+            from dandere2x.dandere2x_service.service_types.gif_service import GifService
+            return GifService
 
         if request.processing_type == ProcessingType.MULTI_PROCESS:
-            from dandere2x.service_types.multiprocess_service import MultiProcess
-            return MultiProcess
+            from dandere2x.dandere2x_service.service_types.multiprocess_service import MultiProcessService
+            return MultiProcessService
 
         if request.processing_type == ProcessingType.SINGLE_PROCESS:
-            from dandere2x.service_types.singleprocess_service import SingleProcess
-            return SingleProcess
+            from dandere2x.dandere2x_service.service_types.singleprocess_service import SingleProcessService
+            return SingleProcessService
+
+        raise Exception("Could not find selected waifu2x type. ")
 
     def run(self) -> None:
         self._root_service_thread.run()

@@ -5,7 +5,7 @@ from threading import Thread
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 
 
-class Dandere2xInterface(Thread, ABC):
+class Dandere2xServiceInterface(Thread, ABC):
     """
     An abstract-base-class dictating how dandere2x_service should be utilized.
 
@@ -63,7 +63,6 @@ class Dandere2xInterface(Thread, ABC):
             append_dar_filter_to_pipe_process
         from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
         import copy
-
 
         def valid_input_resolution(width: int, height: int, block_size: int):
             return width % block_size == 0 and height % block_size == 0

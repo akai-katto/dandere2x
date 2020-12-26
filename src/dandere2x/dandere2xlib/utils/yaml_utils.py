@@ -2,6 +2,7 @@ import os
 
 import yaml
 
+
 # given a list like ["hi", "bye", "kyle"],
 # return a list in the shape "hi, bye, kyle"
 # This is because ffmpeg expects it in this format
@@ -62,11 +63,6 @@ def load_executable_paths_yaml() -> dict:
 
     # replace each relative path with it's absolute counter-part (if applicable)
     for key in config:
-        if get_operating_system() == "win32":
-            """ Modifications needed to take place if we're not unix-based """
-            config[key] = config[key].replace("/", "\\")
-            config[key] = config[key] + ".exe"
-            continue
 
         # use system binaries if on linux for ffmpeg / ffprobe
         if key == "ffmpeg" and get_operating_system() == "linux":
@@ -76,6 +72,11 @@ def load_executable_paths_yaml() -> dict:
         if key == "ffprobe" and get_operating_system() == "linux":
             config[key] = "ffprobe"
             continue
+
+        if get_operating_system() == "win32":
+            """ Modifications needed to take place if we're not unix-based """
+            config[key] = config[key].replace("/", "\\")
+            config[key] = config[key] + ".exe"
 
         if not os.path.isabs(config[key]):
             config[key] = os.path.join(main_path, config[key])
