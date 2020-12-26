@@ -35,14 +35,13 @@ Comments / Notes: This is probably the most difficult to understand
 import logging
 import threading
 
-from dandere2x.dandere2x_service.core.residual_plugins.pframe import pframe_image
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
 from dandere2x.dandere2xlib.wrappers.ffmpeg.pipe_thread import Pipe
 from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead
 from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
-
+from dandere2x.dandere2x_service.core.residual_plugins.pframe import pframe_image
 
 class Merge(threading.Thread):
     """

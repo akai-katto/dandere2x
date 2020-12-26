@@ -21,7 +21,9 @@ import os
 import subprocess
 from threading import Thread
 
-from dandere2x.dandere2x_service import Dandere2xServiceContext, Dandere2xController
+from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
+
 from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait, get_lexicon_value, file_exists, \
     rename_file, wait_on_either_file, get_operating_system
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml

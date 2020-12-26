@@ -89,7 +89,7 @@ def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, out
     stdout, stderr = process.communicate()
 
 
-def check_if_file_is_video(ffprobe_dir: str, input_video: str):
+def is_file_video(ffprobe_dir: str, input_video: str):
     execute = [
         ffprobe_dir,
         "-i", input_video,

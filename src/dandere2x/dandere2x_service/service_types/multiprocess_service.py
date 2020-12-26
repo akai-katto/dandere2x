@@ -8,7 +8,7 @@ from dandere2x.dandere2x_service.service_types.dandere2x_service_interface impor
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import divide_and_reencode_video, concat_n_videos, \
-    migrate_tracks_contextless
+    migrate_tracks_contextless, is_file_video
 
 
 class MultiProcessService(Dandere2xServiceInterface):
@@ -19,6 +19,11 @@ class MultiProcessService(Dandere2xServiceInterface):
         up into equal parts, then migrating each upscaled-split video into one complete video file.
         """
         super().__init__(service_request=copy.deepcopy(service_request))
+
+        assert is_file_video(ffprobe_dir=load_executable_paths_yaml()['ffprobe'],
+                             input_video=self._service_request.input_file),\
+            "%s is not a video file!" % self._service_request.input_file
+
         self._child_threads: List[Dandere2xServiceThread] = []
         self._divided_videos_upscaled: List[str] = []
 

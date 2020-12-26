@@ -5,7 +5,7 @@ from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks_contextless
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks_contextless, is_file_video
 
 
 class SingleProcessService(Dandere2xServiceInterface):
@@ -18,6 +18,10 @@ class SingleProcessService(Dandere2xServiceInterface):
             service_request: Dandere2xServiceRequest object.
         """
         super().__init__(service_request=copy.deepcopy(service_request))
+
+        assert is_file_video(ffprobe_dir=load_executable_paths_yaml()['ffprobe'],
+                             input_video=self._service_request.input_file),\
+            "%s is not a video file!" % self._service_request.input_file
 
         self.child_request = copy.deepcopy(service_request)
         self.child_request.input_file = os.path.join(service_request.workspace, "pre_processed.mkv")

@@ -26,7 +26,8 @@ from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, file
     rename_file, wait_on_either_file, get_operating_system
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml, get_options_from_section
 from ..waifu2x.abstract_upscaler import AbstractUpscaler
-from ... import Dandere2xServiceContext, Dandere2xController
+from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
+from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 
 
 class Waifu2xConverterCpp(AbstractUpscaler, Thread):
