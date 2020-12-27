@@ -38,6 +38,12 @@ def main():
     else:
         cli_start()
 
+    import glob
+
+    # root_dir needs a trailing slash (i.e. /root/dir/)
+    for filename in glob.iglob('**/*', recursive=True):
+        print(filename)
+
     print("Total runtime duration:", time.time() - start)
 
 
