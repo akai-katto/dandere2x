@@ -89,9 +89,11 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             if exec_command[x] == "[output_file]":
                 exec_command[x] = output_image
 
+        self.log.info("command %s"  % str(exec_command))
+
         console_output.write(str(exec_command))
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command,
-                                                          shell=False, stderr=console_output, stdout=console_output,
+                                                          shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
                                                           cwd=os.path.dirname(self.waifu2x_vulkan_path))
         self.active_waifu2x_subprocess.wait()
 
