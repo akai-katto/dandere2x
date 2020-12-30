@@ -1,8 +1,4 @@
 #!/bin/bash
-# BE WARNED, THIS HAS NOT UNDERGONE RIGOROUS TESTING!
-# Be sure to read the GNU License, although I don't think anything should go wrong - no promises!
-# Partial credit to Tremeschin, who is also under GNU.
-
 
 # Requirements...
 if ! command -v cmake &> /dev/null
@@ -36,11 +32,10 @@ mv ../dandere2x_cpp/dandere2x_cpp ./externals/dandere2x_cpp
 cd externals
 wget https://github.com/nihui/waifu2x-ncnn-vulkan/releases/download/20200606/waifu2x-ncnn-vulkan-20200606-linux.zip
 unzip waifu2x-ncnn-vulkan-20200606-linux.zip
-mv waifu2x-ncnn-vulkan-20200606-linux waifu2x-ncnn-vulkan
+mv waifu2x-ncnn-vulkan-20200606-linux ./waifu2x-ncnn-vulkan
 rm waifu2x-ncnn-vulkan-20200606-linux.zip
 cd ..
 
 # create workspace folder (this needs to exist I think?)
 mkdir -p workspace
-
 echo success, be sure to install requirements and you should be good to go with "python3 main.py" now. 

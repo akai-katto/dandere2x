@@ -33,6 +33,18 @@ While waifu2x may take 2-4 seconds on a modern graphics card to produce a higher
 
 You can read more about how Dandere2x does this <a href="https://github.com/aka-katto/dandere2x/wiki/How-Dandere2x-Works/"><strong>here. </strong></a>
 
+# Docker Usage
+
+The dandere2x docker is currently working off a branch, but it can used using some of the commands here:
+
+```
+docker build .
+
+docker run --rm -it --gpus all -v /dev/dri:/dev/dri -v $PWD:/host [build_number] -p singleprocess -ws ./workspace/ -i /host/yn_moving_480.mkv -o /host/sample_output.mkv
+```
+
+Where [build_number] is the build id. Assert that you have `nvidia-container-toolkit` installed on your respective machine in order to correctly utilize the image. 
+
 # Downloads
 
 ## The latest version can be found here:
