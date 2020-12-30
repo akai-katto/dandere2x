@@ -1,11 +1,15 @@
+LABEL maintainer="akai.katto@gmail.com"
+
 FROM ubuntu:19.10
 
+# Since ubuntu 19.10 isn't LTS, use LTS sources for the packages we need.
 RUN sed -i "s/archive/old-releases/" /etc/apt/sources.list \
     && sed -i "/security/d" /etc/apt/sources.list \
     && apt-get update
     
 RUN apt install -y --no-install-recommends apt-utils software-properties-common
 RUN add-apt-repository -y ppa:graphics-drivers/ppa
+
 RUN export DEBIAN_FRONTEND="noninteractive" & apt-get install -y keyboard-configuration
 RUN apt install -y --no-install-recommends ffmpeg libmagic1 nvidia-cuda-toolkit nvidia-driver-440 python3.8
 RUN apt install -y --no-install-recommends libvulkan1
@@ -27,10 +31,10 @@ RUN git clone -b docker --recurse-submodules --progress https://github.com/aka-k
 RUN ls /dandere2x/dandere2x/
 RUN cd /dandere2x/dandere2x/src/ && bash /dandere2x/dandere2x/src/linux_setup.sh
 
-RUN wget https://github.com/nihui/waifu2x-ncnn-vulkan/releases/download/20200606/waifu2x-ncnn-vulkan-20200606-linux.zip
-RUN unzip waifu2x-ncnn-vulkan-20200606-linux.zip
-RUN mv waifu2x-ncnn-vulkan-20200606-linux /dandere2x/dandere2x/src/externals/waifu2x-ncnn-vulkan
-RUN rm waifu2x-ncnn-vulkan-20200606-linux.zip
+# RUN wget https://github.com/nihui/waifu2x-ncnn-vulkan/releases/download/20200606/waifu2x-ncnn-vulkan-20200606-linux.zip
+# RUN unzip waifu2x-ncnn-vulkan-20200606-linux.zip
+# RUN mv waifu2x-ncnn-vulkan-20200606-linux /dandere2x/dandere2x/src/externals/waifu2x-ncnn-vulkan
+# RUN rm waifu2x-ncnn-vulkan-20200606-linux.zip
 
 RUN apt install -y python3-pip
 RUN pip3 install -U pip
