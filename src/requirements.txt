@@ -1,4 +1,4 @@
-opencv-python-headless==4.4.0.44
+opencv-python-headless==3.4.11.45
 numpy==1.19.3
 imageio==2.9.0
 Pillow
