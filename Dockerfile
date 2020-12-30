@@ -14,7 +14,7 @@ RUN apt-get -y update
 RUN export DEBIAN_FRONTEND="noninteractive" & apt-get install -y keyboard-configuration
 
 # Needed Libraries for Dandere2x
-RUN apt install -y ffmpeg nvidia-driver-440 python3.8 libvulkan1
+RUN apt install -y --no-install-recommends ffmpeg nvidia-driver-440 python3.8 libvulkan1 libgtk2.0-dev pkg-config
 
 # Needed Library for Building Dandere2x (this will be removed later)
 RUN apt-get install -y cmake

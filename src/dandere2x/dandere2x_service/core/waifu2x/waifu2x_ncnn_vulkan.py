@@ -89,19 +89,11 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             if exec_command[x] == "[output_file]":
                 exec_command[x] = output_image
 
-        print("exec command %s" % exec_command)
-        self.log.info("command %s"  % str(exec_command))
-
         console_output.write(str(exec_command))
         self.active_waifu2x_subprocess = subprocess.Popen(exec_command,
                                                           shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
                                                           cwd=os.path.dirname(self.waifu2x_vulkan_path))
         self.active_waifu2x_subprocess.wait()
-
-        log = open("workspace/subworkspace/console_output/vulkan_upscale_frames.txt")
-        for line in log:
-            print(line)
-
 
         rename_file_wait(output_image, output_image.replace(".png", ".jpg"))
 
