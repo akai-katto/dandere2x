@@ -38,9 +38,8 @@ You can read more about how Dandere2x does this <a href="https://github.com/aka-
 The dandere2x docker is currently working off a branch, but it can used using some of the commands here:
 
 ```
-docker build .
-
-docker run --rm -it --gpus all -v /dev/dri:/dev/dri -v $PWD:/host [build_number] -p singleprocess -ws ./workspace/ -i /host/yn_moving_480.mkv -o /host/sample_output.mkv
+docker pull akaikatto/dandere2x
+docker run --rm -it --gpus all -v $PWD:/host akaikatto/dandere2x -p singleprocess -ws ./workspace/ -i /host/yn_moving_480.mkv -o /host/sample_output.mkv
 ```
 
 Where [build_number] is the build id. Assert that you have `nvidia-container-toolkit` installed on your respective machine in order to correctly utilize the image. 

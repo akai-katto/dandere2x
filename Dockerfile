@@ -27,7 +27,7 @@ RUN apt-get install -y zip
 
 # Move Dandere2x's files to /dandere2x/
 RUN mkdir /dandere2x/
-RUN git clone -b docker --recurse-submodules --progress https://github.com/aka-katto/dandere2x.git /dandere2x/dandere2x
+RUN git clone --recurse-submodules --progress https://github.com/aka-katto/dandere2x.git /dandere2x/dandere2x
 
 # Begin the building process
 RUN cd /dandere2x/dandere2x/src/ && bash /dandere2x/dandere2x/src/linux_setup.sh
