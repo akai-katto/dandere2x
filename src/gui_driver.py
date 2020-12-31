@@ -159,7 +159,6 @@ class AppWindow(QMainWindow):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
             self.ui.scale_3_radio_button.setEnabled(False)
             self.ui.scale_4_radio_button.setEnabled(False)
-            self.ui.scale_1_radio_button.setEnabled(False)
         elif self.ui.waifu2x_type_combo_box.currentText() == 'RealSR':
             self.ui.scale_3_radio_button.setEnabled(False)
             self.ui.scale_4_radio_button.setEnabled(True)
@@ -169,6 +168,7 @@ class AppWindow(QMainWindow):
             self.ui.scale_3_radio_button.setEnabled(True)
             self.ui.scale_4_radio_button.setEnabled(True)
             self.ui.scale_1_radio_button.setEnabled(True)
+            self.ui.scale_2_radio_button.setEnabled(True)
 
     def press_upscale_button(self):
 
