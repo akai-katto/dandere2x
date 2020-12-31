@@ -143,8 +143,8 @@ class Dandere2xServiceRequest:
         parser.add_argument('-p', '--process_type', action="store", dest="processing_type", type=str, default="single",
                             help='Processing Type (Options: "single", "multi"')
 
-        parser.add_argument('-ws', '--workspace', action="store", dest="workspace", type=str, default=".",
-                            help='Workspace Directory (Default "." ) ')
+        parser.add_argument('-ws', '--workspace', action="store", dest="workspace", type=str, default="./workspace/",
+                            help='Workspace directory for dandere2x.')
 
         args = parser.parse_args()
         return args
