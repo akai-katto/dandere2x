@@ -8,3 +8,4 @@ pyyaml==5.1.2
 psutil
 wget==3.2
 colorlog==4.1.0
+future-annotations
