@@ -35,14 +35,20 @@ You can read more about how Dandere2x does this <a href="https://github.com/aka-
 
 # Docker Usage
 
-The dandere2x docker is currently working off a branch, but it can used using some of the commands here:
+The dandere2x docker is ready to be tested. Below are generic instructions on how to use the image, as it's a bit "sharp-around-the-edges".
 
 ```
-docker pull akaikatto/dandere2x
-docker run --rm -it --gpus all -v $PWD:/host akaikatto/dandere2x -p singleprocess -ws ./workspace/ -i /host/yn_moving_480.mkv -o /host/sample_output.mkv
+# be cd'd into the directory of the video you wish to upscale. 
+$ cd video_directory
+$ ls
+[your_video.mkv]
+$ docker pull akaikatto/dandere2x
+$ docker run --rm -it --gpus all -v $PWD:/host akaikatto/dandere2x -p singleprocess -ws ./workspace/ -i /host/[your_video.mkv] -o /host/[your_output.mkv]
 ```
 
-Where [build_number] is the build id. Assert that you have `nvidia-container-toolkit` installed on your respective machine in order to correctly utilize the image. 
+Replace `[your_video.mkv]` with your video, the docker image will treat the current working directory as the input area / output area for your file. 
+
+Assert that you have `nvidia-container-toolkit` installed on your respective machine in order to correctly utilize the image. 
 
 # Downloads
 
