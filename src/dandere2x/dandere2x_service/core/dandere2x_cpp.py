@@ -15,8 +15,6 @@
 Original Author: aka_katto 
 Purpose: Simply put, very expensive computations for Dandere2x are
 ====================================================================="""
-from __future__ import annotations
-
 import logging
 import subprocess
 import threading
