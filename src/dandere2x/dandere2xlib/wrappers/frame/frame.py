@@ -94,13 +94,13 @@ class Frame:
         self.string_name = ''
 
     def load_from_string(self, input_string):
+        self.frame = imageio.imread(input_string).astype(np.uint8)
 
         if self.frame.shape[0] == 3:
             # Google collab for some reason, for some images, has the arrays swapped for how the PIL
             # library needs them to be, so this is a work around for switching the pixel's orders.
             self.frame = np.stack(self.frame, axis=2)
 
-        self.frame = imageio.imread(input_string).astype(np.uint8)
         self.height = self.frame.shape[0]
         self.width = self.frame.shape[1]
         self.string_name = input_string
