@@ -128,7 +128,7 @@ class Dandere2xServiceRequest:
 
         parser.add_argument('-o', '--output', action="store", dest="output_file", help='Output Video (no default)')
 
-        parser.add_argument('-q', '--quality', action="store", dest="image_quality", type=int, default=85,
+        parser.add_argument('-q', '--quality', action="store", dest="image_quality", type=int, default=97,
                             help='Image Quality (Default 85)')
 
         parser.add_argument('-w', '--waifu2x_type', action="store", dest="waifu2x_type", type=str, default="vulkan",
