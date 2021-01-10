@@ -35,6 +35,8 @@ You can read more about how Dandere2x does this <a href="https://github.com/aka-
 
 # Docker Usage
 
+The image repo can be found here: https://hub.docker.com/r/akaikatto/dandere2x
+
 The dandere2x docker is ready to be tested. Below are generic instructions on how to use the image, as it's a bit "sharp-around-the-edges".
 
 ```
