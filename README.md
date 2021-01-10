@@ -50,6 +50,11 @@ $ docker run --rm -it --gpus all -v $PWD:/host akaikatto/dandere2x -p singleproc
 
 Replace `[your_video.mkv]` with your video, the docker image will treat the current working directory as the input area / output area for your file. 
 
+For example, my command is 
+```
+$ docker run --rm -it --gpus all -v $PWD:/host akaikatto/dandere2x -p singleprocess -ws ./workspace/ -i /host/yn_moving.mkv -o /host/yn_moving_upscaled.mkv
+```
+
 Assert that you have `nvidia-container-toolkit` installed on your respective machine in order to correctly utilize the image. 
 
 # Downloads
