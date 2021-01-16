@@ -53,6 +53,7 @@ def get_aspect_ratio(ffprobe_dir, input_video):
     Returns:
         dictionary -- JSON text of input video information
     """
+    assert get_operating_system() != "win32" or os.path.exists(ffprobe_dir), "%s does not exist!" % ffprobe_dir
 
     # this execution command needs to be hard-coded
     # since video2x only strictly recignizes this one format
@@ -87,6 +88,7 @@ def get_width_height(ffprobe_dir, input_video):
     Returns:
         dictionary -- JSON text of input video information
     """
+    assert get_operating_system() != "win32" or os.path.exists(ffprobe_dir), "%s does not exist!" % ffprobe_dir
 
     # this execution command needs to be hard-coded
     # since video2x only strictly recignizes this one format
@@ -134,6 +136,7 @@ def get_frame_rate(ffprobe_dir, input_video):
     Returns:
         dictionary -- JSON text of input video information
     """
+    assert get_operating_system() != "win32" or os.path.exists(ffprobe_dir), "%s does not exist!" % ffprobe_dir
 
     # this execution command needs to be hard-coded
     # since video2x only strictly recignizes this one format
@@ -157,6 +160,8 @@ def get_frame_rate(ffprobe_dir, input_video):
 
 
 def get_frame_count(ffprobe_dir, input_video):
+    assert get_operating_system() != "win32" or os.path.exists(ffprobe_dir), "%s does not exist!" % ffprobe_dir
+
     # this execution command needs to be hard-coded
     # since video2x only strictly recignizes this one format
     execute = [

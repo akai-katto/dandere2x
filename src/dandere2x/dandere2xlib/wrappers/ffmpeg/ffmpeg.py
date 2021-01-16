@@ -90,6 +90,8 @@ def convert_gif_to_video(ffmpeg_dir: str, input_path: str, output_path: str, out
 
 
 def is_file_video(ffprobe_dir: str, input_video: str):
+    assert get_operating_system() != "win32" or os.path.exists(ffprobe_dir), "%s does not exist!" % ffprobe_dir
+
     execute = [
         ffprobe_dir,
         "-i", input_video,
