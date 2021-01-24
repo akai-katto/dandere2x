@@ -16,7 +16,6 @@ class ProgressiveFramesExtractorCV2:
         self.extracted_frames_dir = extracted_frames_dir
         self.compressed_frames_dir = compressed_frames_dir
         self.compressed_quality = compressed_quality
-
         self.cap = cv2.VideoCapture(self.input_video)
 
         self.count = 1
@@ -27,9 +26,16 @@ class ProgressiveFramesExtractorCV2:
             self.next_frame()
 
     def release_capture(self):
-        # Closes all the frames
-        self.cap.release()
-        cv2.destroyAllWindows()
+
+        #todo, investigate / remove this try catch block with an actual solution
+        try:
+            # Closes all the frames
+            self.cap.release()
+            cv2.destroyAllWindows()
+
+        except cv2.error:
+            print("cv2 error caught - this behaviour is unexpected by the developer, but testing to see if this is"
+                  " a potential duct-tape fix.")
 
     # todo, need to find a fix for "stuck at 99%" error, or getting stuck prematurely.
     def next_frame(self):
