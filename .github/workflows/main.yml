@@ -2,8 +2,6 @@
 
 name: CI-Test
 
-name: Package Application with Pyinstaller
-
 on:
   push:
     branches: [ master ]
