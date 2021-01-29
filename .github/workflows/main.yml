@@ -1,0 +1,29 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI-Test
+
+name: Package Application with Pyinstaller
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Package Application
+      uses: JackMcKew/pyinstaller-action-windows@main
+      with:
+        path: src/main.py
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: name-of-artifact
+        path: src/dist/windows
