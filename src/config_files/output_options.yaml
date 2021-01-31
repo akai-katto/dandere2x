@@ -13,7 +13,8 @@ ffmpeg:
       -pix_fmt: rgba64le
       -vsync: "cfr"
       -crf: 15
-      -vf: noise=c0s=8:c0f=u
+      -vf:
+        - noise=c0s=8:c0f=u
 
   convert_video_to_gif:
     output_options:
@@ -56,7 +57,6 @@ waifu2x_converter:
     --silent: true
 
 waifu2x_caffe:
-
   output_options:
     -batch_size: null
     -crop_size: null
