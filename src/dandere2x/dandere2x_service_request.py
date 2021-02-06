@@ -93,7 +93,7 @@ class Dandere2xServiceRequest:
         @return: The "root" Dandere2xServiceRequest, using the args object as it's input.
         """
 
-        with open("config_files/output_options.yaml", "r") as read_file:
+        with open(args.config, "r") as read_file:
             output_config = yaml.safe_load(read_file)
 
         request = \
@@ -120,6 +120,10 @@ class Dandere2xServiceRequest:
         """
 
         parser = argparse.ArgumentParser()
+
+        parser.add_argument('-c', '--config', action="store", dest="config", type=str,
+                            default="./config_files/output_options.yaml",
+                            help='Config path. Defaults to "./config_files/output_options.yaml"')
 
         parser.add_argument('-b', '--block_size', action="store", dest="block_size", type=int, default=30,
                             help='Block Size (Default 30)')
