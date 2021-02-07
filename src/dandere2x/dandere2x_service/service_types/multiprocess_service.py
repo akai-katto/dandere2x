@@ -82,4 +82,5 @@ class MultiProcessService(Dandere2xServiceInterface):
         migrate_tracks_contextless(ffmpeg_dir=ffmpeg_path, no_audio=no_audio,
                                    file_dir=self._service_request.input_file,
                                    output_file=self._service_request.output_file,
-                                   output_options=self._service_request.output_options)
+                                   output_options=self._service_request.output_options,
+                                   console_output_dir=self._service_request.workspace)
