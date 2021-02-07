@@ -69,4 +69,5 @@ class SingleProcessService(Dandere2xServiceInterface):
         ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
         migrate_tracks_contextless(ffmpeg_dir=ffmpeg_path, no_audio=self.child_request.output_file,
                                    file_dir=self._service_request.input_file,
-                                   output_file=self._service_request.output_file)
+                                   output_file=self._service_request.output_file,
+                                   output_options=self._service_request.output_options)
