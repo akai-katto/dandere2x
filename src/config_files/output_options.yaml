@@ -36,6 +36,7 @@ ffmpeg:
 
   migrate_audio:
     output_options:
+      -c: copy
       -y: True
 
 waifu2x_ncnn_vulkan:
