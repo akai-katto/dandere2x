@@ -237,10 +237,13 @@ def concat_n_videos(ffmpeg_dir: str, temp_file_dir: str, console_output_dir: str
 
 
 def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, output_file: str,
+                               output_options: dict,
                                console_output_dir=None):
     """
     Add the audio tracks from the original video to the output video.
     """
+
+    print("migrate tracks called")
 
     # to remove
     def convert(lst):
@@ -257,6 +260,12 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
                               "-map", "1:d?",
                               "-map", "1:t?"
                               ]
+
+    options = get_options_from_section(output_options["ffmpeg"]['migrate_audio']['output_options'],
+                                       ffmpeg_command=True)
+
+    for element in options:
+        migrate_tracks_command.append(element)
 
     migrate_tracks_command.extend([str(output_file)])
 

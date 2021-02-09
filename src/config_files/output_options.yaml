@@ -34,6 +34,11 @@ ffmpeg:
       -vf:
         - ' deband=range=8:blur=false, pp7=qp=2:mode=medium'
 
+  migrate_audio:
+    output_options:
+      -c: copy
+      -y: True
+
 waifu2x_ncnn_vulkan:
   output_options:
     -g: null
