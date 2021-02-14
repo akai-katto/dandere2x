@@ -18,6 +18,7 @@ Purpose:
 ====================================================================="""
 import logging
 import os
+import sys
 import time
 from abc import ABC, abstractmethod
 from threading import Thread
@@ -60,7 +61,13 @@ class AbstractUpscaler(Thread, ABC):
         self.log.info("Attempting to upscale file %s into %s to ensure waifu2x is working..."
                       % (test_file, test_file_upscaled))
 
-        self.upscale_file(test_file, test_file_upscaled)
+        try:
+            self.upscale_file(test_file, test_file_upscaled)
+
+        except:
+            e = sys.exc_info()[0]
+            self.log.info("Caught exception %s" % str(e))
+            raise Exception("Could not upscale first frame, see stacktrace for more details. ")
 
         if not file_exists(test_file_upscaled):
             self.log.error("Your computer could not upscale a test image, which is required for dandere2x to work.")

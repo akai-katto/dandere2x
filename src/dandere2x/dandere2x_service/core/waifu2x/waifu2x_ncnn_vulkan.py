@@ -72,30 +72,41 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
     # override
     def upscale_file(self, input_image: str, output_image: str) -> None:
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "vulkan_upscale_frames.txt", "w")
+        console_output_path = self.context.console_output_dir + "vulkan_upscale_frames.txt"
 
-        """  
-        note: 
-        so waifu2x-ncnn-vulkan actually doesn't allow jpg outputs. We have to work around this by
-        simply renaming it as png here, then changing it to jpg (for consistency elsewhere) """
+        with open(console_output_path, "w") as console_output:
+            """  
+            note: 
+            so waifu2x-ncnn-vulkan actually doesn't allow jpg outputs. We have to work around this by
+            simply renaming it as png here, then changing it to jpg (for consistency elsewhere) 
+            """
 
-        output_image = output_image.replace(".jpg", ".png")
+            output_image = output_image.replace(".jpg", ".png")
 
-        # replace the exec command with the files we're concerned with
-        for x in range(len(exec_command)):
-            if exec_command[x] == "[input_file]":
-                exec_command[x] = input_image
+            # replace the exec command with the files we're concerned with
+            for x in range(len(exec_command)):
+                if exec_command[x] == "[input_file]":
+                    exec_command[x] = input_image
 
-            if exec_command[x] == "[output_file]":
-                exec_command[x] = output_image
+                if exec_command[x] == "[output_file]":
+                    exec_command[x] = output_image
 
-        console_output.write(str(exec_command))
-        self.active_waifu2x_subprocess = subprocess.Popen(exec_command,
-                                                          shell=False, stderr=console_output, stdout=console_output,
-                                                          cwd=os.path.dirname(self.waifu2x_vulkan_path))
-        self.active_waifu2x_subprocess.wait()
+            console_output.write(str(exec_command))
+            self.active_waifu2x_subprocess = subprocess.Popen(exec_command,
+                                                              shell=False, stderr=console_output, stdout=console_output,
+                                                              cwd=os.path.dirname(self.waifu2x_vulkan_path))
+            self.active_waifu2x_subprocess.wait()
 
-        rename_file_wait(output_image, output_image.replace(".png", ".jpg"))
+            if not os.path.exists(output_image):
+                self.log.info("Could not upscale first frame: printing %s console log" % __name__)
+
+                with open(console_output_path) as f:
+                    for line in f:
+                        self.log.critical("%s", str(line))
+
+                raise Exception("Could not upscale file %s" % input_image)
+
+            rename_file_wait(output_image, output_image.replace(".png", ".jpg"))
 
     # override
     def _construct_upscale_command(self) -> list:
