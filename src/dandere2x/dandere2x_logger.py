@@ -36,6 +36,7 @@ def set_dandere2x_logger(input_file_path: str) -> None:
     handler.setFormatter(formatter)
 
     logger = colorlog.getLogger(name=input_file_path)
+    logger.propagate = False
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     logger.info("Dandere2x Console Logger Set")

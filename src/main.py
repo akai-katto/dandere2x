@@ -1,6 +1,7 @@
+import logging
 import time
 
-from dandere2x import Dandere2x
+from dandere2x import Dandere2x, set_dandere2x_logger
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.dandere2x_utils import show_exception_and_exit
 
@@ -30,6 +31,10 @@ def main():
     # Set a custom 'except hook' to prevent window from closing on crash.
     import sys
     sys.excepthook = show_exception_and_exit
+
+    # set the master logger at the highest level
+    set_dandere2x_logger("root")
+    logging.propagate = False
 
     start = time.time()
 

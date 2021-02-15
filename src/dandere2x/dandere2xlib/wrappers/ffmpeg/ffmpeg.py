@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import sys
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution, get_operating_system
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section
@@ -17,7 +18,7 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
     if console_output:
         assert type(console_output) == str
 
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("root")
     video_settings = VideoSettings(ffprobe_dir=ffprobe_dir, video_file=input_file)
     frame_rate = video_settings.frame_rate
 
@@ -41,7 +42,8 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
     extract_frames_command.append(str(frame_rate))
     extract_frames_command.extend([output_file])
 
-    process = subprocess.Popen(extract_frames_command, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE,
+    logger.warning("Re-encoding your video, this may take some time.")
+    process = subprocess.Popen(extract_frames_command, stdout=sys.stdout, stderr=sys.stdout,
                                stdin=subprocess.PIPE, shell=False)
 
     stdout, stderr = process.communicate()
