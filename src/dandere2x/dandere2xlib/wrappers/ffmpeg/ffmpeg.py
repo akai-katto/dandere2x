@@ -251,7 +251,7 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
     Add the audio tracks from the original video to the output video.
     """
 
-    print("migrate tracks called")
+    log = logging.getLogger("root")
 
     # to remove
     def convert(lst):
@@ -276,6 +276,8 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
         migrate_tracks_command.append(element)
 
     migrate_tracks_command.extend([str(output_file)])
+
+    log.info("Migrating tracks %s " % convert(migrate_tracks_command))
 
     console_output = get_console_output(__name__, console_output_dir)
 
