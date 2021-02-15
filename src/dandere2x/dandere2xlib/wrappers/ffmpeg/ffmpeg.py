@@ -21,8 +21,14 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
     video_settings = VideoSettings(ffprobe_dir=ffprobe_dir, video_file=input_file)
     frame_rate = video_settings.frame_rate
 
-    extract_frames_command = [ffmpeg_dir,
-                              "-i", input_file]
+    extract_frames_command = [ffmpeg_dir]
+
+    # walrus operator go brrrr
+    if (hw_accel := output_options["ffmpeg"]["pre_process_video"]["-hwaccel"]) is not None:
+        extract_frames_command.append("-hwaccel")
+        extract_frames_command.append(hw_accel)
+
+    extract_frames_command.extend(["-i", input_file])
 
     extract_frames_options = \
         get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],

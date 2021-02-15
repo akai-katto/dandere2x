@@ -7,8 +7,8 @@ realsr_ncnn_vulkan:
     -verbose: null
 
 ffmpeg:
-  -hwaccel: true
   pre_process_video:
+    -hwaccel: auto
     output_options:
       -pix_fmt: rgba64le
       -vsync: "cfr"
@@ -22,6 +22,7 @@ ffmpeg:
       -r: 15
 
   pipe_video:
+    -hwaccel: auto
     output_options:
       -loglevel: panic
       -y: -f
