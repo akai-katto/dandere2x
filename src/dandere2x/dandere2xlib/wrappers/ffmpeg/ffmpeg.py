@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import sys
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution, get_operating_system
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section
@@ -17,12 +18,18 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
     if console_output:
         assert type(console_output) == str
 
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("root")
     video_settings = VideoSettings(ffprobe_dir=ffprobe_dir, video_file=input_file)
     frame_rate = video_settings.frame_rate
 
-    extract_frames_command = [ffmpeg_dir,
-                              "-i", input_file]
+    extract_frames_command = [ffmpeg_dir]
+
+    # walrus operator go brrrr
+    if (hw_accel := output_options["ffmpeg"]["pre_process_video"]["-hwaccel"]) is not None:
+        extract_frames_command.append("-hwaccel")
+        extract_frames_command.append(hw_accel)
+
+    extract_frames_command.extend(["-i", input_file])
 
     extract_frames_options = \
         get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],
@@ -35,7 +42,8 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
     extract_frames_command.append(str(frame_rate))
     extract_frames_command.extend([output_file])
 
-    process = subprocess.Popen(extract_frames_command, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE,
+    logger.warning("Re-encoding your video, this may take some time.")
+    process = subprocess.Popen(extract_frames_command, stdout=sys.stdout, stderr=sys.stdout,
                                stdin=subprocess.PIPE, shell=False)
 
     stdout, stderr = process.communicate()
@@ -243,7 +251,7 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
     Add the audio tracks from the original video to the output video.
     """
 
-    print("migrate tracks called")
+    log = logging.getLogger("root")
 
     # to remove
     def convert(lst):
@@ -268,6 +276,8 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
         migrate_tracks_command.append(element)
 
     migrate_tracks_command.extend([str(output_file)])
+
+    log.info("Migrating tracks %s " % convert(migrate_tracks_command))
 
     console_output = get_console_output(__name__, console_output_dir)
 

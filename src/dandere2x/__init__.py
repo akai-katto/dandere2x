@@ -2,6 +2,7 @@ import os
 from threading import Thread
 from typing import Type
 
+from dandere2x.dandere2x_logger import set_dandere2x_logger
 from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest, ProcessingType
 

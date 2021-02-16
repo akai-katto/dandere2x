@@ -82,7 +82,14 @@ class Pipe(threading.Thread):
         dar = self.context.video_settings.dar
 
         # constructing the pipe command...
-        ffmpeg_pipe_command = [ffmpeg_dir, "-r", frame_rate]
+        ffmpeg_pipe_command = [ffmpeg_dir]
+
+        # walrus operator go brrrr
+        if (hw_accel := self.context.service_request.output_options["ffmpeg"]["pipe_video"]["-hwaccel"]) is not None:
+            ffmpeg_pipe_command.append("-hwaccel")
+            ffmpeg_pipe_command.append(hw_accel)
+
+        ffmpeg_pipe_command.extend(["-r", frame_rate])
 
         options = get_options_from_section(
             self.context.service_request.output_options["ffmpeg"]["pipe_video"]['output_options'],
