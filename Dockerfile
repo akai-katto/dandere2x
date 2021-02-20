@@ -38,13 +38,14 @@ RUN cd /dandere2x/dandere2x/src/ && bash /dandere2x/dandere2x/src/linux_setup.sh
 # RUN rm waifu2x-ncnn-vulkan-20200606-linux.zip
 
 # Install Python Dependencies (note pyyaml has to be manually installed due to ubuntu:19.10 python3.8 restriction)
-RUN apt install -y python3-pip
-RUN pip3 install -U pip
-RUN pip3 install -r /dandere2x/dandere2x/src/requirements.txt
-RUN pip3 install pyyaml==5.3
+# Ubuntu 19.10 will by default use python3.75 rather than the needed 3.8, so we have to manually get pip and refer to python + python as 3.8
+
+RUN wget 'https://bootstrap.pypa.io/get-pip.py' && python3.8 get-pip.py
+RUN pip3.8 install -U pip
+RUN pip3.8 install -r /dandere2x/dandere2x/src/requirements.txt
 
 WORKDIR /dandere2x/dandere2x/src/
-ENTRYPOINT ["python3", "/dandere2x/dandere2x/src/main.py"]
+ENTRYPOINT ["python3.8", "/dandere2x/dandere2x/src/main.py"]
 
 ENV NVIDIA_DRIVER_CAPABILITIES all
 ENV DEBIAN_FRONTEND teletype
