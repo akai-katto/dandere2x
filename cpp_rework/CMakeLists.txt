@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.15)
+project(cpp_rework)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fopenmp")
+add_executable(cpp_rework main.cpp frame/Frame.cpp frame/Frame.h math/MSE_Functions.h math/MSE_Functions.cpp math/SSIM_Function.cpp math/SSIM_Function.h plugins/AbstractPlugin.h plugins/PredictiveFrame.cpp plugins/PredictiveFrame.h plugins/block_plugins/Block.h plugins/block_plugins/BlockMatchingMemoization.cpp plugins/block_plugins/BlockMatchingMemoization.h testcases/BlockMatchingMemoizationTestCases.h plugins/block_plugins/Block.cpp plugins/block_plugins/block_matching_algorithms/DiamondSearch.cpp plugins/block_plugins/block_matching_algorithms/DiamondSearch.h plugins/block_plugins/block_matching_algorithms/AbstractBlockMatch.h plugins/block_plugins/block_matching_algorithms/ExhaustiveSearch.cpp plugins/block_plugins/block_matching_algorithms/ExhaustiveSearch.h)
