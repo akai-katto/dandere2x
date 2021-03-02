@@ -32,13 +32,18 @@ Purpose: Find blocks using my custom-made implementation of diamond
 #ifndef CPP_REWORK_DIAMONDSEARCH_H
 #define CPP_REWORK_DIAMONDSEARCH_H
 
-#include "AbstractBlockMatch.h"
+#include <memory>
 
-class DiamondSearch : public AbstractBlockMatch {
+#include "../Block.h"
+#include "../../../frame/Frame.h"
+
+using namespace std;
+
+class DiamondSearch {
 public:
 
     // For some reason putting constructor in .cpp file gives an error...
-    DiamondSearch(Frame &desired_image, Frame &input_image, int block_size) : AbstractBlockMatch(desired_image, input_image, block_size){
+    DiamondSearch(const shared_ptr<Frame>& desired_image, const shared_ptr<Frame>& input_image, const int block_size){
 
     }
 

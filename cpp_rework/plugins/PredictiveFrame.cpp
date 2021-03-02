@@ -27,9 +27,3 @@ Purpose:
 
 #include "PredictiveFrame.h"
 
-PredictiveFrame::PredictiveFrame(shared_ptr<Frame> frame1, shared_ptr<Frame> frame2, shared_ptr<Frame> frame_compressed,
-                                 int block_size, string predictive_frame_file_output, string residual_file_output,
-                                 int step_size) {
-
-
-}

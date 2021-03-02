@@ -1,35 +1,40 @@
-#include "testcases/BlockMatchingMemoizationTestCases.h"
-#include "plugins/block_plugins/block_matching_algorithms/DiamondSearch.h"
-#include "plugins/block_plugins/block_matching_algorithms/ExhaustiveSearch.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 
+
+#include <chrono>
+using namespace std::chrono;
+
+#include <string>
 #include <iostream>
+#include "frame/externals/stb_image_write.h"
+#include "frame/externals/stb_image.h"
+#include "frame/Frame.h"
+#include <cstdio>
+
+#include "evaluator/SSIM_Function.h"
+using namespace std;
+
 
 int main(){
-    Frame input1 = Frame("/home/owo/Documents/git_stuff/tremex_rework/dandere2x-new/samples/frame194.png");
-    Frame input2 = Frame("/home/owo/Documents/git_stuff/tremex_rework/dandere2x-new/samples/frame193.png");
-    ExhaustiveSearch searcher = ExhaustiveSearch(input1, input2, 30);
-//    Block result = searcher.match_block(60,95);
 
-    int x, y, width, height, block_size;
-    x = 0;
-    y = 0;
-    width = 400;
-    height = 400;
-    block_size = 30;
-//
-//    for (int x = 0; x < width / block_size; x++) {
-//        for (int y = 0; y < height / block_size; y++) {
-//            Block result = searcher.match_block(x * block_size,y * block_size);
-//        }
-//    }
-//    cout << "SUM: " << MSE_FUNCTIONS::compute_mse(input1, input2, 50,50,50,50,30) << endl;
+    string file_name = "/home/tyler/Pictures/100.png";
+    string name1 = std::tmpnam(nullptr);
 
-//    searcher.match_block(100,100);
-//    searcher.match_block(100,100);
+    int width, height, bpp;
+    unsigned char *stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
 
-    searcher.mse_blocks(100,100,100,105);
-    searcher.mse_blocks(100,105,100,100);
+    auto start = high_resolution_clock::now();
+    stbi_write_jpg(name1.c_str(), width, height, bpp, stb_image, 99);
+    auto stop = high_resolution_clock::now();
 
-    cout << "Computations Saved " << searcher.computations_saved << endl;
-    cout << "Total Calls Saved " << searcher.total_calls << endl;
+    auto duration = duration_cast<microseconds>(stop - start);
+
+// To get the value of duration use the count()
+// member function on the duration object
+    cout << duration.count() << endl;
+
+    SSIM_Function ssim = SSIM_Function();
+    cout << SSIM_Function::compute_ssim(Frame(file_name), Frame(name1), 0,0,0,0,50);
+
+    return 0;
 }

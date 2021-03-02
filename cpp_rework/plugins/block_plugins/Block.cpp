@@ -26,19 +26,6 @@ Purpose:
 
 #include "Block.h"
 
-//---------------------------------------------------------------
-// Purpose: Flip the direction a block goes (used in memoization)
-//---------------------------------------------------------------
-void Block::flip_direction() {
-    int temp_x_start = x_start;
-    int temp_y_start = y_start;
-
-    x_start = x_end;
-    y_start = y_end;
-    x_end = temp_x_start;
-    y_end = temp_y_start;
-}
-
 Block::Block(const Block &other) {
     this->x_start = other.x_start;
     this->y_start = other.y_start;

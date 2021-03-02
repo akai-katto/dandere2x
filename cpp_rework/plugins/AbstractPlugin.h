@@ -29,12 +29,26 @@ Purpose: An abstract class describing inherited d2x_cpp classes.
 #define CPP_REWORK_ABSTRACTPLUGIN_H
 
 #include <string>
+#include <utility>
 #include "../frame/Frame.h"
 
 using namespace std;
 
 class AbstractPlugin {
 public:
+
+    // Note that "current_frame" is not const, and can be updated in the "update_frame" function, once the plugin
+    // "updates" it.
+    AbstractPlugin(shared_ptr<Frame> current_frame,
+                   const shared_ptr<Frame>& next_frame,
+                   const shared_ptr<Frame>& next_frame_compressed,
+                   const int block_size){
+
+        this->current_frame = move(current_frame);
+        this->next_frame = next_frame;
+        this->next_frame_compressed = next_frame_compressed;
+        this->block_size = block_size;
+    }
 
     // Every plugin needs to be 'ran' to some extent.
     virtual void run() = 0;
@@ -49,6 +63,11 @@ private:
 
     // Every plugin *should* utilize some sort of parallel optimization, although it doesn't need t.
     virtual void parallel_function_call(int x, int y) = 0;
+
+    shared_ptr<Frame> current_frame;
+    shared_ptr<Frame> next_frame;
+    shared_ptr<Frame> next_frame_compressed;
+    int block_size;
 
 };
 

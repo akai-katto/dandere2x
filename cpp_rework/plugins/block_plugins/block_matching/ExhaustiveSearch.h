@@ -20,40 +20,34 @@
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
 Date: 4/11/20 
-Purpose: Provide a memoization function / table for various block
-         matching algorithms to use.
+Purpose: 
+ 
 ===================================================================== */
 
 
-#ifndef CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H
-#define CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H
+#ifndef CPP_REWORK_EXHAUSTIVESEARCH_H
+#define CPP_REWORK_EXHAUSTIVESEARCH_H
 
-#include "../../frame/Frame.h"
-#include "Block.h"
 
-#include <memory>
-#include <map>
+#include "AbstractBlockMatch.h"
 
-using namespace std;
-
-class BlockMatchingMemoization {
-
+class ExhaustiveSearch : public AbstractBlockMatch {
 public:
+    ExhaustiveSearch(Frame &desired_image, Frame &input_image, int block_size)
+    : AbstractBlockMatch(desired_image, input_image, block_size){
 
-    BlockMatchingMemoization(){}
+    }
+    // Implementation of match_block
+    Block match_block(int x, int y) override;
 
-    [[nodiscard]] Block &get_memoized_block(const Block &block) const;
-
-    [[nodiscard]] bool is_memoized(const Block &block) const;
-
-    bool add_to_memoized(const Block &block);
+    void set_max_box(int max_box_arg){ this->max_box = max_box_arg;}
 
 private:
+    std::vector<Block::Point> createSearchVector(int centx, int centy);
 
-    map<unsigned long, Block> memoize_table;
+    int max_box = 10;
 
 };
 
 
-
-#endif //CPP_REWORK_BLOCKMATCHINGMEMOIZATION_H
+#endif //CPP_REWORK_EXHAUSTIVESEARCH_H

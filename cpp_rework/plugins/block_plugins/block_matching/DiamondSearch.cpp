@@ -26,7 +26,7 @@ Purpose:
 
 
 #include "DiamondSearch.h"
-#include <algorithm>>
+#include <algorithm>
 
 //-----------------------------------------------------------------------------
 // Purpose: An iterative implementation of diamond search, plus or minus some
@@ -36,8 +36,8 @@ Block DiamondSearch::match_block(int x, int y) {
 
 
     // These variables stay the same
-    int x_bounds = desired_image.get_width();
-    int y_bounds = desired_image.get_height();
+    int x_bounds = 5; // desired_image.get_width();
+    int y_bounds = 5; // desired_image.get_height();
 
     int x_origin = x;
     int y_origin = y;
@@ -60,14 +60,14 @@ Block DiamondSearch::match_block(int x, int y) {
         {
             // If we ran out of checks, return what we're at right now
             if (x == max_checks - 1) {
-                double sum = AbstractBlockMatch::mse_blocks(initial_x, initial_y, x_origin, y_origin);
-                return Block(initial_x, initial_y, x_origin, y_origin, sum);
+//                double sum = AbstractBlockMatch::mse_blocks(initial_x, initial_y, x_origin, y_origin);
+//                return Block(initial_x, initial_y, x_origin, y_origin, sum);
             }
 
             // If step size is 0, return where we are at right now, since we've reached the end of our search
             if (step_size <= 0) {
-                double sum = AbstractBlockMatch::mse_blocks(initial_x, initial_y, x_origin, y_origin);
-                return Block(initial_x, initial_y, x_origin, y_origin, sum);
+//                double sum = AbstractBlockMatch::mse_blocks(initial_x, initial_y, x_origin, y_origin);
+//                return Block(initial_x, initial_y, x_origin, y_origin, sum);
             }
         }
 
@@ -126,16 +126,16 @@ Block DiamondSearch::match_block(int x, int y) {
 
 
         // Create an array that is used to signal if a point is "valid" or not, i.e if it is legal to probe.
-        bool any_legal_points = flag_invalid_points(x_bounds, y_bounds, point_array, CHECKS_PER_STEP, block_size,
+        bool any_legal_points = flag_invalid_points(x_bounds, y_bounds, point_array, CHECKS_PER_STEP, 30,
                                                     flag_array);
 
         // Cycle through each search point (if it's legal that is) and add it to the block vector.
         for (int j = 0; j < CHECKS_PER_STEP; j++) {
             if (!flag_array[j]) { // checks if point is legal
-                double sum = AbstractBlockMatch::mse_blocks(initial_x, initial_y, point_array[j].x, point_array[j].y);
-
-                Block block = Block(initial_x, initial_y, point_array[j].x, point_array[j].y, sum);
-                blocks.push_back(block);
+//                double sum = AbstractBlockMatch::mse_blocks(initial_x, initial_y, point_array[j].x, point_array[j].y);
+//
+//                Block block = Block(initial_x, initial_y, point_array[j].x, point_array[j].y, sum);
+//                blocks.push_back(block);
             }
         }
 

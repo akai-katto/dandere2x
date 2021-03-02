@@ -36,7 +36,6 @@ Purpose: A data structure representing the movement of a square grid
 using namespace std;
 
 class Block {
-    friend class BlockMatchingMemoization;
 
 public:
 
@@ -59,12 +58,10 @@ public:
 
     Block(const Block &other);
 
-    void flip_direction(); // used in optimization techniques (memoization)
-
     [[nodiscard]] bool is_equivalent(const Block &other) const;
 
     // Compare a blocks mean squared error with relation to another block.
-    bool operator<(const Block &other) {
+    bool operator<(const Block &other) const {
         return this->sum < other.sum;
     }
 

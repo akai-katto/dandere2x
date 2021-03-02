@@ -30,23 +30,24 @@ Purpose: Given two frames, try to find as many matching blocks between
 #define CPP_REWORK_PREDICTIVEFRAME_H
 
 #include <memory>
+#include <utility>
 #import "AbstractPlugin.h"
 #import "../frame/Frame.h"
 
 using namespace std;
 class PredictiveFrame : AbstractPlugin {
 public:
-    PredictiveFrame(shared_ptr<Frame> frame1, shared_ptr<Frame> frame2, shared_ptr<Frame> frame_compressed,
-                    int block_size, string predictive_frame_file_output, string residual_file_output, int step_size = 4);
+    PredictiveFrame(shared_ptr<Frame> current_frame,
+                    const shared_ptr<Frame>& next_frame,
+                    const shared_ptr<Frame>& next_frame_compressed,
+                    const int block_size) : AbstractPlugin(move(current_frame),
+                                                     next_frame,
+                                                     next_frame_compressed,
+                                                     block_size){
+    }
 
 private:
 
-    shared_ptr<Frame> frame1;
-    shared_ptr<Frame> frame2;
-    shared_ptr<Frame> frame2_compressed;
-    string predictive_frame_file_output;
-    string residual_file_output;
-    int step_size = 4;
 
 };
 

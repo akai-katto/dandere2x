@@ -34,12 +34,11 @@ Purpose: An abstract block matching class that will implement a block
 #define CPP_REWORK_ABSTRACTBLOCKMATCH_H
 
 #include "../../../frame/Frame.h"
-#include "../../../math/MSE_Functions.h"
-#include "../BlockMatchingMemoization.h"
+#include "../Block.h"
 
 class AbstractBlockMatch {
 public:
-    AbstractBlockMatch(Frame &desired_image, Frame &input_image, int block_size) {
+    AbstractBlockMatch(const Frame &desired_image, const Frame &input_image, int block_size) {
         this->desired_image = desired_image;
         this->input_image = input_image;
         this->block_size = block_size;
@@ -48,57 +47,12 @@ public:
         this->height = desired_image.get_height();
     }
 
-    // meta data like stuff
-    int computations_saved = 0;
-    int total_calls = 0;
-
     virtual Block match_block(int x, int y) = 0;
-
-    double mse_blocks(int start_x, int start_y, int variable_x, int variable_y) {
-        total_calls++;
-
-
-        Block compared_block(start_x, start_y, variable_x, variable_y, 0);
-
-        // preform memoization
-        if (memoization_table.is_memoized(compared_block)) {
-            computations_saved++;
-            return memoization_table.get_memoized_block(compared_block).sum;
-        }
-
-        double sum = MSE_FUNCTIONS::compute_mse(this->desired_image, this->input_image, start_x, start_y,
-                                                variable_x, variable_y, block_size);
-
-        compared_block.sum = sum;
-        memoization_table.add_to_memoized(compared_block);
-        return sum;
-    }
 
 protected:
 
-//    double mse_blocks(int start_x, int start_y, int variable_x, int variable_y) {
-//        total_calls++;
-//
-//
-//        Block compared_block(start_x, start_y, variable_x, variable_y, 0);
-//
-//        // preform memoization
-//        if (memoization_table.is_memoized(compared_block)) {
-//            computations_saved++;
-//            return memoization_table.get_memoized_block(compared_block).sum;
-//        }
-//
-//        double sum = MSE_FUNCTIONS::compute_mse(this->desired_image, this->input_image, start_x, start_y,
-//                                                variable_x, variable_y, block_size);
-//
-//        compared_block.sum = sum;
-//        memoization_table.add_to_memoized(compared_block);
-//        return sum;
-//    }
-
     Frame desired_image;
     Frame input_image;
-    BlockMatchingMemoization memoization_table;
     int block_size;
 
     int width;

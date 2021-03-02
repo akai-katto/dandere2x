@@ -27,6 +27,7 @@ Purpose:
 
 #include <algorithm>
 #include "ExhaustiveSearch.h"
+#include "../Block.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Create a series points that represent a box surrounding the centx
@@ -56,15 +57,13 @@ Block ExhaustiveSearch::match_block(int x, int y) {
     //find initial disp
     for (int x = 0; x < test.size(); x++) {
 
-        double sum = AbstractBlockMatch::mse_blocks(x, y, test[x].x, test[x].y);
-
-        Block b = Block(x, y, test[x].x, test[x].y, sum);
-        blockSum.push_back(b);
+//        double sum = AbstractBlockMatch::mse_blocks(x, y, test[x].x, test[x].y);
+//
+//        Block b = Block(x, y, test[x].x, test[x].y, sum);
+//        blockSum.push_back(b);
 
     }
 
     auto smallestBlock = std::min_element(blockSum.begin(), blockSum.end());
     return *smallestBlock;
-
-
 }

@@ -39,9 +39,25 @@ Notes:
 
 
 #include "../frame/Frame.h"
+#include "AbstractEvaluator.h"
 
-class SSIM_Function {
+class SSIM_Function: public AbstractEvaluator{
 
+public:
+    bool evaluate(const Frame &current_frame,
+                  const Frame &next_frame,
+                  const Frame &current_frame_compressed,
+                  int initial_x, int initial_y,
+                  int variable_x, int variable_y,
+                  int block_size)
+                  override;
+
+    static inline double compute_ssim(const Frame& image_a, const Frame& image_b,
+                                      int image_a_x_start, int image_a_y_start,
+                                      int image_b_x_start, int image_b_y_start,
+                                      int block_size);
+
+public:
     // short-handed notation used for class
     using RGB = char; // 'r' == 'red', 'g' == 'green', 'b' == 'blue
 
@@ -54,7 +70,7 @@ class SSIM_Function {
                                                int start_x, int start_y,
                                                int block_size, RGB rgb_component);
 
-    static inline char get_rgb_from_color(const Frame::Color &col, RGB rgb_component);
+    static inline char get_rgb(const Frame::Color &col, const RGB rgb_component);
 
 
 
