@@ -40,7 +40,6 @@ Purpose: This class is to facilitate all the functions and uses dandere2x
 // local includes
 #include "externals/stb_image.h"
 
-#define STB_IMAGE_IMPLEMENTATION
 
 using namespace std;
 
@@ -55,11 +54,14 @@ public:
 
     // Constructors //
 
-    Frame(const string file_name);
+    Frame(const string& file_name);
+
+    Frame(const string& file_name, const int compression);
 
     Frame(const Frame& other);
 
     Frame(const int height, const int width);
+
 
     Frame();
 

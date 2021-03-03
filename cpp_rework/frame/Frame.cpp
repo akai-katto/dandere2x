@@ -30,8 +30,7 @@ Purpose:
 
 // local includes
 #include "externals/stb_image.h"
-
-#define STB_IMAGE_IMPLEMENTATION
+#include "externals/stb_image_write.h"
 
 //////////////////
 // Constructors //
@@ -40,7 +39,7 @@ Purpose:
 //----------------------------------------------------
 // Purpose: Create a frame loading from a file string.
 //----------------------------------------------------
-Frame::Frame(const string file_name) {
+Frame::Frame(const string& file_name) {
 
     // Using stb_image, load the file using the input string.
     int width, height, bpp;
@@ -60,6 +59,34 @@ Frame::Frame(const string file_name) {
     // Free used memory..
     stbi_image_free(stb_image);
 }
+//----------------------------------------------------
+// Purpose: todo
+//----------------------------------------------------
+Frame::Frame(const string &file_name, const int compression) {
+    int width, height, bpp;
+    unsigned char *stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
+
+    string temp_name = std::tmpnam(nullptr);
+    stbi_write_jpg(temp_name.c_str(), width, height, bpp, stb_image, compression);
+    stbi_image_free(stb_image);
+
+    stb_image = stbi_load(temp_name.c_str(), &width, &height, &bpp, 3);
+    this->height = height;
+    this->width = width;
+    this->file_name = file_name;
+
+    // Begin the process of putting the stb image into our wrapper.
+    this->image_colors.resize(this->width, std::vector<Frame::Color>(this->height));
+
+    // Fill our wrapper's image with stbi image information
+    for (int x = 0; x < width; x++)
+        for (int y = 0; y < height; y++)
+            this->image_colors[x][y] = this->construct_color(stb_image, x, y);
+
+    stbi_image_free(stb_image);
+}
+
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Copy Constructor that trivially copies another image.
@@ -83,7 +110,6 @@ Frame::Frame(const Frame &other) {
 // Purpose:
 //-----------------------------------------------------------------------------
 Frame::Frame() {
-
 }
 
 //---------------------------------------------------------------------------------------------
@@ -160,6 +186,7 @@ Frame::Color Frame::construct_color(const unsigned char *stb_image, const int x,
     color.b = stb_image[x * 3 + 3 * y * width + 2];
     return color;
 }
+
 
 
 

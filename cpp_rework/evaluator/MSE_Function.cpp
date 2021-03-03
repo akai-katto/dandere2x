@@ -24,7 +24,7 @@ Purpose:
  
 ===================================================================== */
 
-#include "MSE_Functions.h"
+#include "MSE_Function.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: A simple square function which calculuates the "distance" or loss

@@ -28,6 +28,7 @@ Purpose:
 #include <algorithm>
 #include "ExhaustiveSearch.h"
 #include "../Block.h"
+#include "../../../evaluator/MSE_Function.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Create a series points that represent a box surrounding the centx
@@ -39,7 +40,7 @@ std::vector<Block::Point> ExhaustiveSearch::createSearchVector(int centx, int ce
     for (int x = centx - max_box; x < centx + max_box; x++) {
         for (int y = centy - max_box; y < centy + max_box; y++) {
             if ((x > 0 && x < width) && (y > 0 && y < height)) {
-                Block::Point point;
+                Block::Point point{};
                 point.x = x;
                 point.y = y;
                 list.push_back(point);
@@ -50,17 +51,19 @@ std::vector<Block::Point> ExhaustiveSearch::createSearchVector(int centx, int ce
     return list;
 }
 
-Block ExhaustiveSearch::match_block(int x, int y) {
+//-----------------------------------------------------------------------------
+// Purpose: todo
+//-----------------------------------------------------------------------------
+Block ExhaustiveSearch::match_block(const int x, const int y, const int block_size) {
     vector<Block::Point> test = createSearchVector(x, y);
     vector<Block> blockSum = vector<Block>();
 
     //find initial disp
-    for (int x = 0; x < test.size(); x++) {
-
-//        double sum = AbstractBlockMatch::mse_blocks(x, y, test[x].x, test[x].y);
-//
-//        Block b = Block(x, y, test[x].x, test[x].y, sum);
-//        blockSum.push_back(b);
+    for (int iter = 0; iter < test.size(); iter++) {
+        double sum = MSE_FUNCTIONS::compute_mse(this->input_image, this->desired_image, iter, y, test[iter].x,
+                                                test[iter].y, block_size);
+        Block b = Block(iter, y, test[iter].x, test[iter].y, sum);
+        blockSum.push_back(b);
 
     }
 

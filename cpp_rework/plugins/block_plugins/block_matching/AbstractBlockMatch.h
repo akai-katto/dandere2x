@@ -38,22 +38,20 @@ Purpose: An abstract block matching class that will implement a block
 
 class AbstractBlockMatch {
 public:
-    AbstractBlockMatch(const Frame &desired_image, const Frame &input_image, int block_size) {
+    AbstractBlockMatch(const Frame &desired_image, const Frame &input_image) {
         this->desired_image = desired_image;
         this->input_image = input_image;
-        this->block_size = block_size;
 
         this->width = desired_image.get_width();
         this->height = desired_image.get_height();
     }
 
-    virtual Block match_block(int x, int y) = 0;
+    virtual Block match_block(int x, int y, int block_size) = 0;
 
 protected:
 
     Frame desired_image;
     Frame input_image;
-    int block_size;
 
     int width;
     int height;

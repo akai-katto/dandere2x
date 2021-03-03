@@ -25,8 +25,8 @@ Purpose: A set of functions to perform Mean Squared Error (MSE)
 ===================================================================== */
 
 
-#ifndef CPP_REWORK_MSE_FUNCTIONS_H
-#define CPP_REWORK_MSE_FUNCTIONS_H
+#ifndef CPP_REWORK_MSE_FUNCTION_H
+#define CPP_REWORK_MSE_FUNCTION_H
 
 #include "../frame/Frame.h"
 
@@ -40,4 +40,4 @@ public:
 
 };
 
-#endif //CPP_REWORK_MSE_FUNCTIONS_H
+#endif //CPP_REWORK_MSE_FUNCTION_H

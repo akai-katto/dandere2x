@@ -56,7 +56,7 @@ public:
     // Write the contents of the plugin somewhere.
     virtual void write(const string &output_file) = 0;
 
-private:
+protected:
 
     // Every plugin needs to affect the frame somehow after it's done it's processing on it.
     virtual void update_frame() = 0;
@@ -67,7 +67,10 @@ private:
     shared_ptr<Frame> current_frame;
     shared_ptr<Frame> next_frame;
     shared_ptr<Frame> next_frame_compressed;
+
     int block_size;
+
+
 
 };
 

@@ -33,16 +33,18 @@ Purpose:
 
 class ExhaustiveSearch : public AbstractBlockMatch {
 public:
-    ExhaustiveSearch(Frame &desired_image, Frame &input_image, int block_size)
-    : AbstractBlockMatch(desired_image, input_image, block_size){
+    ExhaustiveSearch(const Frame &desired_image, const Frame &input_image) : AbstractBlockMatch(desired_image,
+                                                                                                input_image) {
 
     }
-    // Implementation of match_block
-    Block match_block(int x, int y) override;
 
-    void set_max_box(int max_box_arg){ this->max_box = max_box_arg;}
+    // Implementation of match_block
+    Block match_block(int x, int y, int block_size) override;
+
+    void set_max_box(int max_box_arg) { this->max_box = max_box_arg; }
 
 private:
+
     std::vector<Block::Point> createSearchVector(int centx, int centy);
 
     int max_box = 10;

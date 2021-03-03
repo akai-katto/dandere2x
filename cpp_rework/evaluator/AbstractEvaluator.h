@@ -60,6 +60,8 @@ public:
                           int variable_x, int variable_y,
                           int block_size) = 0;
 
+
+
 };
 
 

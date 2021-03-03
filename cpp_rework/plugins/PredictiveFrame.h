@@ -31,23 +31,44 @@ Purpose: Given two frames, try to find as many matching blocks between
 
 #include <memory>
 #include <utility>
-#import "AbstractPlugin.h"
-#import "../frame/Frame.h"
+#include "AbstractPlugin.h"
+#include "../frame/Frame.h"
+#include "block_plugins/Block.h"
+#include "../evaluator/AbstractEvaluator.h"
+#include "block_plugins/block_matching/AbstractBlockMatch.h"
 
 using namespace std;
 class PredictiveFrame : AbstractPlugin {
 public:
-    PredictiveFrame(shared_ptr<Frame> current_frame,
+    PredictiveFrame(AbstractEvaluator *eval,
+                    AbstractBlockMatch *block_matcher,
+                    shared_ptr<Frame> current_frame,
                     const shared_ptr<Frame>& next_frame,
                     const shared_ptr<Frame>& next_frame_compressed,
                     const int block_size) : AbstractPlugin(move(current_frame),
                                                      next_frame,
                                                      next_frame_compressed,
                                                      block_size){
+        this->eval = eval;
+        this->block_matcher = block_matcher;
     }
+
+    void run() override;
+
+    void write(const string &output_file) override;
+
+protected:
+
+    void update_frame() override;
+
 
 private:
 
+    void parallel_function_call(int x, int y) override;
+
+    vector<Block> matched_blocks;
+    AbstractEvaluator *eval;
+    AbstractBlockMatch *block_matcher;
 
 };
 
