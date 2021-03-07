@@ -33,7 +33,7 @@ Purpose: # todo
 //-----------------------------------------------------------------------------
 // Purpose: # todo
 //-----------------------------------------------------------------------------
- bool SSIM_Function::evaluate(const Frame &current_frame,
+ bool SSIM_Function::evaluate_implementation(const Frame &current_frame,
                               const Frame &next_frame,
                               const Frame &current_frame_compressed,
                               const int initial_x, const int initial_y,
@@ -62,8 +62,8 @@ Purpose: # todo
 double SSIM_Function::compute_ssim(const Frame &image_a, const Frame &image_b, int image_a_x_start, int image_a_y_start,
                                    int image_b_x_start, int image_b_y_start, int block_size) {
     // Invalid argument condition
-    if (image_a.block_within_bounds(image_a_x_start, image_a_y_start, block_size) ||
-        image_b.block_within_bounds(image_b_x_start, image_b_y_start, block_size))
+    if (image_a.block_out_of_bounds(image_a_x_start, image_a_y_start, block_size) ||
+        image_b.block_out_of_bounds(image_b_x_start, image_b_y_start, block_size))
         return -1;
 
     double r = compute_ssim_color(image_a, image_b, image_a_x_start, image_a_y_start, image_b_x_start, image_b_y_start, block_size, 'r');

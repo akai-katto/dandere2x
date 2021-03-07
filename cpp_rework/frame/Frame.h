@@ -52,21 +52,35 @@ public:
         unsigned char b;
     };
 
+    // todo
+    static inline Color average_color(const Color& color_a, const Color& color_b){
+
+        Color returned_color{};
+        returned_color.r = (unsigned char) (((int) color_a.r + (int) color_b.r) / 2);
+        returned_color.g = (unsigned char) (((int) color_a.g + (int) color_b.g) / 2);
+        returned_color.b = (unsigned char) (((int) color_a.b + (int) color_b.b) / 2);
+
+        return returned_color;
+    }
+
     // Constructors //
 
     Frame(const string& file_name);
 
     Frame(const string& file_name, const int compression);
 
+    Frame(const string& file_name, const int compression, const bool decimal);
+
     Frame(const Frame& other);
 
-    Frame(const int height, const int width);
-
+    Frame(const int width, const int height, const int bpp);
 
     Frame();
 
+    void write(const string& output);
+
     // External Bounds Checking //
-    bool block_within_bounds(const int x, const int y, const int block_size) const;
+    bool block_out_of_bounds(const int x, const int y, const int block_size) const;
 
     bool is_out_of_bounds(const int x, const int y) const;
 
@@ -79,9 +93,15 @@ public:
         return this->height;
     }
 
+    int get_bpp() const {
+        return this->bpp;
+    }
+
     string get_file_name() const {
         return this->file_name;
     }
+
+    void apply_noise(int range);
 
     Frame::Color &get_color(const int x, const int y) const {
         sanity_check("Frame::Color &Frame::get_color", x, y);
@@ -102,12 +122,15 @@ private:
 
     // image information //
     vector<vector<Frame::Color>> image_colors;
+    int bpp;
 
     // common functions //
     void sanity_check(const string &caller, const int x, const int y) const;
 
     // utility functions to assist with stb_image //
     Frame::Color construct_color(const unsigned char *stb_image, const int x, const int y) const;
+
+    void deconstruct_color(unsigned char *stb_image, const int x, const int y);
 
 
 };

@@ -30,6 +30,27 @@ Purpose:
 // Purpose: A simple square function which calculuates the "distance" or loss
 //          between two colors.
 //-----------------------------------------------------------------------------
+bool MSE_FUNCTIONS::evaluate_implementation(const Frame &current_frame, const Frame &next_frame, const Frame &next_frame_compressed,
+                             int initial_x, int initial_y, int variable_x, int variable_y, int block_size) {
+
+    double image_1_image_2_ssim = MSE_FUNCTIONS::compute_mse(current_frame, next_frame,
+                                                             initial_x, initial_y, variable_x, variable_y,
+                                                             block_size);
+
+    double image_2_image_2_compressed_ssim = MSE_FUNCTIONS::compute_mse(next_frame, next_frame_compressed,
+                                                                        initial_x, initial_y, variable_x, variable_y,
+                                                                        block_size);
+
+    if (image_1_image_2_ssim <= image_2_image_2_compressed_ssim) {
+        return true;
+    }
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: A simple square function which calculuates the "distance" or loss
+//          between two colors.
+//-----------------------------------------------------------------------------
 int MSE_FUNCTIONS::square(const Frame::Color &color_a, const Frame::Color &color_b) {
 
     int r1 = (int) color_a.r;
@@ -55,8 +76,8 @@ double MSE_FUNCTIONS::compute_mse(const Frame& image_a, const Frame& image_b,
 
     // Return a really large MSE if the two images are out of bounds (this is also to avoid causing 'sanity check'
     // within Frame from exiting the program).
-    if (image_a.block_within_bounds(image_a_x_start, image_a_y_start, block_size) ||
-        image_b.block_within_bounds(image_b_x_start, image_b_y_start, block_size))
+    if (image_a.block_out_of_bounds(image_a_x_start, image_a_y_start, block_size) ||
+        image_b.block_out_of_bounds(image_b_x_start, image_b_y_start, block_size))
         return INTMAX_MAX;
 
     // Compute the mse
@@ -70,3 +91,4 @@ double MSE_FUNCTIONS::compute_mse(const Frame& image_a, const Frame& image_b,
 
     return sum;
 }
+

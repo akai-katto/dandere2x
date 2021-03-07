@@ -29,14 +29,25 @@ Purpose: A set of functions to perform Mean Squared Error (MSE)
 #define CPP_REWORK_MSE_FUNCTION_H
 
 #include "../frame/Frame.h"
+#include "AbstractEvaluator.h"
 
-class MSE_FUNCTIONS{
+class MSE_FUNCTIONS : public AbstractEvaluator {
 
 public:
-    static inline int square(const Frame::Color& color_a, const Frame::Color& color_b);
-    static double compute_mse(const Frame& image_a, const Frame& image_b,
-                                     const int initial_x, const int initial_y,
-                                     const int variable_x, const int variable_y, const int block_size);
+
+    static inline int square(const Frame::Color &color_a, const Frame::Color &color_b);
+
+    static double compute_mse(const Frame &image_a, const Frame &image_b,
+                              int initial_x, int initial_y,
+                              int variable_x, int variable_y, int block_size);
+
+protected:
+    bool evaluate_implementation(const Frame &current_frame,
+                                 const Frame &next_frame,
+                                 const Frame &next_frame_compressed,
+                                 int initial_x, int initial_y,
+                                 int variable_x, int variable_y,
+                                 int block_size) override;
 
 };
 

@@ -30,6 +30,7 @@ Purpose: todo
 // remove
 #include "../evaluator/MSE_Function.h"
 #include "../evaluator/SSIM_Function.h"
+#include "../frame/Frame_Utilities.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Match every block using the chosen block_matching algorithm chosen
@@ -39,46 +40,64 @@ Purpose: todo
 void PredictiveFrame::parallel_function_call(int x, int y) {
 
     // check if stationary block match works.
-    if (eval->evaluate(*this->current_frame,*this->next_frame,
-                       *this->next_frame_compressed, x, y, x, y, block_size)) {
-        //cout << "matched stationary" << endl;
-        this->matched_blocks.emplace_back(x, y, x, y, -1);
-    } else {
-        Block matched_block = this->block_matcher->match_block(x, y, block_size);
-
-        if (eval->evaluate(*this->next_frame,*this->current_frame,
-                           *this->next_frame_compressed,
-                           matched_block.x_start, matched_block.y_start, matched_block.x_end, matched_block.y_end, block_size)) {
-            //cout << "matched blocked" << endl;
-
-            cout << SSIM_Function::compute_ssim(*this->next_frame,*this->current_frame,
-                                               matched_block.x_start, matched_block.y_start, matched_block.x_end, matched_block.y_end, block_size) << endl;
+//    if (eval->evaluate(*this->current_frame, *this->next_frame,
+//                       *this->next_frame_compressed, x, y, x, y, block_size)) {
+//        //cout << "matched stationary" << endl;
+//        this->matched_blocks.emplace_back(x, y, x, y, -1);
+//    } else {
 
 
-            this->matched_blocks.emplace_back(matched_block.x_start, matched_block.y_start, matched_block.x_end, matched_block.y_end, -1);
-        }
+    Block matched_block = this->block_matcher->match_block(x, y, block_size);
+
+    if (eval->evaluate(*this->current_frame, *this->next_frame,
+                       *this->next_frame_compressed,
+                       matched_block.x_end, matched_block.y_end, matched_block.x_start, matched_block.y_start,
+                       block_size)) {
+
+        this->matched_blocks.emplace_back(matched_block.x_start, matched_block.y_start, matched_block.x_end,
+                                          matched_block.y_end, -1);
     }
-}
+
+
+//        }
+//    }
+    }
 
 //-----------------------------------------------------------------------------
 // Purpose: todo
 //-----------------------------------------------------------------------------
-void PredictiveFrame::run() {
-    for (int x = 0; x < current_frame->get_width() / block_size; x++) {
-        for (int y = 0; y < current_frame->get_height() / block_size; y++) {
-            parallel_function_call(x * block_size, y * block_size);
+    void PredictiveFrame::run() {
+        for (int x = 0; x < current_frame->get_width() / block_size; x++) {
+            for (int y = 0; y < current_frame->get_height() / block_size; y++) {
+                parallel_function_call(x * block_size, y * block_size);
+            }
         }
-    }
 
-}
+    }
 
 //-----------------------------------------------------------------------------
 // Purpose: todo
 //-----------------------------------------------------------------------------
-void PredictiveFrame::write(const string &output_file) {
+    void PredictiveFrame::write(const string &output_file) {
 
-}
 
-void PredictiveFrame::update_frame() {
+//        vector<Block> test_write;
+//
+//        for(int i = 0; i < next_frame->get_width() / block_size; i++){
+//            for (int j = 0; j < next_frame->get_height() / block_size; j++){
+//                test_write.emplace_back(i * block_size,j * block_size,i * block_size,j * block_size,-1);
+//            }
+//        }
 
-}
+        Frame new_frame = Frame(*this->next_frame);
+        //Frame new_frame = Frame(next_frame->get_width(), next_frame->get_height(), next_frame->get_bpp());
+        FrameUtilities::copy_frame_using_blocks(new_frame,
+                                                *current_frame,
+                                                this->matched_blocks,
+                                                this->block_size);
+        new_frame.write(output_file);
+    }
+
+    void PredictiveFrame::update_frame() {
+
+    }

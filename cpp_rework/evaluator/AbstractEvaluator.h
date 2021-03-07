@@ -53,14 +53,30 @@ public:
     // "no it doesn't". Since each metric is different (i.e higher number in some means better, lower number means worse)
     // it's left to the implementation to determine what quantifies that a block is matched or not.
     //-----------------------------------------------------------------------------
-    virtual bool evaluate(const Frame &current_frame,
-                          const Frame &next_frame,
-                          const Frame &current_frame_compressed,
-                          int initial_x, int initial_y,
-                          int variable_x, int variable_y,
-                          int block_size) = 0;
+    bool evaluate(const Frame &current_frame,
+                  const Frame &next_frame,
+                  const Frame &next_frame_compressed,
+                  int initial_x, int initial_y,
+                  int variable_x, int variable_y,
+                  int block_size) {
 
+        // primitive sanity check for any evaluation
+        if (current_frame.block_out_of_bounds(initial_x, initial_y, block_size) ||
+            current_frame.block_out_of_bounds(variable_x, variable_y, block_size))
+            return false;
 
+        return evaluate_implementation(current_frame, next_frame, next_frame_compressed, initial_x, initial_y,
+                                       variable_x, variable_y, block_size);
+    }
+
+protected:
+
+    virtual bool evaluate_implementation(const Frame &current_frame,
+                                         const Frame &next_frame,
+                                         const Frame &next_frame_compressed,
+                                         int initial_x, int initial_y,
+                                         int variable_x, int variable_y,
+                                         int block_size) = 0;
 
 };
 

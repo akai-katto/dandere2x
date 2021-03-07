@@ -41,21 +41,24 @@ Notes:
 #include "../frame/Frame.h"
 #include "AbstractEvaluator.h"
 
-class SSIM_Function: public AbstractEvaluator{
+class SSIM_Function: public AbstractEvaluator {
 
 public:
-    bool evaluate(const Frame &current_frame,
-                  const Frame &next_frame,
-                  const Frame &current_frame_compressed,
-                  int initial_x, int initial_y,
-                  int variable_x, int variable_y,
-                  int block_size)
-                  override;
 
     static inline double compute_ssim(const Frame& image_a, const Frame& image_b,
                                       int image_a_x_start, int image_a_y_start,
                                       int image_b_x_start, int image_b_y_start,
                                       int block_size);
+
+
+protected:
+    bool evaluate_implementation(const Frame &current_frame,
+                  const Frame &next_frame,
+                  const Frame &current_frame_compressed,
+                  int initial_x, int initial_y,
+                  int variable_x, int variable_y,
+                  int block_size) override;
+
 
 public:
     // short-handed notation used for class
