@@ -47,7 +47,7 @@ private:
 
     std::vector<Block::Point> createSearchVector(int centx, int centy);
 
-    int max_box = 10;
+    int max_box = 4;
 
 };
 

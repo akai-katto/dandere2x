@@ -20,8 +20,8 @@ using namespace std;
 
 
 int main(){
-    string file1_name = "/home/tyler/Downloads/yn_extracted/output100.png";
-    string file2_name = "/home/tyler/Downloads/yn_extracted/output101.png";
+    string file1_name = "/home/tyler/Downloads/yn_extracted/output1.png";
+    string file2_name = "/home/tyler/Downloads/yn_extracted/output2.png";
 
     auto test = make_shared<Frame>(file1_name);
     auto test_2 = make_shared<Frame>(file2_name);
@@ -29,23 +29,22 @@ int main(){
     auto start = high_resolution_clock::now();
 
     auto test_2_compressed = make_shared<Frame>(file2_name, 100, true);
-    test_2_compressed->write("/home/tyler/Documents/Random/frame2_compressed.png");
+    // test_2_compressed->write("/home/tyler/Documents/Random/frame2_compressed.png");
 
     cout << duration_cast<microseconds>(high_resolution_clock::now() - start).count() << endl;
 
-    test_2->apply_noise(8);
-    test_2_compressed->apply_noise(8);
+//    test_2->apply_noise(4);
+    // test_2_compressed->apply_noise(4);
 
 
-    test_2_compressed->write("/home/tyler/Documents/Random/finished.png");
-    auto *ssim = new SSIM_Function();
-    auto *exhaustive_search = new ExhaustiveSearch(*test, *test_2);
+    //test_2_compressed->write("/home/tyler/Documents/Random/finished.png");
+    auto *evaluation_library = new MSE_FUNCTIONS();
+    auto *search_library = new ExhaustiveSearch(*test, *test_2);
+    PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library, test, test_2, test_2_compressed, 30);
 
-    //cout << SSIM_Function::compute_ssim(test, test_compressed, 0,0,0,0,50);
 
-    PredictiveFrame test_prediction = PredictiveFrame(ssim, exhaustive_search, test, test_2, test_2_compressed, 60);
     test_prediction.run();
-    test_prediction.write("/home/tyler/Documents/Random/new_frame_101.png");
+    test_prediction.write("/home/tyler/Documents/Random/new_mse_with_noise.png");
 
 
 //    test->write("/home/tyler/Documents/Random/ah.png");
@@ -72,7 +71,7 @@ int main(){
 //// member function on the duration object
 //    cout << duration.count() << endl;
 //
-//    SSIM_Function ssim = SSIM_Function();
+//    SSIM_Function evaluation_library = SSIM_Function();
 //    cout << SSIM_Function::compute_ssim(Frame(file_name), Frame(name1), 0,0,0,0,50);
 
     return 0;
