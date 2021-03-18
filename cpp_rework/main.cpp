@@ -20,59 +20,29 @@ using namespace std;
 
 
 int main(){
-    string file1_name = "/home/tyler/Downloads/yn_extracted/output1.png";
-    string file2_name = "/home/tyler/Downloads/yn_extracted/output2.png";
-
-    auto test = make_shared<Frame>(file1_name);
-    auto test_2 = make_shared<Frame>(file2_name);
-
-    auto start = high_resolution_clock::now();
-
-    auto test_2_compressed = make_shared<Frame>(file2_name, 100, true);
-    // test_2_compressed->write("/home/tyler/Documents/Random/frame2_compressed.png");
-
-    cout << duration_cast<microseconds>(high_resolution_clock::now() - start).count() << endl;
-
-//    test_2->apply_noise(4);
-    // test_2_compressed->apply_noise(4);
+    auto *evaluation_library = new SSIM_Function();
+    string prefix = "/home/tyler/Downloads/yn_extracted/output";
 
 
-    //test_2_compressed->write("/home/tyler/Documents/Random/finished.png");
-    auto *evaluation_library = new MSE_FUNCTIONS();
-    auto *search_library = new ExhaustiveSearch(*test, *test_2);
-    PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library, test, test_2, test_2_compressed, 30);
 
+    for (int i = 1; i < 200; i++) {
 
-    test_prediction.run();
-    test_prediction.write("/home/tyler/Documents/Random/new_mse_with_noise.png");
+        auto frame_1 = make_shared<Frame>(prefix + to_string(1) + ".png");
+        auto frame_2 = make_shared<Frame>(prefix + to_string(i+1) + ".png");
+        auto frame_2_compressed = make_shared<Frame>(prefix + to_string(i+1) + ".png", 99);
 
+        frame_1->apply_noise(2);
+        frame_2->apply_noise(2);
 
-//    test->write("/home/tyler/Documents/Random/ah.png");
-//
-//    vector<Block> vector_blocks = vector<Block>();
-//    vector_blocks.emplace_back(100,100,150,150, -1);
-//
-//    Frame new_frame = FrameUtilities::copy_frame_using_blocks(*test, vector_blocks, 30);
-//    new_frame.write("/home/tyler/Documents/Random/written.png");
+        auto *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
 
-//    string file_name = "/home/tyler/Pictures/100.png";
-//    string name1 = std::tmpnam(nullptr);
-//
-//    int width, height, bpp;
-//    unsigned char *stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
-//
-//    auto start = high_resolution_clock::now();
-//    stbi_write_jpg(name1.c_str(), width, height, bpp, stb_image, 99);
-//    auto stop = high_resolution_clock::now();
-//
-//    auto duration = duration_cast<microseconds>(stop - start);
-//
-//// To get the value of duration use the count()
-//// member function on the duration object
-//    cout << duration.count() << endl;
-//
-//    SSIM_Function evaluation_library = SSIM_Function();
-//    cout << SSIM_Function::compute_ssim(Frame(file_name), Frame(name1), 0,0,0,0,50);
+        PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library, *frame_1, *frame_2,
+                                                          *frame_2_compressed, 30);
+
+        test_prediction.run();
+        test_prediction.update_frame();
+        test_prediction.write("/home/tyler/Documents/debug_frames/frame" + to_string(i) + ".png");
+    }
 
     return 0;
 }

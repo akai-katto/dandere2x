@@ -39,12 +39,12 @@ public:
 
     // Note that "current_frame" is not const, and can be updated in the "update_frame" function, once the plugin
     // "updates" it.
-    AbstractPlugin(shared_ptr<Frame> current_frame,
-                   const shared_ptr<Frame>& next_frame,
-                   const shared_ptr<Frame>& next_frame_compressed,
+    AbstractPlugin(Frame &current_frame,
+                   Frame &next_frame,
+                   const Frame &next_frame_compressed,
                    const int block_size){
 
-        this->current_frame = move(current_frame);
+        this->current_frame = current_frame;
         this->next_frame = next_frame;
         this->next_frame_compressed = next_frame_compressed;
         this->block_size = block_size;
@@ -56,17 +56,17 @@ public:
     // Write the contents of the plugin somewhere.
     virtual void write(const string &output_file) = 0;
 
-protected:
-
     // Every plugin needs to affect the frame somehow after it's done it's processing on it.
     virtual void update_frame() = 0;
+
+protected:
 
     // Every plugin *should* utilize some sort of parallel optimization, although it doesn't need t.
     virtual void parallel_function_call(int x, int y) = 0;
 
-    shared_ptr<Frame> current_frame;
-    shared_ptr<Frame> next_frame;
-    shared_ptr<Frame> next_frame_compressed;
+    Frame current_frame;
+    Frame next_frame;
+    Frame next_frame_compressed;
 
     int block_size;
 
