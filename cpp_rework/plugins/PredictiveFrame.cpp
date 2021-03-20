@@ -42,23 +42,28 @@ Purpose: todo
 void PredictiveFrame::parallel_function_call(int x, int y) {
 
     // check if stationary block match works.
-    if (eval->evaluate(this->current_frame, this->next_frame,
-                       this->next_frame_compressed, x, y, x, y, block_size)) {
-        this->matched_blocks[x][y] = make_shared<Block>(x,y,x,y,1);
+    if (eval->evaluate(this->current_frame,
+                       this->next_frame, this->next_frame_compressed,
+                       x, y,
+                       x, y,
+                       block_size)) {
+
+        this->matched_blocks[x][y] = make_shared<Block>(x, y, x, y, 1);
+
     } else {
         Block matched_block = this->block_matcher->match_block(x, y, block_size);
 
         if (eval->evaluate(this->current_frame,
-                           this->next_frame,
-                           this->next_frame_compressed,
-                           matched_block.x_start, matched_block.y_start, matched_block.x_end, matched_block.y_end,
+                           this->next_frame, this->next_frame_compressed,
+                           matched_block.x_end, matched_block.y_end,
+                           matched_block.x_start, matched_block.y_start,
                            block_size)) {
 
             cout << "matched moving" << endl;
 
-
-            this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_start, matched_block.y_start,
-                                                            matched_block.x_end,matched_block.y_end,1);
+            this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_end, matched_block.y_end,
+                                                            matched_block.x_start, matched_block.y_start,
+                                                            1);
         }
 
 
@@ -75,7 +80,7 @@ void PredictiveFrame::run() {
     int y = 0;
     int num_threads = 8;
 
-   #pragma omp parallel for shared(current_frame, next_frame, next_frame_compressed, matched_blocks) private(x, y)
+#pragma omp parallel for shared(current_frame, next_frame, next_frame_compressed, matched_blocks) private(x, y)
 
     for (x = 0; x < current_frame.get_width() / block_size; x++) {
         for (y = 0; y < current_frame.get_height() / block_size; y++) {

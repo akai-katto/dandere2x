@@ -30,20 +30,25 @@ Purpose:
 // Purpose: A simple square function which calculuates the "distance" or loss
 //          between two colors.
 //-----------------------------------------------------------------------------
-bool MSE_FUNCTIONS::evaluate_implementation(const Frame &current_frame, const Frame &next_frame, const Frame &next_frame_compressed,
+bool MSE_FUNCTIONS::evaluate_implementation(const Frame &current_frame,
+                                            const Frame &next_frame,
+                                            const Frame &next_frame_compressed,
                              int initial_x, int initial_y, int variable_x, int variable_y, int block_size) {
 
-    double image_1_image_2_mse = MSE_FUNCTIONS::compute_mse(current_frame, next_frame,
+    double image_1_image_2_mse = MSE_FUNCTIONS::compute_mse(next_frame, current_frame,
                                                             initial_x, initial_y, variable_x, variable_y,
                                                             block_size);
 
     double image_2_image_2_compressed_mse = MSE_FUNCTIONS::compute_mse(next_frame, next_frame_compressed,
-                                                                       initial_x, initial_y, variable_x, variable_y,
+                                                                       variable_x, variable_y, variable_x, variable_y,
                                                                        block_size);
+
+
 
     if (image_1_image_2_mse <= image_2_image_2_compressed_mse) {
         return true;
     }
+
     return false;
 }
 

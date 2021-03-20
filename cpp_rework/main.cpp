@@ -20,19 +20,39 @@ using namespace std;
 
 
 int main(){
-    auto *evaluation_library = new SSIM_Function();
+    auto *evaluation_library = new MSE_FUNCTIONS();
     string prefix = "/home/tyler/Downloads/yn_extracted/output";
 
+//    auto frame_1 = make_shared<Frame>(prefix + to_string(i) + ".png");
+//    auto frame_1 = make_shared<Frame>(prefix + to_string(i) + ".png");
 
 
-    for (int i = 1; i < 200; i++) {
 
-        auto frame_1 = make_shared<Frame>(prefix + to_string(1) + ".png");
+//    string prefix = "/home/tyler/Downloads/yn_extracted/output";
+//
+//    auto frame_1 = Frame("/home/tyler/Documents/test_scenario/" + to_string(1) + ".png");
+//
+//    //auto frame_1 = make_shared<Frame>("/home/tyler/Documents/test_scenario/" + to_string(100) + ".png");
+//    //auto frame_2 = make_shared<Frame>("/home/tyler/Documents/test_scenario/" + to_string(2) + ".jpg");
+//
+//    frame_1.write("/home/tyler/Documents/test_scenario/test.png");
+//    auto frame_2_compressed = make_shared<Frame>("/home/tyler/Documents/test_scenario/" + to_string(2) + ".jpg", 100);
+//
+//    auto *search_library = new ExhaustiveSearch(*frame_1, *frame_2);
+//
+//    PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library, *frame_1, *frame_2,
+//                                                      *frame_2_compressed, 30);
+//
+//    test_prediction.run();
+//    test_prediction.update_frame();
+//    test_prediction.write("/home/tyler/Documents/test_scenario/frame_predicted.jpg");
+
+
+    for (int i = 1; i < 51; i++) {
+
+        auto frame_1 = make_shared<Frame>(prefix + to_string(i) + ".png");
         auto frame_2 = make_shared<Frame>(prefix + to_string(i+1) + ".png");
         auto frame_2_compressed = make_shared<Frame>(prefix + to_string(i+1) + ".png", 99);
-
-        frame_1->apply_noise(2);
-        frame_2->apply_noise(2);
 
         auto *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
 

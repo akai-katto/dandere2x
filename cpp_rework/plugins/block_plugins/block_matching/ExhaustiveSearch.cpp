@@ -63,7 +63,9 @@ Block ExhaustiveSearch::match_block(const int x, const int y, const int block_si
     //find initial disp
     for (int iter = 0; iter < test.size(); iter++) {
         double sum = MSE_FUNCTIONS::compute_mse(this->input_image, this->desired_image,
-                                                x, y, test[iter].x, test[iter].y, block_size);
+                                                x, y,
+                                                test[iter].x, test[iter].y,
+                                                block_size);
         Block b = Block(x, y, test[iter].x, test[iter].y, sum);
         blockSum.push_back(b);
 
