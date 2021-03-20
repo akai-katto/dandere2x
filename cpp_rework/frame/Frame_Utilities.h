@@ -22,8 +22,8 @@ public:
 
                 for (int i = 0; i < block_size; i++) {
                     for (int j = 0; j < block_size; j++) {
-                        final_frame.set_color(block->x_end + i, block->y_end + j,
-                                              base_image.get_color(block->x_start + i, block->y_start + j));
+                        final_frame.set_color(block->x_start + i, block->y_start + j,
+                                              base_image.get_color(block->x_end + i, block->y_end + j));
                     }
                 }
             }

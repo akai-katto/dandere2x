@@ -68,6 +68,7 @@ private:
     vector<vector<shared_ptr<Block>>> matched_blocks;
     AbstractEvaluator *eval;
     AbstractBlockMatch *block_matcher;
+    int matched_block_count = 0;
 
 };
 

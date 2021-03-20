@@ -60,6 +60,8 @@ public:
 
     [[nodiscard]] bool is_equivalent(const Block &other) const;
 
+    void reverse_block();
+
     // Compare a blocks mean squared error with relation to another block.
     bool operator<(const Block &other) const {
         return this->sum < other.sum;

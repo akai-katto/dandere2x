@@ -68,6 +68,18 @@ Block::Block(int x_start, int y_start, int x_end, int y_end, double sum) {
     this->right_to_left_hash = hash<string>{}(right_to_left_string);
 }
 
+void Block::reverse_block() {
+    // Reverse a blocks direction.
+
+    int temp_x_start = this->x_start;
+    int temp_y_start = this->y_start;
+
+    this->x_start = x_end;
+    this->y_start = y_end;
+    this->x_end = temp_x_start;
+    this->y_end = temp_y_start;
+}
+
 
 // Protected
 
@@ -80,3 +92,4 @@ bool Block::is_equivalent(const Block &other) const {
     return (this->left_to_right_hash == other.right_to_left_hash) ||
            (this->left_to_right_hash == other.left_to_right_hash);
 }
+

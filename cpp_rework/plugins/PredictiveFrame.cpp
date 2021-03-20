@@ -51,18 +51,22 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
         this->matched_blocks[x][y] = make_shared<Block>(x, y, x, y, 1);
 
     } else {
+
+        // Look for the block (x,y,block_size) in frame_2, searching for blocks in frame_1.
         Block matched_block = this->block_matcher->match_block(x, y, block_size);
+
+        // Since we're going frame_2 -> frame_1, the matched block is "being matched in reverse", so flip the block
+        // so we can go frame_1 -> frame_2.
+        matched_block.reverse_block();
 
         if (eval->evaluate(this->current_frame,
                            this->next_frame, this->next_frame_compressed,
-                           matched_block.x_end, matched_block.y_end,
                            matched_block.x_start, matched_block.y_start,
+                           matched_block.x_end, matched_block.y_end,
                            block_size)) {
-
-            cout << "matched moving" << endl;
-
-            this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_end, matched_block.y_end,
-                                                            matched_block.x_start, matched_block.y_start,
+            matched_block_count+=1;
+            this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_start, matched_block.y_start,
+                                                            matched_block.x_end, matched_block.y_end,
                                                             1);
         }
 
@@ -96,13 +100,14 @@ void PredictiveFrame::run() {
 //-----------------------------------------------------------------------------
 void PredictiveFrame::write(const string &output_file) {
 
+    cout << "matched block count: " << matched_block_count << endl;
     //Frame new_frame = Frame(*this->next_frame);
     Frame new_frame = Frame(next_frame.get_width(), next_frame.get_height(), next_frame.get_bpp());
-    FrameUtilities::copy_frame_using_blocks(new_frame,
+    FrameUtilities::copy_frame_using_blocks(next_frame,
                                             current_frame,
                                             this->matched_blocks,
                                             this->block_size);
-    new_frame.write(output_file);
+    next_frame.write(output_file);
 }
 
 void PredictiveFrame::update_frame() {

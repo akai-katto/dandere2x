@@ -61,14 +61,13 @@ Block ExhaustiveSearch::match_block(const int x, const int y, const int block_si
     vector<Block> blockSum = vector<Block>();
 
     //find initial disp
-    for (int iter = 0; iter < test.size(); iter++) {
+    for (auto & iter : test) {
         double sum = MSE_FUNCTIONS::compute_mse(this->input_image, this->desired_image,
+                                                iter.x, iter.y,
                                                 x, y,
-                                                test[iter].x, test[iter].y,
                                                 block_size);
-        Block b = Block(x, y, test[iter].x, test[iter].y, sum);
+        Block b = Block(iter.x, iter.y, x, y, sum);
         blockSum.push_back(b);
-
     }
 
     auto smallestBlock = std::min_element(blockSum.begin(), blockSum.end());
