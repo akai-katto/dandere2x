@@ -42,33 +42,33 @@ class PredictiveFrame : AbstractPlugin {
 public:
     PredictiveFrame(AbstractEvaluator *eval,
                     AbstractBlockMatch *block_matcher,
-                    shared_ptr<Frame> current_frame,
-                    const shared_ptr<Frame>& next_frame,
-                    const shared_ptr<Frame>& next_frame_compressed,
-                    const int block_size) : AbstractPlugin(move(current_frame),
+                    Frame &current_frame,
+                    Frame &next_frame,
+                    const Frame &next_frame_compressed,
+                    const int block_size) : AbstractPlugin(current_frame,
                                                      next_frame,
                                                      next_frame_compressed,
                                                      block_size){
         this->eval = eval;
         this->block_matcher = block_matcher;
+        this->matched_blocks.resize(next_frame.get_width(), vector<shared_ptr<Block>>(next_frame.get_height()));
+
     }
 
     void run() override;
 
     void write(const string &output_file) override;
 
-protected:
-
     void update_frame() override;
-
 
 private:
 
     void parallel_function_call(int x, int y) override;
 
-    vector<Block> matched_blocks;
+    vector<vector<shared_ptr<Block>>> matched_blocks;
     AbstractEvaluator *eval;
     AbstractBlockMatch *block_matcher;
+    int matched_block_count = 0;
 
 };
 

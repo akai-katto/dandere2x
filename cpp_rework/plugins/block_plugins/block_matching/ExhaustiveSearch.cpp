@@ -37,9 +37,11 @@ Purpose:
 std::vector<Block::Point> ExhaustiveSearch::createSearchVector(int centx, int centy) {
     std::vector<Block::Point> list = std::vector<Block::Point>();
 
+    // We can optimize this a bit further by restricting the search domain to be within the grid.
+    // Might not be worth the added complexity.
     for (int x = centx - max_box; x < centx + max_box; x++) {
         for (int y = centy - max_box; y < centy + max_box; y++) {
-            if ((x > 0 && x < width) && (y > 0 && y < height)) {
+            if ((x >= 0 && x < width) && (y >= 0 && y < height)) {
                 Block::Point point{};
                 point.x = x;
                 point.y = y;
@@ -59,12 +61,13 @@ Block ExhaustiveSearch::match_block(const int x, const int y, const int block_si
     vector<Block> blockSum = vector<Block>();
 
     //find initial disp
-    for (int iter = 0; iter < test.size(); iter++) {
+    for (auto & iter : test) {
         double sum = MSE_FUNCTIONS::compute_mse(this->input_image, this->desired_image,
-                                                x, y, test[iter].x, test[iter].y, block_size);
-        Block b = Block(x, y, test[iter].x, test[iter].y, sum);
+                                                iter.x, iter.y,
+                                                x, y,
+                                                block_size);
+        Block b = Block(iter.x, iter.y, x, y, sum);
         blockSum.push_back(b);
-
     }
 
     auto smallestBlock = std::min_element(blockSum.begin(), blockSum.end());

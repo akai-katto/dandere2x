@@ -12,13 +12,19 @@ public:
 
     static void copy_frame_using_blocks(Frame &final_frame,
                                          const Frame &base_image,
-                                         const vector<Block>& matched_blocks,
+                                         const vector<vector<shared_ptr<Block>>>& matched_blocks,
                                          const int block_size){
-        for (const Block &block: matched_blocks){
-            for (int i = 0; i < block_size; i++){
-                for(int j = 0; j < block_size; j++){
-                    final_frame.set_color(block.x_start + i, block.y_start + j,
-                                             base_image.get_color(block.x_end + i, block.y_end + j));
+        for (const vector<shared_ptr<Block>>& row: matched_blocks){
+
+            for (const shared_ptr<Block>& block: row) {
+                if (block == nullptr)
+                    continue;
+
+                for (int i = 0; i < block_size; i++) {
+                    for (int j = 0; j < block_size; j++) {
+                        final_frame.set_color(block->x_start + i, block->y_start + j,
+                                              base_image.get_color(block->x_end + i, block->y_end + j));
+                    }
                 }
             }
         }

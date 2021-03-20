@@ -39,12 +39,12 @@ Purpose: # todo
                               const int initial_x, const int initial_y,
                               const int variable_x, const int variable_y, const int block_size) {
 
-    double image_1_image_2_ssim = SSIM_Function::compute_ssim(current_frame, next_frame,
+    double image_1_image_2_ssim = SSIM_Function::compute_ssim(next_frame, current_frame,
                                                               initial_x, initial_y, variable_x, variable_y,
                                                               block_size);
 
     double image_2_image_2_compressed_ssim = SSIM_Function::compute_ssim(next_frame, current_frame_compressed,
-                                                                         initial_x, initial_y, variable_x, variable_y,
+                                                                         variable_x, variable_y, variable_x, variable_y,
                                                                          block_size);
 
     if (image_1_image_2_ssim >= image_2_image_2_compressed_ssim) {
@@ -94,6 +94,7 @@ double SSIM_Function::compute_ssim_color(const Frame &image_a, const Frame &imag
     double sigxy = 0;
     double sigsqx = 0;
     double sigsqy = 0;
+    double mse = 0;
 
     for (int x = 0; x < block_size; x++) {
         for (int y = 0; y < block_size; y++) {
@@ -106,8 +107,11 @@ double SSIM_Function::compute_ssim_color(const Frame &image_a, const Frame &imag
 
             sigxy += (get_rgb(image_a.get_color(image_a_x_start + x, image_a_y_start + y), rgb_component) -
                       mx) *
-                     (get_rgb(image_b.get_color(image_b_x_start + x, image_b_y_start + y), rgb_component) -
+                     (get_rgb(image_b.get_color(image_b_x_start + x, image_a_y_start + y), rgb_component) -
                       my);
+
+            mse += pow((get_rgb(image_a.get_color(image_a_x_start + x, image_a_y_start + y), rgb_component))
+                       - (get_rgb(image_b.get_color(image_b_x_start + x, image_b_y_start + y), rgb_component)), 2);
         }
     }
 
@@ -124,7 +128,13 @@ double SSIM_Function::compute_ssim_color(const Frame &image_a, const Frame &imag
     double denominator = (pow(mx, 2) + pow(my, 2) + c1) * (sigsqx + sigsqy + c2);
 
     double ssim = numerator / denominator;
-    return ssim;
+
+    double d1 = pow(0.01 * (255*255), 2);
+    double d2 = pow(0.03 * (255*255), 2);
+
+    double inverse_mse = (1 + d1) / (mse + d2);
+
+    return ssim * inverse_mse;
 }
 
 
