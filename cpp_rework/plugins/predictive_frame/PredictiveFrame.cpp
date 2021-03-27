@@ -119,7 +119,8 @@ void PredictiveFrame::write(const string &output_frame, const string &output_vec
 
             // Create the displacement matching the two images via vectors.
             shared_ptr<Block> current = missing_blocks[0];
-            vector_displacements.push_back(make_shared<Block>(x * block_size, y * block_size, current->x_start, current->y_start, 0));
+            vector_displacements.push_back(make_shared<Block>(x * block_size, y * block_size,
+                                                              current->x_start, current->y_start, 0));
             missing_blocks.erase(missing_blocks.begin(), missing_blocks.begin() + 1);
         }
     }
