@@ -31,11 +31,11 @@ Purpose: Given two frames, try to find as many matching blocks between
 
 #include <memory>
 #include <utility>
-#include "AbstractPlugin.h"
-#include "../frame/Frame.h"
-#include "block_plugins/Block.h"
-#include "../evaluator/AbstractEvaluator.h"
-#include "block_plugins/block_matching/AbstractBlockMatch.h"
+#include "../AbstractPlugin.h"
+#include "../../frame/Frame.h"
+#include "../block_plugins/Block.h"
+#include "../../evaluator/AbstractEvaluator.h"
+#include "../block_plugins/block_matching/AbstractBlockMatch.h"
 
 using namespace std;
 class PredictiveFrame : AbstractPlugin {
@@ -51,19 +51,31 @@ public:
                                                      block_size){
         this->eval = eval;
         this->block_matcher = block_matcher;
+
+        // Due to multiprocessing / multithreading with omp, we need to instantiate the shared vectors before
+        // the code starts running.
+        // todo, fix this to not use as much memory, we're reserving pointers for each pixel, when each block should
+        // be the stuff getting reserved.
         this->matched_blocks.resize(next_frame.get_width(), vector<shared_ptr<Block>>(next_frame.get_height()));
 
     }
 
     void run() override;
 
-    void write(const string &output_file) override;
-
     void update_frame() override;
+
+    void write(const string &output_frame, const string &output_vectors);
+
+    void debug_visual(const string &output_image);
+
+    void debug_predictive(const string &output_image);
+
 
 private:
 
     void parallel_function_call(int x, int y) override;
+
+    static vector<shared_ptr<Block>> get_missing_blocks(const vector<vector<shared_ptr<Block>>> &blocks);
 
     vector<vector<shared_ptr<Block>>> matched_blocks;
     AbstractEvaluator *eval;

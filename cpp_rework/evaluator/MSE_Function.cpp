@@ -33,16 +33,20 @@ Purpose:
 bool MSE_FUNCTIONS::evaluate_implementation(const Frame &current_frame,
                                             const Frame &next_frame,
                                             const Frame &next_frame_compressed,
-                             int initial_x, int initial_y, int variable_x, int variable_y, int block_size) {
+                                            const int current_frame_x, const int current_frame_y,
+                                            const int next_frame_x, const int next_frame_y, const int block_size) {
 
+    // todo: There's an unexpected (but working) behaviour that, while i'm passing the below arguments in
+    // in reverse, (see how next_frame and current_frame_x are swapped), it preferoms correctly and well.
+    // I'm not sure the origin of this bug, and suspect it may occur at a higher call, but chasing it down has
+    // proven not fruitful. Please fix this when I get the time.
     double image_1_image_2_mse = MSE_FUNCTIONS::compute_mse(next_frame, current_frame,
-                                                            initial_x, initial_y, variable_x, variable_y,
+                                                            current_frame_x, current_frame_y, next_frame_x, next_frame_y,
                                                             block_size);
 
     double image_2_image_2_compressed_mse = MSE_FUNCTIONS::compute_mse(next_frame, next_frame_compressed,
-                                                                       variable_x, variable_y, variable_x, variable_y,
+                                                                       next_frame_x, next_frame_y, next_frame_x, next_frame_y,
                                                                        block_size);
-
 
 
     if (image_1_image_2_mse <= image_2_image_2_compressed_mse) {
@@ -75,7 +79,7 @@ int MSE_FUNCTIONS::square(const Frame::Color &color_a, const Frame::Color &color
 //          blocks in their respective images. If the block is out of bounds,
 //          returns INT_MAX (i.e, is the worst MSE possible)
 //-----------------------------------------------------------------------------
-double MSE_FUNCTIONS::compute_mse(const Frame& image_a, const Frame& image_b,
+double MSE_FUNCTIONS::compute_mse(const Frame &image_a, const Frame &image_b,
                                   const int image_a_x_start, const int image_a_y_start,
                                   const int image_b_x_start, const int image_b_y_start, const int block_size) {
 

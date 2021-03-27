@@ -50,11 +50,9 @@ public:
         this->block_size = block_size;
     }
 
+
     // Every plugin needs to be 'ran' to some extent.
     virtual void run() = 0;
-
-    // Write the contents of the plugin somewhere.
-    virtual void write(const string &output_file) = 0;
 
     // Every plugin needs to affect the frame somehow after it's done it's processing on it.
     virtual void update_frame() = 0;

@@ -45,8 +45,8 @@ protected:
     bool evaluate_implementation(const Frame &current_frame,
                                  const Frame &next_frame,
                                  const Frame &next_frame_compressed,
-                                 int initial_x, int initial_y,
-                                 int variable_x, int variable_y,
+                                 int current_frame_x, int current_frame_y,
+                                 int next_frame_x, int next_frame_y,
                                  int block_size) override;
 
 };

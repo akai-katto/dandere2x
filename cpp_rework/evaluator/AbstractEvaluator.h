@@ -42,11 +42,23 @@ Purpose: Dandere2x is built to have multiple evaluators, i.e the user
 #include <string>
 #include <memory>
 #include "../frame/Frame.h"
-
+#include "../plugins/block_plugins/Block.h"
 
 class AbstractEvaluator {
 
 public:
+
+
+    bool evaluate(const Frame &current_frame,
+                  const Frame &next_frame,
+                  const Frame &next_frame_compressed,
+                  const Block &block,
+                  const int block_size){
+        return evaluate(current_frame, next_frame, next_frame_compressed,
+                        block.x_start, block.y_start,
+                        block.x_end, block.y_end, block_size);
+    }
+
 
     //-----------------------------------------------------------------------------
     // Any evaluator will have to give a binary "yes the matched block passes the constant-quality check" or
@@ -56,17 +68,17 @@ public:
     bool evaluate(const Frame &current_frame,
                   const Frame &next_frame,
                   const Frame &next_frame_compressed,
-                  int initial_x, int initial_y,
-                  int variable_x, int variable_y,
-                  int block_size) {
+                  const int current_frame_x, const int current_frame_y,
+                  const int next_frame_x, const int next_frame_y,
+                  const int block_size) {
 
         // primitive sanity check for any evaluation
-        if (current_frame.block_out_of_bounds(initial_x, initial_y, block_size) ||
-            current_frame.block_out_of_bounds(variable_x, variable_y, block_size))
+        if (current_frame.block_out_of_bounds(current_frame_x, current_frame_y, block_size) ||
+            current_frame.block_out_of_bounds(next_frame_x, next_frame_y, block_size))
             return false;
 
-        return evaluate_implementation(current_frame, next_frame, next_frame_compressed, initial_x, initial_y,
-                                       variable_x, variable_y, block_size);
+        return evaluate_implementation(current_frame, next_frame, next_frame_compressed, current_frame_x, current_frame_y,
+                                       next_frame_x, next_frame_y, block_size);
     }
 
 protected:
@@ -74,9 +86,9 @@ protected:
     virtual bool evaluate_implementation(const Frame &current_frame,
                                          const Frame &next_frame,
                                          const Frame &next_frame_compressed,
-                                         int initial_x, int initial_y,
-                                         int variable_x, int variable_y,
-                                         int block_size) = 0;
+                                         const int current_frame_x, const int current_frame_y,
+                                         const int next_frame_x, const int next_frame_y,
+                                         const int block_size) = 0;
 
 };
 
