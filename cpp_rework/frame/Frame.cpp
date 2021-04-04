@@ -30,8 +30,8 @@ Purpose:
 #include "Frame.h"
 
 // local includes
-#include "externals/stb_image.h"
-#include "externals/stb_image_write.h"
+#include "external_headers/stb_image.h"
+#include "external_headers/stb_image_write.h"
 
 //////////////////
 // Constructors //

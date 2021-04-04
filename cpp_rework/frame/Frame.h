@@ -38,7 +38,7 @@ Purpose: This class is to facilitate all the functions and uses dandere2x
 #include <string>
 
 // local includes
-#include "externals/stb_image.h"
+#include "external_headers/stb_image.h"
 
 
 using namespace std;
