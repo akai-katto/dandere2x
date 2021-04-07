@@ -15,59 +15,36 @@ using namespace std::chrono;
 #include "evaluator/SSIM_Function.h"
 #include "evaluator/MSE_Function.h"
 #include "plugins/block_plugins/block_matching/ExhaustiveSearch.h"
+#include "driver.h"
+
 
 using namespace std;
 
 
-int main(){
+int main(int argc, char **argv) {
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
     using std::chrono::duration;
     using std::chrono::milliseconds;
 
+    bool debug = false; //debug flag
 
-//    auto tempfile = make_shared<Frame>("C:\\Users\\Tyler\\Desktop\\releases\\3.1\\workspace\\gui\\subworkspace\\inputs\\frame139.jpg", 95);
-//    tempfile->write("C:\\Users\\Tyler\\Desktop\\releases\\3.1\\workspace\\gui\\subworkspace\\pointer_test.jpg");
+    //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
+    string workspace = "/home/tyler/Documents/workspace";
+    int frame_count = 240;
+    int block_size = 30;
+    string run_type = "r";// 'n' or 'r'
+    string extension_type = ".jpg";
+    // cout << "Dandere2x CPP vDSSIM 1.0" << endl;
 
-    auto *evaluation_library = new MSE_FUNCTIONS();
-    string prefix = "C:\\Users\\Tyler\\Documents\\GitHub\\dandere2x\\src\\workspace\\gui\\extracted\\frame";
-
-
-    // pre loop setting variables
-    int i = 1;
-    auto frame_1 = make_shared<Frame>(prefix + to_string(i) + ".png");
-    frame_1->apply_noise(8);
-
-    // the actual loop
-    for (; i < 51; i++) {
-
-        std::cout << "frame " << i << endl;
-        auto frame_2 = make_shared<Frame>(prefix + to_string(i+1) + ".png");
-        auto frame_2_compressed = make_shared<Frame>(prefix + to_string(i+1) + ".png", 95);
-
-        frame_2->apply_noise(8);
-        frame_2_compressed->apply_noise(8);
-
-        auto *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
-
-        cout << "hi 2" << endl;
-        PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library,
-                                                          *frame_1, *frame_2, *frame_2_compressed, 30);
-
-        auto t1 = high_resolution_clock::now();
-        test_prediction.run();
-        auto t2 = high_resolution_clock::now();
-
-        cout << "time: " << duration_cast<milliseconds>(t2 - t1).count() << endl;
-
-        test_prediction.update_frame();
-        test_prediction.write("C:\\Users\\Tyler\\Desktop\\scratch\\debug_frame\\frame" + to_string(i) + ".png",
-                              "C:\\Users\\Tyler\\Desktop\\scratch\\debug_frame\\frame" + to_string(i) + ".txt");
-//        test_prediction.debug_visual("C:\\Users\\Tyler\\Desktop\\scratch\\debug_frame_visual\\frame" + to_string(i) + ".png");
-//        test_prediction.debug_predictive("C:\\Users\\Tyler\\Desktop\\scratch\\debug_frame_visual\\frame" + to_string(i) + ".png");
-        frame_1 = frame_2;
+    //load arguments
+    if (!debug) {
+        workspace = argv[1];
+        frame_count = atoi(argv[2]);
+        block_size = atoi(argv[3]);
     }
+    driver_difference(workspace, 1, frame_count, block_size);
 
     return 0;
 }

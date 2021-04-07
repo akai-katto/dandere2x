@@ -44,6 +44,7 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
                        x, y,
                        block_size)) {
 
+        matched_block_count += 1;
         this->matched_blocks[x][y] = make_shared<Block>(x, y, x, y, 1);
         return;
     }
@@ -99,23 +100,35 @@ void PredictiveFrame::run() {
 //-----------------------------------------------------------------------------
 // Purpose: Writes the residuals (i.e the blocks that did not get matched )
 //-----------------------------------------------------------------------------
-void PredictiveFrame::write(const string &output_frame, const string &output_vectors) {
+void PredictiveFrame::write(const string &predictive_vectors_output, const string &residual_vectors_output) {
+    // I apologize to myself / any maintainer that this is in a big function, but couldn't find a way to make this
+    // split up into a few smaller bits and pieces.
 
-    // Part 1
+    /**
+     * Part 1: Getting the movement vectors.
+     *
+     * The goal here is to create a series of vectors (literal vectors not c++) mapping the missing blocks of an image,
+     * to a new, smaller image in order for the "residuals" of the image to be upscaled independently,
+     * then re-patched together.
+     *
+     * The vectors are then written to a file to be processed by dandere2x_python in order for them to be
+     * stitched back together once it's finished.
+     */
+    // Create vectors matching the missing blocks to the residuals image.
     vector<shared_ptr<Block>> missing_blocks = PredictiveFrame::get_missing_blocks(this->matched_blocks);
-
-    int missing_blocks_length = missing_blocks.size();
-    int dimension = sqrt(missing_blocks_length) + 1;
-
     vector<shared_ptr<Block>> vector_displacements;
 
-    // Create vectors matching the missing blocks to the residuals image.
+    int missing_blocks_length = missing_blocks.size();
+    int dimension = sqrt(missing_blocks_length) + 1; // The dimension of the output image
+
+    // Start cycling through each missing block, giving it an (x,y) coordinate in the new smaller output image.
     for (int x = 0; x < dimension; x++) {
         for (int y = 0; y < dimension; y++) {
 
             // Break if we pre-maturely finished.
-            if (missing_blocks.empty())
+            if (missing_blocks.empty()) {
                 break;
+            }
 
             // Create the displacement matching the two images via vectors.
             shared_ptr<Block> current = missing_blocks[0];
@@ -125,32 +138,16 @@ void PredictiveFrame::write(const string &output_frame, const string &output_vec
         }
     }
 
-    // Convert the single-dimensional vector into a 2d vector (copy_frame_using_blocks requires 2d vector).
+    /**
+     * Part 2: Writing the output files.
+     *
+     * Now that we have all the necessary data, writing the actual files for dandere2x_python to use (we send them via
+     * text files).
+     */
+    this->write_blocks(predictive_vectors_output, matched_blocks);
     vector<vector<shared_ptr<Block>>> argument_vector = {vector_displacements};
 
-    // Create the new image using the vectors copied
-    Frame residual_frame = Frame(dimension * block_size, dimension * block_size, this->current_frame.get_bpp());
-    FrameUtilities::copy_frame_using_blocks(residual_frame,
-                                            current_frame,
-                                            argument_vector,
-                                            this->block_size);
-
-    residual_frame.write(output_frame);
-
-    // Part 2
-    string temp_file = output_vectors + ".temp";
-    std::ofstream out(temp_file);
-
-    for (auto &block: vector_displacements){
-        out <<
-            block->x_start << "\n" <<
-            block->y_start << "\n" <<
-            block->x_end << "\n" <<
-            block->y_end
-            << std::endl;
-    }
-    out.close();
-    std::rename((temp_file).c_str(), output_vectors.c_str());
+    this->write_blocks(residual_vectors_output, argument_vector); // why is this not writing anything out?
 }
 
 //-----------------------------------------------------------------------------

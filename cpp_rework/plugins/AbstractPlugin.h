@@ -30,7 +30,9 @@ Purpose: An abstract class describing inherited d2x_cpp classes.
 
 #include <string>
 #include <utility>
+#include <fstream>
 #include "../frame/Frame.h"
+#include "block_plugins/Block.h"
 
 using namespace std;
 
@@ -42,7 +44,7 @@ public:
     AbstractPlugin(Frame &current_frame,
                    Frame &next_frame,
                    const Frame &next_frame_compressed,
-                   const int block_size){
+                   const int block_size) {
 
         this->current_frame = current_frame;
         this->next_frame = next_frame;
@@ -57,6 +59,36 @@ public:
     // Every plugin needs to affect the frame somehow after it's done it's processing on it.
     virtual void update_frame() = 0;
 
+    // Writes blocks in a python / c++ safe manner (writes to a tempfile then renames to prevent python from
+    // pre-maturely reading). Checks if the "sum" is less than zero for each block, which denotes
+    void write_blocks(const string &output, const vector<vector<shared_ptr<Block>>> &blocks) {
+        // Write the predictive vectors out
+
+        string temp_file = output + ".temp";
+        std::ofstream out(temp_file);
+
+        for (const vector<shared_ptr<Block>> &row: blocks) {
+            for (const shared_ptr<Block> &block: row) {
+                // todo fix this technical debt, see the issues in "Predictive Frame"
+                if (block == nullptr)
+                    continue;
+
+                if (block->sum != -1) { // -1 denotes an invalid block.
+                    out <<
+                        block->x_start << "\n" <<
+                        block->y_start << "\n" <<
+                        block->x_end << "\n" <<
+                        block->y_end
+                        << std::endl;
+                }
+            }
+        }
+
+
+        out.close();
+        std::rename((temp_file).c_str(), output.c_str());
+    }
+
 protected:
 
     // Every plugin *should* utilize some sort of parallel optimization, although it doesn't need t.
@@ -67,7 +99,6 @@ protected:
     Frame next_frame_compressed;
 
     int block_size;
-
 
 
 };
