@@ -86,7 +86,8 @@ class Residual(threading.Thread):
                 out_image.save_image_temp(out_location=output_file, temp_location=self.con.temp_image)
 
             # With this change the wrappers must be modified to not try deleting the non existing residual file
-            if self.con.debug == 1:
+            #if self.con.debug == 1:
+            if True:
                 self.debug_image(block_size=self.con.service_request.block_size, frame_base=f1,
                                  list_predictive=prediction_data, list_residuals=residual_data,
                                  output_location=debug_output_file)

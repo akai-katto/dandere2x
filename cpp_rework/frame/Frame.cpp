@@ -69,7 +69,7 @@ Frame::Frame(const string &file_name, const int compression) {
     int width, height, bpp;
     unsigned char *stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
 
-    string temp_name = std::tmpnam(nullptr);
+    string temp_name = "C:\\Users\\Tyler\\Desktop\\temp_folder\\temp.jpg";
     stbi_write_jpg(temp_name.c_str(), width, height, bpp, stb_image, compression);
     stbi_image_free(stb_image);
 

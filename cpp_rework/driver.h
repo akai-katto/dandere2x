@@ -6,8 +6,10 @@
 char separator() {
 #ifdef __CYGWIN__
     return '\\';
+#elif __MINGW32_
+    return '\\';
 #else
-    return '/';
+    return '\\';
 #endif
 }
 
@@ -29,30 +31,37 @@ void driver_difference(string workspace,
     string p_data_prefix = workspace + separator() + "pframe_data" + separator() + "pframe_";
     string residual_data_prefix = workspace + separator() + "residual_data" + separator() + "residual_";
 
+    string correction_prefix = workspace + separator() + "correction_data" + separator() + "correction_";
+    string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
 
-    auto frame_1 = make_shared<Frame>(image_prefix + to_string(1) + ".png");
+    auto frame_1 = make_shared<Frame>(image_prefix + to_string(1) + ".jpg");
+    frame_1->apply_noise(4);
     for (int x = resume_count; x < frame_count; x++) {
         std::cout << "frame " << x << endl;
 
         // File Declarations
         string p_data_file = p_data_prefix + to_string(x) + ".txt";
         string residual_file = residual_data_prefix + to_string(x) + ".txt";
+        string correction_file = correction_prefix + to_string(x) + ".txt";
+        string fade_file = fade_prefix + to_string(x) + ".txt";
 
         // Load next frame files
-        auto frame_2 = make_shared<Frame>(image_prefix + to_string(x + 1) + ".png");
-        auto frame_2_compressed = make_shared<Frame>(image_prefix + to_string(x + 1) + ".png", 95);
-        frame_2->apply_noise(8);
-        frame_2_compressed->apply_noise(8);
+        auto frame_2 = make_shared<Frame>(image_prefix + to_string(x + 1) + ".jpg");
+        auto frame_2_compressed = make_shared<Frame>(image_prefix + to_string(x + 1) + ".jpg", 95);
+        frame_2->apply_noise(4);
+        frame_2_compressed->apply_noise(4);
 
         auto *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
 
         PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library,
                                                           *frame_1, *frame_2, *frame_2_compressed, block_size);
         test_prediction.run();
-
-
         test_prediction.update_frame();
-        test_prediction.write(p_data_file, p_data_prefix);
+        test_prediction.write(p_data_file, residual_file);
+
+        test_prediction.write_empty_file(fade_file);
+        test_prediction.write_empty_file(correction_file);
+
         frame_1 = frame_2;
     }
 

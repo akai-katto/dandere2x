@@ -27,13 +27,13 @@ int main(int argc, char **argv) {
     using std::chrono::duration;
     using std::chrono::milliseconds;
 
-    bool debug = false; //debug flag
+    bool debug = true; //debug flag
 
     //Initialize the variables needed for Dandere2x's driver. If debug = True, then we use these variables.
 
-    string workspace = "/home/tyler/Documents/workspace";
+    string workspace = "C:\\Users\\Tyler\\Documents\\GitHub\\dandere2x\\src\\workspace\\gui\\subworkspace";
     int frame_count = 240;
-    int block_size = 30;
+    int block_size = 20;
     string run_type = "r";// 'n' or 'r'
     string extension_type = ".jpg";
     // cout << "Dandere2x CPP vDSSIM 1.0" << endl;

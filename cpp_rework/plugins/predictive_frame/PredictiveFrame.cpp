@@ -44,7 +44,7 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
                        x, y,
                        block_size)) {
 
-        matched_block_count += 1;
+        //matched_block_count += 1;
         this->matched_blocks[x][y] = make_shared<Block>(x, y, x, y, 1);
         return;
     }
@@ -62,6 +62,7 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
                        matched_block,
                        block_size)) {
 
+        cout << "matched moving" << endl;
         matched_block_count += 1;
         this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_start, matched_block.y_start,
                                                         matched_block.x_end, matched_block.y_end,
@@ -114,6 +115,8 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
      * The vectors are then written to a file to be processed by dandere2x_python in order for them to be
      * stitched back together once it's finished.
      */
+
+    cout << "matched moving blocks: " << matched_block_count << endl;
     // Create vectors matching the missing blocks to the residuals image.
     vector<shared_ptr<Block>> missing_blocks = PredictiveFrame::get_missing_blocks(this->matched_blocks);
     vector<shared_ptr<Block>> vector_displacements;
@@ -132,8 +135,8 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
 
             // Create the displacement matching the two images via vectors.
             shared_ptr<Block> current = missing_blocks[0];
-            vector_displacements.push_back(make_shared<Block>(x * block_size, y * block_size,
-                                                              current->x_start, current->y_start, 0));
+            vector_displacements.push_back(make_shared<Block>(current->x_start , current->y_start,
+                                                              x, y, 0));
             missing_blocks.erase(missing_blocks.begin(), missing_blocks.begin() + 1);
         }
     }

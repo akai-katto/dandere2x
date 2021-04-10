@@ -39,7 +39,7 @@ from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServi
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
 from dandere2x.dandere2xlib.wrappers.ffmpeg.pipe_thread import Pipe
-from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead
+from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead, AsyncFrameWrite
 from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
 from dandere2x.dandere2x_service.core.residual_plugins.pframe import pframe_image
 
@@ -140,10 +140,11 @@ class Merge(threading.Thread):
 
             # Manually write the image if we're preserving frames (this is for enthusiasts / debugging).
             # if self.preserve_frames:
-            # if True:
-            #     output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".jpg"
-            #     background_frame_write = AsyncFrameWrite(current_frame, output_file)
-            #     background_frame_write.start()
+            if True:
+                output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".jpg"
+                current_frame.save_image(output_file)
+
+            print("hi147")
 
             #######################################
             # Assign variables for next iteration #
@@ -152,7 +153,7 @@ class Merge(threading.Thread):
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
                     wait_on_file(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
-
+            print("hi156")
             """
             Now that we're all done with the current frame, the current `current_frame` is now the frame_previous
             (with respect to the next iteration). We could obviously manually load frame_previous = Frame(n-1) each
@@ -160,6 +161,8 @@ class Merge(threading.Thread):
             """
             frame_previous = current_frame
             current_upscaled_residuals = background_frame_load.loaded_image
+
+            print("hi165")
             self.controller.update_frame_count(x)
 
         self.pipe.kill()

@@ -5,6 +5,7 @@
 //    available at: https://www.gnu.org/licenses/gpl-3.0.txt
 
 #include "Dandere2xUtils.h"
+#include "../../../../../../../../cygwin64/lib/gcc/x86_64-pc-cygwin/10/include/c++/thread"
 #include <chrono>
 #include <thread>
 #include <math.h>
