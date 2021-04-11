@@ -72,14 +72,19 @@ public:
 
     void update_frame() override;
 
-    void write(const string &output_frame, const string &output_vectors);
+    void write(const string &predictive_vectors_output, const string &residual_vectors_output);
 
     void debug_visual(const string &output_image);
 
     void debug_predictive(const string &output_image);
 
+protected:
+
+    void write_positive_case(const string &predictive_vectors_output, const string &residual_vectors_output);
 
 private:
+
+    void match_blocks();
 
     void parallel_function_call(int x, int y) override;
 
@@ -88,7 +93,9 @@ private:
     vector<vector<shared_ptr<Block>>> matched_blocks;
     AbstractEvaluator *eval;
     AbstractBlockMatch *block_matcher;
-    int matched_block_count = 0;
+    int matched_stationary_blocks = 0;
+    int matched_moving_blocks = 0;
+    int bleed = 1;
 
 };
 

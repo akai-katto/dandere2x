@@ -195,9 +195,12 @@ void Frame::apply_noise(const int range) {
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
             Color edited_color = this->get_color(i, j);
-            edited_color.r = max(0, min(255, edited_color.r + dis(gen)));
-            edited_color.g = max(0, min(255, edited_color.g + dis(gen)));
-            edited_color.b = max(0, min(255, edited_color.b + dis(gen)));
+
+            int noise = dis(gen);
+
+            edited_color.r = max(0, min(255, edited_color.r + noise));
+            edited_color.g = max(0, min(255, edited_color.g + noise));
+            edited_color.b = max(0, min(255, edited_color.b + noise));
             set_color(i,j, edited_color);
         }
     }

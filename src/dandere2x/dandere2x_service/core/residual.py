@@ -50,7 +50,7 @@ class Residual(threading.Thread):
 
             # Files needed to create a residual image
             f1 = Frame()
-            f1.load_from_string_controller(self.con.input_frames_dir + "frame" + str(x + 1) + ".jpg",
+            f1.load_from_string_controller(self.con.input_frames_dir + "frame" + str(x + 1) + ".png",
                                            self.controller)
             # Load the neccecary lists to compute this iteration of residual making
             residual_data = get_list_from_file_and_wait(self.con.residual_data_dir + "residual_" + str(x) + ".txt")
@@ -58,8 +58,8 @@ class Residual(threading.Thread):
             prediction_data = get_list_from_file_and_wait(self.con.pframe_data_dir + "pframe_" + str(x) + ".txt")
 
             # Create the output files..
-            debug_output_file = self.con.debug_dir + "debug" + str(x + 1) + ".jpg"
-            output_file = self.con.residual_images_dir + "output_" + get_lexicon_value(6, x) + ".jpg"
+            debug_output_file = self.con.debug_dir + "debug" + str(x + 1) + ".png"
+            output_file = self.con.residual_images_dir + "output_" + get_lexicon_value(6, x) + ".png"
 
             # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
             out_image = self.make_residual_image(self.con, f1, residual_data, prediction_data)
@@ -219,4 +219,4 @@ class Residual(threading.Thread):
                                  vector.x_1, vector.y_1,
                                  vector.x_1, vector.y_1)
 
-        out_image.save_image_quality(output_location, 25)
+        out_image.save_image(output_location)

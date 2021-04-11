@@ -44,7 +44,7 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
                        x, y,
                        block_size)) {
 
-        //matched_block_count += 1;
+        matched_stationary_blocks += 1;
         this->matched_blocks[x][y] = make_shared<Block>(x, y, x, y, 1);
         return;
     }
@@ -62,8 +62,7 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
                        matched_block,
                        block_size)) {
 
-        cout << "matched moving" << endl;
-        matched_block_count += 1;
+        matched_moving_blocks += 1;
         this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_start, matched_block.y_start,
                                                         matched_block.x_end, matched_block.y_end,
                                                         1);
@@ -81,6 +80,24 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
 // Purpose: todo
 //-----------------------------------------------------------------------------
 void PredictiveFrame::run() {
+
+    double psnr = eval->psnr_two_frames(current_frame, next_frame);
+
+    // Don't conduct block matches if the PSNR is terribly low.
+    if (psnr < 10) {
+        std::cout << "PSNR " << psnr << std::endl;
+        std::cout << "PSNR is low - not going to match blocks" << std::endl;
+    }
+    else{
+        match_blocks();
+    }
+
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: todo
+//-----------------------------------------------------------------------------
+void PredictiveFrame::match_blocks() {
 
     int x = 0;
     int y = 0;
@@ -102,6 +119,23 @@ void PredictiveFrame::run() {
 // Purpose: Writes the residuals (i.e the blocks that did not get matched )
 //-----------------------------------------------------------------------------
 void PredictiveFrame::write(const string &predictive_vectors_output, const string &residual_vectors_output) {
+    int max_blocks_possible = (current_frame.get_height() * this->current_frame.get_width()) / (this->block_size * this->block_size);
+
+    if (max_blocks_possible <=
+        ((block_size * block_size) * (matched_moving_blocks + matched_stationary_blocks)) / ((block_size + bleed) * (block_size + bleed))) {
+        // We decided not to keep any of the blocks.. abandon all the progress we did in this function
+
+        std::cout << "Too many missing blocks - conducting redraw" << std::endl;
+        this->write_blocks(predictive_vectors_output, {});
+        this->write_blocks(residual_vectors_output, {});
+    }
+    else{
+        write_positive_case(predictive_vectors_output, residual_vectors_output);
+        update_frame();
+    }
+}
+
+void PredictiveFrame::write_positive_case(const string &predictive_vectors_output, const string &residual_vectors_output) {
     // I apologize to myself / any maintainer that this is in a big function, but couldn't find a way to make this
     // split up into a few smaller bits and pieces.
 
@@ -116,7 +150,7 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
      * stitched back together once it's finished.
      */
 
-    cout << "matched moving blocks: " << matched_block_count << endl;
+    cout << "matched moving blocks: " << matched_moving_blocks << endl;
     // Create vectors matching the missing blocks to the residuals image.
     vector<shared_ptr<Block>> missing_blocks = PredictiveFrame::get_missing_blocks(this->matched_blocks);
     vector<shared_ptr<Block>> vector_displacements;
@@ -149,7 +183,6 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
      */
     this->write_blocks(predictive_vectors_output, matched_blocks);
     vector<vector<shared_ptr<Block>>> argument_vector = {vector_displacements};
-
     this->write_blocks(residual_vectors_output, argument_vector); // why is this not writing anything out?
 }
 
@@ -202,4 +235,6 @@ vector<shared_ptr<Block>> PredictiveFrame::get_missing_blocks(const vector<vecto
 
     return returned_blocks;
 }
+
+
 

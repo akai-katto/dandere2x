@@ -46,15 +46,8 @@ class ProgressiveFramesExtractorCV2:
             success, image = self.cap.read()
 
         if success:
-            cv2.imwrite(self.extracted_frames_dir + "frame_temp_%s.jpg" % self.count, image,
-                        [cv2.IMWRITE_JPEG_QUALITY, 100])
-            cv2.imwrite(self.compressed_frames_dir + "compressed_temp_%s.jpg" % self.count, image,
-                        [cv2.IMWRITE_JPEG_QUALITY, self.compressed_quality])
+            cv2.imwrite(self.extracted_frames_dir + "frame_temp_%s.png" % self.count, image)
 
-            rename_file_wait(self.extracted_frames_dir + "frame_temp_%s.jpg" % self.count,
-                             self.extracted_frames_dir + "frame%s.jpg" % self.count)
-
-            rename_file_wait(self.compressed_frames_dir + "compressed_temp_%s.jpg" % self.count,
-                             self.compressed_frames_dir + "compressed_%s.jpg" % self.count)
-
+            rename_file_wait(self.extracted_frames_dir + "frame_temp_%s.png" % self.count,
+                             self.extracted_frames_dir + "frame%s.png" % self.count)
             self.count += 1

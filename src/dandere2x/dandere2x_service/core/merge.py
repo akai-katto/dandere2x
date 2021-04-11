@@ -77,14 +77,14 @@ class Merge(threading.Thread):
         # Load the genesis image + the first upscaled image.
         frame_previous = Frame()
         frame_previous.load_from_string_controller(
-            self.context.merged_dir + "merged_" + str(1) + ".jpg",
+            self.context.merged_dir + "merged_" + str(1) + ".png",
             self.controller)
 
         # Load and pipe the 'first' image before we start the for loop procedure, since all the other images will
         # inductively build off this first frame.
         frame_previous = Frame()
         frame_previous.load_from_string_controller(
-            self.context.merged_dir + "merged_" + str(1) + ".jpg", self.controller)
+            self.context.merged_dir + "merged_" + str(1) + ".png", self.controller)
         self.pipe.save(frame_previous)
 
         current_upscaled_residuals = Frame()
@@ -141,7 +141,7 @@ class Merge(threading.Thread):
             # Manually write the image if we're preserving frames (this is for enthusiasts / debugging).
             # if self.preserve_frames:
             if True:
-                output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".jpg"
+                output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".png"
                 current_frame.save_image(output_file)
 
             print("hi147")

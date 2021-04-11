@@ -110,11 +110,11 @@ class Dandere2xServiceThread(threading.Thread):
         # measure the time to upscale a single frame for printing purposes
         one_frame_time = time.time()
         self.waifu2x.upscale_file(
-            input_image=self.context.input_frames_dir + "frame" + str(1) + ".jpg",
-            output_image=self.context.merged_dir + "merged_" + str(1) + ".jpg")
+            input_image=self.context.input_frames_dir + "frame" + str(1) + ".png",
+            output_image=self.context.merged_dir + "merged_" + str(1) + ".png")
 
         if not file_exists(
-                self.context.merged_dir + "merged_" + str(1) + ".jpg"):
+                self.context.merged_dir + "merged_" + str(1) + ".png"):
             """ 
             Ensure the first file was able to get upscaled. We literally cannot continue if it doesn't. 
             """
