@@ -36,9 +36,10 @@ void driver_difference(string workspace,
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
 
     auto frame_1 = make_shared<Frame>(image_prefix + to_string(1) + ".png");
+    // frame_1->convert_to_lab();
 
     int noise = 4;
-    frame_1->apply_noise(noise);
+    // frame_1->apply_noise(noise);
     for (int x = resume_count; x < frame_count; x++) {
         std::cout << "frame " << x << endl;
 
@@ -52,15 +53,18 @@ void driver_difference(string workspace,
         // Load next frame files
         auto frame_2 = make_shared<Frame>(image_prefix + to_string(x + 1) + ".png");
         auto frame_2_compressed = make_shared<Frame>(image_prefix + to_string(x + 1) + ".png", 95);
-        frame_2->apply_noise(noise);
-        frame_2_compressed->apply_noise(noise);
+
+//        frame_2->apply_noise(noise);
+//        frame_2_compressed->apply_noise(noise);
+        // frame_2->convert_to_lab();
+        // frame_2_compressed->convert_to_lab();
 
         auto *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
 
         PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library,
                                                           *frame_1, *frame_2, *frame_2_compressed, block_size);
         test_prediction.run();
-        // test_prediction.debug_visual(debug_file);
+        test_prediction.debug_predictive(debug_file);
         // test_prediction.update_frame();
         test_prediction.write(p_data_file, residual_file);
 

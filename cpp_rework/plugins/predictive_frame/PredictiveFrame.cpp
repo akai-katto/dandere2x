@@ -70,8 +70,8 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
     }
 
     // -1 denotes an invalid block.
-    this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_start, matched_block.y_start,
-                                                    matched_block.x_end, matched_block.y_end,
+    this->matched_blocks[x][y] = make_shared<Block>(x, y,
+                                                    x, y,
                                                     -1);
 }
 

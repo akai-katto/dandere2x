@@ -37,9 +37,18 @@ public:
 
     static inline int square(const Frame::Color &color_a, const Frame::Color &color_b);
 
+    static double compute_mse_lab(const Frame &image_a, const Frame &image_b,
+                                  int initial_x, int initial_y,
+                                  int variable_x, int variable_y, int block_size);
+
     static double compute_mse(const Frame &image_a, const Frame &image_b,
-                              int initial_x, int initial_y,
-                              int variable_x, int variable_y, int block_size);
+                                  int initial_x, int initial_y,
+                                  int variable_x, int variable_y, int block_size);
+
+    static double H(double q);
+
+    static double RGB2LAB ( int R_value, int G_value, int B_value, int R_value2, int G_value2, int B_value2);
+
 
 protected:
     bool evaluate_implementation(const Frame &current_frame,

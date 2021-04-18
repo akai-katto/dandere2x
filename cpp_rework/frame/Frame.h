@@ -113,6 +113,42 @@ public:
         image_colors[x][y] = color;
     }
 
+    struct lab{
+        int l;
+        int a;
+        int b;
+    };
+
+    static Frame::Color get_lab_from_rgb(const Frame::Color& col){
+        float_t var_R = float_t(col.r) / 255;
+        float_t var_G = float_t(col.g) / 255;
+        float_t var_B = float_t(col.b) / 255;
+
+        var_R = (var_R > 0.04045) ? pow((var_R + 0.055) / 1.055, 2.4)
+                                  : var_R / 12.92;
+        var_G = (var_G > 0.04045) ? pow((var_G + 0.055) / 1.055, 2.4)
+                                  : var_G / 12.92;
+        var_B = (var_B > 0.04045) ? pow((var_B + 0.055) / 1.055, 2.4)
+                                  : var_B / 12.92;
+
+        var_R *= 100;
+        var_G *= 100;
+        var_B *= 100;
+
+        Frame::Color result;
+        result.r = (int) (var_R * float_t(0.4124) + var_G * float_t(0.3576) + var_B * float_t(0.1805));
+        result.g = (int) (var_R * float_t(0.2126) + var_G * float_t(0.7152) + var_B * float_t(0.0722));
+        result.b = (int) (var_R * float_t(0.0193) + var_G * float_t(0.1192) + var_B * float_t(0.9505));
+
+        return result;
+    }
+
+    void convert_to_lab(){
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+                this->image_colors[x][y] = get_lab_from_rgb(this->get_color(x,y));
+    }
+
 private:
 
     // meta data //
