@@ -49,7 +49,6 @@ lab get_lab_from_rgb(const Frame::Color& col){
     return result;
 }
 
-
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -58,28 +57,11 @@ int main(int argc, char **argv) {
     using std::chrono::duration;
     using std::chrono::milliseconds;
 
-//    auto color1 = Frame::Color();
-//    color1.r = 128;
-//    color1.g = 200;
-//    color1.b = 192;
-//
-//    auto color2 = Frame::Color();
-//    color2.r = 128;
-//    color2.g = 200;
-//    color2.b = 192;
-//
-//    auto lab = get_lab_from_rgb(color1);
-//
-//    cout << lab.l << endl;
-//    cout << lab.a << endl;
-//    cout << lab.b << endl;
-
-
     bool debug = true; //debug flag
 
     string workspace = "C:\\Users\\Tyler\\Documents\\GitHub\\dandere2x\\src\\workspace\\gui\\subworkspace";
     int frame_count = 720;
-    int block_size = 30;
+    int block_size = 20;
     string run_type = "r";// 'n' or 'r'
     string extension_type = ".jpg";
     // cout << "Dandere2x CPP vDSSIM 1.0" << endl;

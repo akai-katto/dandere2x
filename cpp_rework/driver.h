@@ -2,19 +2,12 @@
 // Created by tyler on 04/04/2021.
 //
 
-//utilities
-char separator() {
-#ifdef __CYGWIN__
-    return '\\';
-#elif __MINGW32_
-    return '\\';
-#else
-    return '\\';
-#endif
-}
+#include "dandere2x_utilities.h"
 
 #ifndef CPP_REWORK_DRIVER_H
 #define CPP_REWORK_DRIVER_H
+
+using namespace dandere2x_utilities;
 
 #include "plugins/predictive_frame/PredictiveFrame.h"
 
@@ -35,11 +28,10 @@ void driver_difference(string workspace,
     string correction_prefix = workspace + separator() + "correction_data" + separator() + "correction_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
 
-    auto frame_1 = make_shared<Frame>(image_prefix + to_string(1) + ".png");
-    // frame_1->convert_to_lab();
+    auto frame1_path = image_prefix + to_string(1) + ".png";
+    wait_for_file(frame1_path);
+    auto frame_1 = make_shared<Frame>(frame1_path);
 
-    int noise = 4;
-    // frame_1->apply_noise(noise);
     for (int x = resume_count; x < frame_count; x++) {
         std::cout << "frame " << x << endl;
 
@@ -51,23 +43,23 @@ void driver_difference(string workspace,
         string debug_file = debug_frame_prefix + to_string(x) + ".png";
 
         // Load next frame files
-        auto frame_2 = make_shared<Frame>(image_prefix + to_string(x + 1) + ".png");
-        auto frame_2_compressed = make_shared<Frame>(image_prefix + to_string(x + 1) + ".png", 95);
+        auto frame_2_path = image_prefix + to_string(x + 1) + ".png";
 
-//        frame_2->apply_noise(noise);
-//        frame_2_compressed->apply_noise(noise);
-        // frame_2->convert_to_lab();
-        // frame_2_compressed->convert_to_lab();
+        auto frame_2 = make_shared<Frame>(frame_2_path);
+        auto frame_2_compressed = make_shared<Frame>(frame_2_path, 99);
+
 
         auto *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
 
         PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library,
                                                           *frame_1, *frame_2, *frame_2_compressed, block_size);
         test_prediction.run();
-        test_prediction.debug_predictive(debug_file);
-        // test_prediction.update_frame();
-        test_prediction.write(p_data_file, residual_file);
 
+        if (debug_enabled()){
+            test_prediction.debug_predictive(debug_file);
+        }
+
+        test_prediction.write(p_data_file, residual_file);
         test_prediction.write_empty_file(fade_file);
         test_prediction.write_empty_file(correction_file);
 

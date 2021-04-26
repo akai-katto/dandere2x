@@ -14,8 +14,7 @@ ffmpeg:
       -vsync: "cfr"
       -crf: 1
       -vf:
-        - "null"
-        # - noise=c0s=8:c0f=u
+         - noise=c0s=8:c0f=u
 
   convert_video_to_gif:
     output_options:

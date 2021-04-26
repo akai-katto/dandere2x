@@ -249,7 +249,7 @@ void Frame::sanity_check(const string &caller, const int x, const int y) const {
 // Purpose: Determine whether a block is within bounds of an image or not.
 //-----------------------------------------------------------------------------
 bool Frame::block_out_of_bounds(const int x, const int y, const int block_size) const {
-    return is_out_of_bounds(x + block_size, y + block_size);
+    return is_out_of_bounds(x + block_size, y + block_size );
 }
 
 //-----------------------------------------------------------------------------
@@ -257,7 +257,7 @@ bool Frame::block_out_of_bounds(const int x, const int y, const int block_size) 
 //          or not. To be called by any bounds checker in Frame.
 //-----------------------------------------------------------------------------
 bool Frame::is_out_of_bounds(const int x, const int y) const {
-    return x > width - 1 || y > height - 1 || x < 0 || y < 0;
+    return x > width || y > height  || x < 0 || y < 0;
 }
 
 

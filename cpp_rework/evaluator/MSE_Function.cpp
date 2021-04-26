@@ -40,12 +40,22 @@ bool MSE_FUNCTIONS::evaluate_implementation(const Frame &current_frame,
     // in reverse, (see how next_frame and current_frame_x are swapped), it preferoms correctly and well.
     // I'm not sure the origin of this bug, and suspect it may occur at a higher call, but chasing it down has
     // proven not fruitful. Please fix this when I get the time.
-    double image_1_image_2_mse = MSE_FUNCTIONS::compute_mse_lab(next_frame, current_frame,
+//    double image_1_image_2_mse = MSE_FUNCTIONS::compute_mse_lab(next_frame, current_frame,
+//                                                                current_frame_x, current_frame_y, next_frame_x,
+//                                                                next_frame_y,
+//                                                                block_size);
+//
+//    double image_2_image_2_compressed_mse = MSE_FUNCTIONS::compute_mse_lab(next_frame, next_frame_compressed,
+//                                                                           next_frame_x, next_frame_y, next_frame_x,
+//                                                                           next_frame_y,
+//                                                                           block_size);
+
+    double image_1_image_2_mse = MSE_FUNCTIONS::compute_mse(next_frame, current_frame,
                                                                 current_frame_x, current_frame_y, next_frame_x,
                                                                 next_frame_y,
                                                                 block_size);
 
-    double image_2_image_2_compressed_mse = MSE_FUNCTIONS::compute_mse_lab(next_frame, next_frame_compressed,
+    double image_2_image_2_compressed_mse = MSE_FUNCTIONS::compute_mse(next_frame, next_frame_compressed,
                                                                            next_frame_x, next_frame_y, next_frame_x,
                                                                            next_frame_y,
                                                                            block_size);
