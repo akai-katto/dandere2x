@@ -38,6 +38,7 @@ Purpose: Dandere2x is built to have multiple evaluators, i.e the user
 #define CPP_REWORK_ABSTRACTEVALUATOR_H
 
 // internal includes
+#include <cmath>
 #include <vector>
 #include <string>
 #include <memory>

@@ -136,13 +136,14 @@ Frame::Frame(const string &file_name, const int compression, const bool decimal)
 // Purpose: Copy Constructor that trivially copies another image.
 //-----------------------------------------------------------------------------
 Frame::Frame(const Frame &other) {
+
     this->height = other.get_height();
     this->width = other.get_width();
     this->file_name = other.get_file_name();
     this->bpp = other.bpp;
 
     // Begin the process of putting the stb image into our wrapper.
-    this->image_colors.resize(this->width, std::vector<Frame::Color>(this->height));
+    this->image_colors.resize(other.get_width(), std::vector<Frame::Color>(other.get_height()));
 
     // Fill our wrapper's image with stbi image information
     for (int x = 0; x < width; x++)
@@ -241,7 +242,7 @@ void Frame::sanity_check(const string &caller, const int x, const int y) const {
              << "Image Dimensions (Width / Height): " << this->width << " " << this->height << " \n"
              << "Illegal Access at (x,y) " << x << " " << y << endl;
 
-        throw "Ilegall Access!";
+        throw std::logic_error("Ilegall Access!");
     }
 }
 
@@ -290,7 +291,24 @@ void Frame::deconstruct_color(unsigned char *stb_image, const int x, const int y
     stb_image[x * 3 + 3 * y * width + 2] = pixel.b;
 }
 
+int Frame::bound_integer(int min, int max, int val) {
+    if (val <= min)
+        return min;
+    if (val >= max)
+        return max;
 
+    return val;
+}
+
+Frame::Color Frame::bound_color(int r, int g, int b){
+    Color returned_color{};
+    auto char_max = 255;
+
+    returned_color.r = (char) bound_integer(0, char_max, r);
+    returned_color.g = (char) bound_integer(0, char_max, g);
+    returned_color.b = (char) bound_integer(0, char_max, b);
+    return returned_color;
+}
 
 
 

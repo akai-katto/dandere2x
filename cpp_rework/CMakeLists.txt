@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(cpp_rework)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
@@ -13,4 +13,4 @@ if (OPENMP_FOUND)
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fopenmp")
-add_executable(cpp_rework main.cpp frame/Frame.cpp frame/Frame.h evaluator/MSE_Function.h evaluator/MSE_Function.cpp evaluator/SSIM_Function.cpp evaluator/SSIM_Function.h plugins/AbstractPlugin.h plugins/predictive_frame/PredictiveFrame.cpp plugins/predictive_frame/PredictiveFrame.h plugins/block_plugins/Block.h plugins/block_plugins/Block.cpp plugins/block_plugins/block_matching/DiamondSearch.cpp plugins/block_plugins/block_matching/DiamondSearch.h plugins/block_plugins/block_matching/ExhaustiveSearch.cpp plugins/block_plugins/block_matching/ExhaustiveSearch.h frame/external_headers/stb_image.h evaluator/AbstractEvaluator.h plugins/block_plugins/block_matching/AbstractBlockMatch.h frame/Frame_Utilities.h driver.h frame/lab_utilities.h dandere2x_utilities.h)
+add_executable(cpp_rework main.cpp frame/Frame.cpp frame/Frame.h evaluator/MSE_Function.h evaluator/MSE_Function.cpp evaluator/SSIM_Function.cpp evaluator/SSIM_Function.h plugins/AbstractPlugin.h plugins/predictive_frame/PredictiveFrame.cpp plugins/predictive_frame/PredictiveFrame.h plugins/block_plugins/Block.h plugins/block_plugins/Block.cpp plugins/block_plugins/block_matching/DiamondSearch.cpp plugins/block_plugins/block_matching/DiamondSearch.h plugins/block_plugins/block_matching/ExhaustiveSearch.cpp plugins/block_plugins/block_matching/ExhaustiveSearch.h frame/external_headers/stb_image.h evaluator/AbstractEvaluator.h plugins/block_plugins/block_matching/AbstractBlockMatch.h frame/Frame_Utilities.h driver.h frame/lab_utilities.h dandere2x_utilities.h plugins/frade_frame/FadeFrame.cpp plugins/frade_frame/FadeFrame.h)

@@ -10,11 +10,13 @@
 using namespace dandere2x_utilities;
 
 #include "plugins/predictive_frame/PredictiveFrame.h"
+#include "plugins/frade_frame/FadeFrame.h"
 
-void driver_difference(string workspace,
-                       int resume_count,
-                       int frame_count,
-                       int block_size) {
+void driver_difference(const string& workspace,
+                       const int resume_count,
+                       const int frame_count,
+                       const int block_size) {
+
     auto *evaluation_library = new MSE_FUNCTIONS();
 
     // Input Files
@@ -29,6 +31,7 @@ void driver_difference(string workspace,
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
 
     auto frame1_path = image_prefix + to_string(1) + ".png";
+
     wait_for_file(frame1_path);
     auto frame_1 = make_shared<Frame>(frame1_path);
 
@@ -44,24 +47,27 @@ void driver_difference(string workspace,
 
         // Load next frame files
         auto frame_2_path = image_prefix + to_string(x + 1) + ".png";
+        wait_for_file(frame_2_path);
 
         auto frame_2 = make_shared<Frame>(frame_2_path);
         auto frame_2_compressed = make_shared<Frame>(frame_2_path, 99);
 
+        FadeFrame fade = FadeFrame(evaluation_library,*frame_1, *frame_2, *frame_2_compressed, block_size);
+        fade.run();
+        fade.write(fade_file);
 
-        auto *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
-
-        PredictiveFrame test_prediction = PredictiveFrame(evaluation_library, search_library,
+        AbstractBlockMatch *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
+        PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
                                                           *frame_1, *frame_2, *frame_2_compressed, block_size);
-        test_prediction.run();
+        predict.run();
+        predict.write(p_data_file, residual_file);
+        free(search_library);
 
         if (debug_enabled()){
-            test_prediction.debug_predictive(debug_file);
+            predict.debug_predictive(debug_file);
         }
 
-        test_prediction.write(p_data_file, residual_file);
-        test_prediction.write_empty_file(fade_file);
-        test_prediction.write_empty_file(correction_file);
+        AbstractPlugin::write_empty_file(correction_file);
 
         frame_1 = frame_2;
     }

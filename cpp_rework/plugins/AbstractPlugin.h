@@ -83,7 +83,13 @@ public:
                 }
             }
         }
+        out.close();
+        std::rename((temp_file).c_str(), output.c_str());
+    }
 
+    static void write_empty_file(const string &output) {
+        string temp_file = output + ".temp";
+        std::ofstream out(temp_file);
 
         out.close();
         std::rename((temp_file).c_str(), output.c_str());

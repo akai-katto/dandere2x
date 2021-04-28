@@ -10,6 +10,12 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
+#include <unistd.h>
+
+// Need to include <windows.h> for mingw64 for sleep.
+#ifdef __MINGW64__
+#include <windows.h>
+#endif
 
 namespace dandere2x_utilities {
 
@@ -20,8 +26,10 @@ namespace dandere2x_utilities {
     char separator() {
 #ifdef __CYGWIN__
         return '\\';
-#else
+#elif __GNUC__
         return '/';
+#elif __MINGW64__
+        return '\\';
 #endif
     }
 
@@ -35,10 +43,15 @@ namespace dandere2x_utilities {
     void wait_for_file(const std::string &name) {
         int count = 0;
         while (true) {
-            if (file_exists(name)) {
+            if (file_exists(name))
                 break;
-            }
+
+            // Need to call different sleep implementation depending on implementation.
+#ifdef __MINGW64__
+            Sleep(100);
+#elif __GNUC__
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+#endif
             count++;
             if (std::remainder(count, 10) == 0) {
                 std::cout << "waiting for file more than 1 sec " << name << std::endl;

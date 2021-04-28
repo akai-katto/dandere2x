@@ -144,8 +144,6 @@ class Merge(threading.Thread):
                 output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".png"
                 current_frame.save_image(output_file)
 
-            print("hi147")
-
             #######################################
             # Assign variables for next iteration #
             #######################################
@@ -153,7 +151,6 @@ class Merge(threading.Thread):
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
                     wait_on_file(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
-            print("hi156")
             """
             Now that we're all done with the current frame, the current `current_frame` is now the frame_previous
             (with respect to the next iteration). We could obviously manually load frame_previous = Frame(n-1) each
@@ -161,8 +158,6 @@ class Merge(threading.Thread):
             """
             frame_previous = current_frame
             current_upscaled_residuals = background_frame_load.loaded_image
-
-            print("hi165")
             self.controller.update_frame_count(x)
 
         self.pipe.kill()
