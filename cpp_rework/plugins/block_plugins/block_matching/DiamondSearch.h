@@ -43,7 +43,7 @@ class DiamondSearch {
 public:
 
     // For some reason putting constructor in .cpp file gives an error...
-    DiamondSearch(const shared_ptr<Frame>& desired_image, const shared_ptr<Frame>& input_image, const int block_size){
+    DiamondSearch(){
 
     }
 

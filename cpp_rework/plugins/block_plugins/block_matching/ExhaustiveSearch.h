@@ -33,10 +33,7 @@ Purpose:
 
 class ExhaustiveSearch : public AbstractBlockMatch {
 public:
-    ExhaustiveSearch(const Frame &desired_image, const Frame &input_image) : AbstractBlockMatch(desired_image,
-                                                                                                input_image) {
-
-    }
+    ExhaustiveSearch() = default;
 
     // Implementation of match_block
     Block match_block(int x, int y, int block_size) override;

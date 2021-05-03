@@ -11,13 +11,14 @@ using namespace dandere2x_utilities;
 
 #include "plugins/predictive_frame/PredictiveFrame.h"
 #include "plugins/frade_frame/FadeFrame.h"
+#include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
 
 void driver_difference(const string& workspace,
-                       const int resume_count,
                        const int frame_count,
-                       const int block_size) {
+                       const int block_size,
+                       AbstractBlockMatch *search_library,
+                       AbstractEvaluator *evaluation_library) {
 
-    auto *evaluation_library = new MSE_FUNCTIONS();
 
     // Input Files
     string image_prefix = workspace + separator() + "inputs" + separator() + "frame";
@@ -35,7 +36,7 @@ void driver_difference(const string& workspace,
     wait_for_file(frame1_path);
     auto frame_1 = make_shared<Frame>(frame1_path);
 
-    for (int x = resume_count; x < frame_count; x++) {
+    for (int x = 1; x < frame_count; x++) {
         std::cout << "frame " << x << endl;
 
         // File Declarations
@@ -56,12 +57,11 @@ void driver_difference(const string& workspace,
         fade.run();
         fade.write(fade_file);
 
-        AbstractBlockMatch *search_library = new ExhaustiveSearch(*frame_2, *frame_1);
+        search_library->set_images(frame_1, frame_2);
         PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
                                                           *frame_1, *frame_2, *frame_2_compressed, block_size);
         predict.run();
         predict.write(p_data_file, residual_file);
-        free(search_library);
 
         if (debug_enabled()){
             predict.debug_predictive(debug_file);
@@ -72,6 +72,7 @@ void driver_difference(const string& workspace,
         frame_1 = frame_2;
     }
 
+    free(search_library);
 //    auto total_end = high_resolution_clock::now();
 //    auto total_duration = duration_cast<microseconds>(total_end - total_start);
 //    cout << "total time:  " << total_duration.count() << endl;

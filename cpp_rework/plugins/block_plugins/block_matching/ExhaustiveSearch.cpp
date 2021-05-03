@@ -61,11 +61,11 @@ Block ExhaustiveSearch::match_block(const int x, const int y, const int block_si
     vector<Block> blockSum = vector<Block>();
 
     //find initial disp
-    for (auto & iter : test) {
-        double sum = MSE_FUNCTIONS::compute_mse(this->input_image, this->desired_image,
-                                                    iter.x, iter.y,
-                                                    x, y,
-                                                    block_size);
+    for (auto &iter : test) {
+        double sum = MSE_FUNCTIONS::compute_mse(*this->input_image, *this->desired_image,
+                                                iter.x, iter.y,
+                                                x, y,
+                                                block_size);
         Block b = Block(iter.x, iter.y, x, y, sum);
         blockSum.push_back(b);
     }

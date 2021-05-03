@@ -11,6 +11,7 @@
     You should have received a copy of the GNU General Public License
     along with Dandere2x.  If not, see <https://www.gnu.org/licenses/>.
 """"""
+
 ========= Copyright aka_katto 2018, All rights reserved. ============
 Original Author: aka_katto 
 Purpose: Simply put, very expensive computations for Dandere2x are
@@ -42,10 +43,7 @@ class Dandere2xCppWrapper(threading.Thread):
                              self.context.service_request.workspace,
                              str(self.context.frame_count),
                              str(self.context.service_request.block_size),
-                             str(self.context.step_size),
-                             "r",
-                             str(1),
-                             ".jpg"]
+                             "exhaustive"]
 
     def join(self, timeout=None):
         self.log.info("Thread joined")
@@ -62,9 +60,9 @@ class Dandere2xCppWrapper(threading.Thread):
 
         self.dandere2x_cpp_subprocess.wait()
 
-        # if self.dandere2x_cpp_subprocess.returncode == 0:
-        #     logger.info("D2xcpp finished correctly.")
-        # elif self.dandere2x_cpp_subprocess.returncode != 0:
-        #     logger.error("D2xcpp ended unexpectedly.")
-        #     logger.error("Dandere2x will stop the current session.")
-        #     raise Exception
+        if self.dandere2x_cpp_subprocess.returncode == 0:
+            logger.info("D2xcpp finished correctly.")
+        elif self.dandere2x_cpp_subprocess.returncode != 0:
+            logger.error("D2xcpp ended unexpectedly.")
+            logger.error("Dandere2x will stop the current session.")
+            raise Exception

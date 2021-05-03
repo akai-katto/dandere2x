@@ -33,29 +33,36 @@ Purpose: An abstract block matching class that will implement a block
 #ifndef CPP_REWORK_ABSTRACTBLOCKMATCH_H
 #define CPP_REWORK_ABSTRACTBLOCKMATCH_H
 
+#include <memory>
+#include <utility>
 #include "../../../frame/Frame.h"
 #include "../Block.h"
 
 class AbstractBlockMatch {
 public:
-    AbstractBlockMatch(const Frame &desired_image, const Frame &input_image) {
-        this->desired_image = desired_image;
-        this->input_image = input_image;
+    AbstractBlockMatch()= default;;
 
-        this->width = desired_image.get_width();
-        this->height = desired_image.get_height();
+    // Set the current images so we can recycle the object pointer.
+    void set_images(shared_ptr<Frame> desired_image, shared_ptr<Frame> input_image){
+        this->desired_image = std::move(desired_image);
+        this->input_image = std::move(input_image);
+
+        this->width = this->desired_image->get_width();
+        this->height = this->desired_image->get_height();
     }
 
+    // Any implementation assumes that desired_image and input_image is not null and already set.
     virtual Block match_block(int x, int y, int block_size) = 0;
 
 protected:
 
-    Frame desired_image;
-    Frame input_image;
+    shared_ptr<Frame> desired_image = nullptr;
+    shared_ptr<Frame> input_image = nullptr;
 
-    int width;
-    int height;
+    int width = 0;
+    int height = 0;
 
 };
+
 
 #endif //CPP_REWORK_ABSTRACTBLOCKMATCH_H
