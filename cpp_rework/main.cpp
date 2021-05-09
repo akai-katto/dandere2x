@@ -14,6 +14,9 @@ using namespace std::chrono;
 #include "plugins/block_plugins/block_matching/ExhaustiveSearch.h"
 #include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
 #include "driver.h"
+#include "easyloggingpp/easylogging++.h"
+#include "dandere2x_utilities.h"
+
 
 using namespace std;
 
@@ -36,7 +39,18 @@ AbstractEvaluator *get_evaluator(const string &evaluator_arg) {
     throw std::logic_error("no valid evaluator selected");
 }
 
+INITIALIZE_EASYLOGGINGPP
 int main(int argc, char **argv) {
+
+    // Easy Logging Setup
+    // Sample output: 2021-05-08 18:51:54,662 INFO main.cpp : block_size: 20
+    el::Configurations c;
+    c.setToDefault();
+    c.parseFromText("*GLOBAL:\n Filename = default_log.txt");
+    c.parseFromText("*GLOBAL:\n Format = %datetime %level %fbase : %msg");
+    el::Loggers::reconfigureAllLoggers(c);
+
+    // Parses the users inputs and starts the driver to preform Dandere2x Block Matching Calculations.
     bool debug = false; //debug flag
 
     string workspace = "C:\\Users\\Tyler\\Documents\\GitHub\\dandere2x\\src\\workspace\\gui\\subworkspace";
@@ -45,7 +59,7 @@ int main(int argc, char **argv) {
     int frame_count = 720;
     int block_size = 20;
 
-    cout << "Dandere2x CPP vDSSIM 1.0" << endl;
+    // If not debug, load the passed variables.
     if (!debug) {
         workspace = argv[1];
         frame_count = atoi(argv[2]);
@@ -53,15 +67,21 @@ int main(int argc, char **argv) {
         block_matching_arg = argv[4];
     }
 
-    cout << "Settings" << endl;
-    cout << "workspace: " << workspace << endl;
-    cout << "frame_count: " << frame_count << endl;
-    cout << "block_size: " << block_size << endl;
+    LOG(INFO) << "Dandere2xCPP 2021 v0.1";
+    LOG(INFO) << "block_matching_arg: " << block_matching_arg << endl;
+    LOG(INFO) << "workspace: " << workspace << endl;
+    LOG(INFO) << "frame_count: " << frame_count << endl;
+    LOG(INFO) << "block_size: " << block_size << endl;
 
+    // Reset log file now that args have been properly parsed.
+    c.parseFromText("*GLOBAL:\n Filename = " + workspace + dandere2x_utilities::separator() + "dandere2x_cpp.log");
+    el::Loggers::reconfigureAllLoggers(c);
+
+    // Start the main driver after having loaded the arguments
     AbstractBlockMatch *matcher = get_block_matcher(block_matching_arg);
     AbstractEvaluator *evaluator = get_evaluator(evaluator_arg);
     driver_difference(workspace, frame_count, block_size, matcher, evaluator);
 
-    free(matcher);
+    free(matcher); // Free used memory
     return 0;
 }

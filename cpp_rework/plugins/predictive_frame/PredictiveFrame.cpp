@@ -25,9 +25,10 @@ Purpose: todo
 ===================================================================== */
 
 #include <omp.h>
-#include <math.h>
+#include <cmath>
 #include <fstream>
 #include "PredictiveFrame.h"
+#include "../../easyloggingpp/easylogging++.h"
 #include "../../frame/Frame_Utilities.h"
 
 //-----------------------------------------------------------------------------
@@ -125,7 +126,7 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
         ((block_size * block_size) * (matched_moving_blocks + matched_stationary_blocks)) / ((block_size + bleed) * (block_size + bleed))) {
         // We decided not to keep any of the blocks.. abandon all the progress we did in this function
 
-        std::cout << "Too many missing blocks - conducting redraw" << std::endl;
+        LOG(INFO) << "Too many missing blocks - conducting redraw" << std::endl;
         this->write_blocks(predictive_vectors_output, {});
         this->write_blocks(residual_vectors_output, {});
     }
@@ -150,7 +151,7 @@ void PredictiveFrame::write_positive_case(const string &predictive_vectors_outpu
      * stitched back together once it's finished.
      */
 
-    cout << "matched moving blocks: " << matched_moving_blocks << endl;
+    LOG(INFO) <<  "matched moving blocks: " << matched_moving_blocks << endl;
     // Create vectors matching the missing blocks to the residuals image.
     vector<shared_ptr<Block>> missing_blocks = PredictiveFrame::get_missing_blocks(this->matched_blocks);
     vector<shared_ptr<Block>> vector_displacements;

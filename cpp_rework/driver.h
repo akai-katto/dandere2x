@@ -2,23 +2,22 @@
 // Created by tyler on 04/04/2021.
 //
 
-#include "dandere2x_utilities.h"
-
 #ifndef CPP_REWORK_DRIVER_H
 #define CPP_REWORK_DRIVER_H
 
+#include "dandere2x_utilities.h"
 using namespace dandere2x_utilities;
 
 #include "plugins/predictive_frame/PredictiveFrame.h"
 #include "plugins/frade_frame/FadeFrame.h"
 #include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
+#include "easyloggingpp/easylogging++.h"
 
 void driver_difference(const string& workspace,
                        const int frame_count,
                        const int block_size,
                        AbstractBlockMatch *search_library,
                        AbstractEvaluator *evaluation_library) {
-
 
     // Input Files
     string image_prefix = workspace + separator() + "inputs" + separator() + "frame";
@@ -37,7 +36,7 @@ void driver_difference(const string& workspace,
     auto frame_1 = make_shared<Frame>(frame1_path);
 
     for (int x = 1; x < frame_count; x++) {
-        std::cout << "frame " << x << endl;
+        LOG(INFO) << "Current Frame: " << x << endl;
 
         // File Declarations
         string p_data_file = p_data_prefix + to_string(x) + ".txt";
@@ -71,12 +70,6 @@ void driver_difference(const string& workspace,
 
         frame_1 = frame_2;
     }
-
-    free(search_library);
-//    auto total_end = high_resolution_clock::now();
-//    auto total_duration = duration_cast<microseconds>(total_end - total_start);
-//    cout << "total time:  " << total_duration.count() << endl;
-
 }
 
 #endif //CPP_REWORK_DRIVER_H

@@ -15,6 +15,7 @@
 // Need to include <windows.h> for mingw64 for sleep.
 #ifdef __MINGW64__
 #include <windows.h>
+#include "easyloggingpp/easylogging++.h"
 #endif
 
 namespace dandere2x_utilities {
@@ -54,7 +55,7 @@ namespace dandere2x_utilities {
 #endif
             count++;
             if (std::remainder(count, 10) == 0) {
-                std::cout << "waiting for file more than 1 sec " << name << std::endl;
+                LOG(WARNING) << "Waiting for file more than 1 sec: " << name << std::endl;
                 count = 0;
             }
         }
