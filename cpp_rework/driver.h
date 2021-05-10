@@ -26,8 +26,6 @@ void driver_difference(const string& workspace,
     string p_data_prefix = workspace + separator() + "pframe_data" + separator() + "pframe_";
     string residual_data_prefix = workspace + separator() + "residual_data" + separator() + "residual_";
     string debug_frame_prefix = workspace + separator() + "debug" + separator() + "debug_";
-
-    string correction_prefix = workspace + separator() + "correction_data" + separator() + "correction_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
 
     auto frame1_path = image_prefix + to_string(1) + ".png";
@@ -41,7 +39,6 @@ void driver_difference(const string& workspace,
         // File Declarations
         string p_data_file = p_data_prefix + to_string(x) + ".txt";
         string residual_file = residual_data_prefix + to_string(x) + ".txt";
-        string correction_file = correction_prefix + to_string(x) + ".txt";
         string fade_file = fade_prefix + to_string(x) + ".txt";
         string debug_file = debug_frame_prefix + to_string(x) + ".png";
 
@@ -65,8 +62,6 @@ void driver_difference(const string& workspace,
         if (debug_enabled()){
             predict.debug_predictive(debug_file);
         }
-
-        AbstractPlugin::write_empty_file(correction_file);
 
         frame_1 = frame_2;
     }

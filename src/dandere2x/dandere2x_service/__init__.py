@@ -21,6 +21,22 @@ from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xCo
 from dandere2x.dandere2xlib.utils.dandere2x_utils import file_exists
 
 
+def _get_upscale_engine(selected_engine: UpscalingEngineType) -> Type[AbstractUpscaler]:
+
+    if selected_engine == UpscalingEngineType.CONVERTER_CPP:
+        return Waifu2xConverterCpp
+
+    if selected_engine == UpscalingEngineType.VULKAN:
+        return Waifu2xNCNNVulkan
+
+    if selected_engine == UpscalingEngineType.CAFFE:
+        return Waifu2xCaffe
+
+    else:
+        print("no valid waifu2x selected")
+        raise Exception
+
+
 class Dandere2xServiceThread(threading.Thread):
 
     def __init__(self, service_request: Dandere2xServiceRequest):
@@ -49,7 +65,7 @@ class Dandere2xServiceThread(threading.Thread):
         self.status_thread = Status(self.context, self.controller)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context, self.controller)
 
-        selected_waifu2x = self._get_upscale_engine(service_request.upscale_engine)
+        selected_waifu2x = _get_upscale_engine(service_request.upscale_engine)
         self.waifu2x = selected_waifu2x(context=self.context, controller=self.controller)
 
         self.residual_thread = Residual(self.context, self.controller)
@@ -78,6 +94,9 @@ class Dandere2xServiceThread(threading.Thread):
         self.waifu2x.start()
         self.status_thread.start()
 
+        while self.controller.get_current_frame() < self.context.frame_count - 1:
+            time.sleep(1)
+
         self.min_disk_demon.join()
         self.dandere2x_cpp_thread.join()
         self.merge_thread.join()
@@ -86,20 +105,6 @@ class Dandere2xServiceThread(threading.Thread):
         self.status_thread.join()
 
     # todo, remove this dependency.
-    def _get_upscale_engine(self, selected_engine: UpscalingEngineType) -> Type[AbstractUpscaler]:
-
-        if selected_engine == UpscalingEngineType.CONVERTER_CPP:
-            return Waifu2xConverterCpp
-
-        if selected_engine == UpscalingEngineType.VULKAN:
-            return Waifu2xNCNNVulkan
-
-        if selected_engine == UpscalingEngineType.CAFFE:
-            return Waifu2xCaffe
-
-        else:
-            print("no valid waifu2x selected")
-            raise Exception
 
     def __upscale_first_frame(self):
         """

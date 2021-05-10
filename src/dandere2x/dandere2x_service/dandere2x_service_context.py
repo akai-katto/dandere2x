@@ -28,7 +28,6 @@ class Dandere2xServiceContext:
         self.residual_upscaled_dir = os.path.join(service_request.workspace, "residual_upscaled") + os.path.sep
         self.residual_data_dir = os.path.join(service_request.workspace, "residual_data") + os.path.sep
         self.pframe_data_dir = os.path.join(service_request.workspace, "pframe_data") + os.path.sep
-        self.correction_data_dir = os.path.join(service_request.workspace, "correction_data") + os.path.sep
         self.merged_dir = os.path.join(service_request.workspace, "merged") + os.path.sep
         self.fade_data_dir = os.path.join(service_request.workspace, "fade_data") + os.path.sep
         self.debug_dir = os.path.join(service_request.workspace, "debug") + os.path.sep
@@ -39,7 +38,6 @@ class Dandere2xServiceContext:
         self.log_dir = os.path.join(service_request.workspace, "log_dir") + os.path.sep
 
         self.directories = {self.input_frames_dir,
-                            self.correction_data_dir,
                             self.residual_images_dir,
                             self.residual_upscaled_dir,
                             self.merged_dir,
