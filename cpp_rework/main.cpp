@@ -15,7 +15,6 @@ using namespace std::chrono;
 #include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
 #include "driver.h"
 #include "easyloggingpp/easylogging++.h"
-#include "dandere2x_utilities.h"
 
 
 using namespace std;
@@ -58,6 +57,7 @@ int main(int argc, char **argv) {
     string evaluator_arg = "mse";
     int frame_count = 720;
     int block_size = 20;
+    int quality_setting = 95;
 
     // If not debug, load the passed variables.
     if (!debug) {
@@ -65,9 +65,12 @@ int main(int argc, char **argv) {
         frame_count = atoi(argv[2]);
         block_size = atoi(argv[3]);
         block_matching_arg = argv[4];
+        evaluator_arg = argv[5];
+        quality_setting = atoi(argv[6]);
     }
 
     LOG(INFO) << "Dandere2xCPP 2021 v0.1";
+    LOG(INFO) << "evaluator_arg: " << evaluator_arg << endl;
     LOG(INFO) << "block_matching_arg: " << block_matching_arg << endl;
     LOG(INFO) << "workspace: " << workspace << endl;
     LOG(INFO) << "frame_count: " << frame_count << endl;
@@ -80,7 +83,7 @@ int main(int argc, char **argv) {
     // Start the main driver after having loaded the arguments
     AbstractBlockMatch *matcher = get_block_matcher(block_matching_arg);
     AbstractEvaluator *evaluator = get_evaluator(evaluator_arg);
-    driver_difference(workspace, frame_count, block_size, matcher, evaluator);
+    driver_difference(workspace, frame_count, block_size, quality_setting, matcher, evaluator);
 
     free(matcher); // Free used memory
     return 0;

@@ -68,11 +68,9 @@ public:
 
     // Constructors //
 
-    Frame(const string& file_name);
+    explicit Frame(const string& file_name);
 
-    Frame(const string& file_name, const int compression);
-
-    Frame(const string& file_name, const int compression, const bool decimal);
+    Frame(const string& file_name, const int compression, const string& workspace);
 
     Frame(const Frame& other);
 

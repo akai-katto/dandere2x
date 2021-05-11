@@ -26,10 +26,12 @@ Purpose:
  */
 
 #include <iostream>
+#include <cstdio>
 #include <random>
-#include "Frame.h"
 
 // local includes
+#include "../dandere2x_utilities.h"
+#include "Frame.h"
 #include "external_headers/stb_image.h"
 #include "external_headers/stb_image_write.h"
 
@@ -65,11 +67,11 @@ Frame::Frame(const string &file_name) {
 //----------------------------------------------------
 // Purpose: todo
 //----------------------------------------------------
-Frame::Frame(const string &file_name, const int compression) {
+Frame::Frame(const string &file_name, const int compression, const string &workspace) {
     int width, height, bpp;
     unsigned char *stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
 
-    string temp_name = "C:\\Users\\Tyler\\Desktop\\temp_folder\\temp.jpg";
+    string temp_name = workspace + dandere2x_utilities::separator() + "temp.jpg";
     stbi_write_jpg(temp_name.c_str(), width, height, bpp, stb_image, compression);
     stbi_image_free(stb_image);
 
@@ -88,47 +90,7 @@ Frame::Frame(const string &file_name, const int compression) {
             this->image_colors[x][y] = this->construct_color(stb_image, x, y);
 
     stbi_image_free(stb_image);
-
-}
-
-Frame::Frame(const string &file_name, const int compression, const bool decimal) {
-
-    int width, height, bpp;
-    unsigned char *stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
-    this->height = height;
-    this->width = width;
-    this->file_name = file_name;
-    this->bpp = bpp;
-
-    vector<vector<Frame::Color>> base_image;
-    base_image.resize(this->width, std::vector<Frame::Color>(this->height));
-
-    for (int x = 0; x < width; x++)
-        for (int y = 0; y < height; y++)
-            base_image[x][y] = this->construct_color(stb_image, x, y);
-
-    string temp_name = std::tmpnam(nullptr);
-    stbi_write_jpg(temp_name.c_str(), width, height, bpp, stb_image, compression);
-    stbi_image_free(stb_image);
-    stb_image = stbi_load(temp_name.c_str(), &width, &height, &bpp, 3);
-
-    // create a vector for compressed frame
-    vector<vector<Frame::Color>> compressed_colors;
-    compressed_colors.resize(this->width, std::vector<Frame::Color>(this->height));
-
-    for (int x = 0; x < width; x++)
-        for (int y = 0; y < height; y++)
-            compressed_colors[x][y] = this->construct_color(stb_image, x, y);
-    stbi_image_free(stb_image);
-
-    // Begin the process of putting the stb image into our wrapper.
-    this->image_colors.resize(this->width, std::vector<Frame::Color>(this->height));
-
-    // Fill our wrapper's image with stbi image information
-    for (int x = 0; x < width; x++)
-        for (int y = 0; y < height; y++)
-            this->image_colors[x][y] = average_color(base_image[x][y], average_color(base_image[x][y], compressed_colors[x][y]));
-
+    std::remove(temp_name.c_str());
 }
 
 
