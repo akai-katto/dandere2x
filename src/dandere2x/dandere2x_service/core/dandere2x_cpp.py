@@ -43,8 +43,8 @@ class Dandere2xCppWrapper(threading.Thread):
                              self.context.service_request.workspace,
                              str(self.context.frame_count),
                              str(self.context.service_request.block_size),
-                             "exhaustive",
-                             "mse",
+                             self.context.dandere2x_cpp_block_matching_arg,
+                             self.context.dandere2x_cpp_evaluator_arg,
                              str(self.context.service_request.quality_minimum)]
 
     def join(self, timeout=None):

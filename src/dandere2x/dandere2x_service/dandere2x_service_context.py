@@ -65,6 +65,11 @@ class Dandere2xServiceContext:
         self.step_size = 4
         self.max_frames_ahead = 100
 
+        # Dandere2xCPP
+        self.dandere2x_cpp_block_matching_arg = self.service_request.output_options["dandere2x_cpp"]["block_matching_arg"]
+        self.dandere2x_cpp_evaluator_arg = self.service_request.output_options["dandere2x_cpp"]["evaluator_arg"]
+
+
     def log_all_variables(self):
         log = logging.getLogger(name=self.service_request.input_file)
 

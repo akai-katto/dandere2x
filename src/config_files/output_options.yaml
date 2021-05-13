@@ -6,6 +6,10 @@ realsr_ncnn_vulkan:
     -tile-size: 200  # note: if you get black images try lowering this tile argument to some lower value.
     -verbose: null
 
+dandere2x_cpp:
+  block_matching_arg: "exhaustive"
+  evaluator_arg: "mse"
+
 ffmpeg:
   pre_process_video:
     -hwaccel: auto
