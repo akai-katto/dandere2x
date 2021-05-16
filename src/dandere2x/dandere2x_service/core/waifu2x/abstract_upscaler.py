@@ -150,14 +150,15 @@ class RemoveUpscaledFiles(Thread):
         # make a list of names that will eventually (past or future) be upscaled
         self.list_of_names = []
         for x in range(1, self.context.frame_count):
-            self.list_of_names.append("output_" + get_lexicon_value(6, x) + ".jpg")
+            self.list_of_names.append("output_" + get_lexicon_value(6, x) + ".png")
 
     # todo, fix this a bit. This isn't scalable / maintainable
     def run(self) -> None:
+
         for x in range(len(self.list_of_names)):
             name = self.list_of_names[x]
-            residual_file = self.context.residual_images_dir + name.replace(".png", ".jpg")
-            residual_upscaled_file = self.context.residual_upscaled_dir + name.replace(".jpg", ".png")
+            residual_file = self.context.residual_images_dir + name
+            residual_upscaled_file = self.context.residual_upscaled_dir + name
 
             wait_on_file(residual_upscaled_file)
 

@@ -81,3 +81,25 @@
 
 2021-05-10 19:56:58,949 INFO main.cpp : block_size: 20
 
+2021-05-15 17:07:45,221 INFO main.cpp : Dandere2xCPP 2021 v0.1
+2021-05-15 17:07:45,222 INFO main.cpp : evaluator_arg: mse
+
+2021-05-15 17:07:45,222 INFO main.cpp : block_matching_arg: exhaustive
+
+2021-05-15 17:07:45,222 INFO main.cpp : workspace: C:\Users\Tyler\Documents\GitHub\dandere2x\src\workspace\gui\subworkspace
+
+2021-05-15 17:07:45,222 INFO main.cpp : frame_count: 240
+
+2021-05-15 17:07:45,222 INFO main.cpp : block_size: 20
+
+2021-05-15 17:15:35,370 INFO main.cpp : Dandere2xCPP 2021 v0.1
+2021-05-15 17:15:35,370 INFO main.cpp : evaluator_arg: mse
+
+2021-05-15 17:15:35,370 INFO main.cpp : block_matching_arg: exhaustive
+
+2021-05-15 17:15:35,370 INFO main.cpp : workspace: C:\Users\Tyler\Documents\GitHub\dandere2x\src\workspace\gui\subworkspace
+
+2021-05-15 17:15:35,370 INFO main.cpp : frame_count: 240
+
+2021-05-15 17:15:35,370 INFO main.cpp : block_size: 20
+

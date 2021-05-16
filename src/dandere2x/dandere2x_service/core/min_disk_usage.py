@@ -124,14 +124,12 @@ class MinDiskUsage(threading.Thread):
         prediction_data_file_r = pframe_data_dir + "pframe_" + index_to_remove + ".txt"
         residual_data_file_r = residual_data_dir + "residual_" + index_to_remove + ".txt"
         fade_data_file_r = fade_data_dir + "fade_" + index_to_remove + ".txt"
-        input_image_r = input_frames_dir + "frame" + index_to_remove + ".jpg"
-        compressed_file_static_r = compressed_static_dir + "compressed_" + index_to_remove + ".jpg"
+        input_image_r = input_frames_dir + "frame" + index_to_remove + ".png"
         upscaled_file_r = residual_upscaled_dir + "output_" + get_lexicon_value(6, int(remove_before)) + ".png"
 
         # "mark" them
         remove = [prediction_data_file_r, residual_data_file_r,
-                  fade_data_file_r, input_image_r,  upscaled_file_r,
-                  compressed_file_static_r]
+                  fade_data_file_r, input_image_r,  upscaled_file_r]
 
         # remove
         threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True, name="mindiskusage").start()
