@@ -68,6 +68,9 @@ int main(int argc, char **argv) {
         evaluator_arg = argv[5];
         quality_setting = atoi(argv[6]);
     }
+    // Reset log file now that args have been properly parsed.
+    c.parseFromText("*GLOBAL:\n Filename = " + workspace + dandere2x_utilities::separator() + "dandere2x_cpp.log");
+    el::Loggers::reconfigureAllLoggers(c);
 
     LOG(INFO) << "Dandere2xCPP 2021 v0.1";
     LOG(INFO) << "evaluator_arg: " << evaluator_arg << endl;
@@ -75,10 +78,7 @@ int main(int argc, char **argv) {
     LOG(INFO) << "workspace: " << workspace << endl;
     LOG(INFO) << "frame_count: " << frame_count << endl;
     LOG(INFO) << "block_size: " << block_size << endl;
-
-    // Reset log file now that args have been properly parsed.
-    c.parseFromText("*GLOBAL:\n Filename = " + workspace + dandere2x_utilities::separator() + "dandere2x_cpp.log");
-    el::Loggers::reconfigureAllLoggers(c);
+    LOG(INFO) << "quality setting: " << quality_setting << endl;
 
     // Start the main driver after having loaded the arguments
     AbstractBlockMatch *matcher = get_block_matcher(block_matching_arg);

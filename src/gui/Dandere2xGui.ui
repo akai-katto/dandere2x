@@ -2135,6 +2135,11 @@
       <string>99</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>100</string>
+     </property>
+    </item>
    </widget>
    <widget class="QLabel" name="video_label_5">
     <property name="geometry">

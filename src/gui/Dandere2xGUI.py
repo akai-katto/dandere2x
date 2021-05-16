@@ -713,6 +713,7 @@ class Ui_Dandere2xGUI(object):
         self.image_quality_box.addItem("")
         self.image_quality_box.addItem("")
         self.image_quality_box.addItem("")
+        self.image_quality_box.addItem("")
         self.video_label_5 = QtWidgets.QLabel(self.centralwidget)
         self.video_label_5.setGeometry(QtCore.QRect(490, 140, 131, 21))
         palette = QtGui.QPalette()
@@ -1366,6 +1367,7 @@ class Ui_Dandere2xGUI(object):
         self.image_quality_box.setItemText(2, _translate("Dandere2xGUI", "97"))
         self.image_quality_box.setItemText(3, _translate("Dandere2xGUI", "98"))
         self.image_quality_box.setItemText(4, _translate("Dandere2xGUI", "99"))
+        self.image_quality_box.setItemText(5, _translate("Dandere2xGUI", "100"))
         self.video_label_5.setText(_translate("Dandere2xGUI", "Image Quality"))
         self.video_label_6.setToolTip(_translate("Dandere2xGUI", "Block size Dandere2x will use to compute blocks. You NEED to select a video first before\n"
 "                        selecting this.,\n"

@@ -16,7 +16,7 @@
 
 using namespace std;
 
-class FadeFrame : AbstractPlugin {
+class FadeFrame : public AbstractPlugin {
 public:
     FadeFrame(AbstractEvaluator *eval,
               Frame &current_frame,
