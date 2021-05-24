@@ -55,9 +55,9 @@ int main(int argc, char **argv) {
     string workspace = "C:\\Users\\Tyler\\Documents\\GitHub\\dandere2x\\src\\workspace\\gui\\subworkspace";
     string block_matching_arg = "exhaustive";
     string evaluator_arg = "mse";
-    int frame_count = 720;
+    int frame_count = 240;
     int block_size = 20;
-    int quality_setting = 95;
+    int quality_setting = 100;
 
     // If not debug, load the passed variables.
     if (!debug) {

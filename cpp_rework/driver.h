@@ -6,6 +6,7 @@
 #define CPP_REWORK_DRIVER_H
 
 #include "dandere2x_utilities.h"
+
 using namespace dandere2x_utilities;
 
 #include "plugins/predictive_frame/PredictiveFrame.h"
@@ -13,7 +14,7 @@ using namespace dandere2x_utilities;
 #include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
 #include "easyloggingpp/easylogging++.h"
 
-void driver_difference(const string& workspace,
+void driver_difference(const string &workspace,
                        const int frame_count,
                        const int block_size,
                        const int quality_setting,
@@ -50,18 +51,19 @@ void driver_difference(const string& workspace,
         auto frame_2 = make_shared<Frame>(frame_2_path);
         auto frame_2_compressed = make_shared<Frame>(frame_2_path, quality_setting, workspace);
 
-        // FadeFrame fade = FadeFrame(evaluation_library,*frame_1, *frame_2, *frame_2_compressed, block_size);
-        // fade.run();
-        //fade.write(fade_file);
-        FadeFrame::write_empty_file(fade_file);
+        FadeFrame fade = FadeFrame(evaluation_library, *frame_1, *frame_2, *frame_2_compressed, block_size);
+        fade.run();
+        fade.write(fade_file);
+
+//        FadeFrame::write_empty_file(fade_file);
 
         search_library->set_images(frame_1, frame_2);
         PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
-                                                          *frame_1, *frame_2, *frame_2_compressed, block_size);
+                                                  *frame_1, *frame_2, *frame_2_compressed, block_size);
         predict.run();
         predict.write(p_data_file, residual_file);
 
-        if (debug_enabled()){
+        if (debug_enabled()) {
             predict.debug_predictive(debug_file);
         }
 

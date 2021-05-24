@@ -198,7 +198,7 @@ class Merge(threading.Thread):
         ###################
 
         # Note: Run the residual_plugins in the SAME order it was ran in dandere2x_cpp. If not, it won't work correctly.
-        out_image = pframe_image(context, out_image, frame_previous, frame_residual, list_residual, list_predictive)
         out_image = fade_image(context, out_image, list_fade)
+        out_image = pframe_image(context, out_image, frame_previous, frame_residual, list_residual, list_predictive)
 
         return out_image

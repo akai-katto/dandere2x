@@ -70,7 +70,7 @@ def load_executable_paths_yaml() -> dict:
     # executable, and return whatever one works. I wish the frozen thing worked on my system
     potential_main_paths = [os.path.dirname(os.path.abspath(sys.executable)), Path(path.abspath(sys.modules['__main__'].__file__)).parent]
 
-
+    # This is acquired technical debt / my pyinstaller refuses to work by simply checking if it's frozen.
     for potential in potential_main_paths:
         # get location of dandere2x directories (will be in the same folder as main)
         configfile = "executable_paths.yaml"
@@ -83,6 +83,7 @@ def load_executable_paths_yaml() -> dict:
             with open(directory_file, "r") as read_file:
                 config = yaml.safe_load(read_file)
                 logger.info(f"Main path {potential} loaded {configfile} successfully. ")
+                break
         except:
             logger.info(f"main_path option {potential} did not work, trying the next main_path option")
 
