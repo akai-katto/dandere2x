@@ -42,13 +42,12 @@ class PredictiveFrame : AbstractPlugin {
 public:
     PredictiveFrame(AbstractEvaluator *eval,
                     AbstractBlockMatch *block_matcher,
-                    Frame &current_frame,
-                    Frame &next_frame,
-                    const Frame &next_frame_compressed,
+                    shared_ptr<Frame> current_frame,
+                    shared_ptr<Frame> next_frame,
+                    shared_ptr<Frame> next_frame_compressed,
                     const int block_size) : AbstractPlugin(current_frame,
-                                                     next_frame,
-                                                     next_frame_compressed,
-                                                     block_size){
+                                                           next_frame,
+                                                           next_frame_compressed, block_size){
         this->eval = eval;
         this->block_matcher = block_matcher;
 
@@ -56,7 +55,7 @@ public:
         // the code starts running.
         // todo, fix this to not use as much memory, we're reserving pointers for each pixel, when each block should
         // be the stuff getting reserved.
-        this->matched_blocks.resize(next_frame.get_width(), vector<shared_ptr<Block>>(next_frame.get_height()));
+        this->matched_blocks.resize(next_frame->get_width(), vector<shared_ptr<Block>>(next_frame->get_height()));
 
     }
 

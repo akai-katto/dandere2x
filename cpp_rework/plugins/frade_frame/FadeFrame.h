@@ -19,14 +19,14 @@ using namespace std;
 class FadeFrame : public AbstractPlugin {
 public:
     FadeFrame(AbstractEvaluator *eval,
-              Frame &current_frame,
-              Frame &next_frame,
-              const Frame &next_frame_compressed,
+              shared_ptr<Frame> current_frame,
+              shared_ptr<Frame> next_frame,
+              shared_ptr<Frame> next_frame_compressed,
               const int block_size) : AbstractPlugin(current_frame,
                                                      next_frame,
                                                      next_frame_compressed,
                                                      block_size) {
-        current_frame_copy = Frame(current_frame);
+        current_frame_copy = shared_ptr<Frame>(current_frame);
         this->eval = eval;
     }
 
@@ -53,7 +53,7 @@ private:
 
     static void add_scalar_to_image(Frame &updated_frame, int x_start, int y_start, int scalar, int block_size);
 
-    Frame current_frame_copy;
+    shared_ptr<Frame> current_frame_copy;
     AbstractEvaluator *eval;
     vector<FadeBlock> fade_blocks;
 };

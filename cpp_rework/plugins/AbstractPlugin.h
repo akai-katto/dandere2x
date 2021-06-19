@@ -31,6 +31,7 @@ Purpose: An abstract class describing inherited d2x_cpp classes.
 #include <string>
 #include <utility>
 #include <fstream>
+#include <memory>
 #include "../frame/Frame.h"
 #include "block_plugins/Block.h"
 
@@ -41,9 +42,9 @@ public:
 
     // Note that "current_frame" is not const, and can be updated in the "update_frame" function, once the plugin
     // "updates" it.
-    AbstractPlugin(Frame &current_frame,
-                   Frame &next_frame,
-                   const Frame &next_frame_compressed,
+    AbstractPlugin(shared_ptr<Frame> current_frame,
+                   shared_ptr<Frame> next_frame,
+                   shared_ptr<Frame> next_frame_compressed,
                    const int block_size) {
 
         this->current_frame = current_frame;
@@ -100,9 +101,9 @@ protected:
     // Every plugin *should* utilize some sort of parallel optimization, although it doesn't need t.
     virtual void parallel_function_call(int x, int y) = 0;
 
-    Frame current_frame;
-    Frame next_frame;
-    Frame next_frame_compressed;
+    shared_ptr<Frame> current_frame;
+    shared_ptr<Frame> next_frame;
+    shared_ptr<Frame> next_frame_compressed;
 
     int block_size;
 

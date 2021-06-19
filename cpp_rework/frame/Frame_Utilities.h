@@ -10,8 +10,8 @@
 class FrameUtilities{
 public:
 
-    static void copy_frame_using_blocks(Frame &final_frame,
-                                        const Frame &base_image,
+    static void copy_frame_using_blocks(shared_ptr<Frame> final_frame,
+                                        shared_ptr<Frame> base_image,
                                         const vector<vector<shared_ptr<Block>>>& matched_blocks,
                                         const int block_size){
         for (const vector<shared_ptr<Block>>& row: matched_blocks){
@@ -25,11 +25,10 @@ public:
                     continue;
 
 
-
                 for (int i = 0; i < block_size; i++) {
                     for (int j = 0; j < block_size; j++) {
-                        final_frame.set_color(block->x_start + i, block->y_start + j,
-                                              base_image.get_color(block->x_end + i, block->y_end + j));
+                        final_frame->set_color(block->x_start + i, block->y_start + j,
+                                              base_image->get_color(block->x_end + i, block->y_end + j));
                     }
                 }
             }

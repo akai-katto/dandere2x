@@ -39,8 +39,8 @@ Purpose: todo
 void PredictiveFrame::parallel_function_call(int x, int y) {
 
     // Check if stationary block match works.
-    if (eval->evaluate(this->current_frame,
-                       this->next_frame, this->next_frame_compressed,
+    if (eval->evaluate(*this->current_frame,
+                       *this->next_frame, *this->next_frame_compressed,
                        x, y,
                        x, y,
                        block_size)) {
@@ -82,7 +82,7 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
 //-----------------------------------------------------------------------------
 void PredictiveFrame::run() {
 
-    double psnr = eval->psnr_two_frames(current_frame, next_frame);
+    double psnr = eval->psnr_two_frames(*current_frame, *next_frame);
 
     // Don't conduct block matches if the PSNR is terribly low.
     if (psnr < 10) {
@@ -106,8 +106,8 @@ void PredictiveFrame::match_blocks() {
 
 #pragma omp parallel for shared(current_frame, next_frame, next_frame_compressed, matched_blocks) private(x, y)
 
-    for (x = 0; x < current_frame.get_width() / block_size; x++) {
-        for (y = 0; y < current_frame.get_height() / block_size; y++) {
+    for (x = 0; x < current_frame->get_width() / block_size; x++) {
+        for (y = 0; y < current_frame->get_height() / block_size; y++) {
             parallel_function_call(x * block_size, y * block_size);
         }
     }
@@ -120,11 +120,11 @@ void PredictiveFrame::match_blocks() {
 // Purpose: Writes the residuals (i.e the blocks that did not get matched )
 //-----------------------------------------------------------------------------
 void PredictiveFrame::write(const string &predictive_vectors_output, const string &residual_vectors_output) {
-    int max_blocks_possible = (current_frame.get_height() * this->current_frame.get_width()) / (block_size * block_size);
+    int max_blocks_possible = (current_frame->get_height() * this->current_frame->get_width()) / (block_size * block_size);
     int total_found_blocks = (matched_stationary_blocks + matched_moving_blocks);
     int missing_blocks = max_blocks_possible - total_found_blocks;
     int missing_blocks_pixel_count = missing_blocks * ((block_size + 1) * (block_size + 1));
-    int total_pixels = current_frame.get_width() * current_frame.get_height();
+    int total_pixels = current_frame->get_width() * current_frame->get_height();
 
     LOG(INFO) << "Comparing " << (int) (total_pixels * 0.95) << " < " << missing_blocks_pixel_count << std::endl;
 
@@ -206,16 +206,16 @@ void PredictiveFrame::update_frame() {
 
 
 void PredictiveFrame::debug_visual(const string &output_image) {
-    Frame debug_frame = Frame(current_frame.get_width(), current_frame.get_height(), this->current_frame.get_bpp());
-    FrameUtilities::copy_frame_using_blocks(debug_frame,
-                                            current_frame,
-                                            this->matched_blocks,
-                                            this->block_size);
-    debug_frame.write(output_image);
+//    Frame debug_frame = Frame(current_frame->get_width(), current_frame->get_height(), this->current_frame->get_bpp());
+//    FrameUtilities::copy_frame_using_blocks(debug_frame,
+//                                            current_frame,
+//                                            this->matched_blocks,
+//                                            this->block_size);
+//    debug_frame.write(output_image);
 }
 
 void PredictiveFrame::debug_predictive(const string &output_image) {
-    this->next_frame.write(output_image);
+    this->next_frame->write(output_image);
 }
 
 

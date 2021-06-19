@@ -7,8 +7,8 @@
 
 // todo, implement parralizable implementation for fade (if needed)
 void FadeFrame::run() {
-    for (int x = 0; x < current_frame.get_width() / block_size; x++) {
-        for (int y = 0; y < current_frame.get_height() / block_size; y++) {
+    for (int x = 0; x < current_frame->get_width() / block_size; x++) {
+        for (int y = 0; y < current_frame->get_height() / block_size; y++) {
             parallel_function_call(x * block_size, y * block_size);
         }
     }
@@ -18,7 +18,7 @@ void FadeFrame::run() {
 void FadeFrame::update_frame() {
 
     for (auto fb : this->fade_blocks) {
-        FadeFrame::add_scalar_to_image(current_frame, fb.x, fb.y, fb.scalar, block_size);
+        FadeFrame::add_scalar_to_image(*current_frame, fb.x, fb.y, fb.scalar, block_size);
     }
 
 }
@@ -44,9 +44,9 @@ void FadeFrame::parallel_function_call(int x, int y) {
     if (scalar == 0)
         return;
 
-    FadeFrame::add_scalar_to_image(current_frame_copy, x, y, scalar, block_size);
-    if (eval->evaluate(this->current_frame_copy,
-                       this->next_frame, this->next_frame_compressed,
+    FadeFrame::add_scalar_to_image(*current_frame_copy, x, y, scalar, block_size);
+    if (eval->evaluate(*this->current_frame_copy,
+                       *this->next_frame, *this->next_frame_compressed,
                        x, y,
                        x, y,
                        block_size)) {
@@ -66,8 +66,8 @@ int FadeFrame::get_scalar_for_block(int x, int y) {
     for (int i = x; i < x + block_size; i++) {
         for (int j = y; j < y + block_size; j++) {
 
-            Frame::Color col1 = current_frame.get_color(i, j);
-            Frame::Color col2 = next_frame.get_color(i, j);
+            Frame::Color col1 = current_frame->get_color(i, j);
+            Frame::Color col2 = next_frame->get_color(i, j);
 
             sum += (int) (col2.r - col1.r) + (int) (col2.g - col1.g) + (int) (col2.b - col1.b);
         }
