@@ -186,7 +186,7 @@ void Frame::write(const string &output) {
     }
 
     stbi_write_png(output.c_str(), width, height, bpp, stb_image, width * bpp);
-
+    stbi_image_free(stb_image);
 }
 
 //////////////////////
