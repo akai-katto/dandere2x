@@ -105,12 +105,12 @@ public:
     void apply_noise(int range);
 
     Frame::Color &get_color(const int x, const int y) const {
-        sanity_check("Frame::Color &Frame::get_color", x, y);
+        // sanity_check("Frame::Color &Frame::get_color", x, y);
         return const_cast<Frame::Color &>(image_colors[x][y]);
     }
 
     void set_color(const int x, const int y, const Frame::Color &color) {
-        sanity_check("void Frame::set_color", x, y);
+        // sanity_check("void Frame::set_color", x, y);
         image_colors[x][y] = color;
     }
 

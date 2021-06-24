@@ -2,6 +2,7 @@
 // Created by Tyler on 5/10/2021.
 //
 #include "dandere2x_utilities.h"
+#include "easyloggingpp/easylogging++.h"
 #include "math.h"
 
 char dandere2x_utilities::separator() {
@@ -40,5 +41,5 @@ void dandere2x_utilities::wait_for_file(const std::string &name) {
 }
 
 bool dandere2x_utilities::debug_enabled() {
-        return true;
+        return false;
 }

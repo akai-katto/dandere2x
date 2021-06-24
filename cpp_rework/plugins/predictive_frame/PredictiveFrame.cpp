@@ -50,25 +50,26 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
         return;
     }
 
-//    // Find (x,y) in frame_2 in frame_1. Note we have to go in the reverse. We can't go frame_1 -> frame_2 since
-//    // the matched blocks may not be on perfect intervals of block_size.
-//    // Since we're going frame_2 -> frame_1, the matched block is "being matched in reverse", so flip the block
-//    // so we can go frame_1 -> frame_2.
-//    Block matched_block = this->block_matcher->match_block(x, y, block_size);
-//    matched_block.reverse_block();
-//
-//    // Check to see if the current matched block produces a valid match
-//    if (eval->evaluate(this->current_frame,
-//                       this->next_frame, this->next_frame_compressed,
-//                       matched_block,
-//                       block_size)) {
-//
-//        matched_moving_blocks += 1;
-//        this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_start, matched_block.y_start,
-//                                                        matched_block.x_end, matched_block.y_end,
-//                                                        1);
-//        return;
-//    }
+    // Find (x,y) in frame_2 in frame_1. Note we have to go in the reverse. We can't go frame_1 -> frame_2 since
+    // the matched blocks may not be on perfect intervals of block_size.
+    // Since we're going frame_2 -> frame_1, the matched block is "being matched in reverse", so flip the block
+    // so we can go frame_1 -> frame_2.
+    Block matched_block = this->block_matcher->match_block(x, y, block_size);
+    matched_block.reverse_block();
+
+    // Check to see if the current matched block produces a valid match
+    if (eval->evaluate(*this->current_frame,
+                       *this->next_frame,
+                       *this->next_frame_compressed,
+                       matched_block,
+                       block_size)) {
+
+        matched_moving_blocks += 1;
+        this->matched_blocks[x][y] = make_shared<Block>(matched_block.x_start, matched_block.y_start,
+                                                        matched_block.x_end, matched_block.y_end,
+                                                        1);
+        return;
+    }
 
     // -1 denotes an invalid block.
     this->matched_blocks[x][y] = make_shared<Block>(x, y,
