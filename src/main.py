@@ -31,7 +31,8 @@ def main():
     # Set a custom 'except hook' to prevent window from closing on crash.
     import sys
     sys.excepthook = show_exception_and_exit
-
+    
+    print("version 3.3")
     # set the master logger at the highest level
     set_dandere2x_logger("root")
     logging.propagate = False
