@@ -81,7 +81,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             simply renaming it as png here, then changing it to jpg (for consistency elsewhere) 
             """
 
-            output_image = output_image.replace(".jpg", ".png")
+            # output_image = output_image.replace(".jpg", ".png")
 
             # replace the exec command with the files we're concerned with
             for x in range(len(exec_command)):
@@ -106,7 +106,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
 
                 raise Exception("Could not upscale file %s" % input_image)
 
-            rename_file_wait(output_image, output_image.replace(".png", ".jpg"))
+            # rename_file_wait(output_image, output_image.replace(".png", ".png"))
 
     # override
     def _construct_upscale_command(self) -> list:
@@ -146,7 +146,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.context.residual_upscaled_dir + file + ".jpg.png"
+            dirty_name = self.context.residual_upscaled_dir + file + ".png.png"
             clean_name = self.context.residual_upscaled_dir + file + ".png"
 
             wait_on_either_file(clean_name, dirty_name)

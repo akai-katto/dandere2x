@@ -1,4 +1,6 @@
 import os
+import sys
+from pathlib import Path
 
 import yaml
 
@@ -41,25 +43,49 @@ def get_options_from_section(section: yaml, ffmpeg_command=False):
     return execute
 
 
+def resource_path():
+    print(os.path.abspath(sys.executable))
+    print(Path(__file__).parent)
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    if getattr(sys, 'frozen', False):
+        return Path(os.path.dirname(os.path.abspath(__file__)))
+    else:
+        return Path(os.path.dirname(os.path.abspath(sys.executable)))
+
 def load_executable_paths_yaml() -> dict:
     """
     Load the dandere2x_directories yaml file, but replace all the relative path definitions with absolute
     definitions.
     """
     from os import path
+    import logging
     from pathlib import Path
     import sys
     from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
 
-    # get location of dandere2x directories (will be in the same folder as main)
-    configfile = "executable_paths.yaml"
-    main_path = Path(path.abspath(sys.modules['__main__'].__file__)).parent
-    config_path = Path(path.join(main_path, "config_files"))
-    directory_file = os.path.join(config_path, configfile)
+    logger = logging.getLogger()
 
-    # load yaml
-    with open(directory_file, "r") as read_file:
-        config = yaml.safe_load(read_file)
+    # For some reason, detecting if python is frozen or not isn't working on pyinstaller (on my machine, at least).
+    # This will cycle through the two options, if we're running as a python script, or if we're running as an
+    # executable, and return whatever one works. I wish the frozen thing worked on my system
+    potential_main_paths = [os.path.dirname(os.path.abspath(sys.executable)), Path(path.abspath(sys.modules['__main__'].__file__)).parent]
+
+    # This is acquired technical debt / my pyinstaller refuses to work by simply checking if it's frozen.
+    for potential in potential_main_paths:
+        # get location of dandere2x directories (will be in the same folder as main)
+        configfile = "executable_paths.yaml"
+        main_path = potential
+        config_path = Path(path.join(main_path, "config_files"))
+        directory_file = os.path.join(config_path, configfile)
+
+        try:
+            # load yaml
+            with open(directory_file, "r") as read_file:
+                config = yaml.safe_load(read_file)
+                logger.info(f"Main path {potential} loaded {configfile} successfully. ")
+                break
+        except:
+            logger.info(f"main_path option {potential} did not work, trying the next main_path option")
 
     # replace each relative path with it's absolute counter-part (if applicable)
     for key in config:

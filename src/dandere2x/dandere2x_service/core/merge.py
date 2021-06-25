@@ -35,11 +35,12 @@ Comments / Notes: This is probably the most difficult to understand
 import logging
 import threading
 
+from dandere2x.dandere2x_service.core.residual_plugins.fade import fade_image
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
 from dandere2x.dandere2xlib.wrappers.ffmpeg.pipe_thread import Pipe
-from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead
+from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead, AsyncFrameWrite
 from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
 from dandere2x.dandere2x_service.core.residual_plugins.pframe import pframe_image
 
@@ -77,14 +78,14 @@ class Merge(threading.Thread):
         # Load the genesis image + the first upscaled image.
         frame_previous = Frame()
         frame_previous.load_from_string_controller(
-            self.context.merged_dir + "merged_" + str(1) + ".jpg",
+            self.context.merged_dir + "merged_" + str(1) + ".png",
             self.controller)
 
         # Load and pipe the 'first' image before we start the for loop procedure, since all the other images will
         # inductively build off this first frame.
         frame_previous = Frame()
         frame_previous.load_from_string_controller(
-            self.context.merged_dir + "merged_" + str(1) + ".jpg", self.controller)
+            self.context.merged_dir + "merged_" + str(1) + ".png", self.controller)
         self.pipe.save(frame_previous)
 
         current_upscaled_residuals = Frame()
@@ -124,14 +125,11 @@ class Merge(threading.Thread):
                 self.context.pframe_data_dir + "pframe_" + str(x) + ".txt")
             residual_data_list = get_list_from_file_and_wait(
                 self.context.residual_data_dir + "residual_" + str(x) + ".txt")
-            correction_data_list = get_list_from_file_and_wait(
-                self.context.correction_data_dir + "correction_" + str(x) + ".txt")
             fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt")
 
             # Create the actual image itself.
             current_frame = self.make_merge_image(self.context, current_upscaled_residuals, frame_previous,
-                                                  prediction_data_list, residual_data_list, correction_data_list,
-                                                  fade_data_list)
+                                                  prediction_data_list, residual_data_list, fade_data_list)
             ###############
             # Saving Area #
             ###############
@@ -141,9 +139,8 @@ class Merge(threading.Thread):
             # Manually write the image if we're preserving frames (this is for enthusiasts / debugging).
             # if self.preserve_frames:
             # if True:
-            #     output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".jpg"
-            #     background_frame_write = AsyncFrameWrite(current_frame, output_file)
-            #     background_frame_write.start()
+            #     output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".png"
+            #     current_frame.save_image(output_file)
 
             #######################################
             # Assign variables for next iteration #
@@ -152,7 +149,6 @@ class Merge(threading.Thread):
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
                     wait_on_file(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
-
             """
             Now that we're all done with the current frame, the current `current_frame` is now the frame_previous
             (with respect to the next iteration). We could obviously manually load frame_previous = Frame(n-1) each
@@ -166,7 +162,7 @@ class Merge(threading.Thread):
 
     @staticmethod
     def make_merge_image(context: Dandere2xServiceContext, frame_residual: Frame, frame_previous: Frame,
-                         list_predictive: list, list_residual: list, list_corrections: list, list_fade: list):
+                         list_predictive: list, list_residual: list, list_fade: list):
         """
         This section can best be explained through pictures. A visual way of expressing what 'merging'
         is doing is this section in the wiki.
@@ -202,8 +198,7 @@ class Merge(threading.Thread):
         ###################
 
         # Note: Run the residual_plugins in the SAME order it was ran in dandere2x_cpp. If not, it won't work correctly.
+        out_image = fade_image(context, out_image, list_fade)
         out_image = pframe_image(context, out_image, frame_previous, frame_residual, list_residual, list_predictive)
-        # out_image = fade_image(context, out_image, list_fade)
-        # out_image = correct_image(context, out_image, list_corrections)
 
         return out_image

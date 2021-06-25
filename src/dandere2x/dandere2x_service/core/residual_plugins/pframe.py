@@ -51,6 +51,7 @@ def pframe_image(context: Dandere2xServiceContext,
                                   vector.y_1 * scale_factor)
 
     for x in range(int(len(list_residual) / 4)):
+
         # load every element in the list into a vector
         vector = DisplacementVector(int(list_residual[x * 4 + 0]),
                                     int(list_residual[x * 4 + 1]),
