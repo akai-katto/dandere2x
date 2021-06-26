@@ -1,3 +1,5 @@
+
+
 # PyCharm and CLion
 .idea/
 
@@ -48,6 +50,7 @@ workspace/
 *.egg
 scratch_paper.py
 MANIFEST
+default_log.txt
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
