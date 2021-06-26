@@ -59,9 +59,9 @@ Assert that you have `nvidia-container-toolkit` installed on your respective mac
 
 # Downloads
 
-## The latest version can be found here:
+## The latest version can be found here
 
-https://github.com/aka-katto/dandere2x/releases/tag/3.0
+https://github.com/akai-katto/dandere2x/releases/tag/3.3
 
 ## Linux
 
