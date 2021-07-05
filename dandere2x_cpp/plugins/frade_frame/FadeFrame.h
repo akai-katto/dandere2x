@@ -51,7 +51,7 @@ private:
 
     static Frame::Color add_scalar_to_color(Frame::Color other_color, int scalar);
 
-    static void add_scalar_to_image(Frame &updated_frame, int x_start, int y_start, int scalar, int block_size);
+    static void add_scalar_to_image(const shared_ptr<Frame>& updated_frame, int x_start, int y_start, int scalar, int block_size);
 
     shared_ptr<Frame> current_frame_copy;
     AbstractEvaluator *eval;

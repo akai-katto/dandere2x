@@ -18,7 +18,7 @@ void FadeFrame::run() {
 void FadeFrame::update_frame() {
 
     for (auto fb : this->fade_blocks) {
-        FadeFrame::add_scalar_to_image(*current_frame, fb.x, fb.y, fb.scalar, block_size);
+        FadeFrame::add_scalar_to_image(current_frame, fb.x, fb.y, fb.scalar, block_size);
     }
 
 }
@@ -44,7 +44,7 @@ void FadeFrame::parallel_function_call(int x, int y) {
     if (scalar == 0)
         return;
 
-    FadeFrame::add_scalar_to_image(*current_frame_copy, x, y, scalar, block_size);
+    FadeFrame::add_scalar_to_image(current_frame_copy, x, y, scalar, block_size);
     if (eval->evaluate(*this->current_frame_copy,
                        *this->next_frame, *this->next_frame_compressed,
                        x, y,
@@ -90,11 +90,11 @@ Frame::Color FadeFrame::add_scalar_to_color(Frame::Color other_color, int scalar
 }
 
 
-void FadeFrame::add_scalar_to_image(Frame &updated_frame, int x_start, int y_start, int scalar, int block_size) {
+void FadeFrame::add_scalar_to_image(const shared_ptr<Frame>& updated_frame, int x_start, int y_start, int scalar, int block_size) {
     for (int x = x_start; x < x_start + block_size; x++) {
         for (int y = y_start; y < y_start + block_size; y++) {
-            Frame::Color col = add_scalar_to_color(updated_frame.get_color(x, y), scalar);
-            updated_frame.set_color(x, y, col);
+            Frame::Color col = add_scalar_to_color(updated_frame->get_color(x, y), scalar);
+            updated_frame->set_color(x, y, col);
         }
     }
 }
