@@ -24,8 +24,8 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
 
     extract_frames_command = [ffmpeg_dir]
 
-    # walrus operator go brrrr
-    if (hw_accel := output_options["ffmpeg"]["pre_process_video"]["-hwaccel"]) is not None:
+    hw_accel = output_options["ffmpeg"]["pre_process_video"]["-hwaccel"]
+    if hw_accel is not None:
         extract_frames_command.append("-hwaccel")
         extract_frames_command.append(hw_accel)
 
