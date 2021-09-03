@@ -16,6 +16,7 @@ from dandere2x.dandere2x_service.core.waifu2x.abstract_upscaler import AbstractU
 from dandere2x.dandere2x_service.core.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from dandere2x.dandere2x_service.core.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from dandere2x.dandere2x_service.core.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
+from dandere2x.dandere2x_service.core.waifu2x.realsr_ncnn_vulkan import RealSRNCNNVulkan
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import file_exists
@@ -28,6 +29,9 @@ def _get_upscale_engine(selected_engine: UpscalingEngineType) -> Type[AbstractUp
 
     if selected_engine == UpscalingEngineType.VULKAN:
         return Waifu2xNCNNVulkan
+
+    if selected_engine == UpscalingEngineType.REALSR:
+        return RealSRNCNNVulkan
 
     if selected_engine == UpscalingEngineType.CAFFE:
         return Waifu2xCaffe

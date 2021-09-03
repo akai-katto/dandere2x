@@ -39,6 +39,7 @@ AbstractEvaluator *get_evaluator(const string &evaluator_arg) {
 }
 
 INITIALIZE_EASYLOGGINGPP
+
 int main(int argc, char **argv) {
 
     // Easy Logging Setup
@@ -58,6 +59,7 @@ int main(int argc, char **argv) {
     int frame_count = 240;
     int block_size = 20;
     int quality_setting = 100;
+    int bleed = 1;
 
     // If not debug, load the passed variables.
     if (!debug) {
@@ -67,6 +69,7 @@ int main(int argc, char **argv) {
         block_matching_arg = argv[4];
         evaluator_arg = argv[5];
         quality_setting = atoi(argv[6]);
+        bleed = atoi(argv[7]);
     }
     // Reset log file now that args have been properly parsed.
     c.parseFromText("*GLOBAL:\n Filename = " + workspace + dandere2x_utilities::separator() + "dandere2x_cpp.log");
@@ -83,7 +86,7 @@ int main(int argc, char **argv) {
     // Start the main driver after having loaded the arguments
     AbstractBlockMatch *matcher = get_block_matcher(block_matching_arg);
     AbstractEvaluator *evaluator = get_evaluator(evaluator_arg);
-    driver_difference(workspace, frame_count, block_size, quality_setting, matcher, evaluator);
+    driver_difference(workspace, frame_count, block_size, quality_setting, bleed, matcher, evaluator);
 
     free(matcher); // Free used memory
     return 0;

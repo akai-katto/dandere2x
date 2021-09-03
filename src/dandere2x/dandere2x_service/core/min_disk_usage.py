@@ -54,6 +54,7 @@ class MinDiskUsage(threading.Thread):
         self.frame_count = context.frame_count
         self.progressive_frame_extractor = ProgressiveFramesExtractorCV2(self.context.service_request.input_file,
                                                                          self.context.input_frames_dir,
+                                                                         self.context.noised_input_frames_dir,
                                                                          self.context.compressed_static_dir,
                                                                          self.context.service_request.quality_minimum)
         self.start_frame = 1

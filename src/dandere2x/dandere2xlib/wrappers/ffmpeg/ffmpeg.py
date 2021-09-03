@@ -219,6 +219,19 @@ def get_console_output(method_name: str, console_output_dir=None):
     return open(os.devnull, 'w')
 
 
+def apply_noise_to_image(ffmpeg_dir: str,
+                         input_image: str,
+                         output_file: str) -> None:
+
+    concat_videos_command = [ffmpeg_dir,
+                             "-i", input_image,
+                             "-vf", "noise=c0s=8:c0f=u",
+                             "-y",
+                             output_file]
+
+    subprocess.call(concat_videos_command, shell=False, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+
+
 def concat_n_videos(ffmpeg_dir: str, temp_file_dir: str, console_output_dir: str, list_of_files: list,
                     output_file: str) -> None:
     import subprocess
