@@ -7,7 +7,7 @@ realsr_ncnn_vulkan:
     -verbose: null
 
 dandere2x:
-  bleed: 2
+  bleed: 3
 
 dandere2x_cpp:
   block_matching_arg: "exhaustive"

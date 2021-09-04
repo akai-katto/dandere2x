@@ -54,7 +54,6 @@ class MinDiskUsage(threading.Thread):
         self.frame_count = context.frame_count
         self.progressive_frame_extractor = ProgressiveFramesExtractorCV2(self.context.service_request.input_file,
                                                                          self.context.input_frames_dir,
-                                                                         self.context.noised_input_frames_dir,
                                                                          self.context.compressed_static_dir,
                                                                          self.context.service_request.quality_minimum)
         self.start_frame = 1
@@ -115,7 +114,7 @@ class MinDiskUsage(threading.Thread):
         residual_data_dir = self.context.residual_data_dir
         fade_data_dir = self.context.fade_data_dir
         input_frames_dir = self.context.input_frames_dir
-        compressed_static_dir = self.context.compressed_static_dir
+        noised_image_dir = self.context.noised_input_frames_dir
         residual_upscaled_dir = self.context.residual_upscaled_dir
 
         # get the files to delete "_r(emove)"
@@ -126,10 +125,11 @@ class MinDiskUsage(threading.Thread):
         residual_data_file_r = residual_data_dir + "residual_" + index_to_remove + ".txt"
         fade_data_file_r = fade_data_dir + "fade_" + index_to_remove + ".txt"
         input_image_r = input_frames_dir + "frame" + index_to_remove + ".png"
+        noised_image = noised_image_dir + "frame" + index_to_remove + ".png"
         upscaled_file_r = residual_upscaled_dir + "output_" + get_lexicon_value(6, int(remove_before)) + ".png"
 
-        # "mark" them
-        remove = [prediction_data_file_r, residual_data_file_r,
+        # "mark" them-------
+        remove = [prediction_data_file_r, residual_data_file_r, noised_image,
                   fade_data_file_r, input_image_r,  upscaled_file_r]
 
         # remove

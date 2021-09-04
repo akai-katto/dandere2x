@@ -14,13 +14,11 @@ class ProgressiveFramesExtractorCV2:
     def __init__(self,
                  input_video: str,
                  extracted_frames_dir: str,
-                 noised_frames_dir: str,
                  compressed_frames_dir: str,
                  compressed_quality: int):
 
         self.input_video = input_video
         self.extracted_frames_dir = extracted_frames_dir
-        self.noised_frames_dir = noised_frames_dir
         self.compressed_frames_dir = compressed_frames_dir
 
         self.compressed_quality = compressed_quality
@@ -58,14 +56,10 @@ class ProgressiveFramesExtractorCV2:
         if success:
             temp_image = self.extracted_frames_dir + "frame_temp_%s.png" % self.count
             final_image = self.extracted_frames_dir + "frame%s.png" % self.count
-            noised_final_image = self.noised_frames_dir + "frame%s.png" % self.count
 
             cv2.imwrite(temp_image, image)
 
             rename_file_wait(temp_image,
                              final_image)
 
-            apply_noise_to_image(ffmpeg_dir=self.ffmpeg_path,
-                                 input_image=final_image,
-                                 output_file=noised_final_image)
             self.count += 1
