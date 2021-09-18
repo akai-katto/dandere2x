@@ -1,8 +1,7 @@
 #!/bin/sh
 
 # Requirements...
-if ! command -v cmake &> /dev/null
-then
+if ! command -v cmake /dev/null 2>&1; then
     echo "cmake could not be found"
     exit
 fi
