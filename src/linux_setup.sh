@@ -24,8 +24,7 @@ if ! test -f "$FILE"; then
 fi
 
 #  get into the src folder from dandere2x_cpp
-cd ..
-cd ./src
+cd ../src
 
 # create the externals folder and move over the recently made d2x_cpp binary
 mkdir -p externals
