@@ -75,6 +75,13 @@ else
     waifu2x_caffe=externals/waifu2x-caffe-cui
 fi
 
+ffmpeg=$(command -v ffmpeg)
+ffprobe=$(command -v ffprobe)
+dandere2x_cpp=externals/dandere2x_cpp
+
+# create executable_config file
+printf "ffmpeg: \"$ffmpeg\"\nffprobe: \"$ffprobe\"\ndandere2x_cpp: \"$dandere2x_cpp\"\nwaifu2x_vulkan: \"$waifu2x_vulkan\"\nwaifu2x_converter_cpp: \"$waifu2x_converter_cpp\"\nwaifu2x_caffe: \"$waifu2x_caffe\"\nrealsr_ncnn_vulkan: \"$realsr_vulkan\"" > ../config_files/executable_paths.yaml
+
 # create workspace folder (this needs to exist I think?)
 mkdir -p workspace
 echo success, be sure to install requirements and you should be good to go with "python3 main.py" now. 
