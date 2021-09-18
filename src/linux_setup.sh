@@ -1,9 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 
 # Requirements...
 if ! command -v cmake &> /dev/null
 then
     echo "cmake could not be found"
+    exit
+fi
+
+if ! command -v ffmpeg > /dev/null 2>&1; then
+    echo could not find path to ffmpeg binary
     exit
 fi
 
