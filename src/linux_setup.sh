@@ -18,9 +18,7 @@ cmake CMakeLists.txt
 make
 
 FILE=dandere2x_cpp
-if test -f "$FILE"; then
-    echo "$FILE exists was built, continuing forward."
-else
+if ! test -f "$FILE"; then
     echo "$FILE does not exist.. not sure what's wrong..."
     exit 1
 fi
