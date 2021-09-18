@@ -84,4 +84,4 @@ printf "ffmpeg: \"$ffmpeg\"\nffprobe: \"$ffprobe\"\ndandere2x_cpp: \"$dandere2x_
 
 # create workspace folder (this needs to exist I think?)
 mkdir -p workspace
-echo success, be sure to install requirements and you should be good to go with "python3 main.py" now. 
+echo "setup successful. install the requirements with pip3 install -r requirements.txt, preferably in a a virtual environment, then run python3 main.py"
