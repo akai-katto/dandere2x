@@ -37,7 +37,7 @@ def _get_upscale_engine(selected_engine: UpscalingEngineType) -> Type[AbstractUp
         return RealSRNCNNVulkan
 
     else:
-        print("no valid waifu2x selected")
+        log.error("no valid waifu2x selected: %s", selected_engine)
         raise Exception
 
 
