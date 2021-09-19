@@ -149,13 +149,13 @@ class Dandere2xServiceThread(threading.Thread):
         try:
             os.makedirs(workspace)
         except:
-            self.log.warning("Creation of directory %s failed.. dandere2x may still work but be advised. " % workspace)
+            self.log.warning("Creation of directory %s failed.. dandere2x may still work but be advised. ", workspace)
 
         for subdirectory in directories_list:
             try:
                 os.makedirs(subdirectory)
             except OSError:
                 self.log.warning(
-                    "Creation of the directory %s failed.. dandere2x may still work but be advised. " % workspace)
+                    "Creation of the directory %s failed.. dandere2x may still work but be advised. ", workspace)
             else:
-                self.log.info("Successfully created the directory %s " % subdirectory)
+                self.log.info("Successfully created the directory %s ", subdirectory)
