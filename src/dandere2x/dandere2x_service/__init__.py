@@ -132,7 +132,7 @@ class Dandere2xServiceThread(threading.Thread):
 
             raise Exception("Could not upscale first file.. check logs file to see what's wrong")
 
-        self.log.info("Time to upscale a single frame: %s " % str(round(time.time() - one_frame_time, 2)))
+        self.log.info("Time to upscale a single frame: %s ", str(round(time.time() - one_frame_time, 2)))
 
     def __create_directories(self, workspace: str, directories_list: list):
         """
