@@ -9,17 +9,17 @@ import yaml
 
 
 class ProcessingType(Enum):
-    SINGLE_PROCESS = "singleprocess"
-    MULTI_PROCESS = "multiprocess"
+    SINGLE_PROCESS = "single"
+    MULTI_PROCESS = "multi"
 
     @staticmethod
     def from_str(input: str):
-        if input == "singleprocess":
+        if input == "single":
             return ProcessingType.SINGLE_PROCESS
-        if input == "multiprocess":
+        if input == "multi":
             return ProcessingType.MULTI_PROCESS
 
-        raise Exception("processing type not found %s" % input)
+        raise Exception("processing type not found %s", input)
 
 
 class UpscalingEngineType(Enum):
