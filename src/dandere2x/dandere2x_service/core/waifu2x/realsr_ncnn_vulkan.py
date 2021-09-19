@@ -32,7 +32,7 @@ from ..waifu2x.abstract_upscaler import AbstractUpscaler
 
 class RealSRNCNNVulkan(AbstractUpscaler, Thread):
 
-    def __init__(self, context: Context):
+    def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
 
         # load context specific to implementation
         self.frame_count = context.frame_count
@@ -49,7 +49,7 @@ class RealSRNCNNVulkan(AbstractUpscaler, Thread):
         # implementation specific
         self.active_waifu2x_subprocess = None
 
-        super().__init__(context)
+        super().__init__(context, controller)
         Thread.__init__(self, name="RealSR-NCNN-Vulkan Thread")
 
     # override
