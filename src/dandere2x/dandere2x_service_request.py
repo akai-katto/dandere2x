@@ -136,10 +136,10 @@ class Dandere2xServiceRequest:
         parser.add_argument('-o', '--output', action="store", dest="output_file", help='Output Video (no default)')
 
         parser.add_argument('-q', '--quality', action="store", dest="image_quality", type=int, default=97,
-                            help='Image Quality (Default 85)')
+                            help='Image Quality (Default 97)')
 
         parser.add_argument('-w', '--waifu2x_type', action="store", dest="waifu2x_type", type=str, default="vulkan",
-                            help='Waifu2x Type. Options: "vulkan" "converter_cpp" "caffe". Default: "vulkan"')
+                            help='Waifu2x Type. Options: "vulkan" "converter_cpp" "caffe" "realsr". Default: "vulkan"')
 
         parser.add_argument('-s', '--scale_factor', action="store", dest="scale_factor", type=int, default=2,
                             help='Scale Factor (Default 2)')
@@ -168,5 +168,4 @@ class Dandere2xServiceRequest:
         log = logging.getLogger()
         log.info("Service Request Settings:")
         for item in self.__dict__:
-            # log.info("%s : %s" % (item, self.__dict__[item]))
-            print("%s : %s" % (item, self.__dict__[item]))
+            log.info("%s : %s", item, self.__dict__[item])
