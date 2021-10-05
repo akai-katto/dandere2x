@@ -36,9 +36,12 @@ def _get_upscale_engine(selected_engine: UpscalingEngineType) -> Type[AbstractUp
 
     if selected_engine == UpscalingEngineType.CAFFE:
         return Waifu2xCaffe
+    
+    if selected_engine == UpscalingEngineType.REALSR:
+        return RealSRNCNNVulkan
 
     else:
-        print("no valid waifu2x selected")
+        log.error("no valid waifu2x selected: %s", selected_engine)
         raise Exception
 
 
@@ -140,7 +143,7 @@ class Dandere2xServiceThread(threading.Thread):
 
             raise Exception("Could not upscale first file.. check logs file to see what's wrong")
 
-        self.log.info("Time to upscale a single frame: %s " % str(round(time.time() - one_frame_time, 2)))
+        self.log.info("Time to upscale a single frame: %s ", str(round(time.time() - one_frame_time, 2)))
 
     def __create_directories(self, workspace: str, directories_list: list):
         """
@@ -157,13 +160,13 @@ class Dandere2xServiceThread(threading.Thread):
         try:
             os.makedirs(workspace)
         except:
-            self.log.warning("Creation of directory %s failed.. dandere2x may still work but be advised. " % workspace)
+            self.log.warning("Creation of directory %s failed.. dandere2x may still work but be advised. ", workspace)
 
         for subdirectory in directories_list:
             try:
                 os.makedirs(subdirectory)
             except OSError:
                 self.log.warning(
-                    "Creation of the directory %s failed.. dandere2x may still work but be advised. " % workspace)
+                    "Creation of the directory %s failed.. dandere2x may still work but be advised. ", workspace)
             else:
-                self.log.info("Successfully created the directory %s " % subdirectory)
+                self.log.info("Successfully created the directory %s ", subdirectory)

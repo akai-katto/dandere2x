@@ -130,3 +130,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 dandere2x_cpp/cmake-build-release/dandere2x_cpp.exe
+
+# test footage
+.mkv
+.mp4

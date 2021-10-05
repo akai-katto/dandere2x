@@ -58,15 +58,14 @@ class AbstractUpscaler(Thread, ABC):
         test_frame.create_new(2, 2)
         test_frame.save_image(test_file)
 
-        self.log.info("Attempting to upscale file %s into %s to ensure waifu2x is working..."
-                      % (test_file, test_file_upscaled))
+        self.log.info("Attempting to upscale file %s into %s to ensure waifu2x is working...", test_file, test_file_upscaled)
 
         try:
             self.upscale_file(test_file, test_file_upscaled)
 
         except:
             e = sys.exc_info()[0]
-            self.log.info("Caught exception %s" % str(e))
+            self.log.info("Caught exception %s", str(e))
             raise Exception("Could not upscale first frame, see stacktrace for more details. ")
 
         if not file_exists(test_file_upscaled):

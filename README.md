@@ -64,10 +64,31 @@ Assert that you have `nvidia-container-toolkit` installed on your respective mac
 https://github.com/akai-katto/dandere2x/releases/tag/3.3
 
 ## Linux
+Dependencies:
+* python 3
+* cmake
+* ffmpeg
 
-This is a bit undermaintained, but a known working verison is found here: https://www.reddit.com/r/Dandere2x/comments/i9xn56/linux_rerelease_other_announcements/
+Check that you have these installed by running `which cmake`, `which ffmpeg` and `which python3`. Python 3 should be installed by default. You should get an output similar to `/usr/bin/ffmpeg`, else you will need to install these packages through your [package manager](https://wiki.archlinux.org/title/Pacman/Rosetta).
 
-I'm juggling to get the linux version more reliably maintained. 
+---
+Installation:
+1. Download the source by [cloning this repository](https://github.com/akai-katto/dandere2x/archive/refs/heads/master.zip) or by going into [releases](https://github.com/akai-katto/dandere2x/releases) and downloading the source from there. Extract the contents of the source file.
+2. Navigate to the `src` directory inside the root of Dandere2x.
+3. While in `src` on the root directory, run `./linux_setup.sh`. This will download the lastest linux binaries for waifu2x-ncnn-vulkan and realsr-ncnn-vulkan. If you want waifu2x-converter-cpp or waifu2x-caffe, you will have to compile them from source. 
+4. Setup a virtual environment with `python3 -m venv .venv`. To activate, run `source .venv/bin/activate`. `.venv` can be exchanged for any path that you prefer. *This step is not strictly necessary, but highly recommended.*
+5. Install the Python dependencies with `pip3 install --user -r requirements.txt`
+6. Run Dandere2x: `python3 main.py`. Running without any command-line arguments will attempt to start the GUI, if you want to see a complete list of options, use the `--help` argument.
+
+* You can remove the PyQt line from the requirements.txt file, if you aren't going to use the GUI.
+* If you can't run `./linux_setup.sh`, try changing its permissions by running `chmod u+x linux_setup.sh`.
+---
+If you are running Arch, there are [AUR](https://wiki.archlinux.org/title/Arch_User_Repository) packages for all upscaler implementations used in this project, including precompiled binaries for waifu2x-ncnn-vulkan and realsr-ncnn-vulkan. You can easily install them with an [AUR Helper](https://wiki.archlinux.org/title/AUR_helpers), such as [paru](https://github.com/morganamilo/paru).
+
+Example: 
+`paru -Syu waifu2x-ncnn-vulkan waifu2x-converter-cpp waifu2x-caffe realsr-ncnn-vulkan`
+
+`./linux_setup.sh` will automatically create a config that uses the upscaler binaries that you have installed, including the ones from the AUR. As long as the binary is in PATH, the script will add it to the config. 
 
 # Related Resources
 
