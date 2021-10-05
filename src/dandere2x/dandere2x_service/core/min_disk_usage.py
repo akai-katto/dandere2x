@@ -31,7 +31,6 @@ from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServi
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value
 from dandere2x.dandere2xlib.wrappers.cv2.progressive_frame_extractor import ProgressiveFramesExtractorCV2
-from dandere2x.dandere2xlib.wrappers.ffmpeg.av_progressive_frame_extractor import ProgressiveFramesExtractorAV
 
 
 class MinDiskUsage(threading.Thread):
@@ -53,10 +52,10 @@ class MinDiskUsage(threading.Thread):
         self.controller = controller
         self.max_frames_ahead = self.context.max_frames_ahead
         self.frame_count = context.frame_count
-        self.progressive_frame_extractor = ProgressiveFramesExtractorAV(self.context.service_request.input_file,
-                                                                        self.context.input_frames_dir,
-                                                                        self.context.compressed_static_dir,
-                                                                        self.context.service_request.quality_minimum)
+        self.progressive_frame_extractor = ProgressiveFramesExtractorCV2(self.context.service_request.input_file,
+                                                                         self.context.input_frames_dir,
+                                                                         self.context.compressed_static_dir,
+                                                                         self.context.service_request.quality_minimum)
         self.start_frame = 1
 
     def join(self, timeout=None):
@@ -81,10 +80,15 @@ class MinDiskUsage(threading.Thread):
             while x >= self.controller.get_current_frame():
                 time.sleep(.00001)
 
+            if not self.is_alive():
+                self.progressive_frame_extractor.release_capture()
+                return
+
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
             self.__delete_used_files(x)
 
+        self.progressive_frame_extractor.release_capture()
 
     def extract_initial_frames(self):
         """
@@ -126,7 +130,7 @@ class MinDiskUsage(threading.Thread):
 
         # "mark" them-------
         remove = [prediction_data_file_r, residual_data_file_r, noised_image,
-                  fade_data_file_r, input_image_r, upscaled_file_r]
+                  fade_data_file_r, input_image_r,  upscaled_file_r]
 
         # remove
         threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True, name="mindiskusage").start()
