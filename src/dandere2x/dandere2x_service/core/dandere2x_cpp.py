@@ -45,7 +45,8 @@ class Dandere2xCppWrapper(threading.Thread):
                              str(self.context.service_request.block_size),
                              self.context.dandere2x_cpp_block_matching_arg,
                              self.context.dandere2x_cpp_evaluator_arg,
-                             str(self.context.service_request.quality_minimum)]
+                             str(self.context.service_request.quality_minimum),
+                             str(self.context.bleed)]
 
     def join(self, timeout=None):
         self.log.info("Thread joined")

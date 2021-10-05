@@ -1355,6 +1355,7 @@ class Ui_Dandere2xGUI(object):
         self.waifu2x_type_combo_box.setItemText(0, _translate("Dandere2xGUI", "Waifu2x-Caffe"))
         self.waifu2x_type_combo_box.setItemText(1, _translate("Dandere2xGUI", "Waifu2x-Vulkan"))
         self.waifu2x_type_combo_box.setItemText(2, _translate("Dandere2xGUI", "Waifu2x-Converter-Cpp"))
+        self.waifu2x_type_combo_box.setItemText(2, _translate("Dandere2xGUI", "RealSR"))
         self.video_label_3.setText(_translate("Dandere2xGUI", "Waifu2x - Type"))
         self.video_label_4.setText(_translate("Dandere2xGUI", "Scale Factor"))
         self.scale_1_radio_button.setText(_translate("Dandere2xGUI", "1 x"))

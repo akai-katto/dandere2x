@@ -18,11 +18,12 @@ void driver_difference(const string &workspace,
                        const int frame_count,
                        const int block_size,
                        const int quality_setting,
+                       const int bleed,
                        AbstractBlockMatch *search_library,
                        AbstractEvaluator *evaluation_library) {
 
     // Input Files
-    string image_prefix = workspace + separator() + "inputs" + separator() + "frame";
+    string image_prefix = workspace + separator() + "noised_inputs" + separator() + "frame";
 
     // Output files
     string p_data_prefix = workspace + separator() + "pframe_data" + separator() + "pframe_";
@@ -59,7 +60,7 @@ void driver_difference(const string &workspace,
 
         search_library->set_images(frame_1, frame_2);
         PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
-                                                  frame_1, frame_2, frame_2_compressed, block_size);
+                                                  frame_1, frame_2, frame_2_compressed, block_size, bleed);
         predict.run();
         predict.write(p_data_file, residual_file);
 

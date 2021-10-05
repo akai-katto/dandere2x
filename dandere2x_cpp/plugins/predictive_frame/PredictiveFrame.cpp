@@ -124,7 +124,7 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
     int max_blocks_possible = (current_frame->get_height() * this->current_frame->get_width()) / (block_size * block_size);
     int total_found_blocks = (matched_stationary_blocks + matched_moving_blocks);
     int missing_blocks = max_blocks_possible - total_found_blocks;
-    int missing_blocks_pixel_count = missing_blocks * ((block_size + 1) * (block_size + 1));
+    int missing_blocks_pixel_count = missing_blocks * ((block_size + bleed) * (block_size + bleed));
     int total_pixels = current_frame->get_width() * current_frame->get_height();
 
     LOG(INFO) << "Comparing " << (int) (total_pixels * 0.95) << " < " << missing_blocks_pixel_count << std::endl;

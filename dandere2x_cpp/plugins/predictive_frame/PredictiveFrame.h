@@ -38,6 +38,7 @@ Purpose: Given two frames, try to find as many matching blocks between
 #include "../block_plugins/block_matching/AbstractBlockMatch.h"
 
 using namespace std;
+
 class PredictiveFrame : AbstractPlugin {
 public:
     PredictiveFrame(AbstractEvaluator *eval,
@@ -45,11 +46,13 @@ public:
                     shared_ptr<Frame> current_frame,
                     shared_ptr<Frame> next_frame,
                     shared_ptr<Frame> next_frame_compressed,
-                    const int block_size) : AbstractPlugin(current_frame,
-                                                           next_frame,
-                                                           next_frame_compressed, block_size){
+                    const int block_size,
+                    const int bleed) : AbstractPlugin(current_frame,
+                                                      next_frame,
+                                                      next_frame_compressed, block_size) {
         this->eval = eval;
         this->block_matcher = block_matcher;
+        this->bleed = bleed;
 
         // Due to multiprocessing / multithreading with omp, we need to instantiate the shared vectors before
         // the code starts running.
@@ -86,7 +89,7 @@ private:
     AbstractBlockMatch *block_matcher;
     int matched_stationary_blocks = 0;
     int matched_moving_blocks = 0;
-    int bleed = 1;
+    int bleed;
 };
 
 

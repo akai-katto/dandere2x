@@ -137,7 +137,7 @@ class Merge(threading.Thread):
             self.pipe.save(current_frame)
 
             # Manually write the image if we're preserving frames (this is for enthusiasts / debugging).
-            # if self.preserve_frames:
+
             # if True:
             #     output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".png"
             #     current_frame.save_image(output_file)

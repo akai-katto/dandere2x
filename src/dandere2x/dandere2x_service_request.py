@@ -9,17 +9,17 @@ import yaml
 
 
 class ProcessingType(Enum):
-    SINGLE_PROCESS = "single"
-    MULTI_PROCESS = "multi"
+    SINGLE_PROCESS = "singleprocess"
+    MULTI_PROCESS = "multiprocess"
 
     @staticmethod
     def from_str(input: str):
-        if input == "single":
+        if input == "singleprocess":
             return ProcessingType.SINGLE_PROCESS
-        if input == "multi":
+        if input == "multiprocess":
             return ProcessingType.MULTI_PROCESS
 
-        raise Exception("processing type not found %s", input)
+        raise Exception("processing type not found %s" % input)
 
 
 class UpscalingEngineType(Enum):
@@ -27,7 +27,7 @@ class UpscalingEngineType(Enum):
     CONVERTER_CPP = "converter_cpp"
     CAFFE = "caffe"
     REALSR = "realsr"
-    
+
     @staticmethod
     def from_str(input: str):
         if input == "vulkan":
@@ -36,10 +36,10 @@ class UpscalingEngineType(Enum):
             return UpscalingEngineType.CONVERTER_CPP
         if input == "caffe":
             return UpscalingEngineType.CAFFE
-        if input == "realsr":
+        if input == "realsr_ncnn_vulkan":
             return UpscalingEngineType.REALSR
 
-        raise Exception("UpscalingEngineType not found %s", input)
+        raise Exception("UpscalingEngineType not found %s" % input)
 
 
 class Dandere2xServiceRequest:
@@ -136,10 +136,10 @@ class Dandere2xServiceRequest:
         parser.add_argument('-o', '--output', action="store", dest="output_file", help='Output Video (no default)')
 
         parser.add_argument('-q', '--quality', action="store", dest="image_quality", type=int, default=97,
-                            help='Image Quality (Default 97)')
+                            help='Image Quality (Default 85)')
 
         parser.add_argument('-w', '--waifu2x_type', action="store", dest="waifu2x_type", type=str, default="vulkan",
-                            help='Waifu2x Type. Options: "vulkan" "converter_cpp" "caffe" "realsr". Default: "vulkan"')
+                            help='Waifu2x Type. Options: "vulkan" "converter_cpp" "caffe". Default: "vulkan"')
 
         parser.add_argument('-s', '--scale_factor', action="store", dest="scale_factor", type=int, default=2,
                             help='Scale Factor (Default 2)')
@@ -158,7 +158,7 @@ class Dandere2xServiceRequest:
 
     def make_workspace(self):
 
-        print("attempting to make or clear %s" % self.workspace)
+        print("attempting to make or clear % s" % self.workspace)
         if os.path.exists(self.workspace):
             shutil.rmtree(self.workspace)
 
@@ -168,4 +168,5 @@ class Dandere2xServiceRequest:
         log = logging.getLogger()
         log.info("Service Request Settings:")
         for item in self.__dict__:
-            log.info("%s : %s", item, self.__dict__[item])
+            # log.info("%s : %s" % (item, self.__dict__[item]))
+            print("%s : %s" % (item, self.__dict__[item]))
