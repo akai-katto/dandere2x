@@ -16,9 +16,11 @@ from dandere2x.dandere2x_service.core.waifu2x.abstract_upscaler import AbstractU
 from dandere2x.dandere2x_service.core.waifu2x.waifu2x_caffe import Waifu2xCaffe
 from dandere2x.dandere2x_service.core.waifu2x.waifu2x_converter_cpp import Waifu2xConverterCpp
 from dandere2x.dandere2x_service.core.waifu2x.waifu2x_ncnn_vulkan import Waifu2xNCNNVulkan
+from dandere2x.dandere2x_service.core.waifu2x.realsr_ncnn_vulkan import RealSRNCNNVulkan
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import file_exists
+from dandere2x.dandere2xlib.wrappers.ffmpeg.progressive_noise_adder import ProgressiveNoiseAdder
 
 
 def _get_upscale_engine(selected_engine: UpscalingEngineType) -> Type[AbstractUpscaler]:
@@ -28,6 +30,9 @@ def _get_upscale_engine(selected_engine: UpscalingEngineType) -> Type[AbstractUp
 
     if selected_engine == UpscalingEngineType.VULKAN:
         return Waifu2xNCNNVulkan
+
+    if selected_engine == UpscalingEngineType.REALSR:
+        return RealSRNCNNVulkan
 
     if selected_engine == UpscalingEngineType.CAFFE:
         return Waifu2xCaffe
@@ -61,6 +66,10 @@ class Dandere2xServiceThread(threading.Thread):
         self.threads_active = False
 
         # Child-threads
+        self.progressive_noise_adder = ProgressiveNoiseAdder(self.context.input_frames_dir,
+                                                             self.context.noised_input_frames_dir,
+                                                             self.context.frame_count)
+
         self.min_disk_demon = MinDiskUsage(self.context, self.controller)
         self.status_thread = Status(self.context, self.controller)
         self.dandere2x_cpp_thread = Dandere2xCppWrapper(self.context, self.controller)
@@ -84,6 +93,8 @@ class Dandere2xServiceThread(threading.Thread):
         self.log.info("Dandere2x Threads Set.. going live with the following context file.")
         self.context.log_all_variables()
 
+        self.progressive_noise_adder.start()
+
         self.min_disk_demon.extract_initial_frames()
         self.__upscale_first_frame()
 
@@ -97,6 +108,7 @@ class Dandere2xServiceThread(threading.Thread):
         while self.controller.get_current_frame() < self.context.frame_count - 1:
             time.sleep(1)
 
+        self.progressive_noise_adder.join()
         self.min_disk_demon.join()
         self.dandere2x_cpp_thread.join()
         self.merge_thread.join()

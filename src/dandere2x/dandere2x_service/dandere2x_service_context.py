@@ -23,7 +23,9 @@ class Dandere2xServiceContext:
 
         self.service_request = service_request
 
+        # Directories and Paths
         self.input_frames_dir = os.path.join(service_request.workspace, "inputs") + os.path.sep
+        self.noised_input_frames_dir = os.path.join(service_request.workspace, "noised_inputs") + os.path.sep
         self.residual_images_dir = os.path.join(service_request.workspace, "residual_images") + os.path.sep
         self.residual_upscaled_dir = os.path.join(service_request.workspace, "residual_upscaled") + os.path.sep
         self.residual_data_dir = os.path.join(service_request.workspace, "residual_data") + os.path.sep
@@ -38,6 +40,7 @@ class Dandere2xServiceContext:
         self.log_dir = os.path.join(service_request.workspace, "log_dir") + os.path.sep
 
         self.directories = {self.input_frames_dir,
+                            self.noised_input_frames_dir,
                             self.residual_images_dir,
                             self.residual_upscaled_dir,
                             self.merged_dir,
@@ -59,7 +62,7 @@ class Dandere2xServiceContext:
         self.frame_rate = video_settings.frame_rate
 
         # todo static-ish settings < add to a yaml somewhere >
-        self.bleed = 1
+        self.bleed = self.service_request.output_options["dandere2x"]["bleed"]
         self.temp_image = self.temp_image_folder + "tempimage.jpg"
         self.debug = False
         self.step_size = 4

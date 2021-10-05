@@ -1,6 +1,8 @@
 import cv2
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait
+from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import apply_noise_to_image
 
 
 class ProgressiveFramesExtractorCV2:
@@ -9,14 +11,20 @@ class ProgressiveFramesExtractorCV2:
     Saves into dandere2x's inputs DIR.
     """
 
-    def __init__(self, input_video: str, extracted_frames_dir: str, compressed_frames_dir: str,
+    def __init__(self,
+                 input_video: str,
+                 extracted_frames_dir: str,
+                 compressed_frames_dir: str,
                  compressed_quality: int):
 
         self.input_video = input_video
         self.extracted_frames_dir = extracted_frames_dir
         self.compressed_frames_dir = compressed_frames_dir
+
         self.compressed_quality = compressed_quality
         self.cap = cv2.VideoCapture(self.input_video)
+
+        self.ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
 
         self.count = 1
 
@@ -46,8 +54,12 @@ class ProgressiveFramesExtractorCV2:
             success, image = self.cap.read()
 
         if success:
-            cv2.imwrite(self.extracted_frames_dir + "frame_temp_%s.png" % self.count, image)
+            temp_image = self.extracted_frames_dir + "frame_temp_%s.png" % self.count
+            final_image = self.extracted_frames_dir + "frame%s.png" % self.count
 
-            rename_file_wait(self.extracted_frames_dir + "frame_temp_%s.png" % self.count,
-                             self.extracted_frames_dir + "frame%s.png" % self.count)
+            cv2.imwrite(temp_image, image)
+
+            rename_file_wait(temp_image,
+                             final_image)
+
             self.count += 1

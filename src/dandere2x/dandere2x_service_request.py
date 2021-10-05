@@ -26,6 +26,7 @@ class UpscalingEngineType(Enum):
     VULKAN = "vulkan"
     CONVERTER_CPP = "converter_cpp"
     CAFFE = "caffe"
+    REALSR = "realsr"
 
     @staticmethod
     def from_str(input: str):
@@ -35,6 +36,8 @@ class UpscalingEngineType(Enum):
             return UpscalingEngineType.CONVERTER_CPP
         if input == "caffe":
             return UpscalingEngineType.CAFFE
+        if input == "realsr_ncnn_vulkan":
+            return UpscalingEngineType.REALSR
 
         raise Exception("UpscalingEngineType not found %s" % input)
 
