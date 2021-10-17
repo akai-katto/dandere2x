@@ -20,6 +20,8 @@ ffmpeg:
       -pix_fmt: rgba64le
       -vsync: "cfr"
       -crf: 1
+      -vf:
+        - " null"
 
   convert_video_to_gif:
     output_options:
