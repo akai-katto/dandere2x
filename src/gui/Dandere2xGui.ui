@@ -1294,6 +1294,11 @@
     </item>
     <item>
      <property name="text">
+      <string>RealSR</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
       <string>Waifu2x-Vulkan</string>
      </property>
     </item>
@@ -4007,7 +4012,7 @@
      <x>0</x>
      <y>0</y>
      <width>688</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
    </property>
   </widget>
