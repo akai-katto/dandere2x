@@ -158,7 +158,6 @@ class AppWindow(QMainWindow):
     def refresh_scale_factor(self):
         if self.ui.waifu2x_type_combo_box.currentText() == 'Waifu2x-Vulkan':
             self.ui.scale_3_radio_button.setEnabled(False)
-            self.ui.scale_4_radio_button.setEnabled(False)
         elif self.ui.waifu2x_type_combo_box.currentText() == 'RealSR':
             self.ui.scale_3_radio_button.setEnabled(False)
             self.ui.scale_4_radio_button.setEnabled(True)

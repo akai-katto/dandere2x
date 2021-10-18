@@ -272,9 +272,9 @@ def download_and_extract_externals(dandere2x_dir: str):
     import os
 
     print(
-        "Downloading: " + "https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip")
+        "Downloading: " + "https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.2/externals.zip")
     download_file = dandere2x_dir + "download.zip"
-    wget.download('https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.1/externals.zip',
+    wget.download('https://github.com/aka-katto/dandere2x_externals_static/releases/download/1.2/externals.zip',
                   out=download_file, bar=bar_adaptive)
 
     with zipfile.ZipFile(download_file, 'r') as zip_ref:
