@@ -47,7 +47,7 @@ class MinDiskUsage(threading.Thread):
         # Threading Specific
         threading.Thread.__init__(self, name="Min Disk Thread")
 
-        self.log = logging.getLogger(name=context.service_request.input_file)
+        self.log = logging.getLogger(name=context.service_request.input_file.name)
         self.context = context
         self.controller = controller
         self.max_frames_ahead = self.context.max_frames_ahead
@@ -121,12 +121,12 @@ class MinDiskUsage(threading.Thread):
 
         index_to_remove = str(remove_before - 2)
 
-        prediction_data_file_r = pframe_data_dir + "pframe_" + index_to_remove + ".txt"
-        residual_data_file_r = residual_data_dir + "residual_" + index_to_remove + ".txt"
-        fade_data_file_r = fade_data_dir + "fade_" + index_to_remove + ".txt"
-        input_image_r = input_frames_dir + "frame" + index_to_remove + ".png"
-        noised_image = noised_image_dir + "frame" + index_to_remove + ".png"
-        upscaled_file_r = residual_upscaled_dir + "output_" + get_lexicon_value(6, int(remove_before)) + ".png"
+        prediction_data_file_r = pframe_data_dir / ("pframe_" + index_to_remove + ".txt")
+        residual_data_file_r = residual_data_dir / ("residual_" + index_to_remove + ".txt")
+        fade_data_file_r = fade_data_dir / ("fade_" + index_to_remove + ".txt")
+        input_image_r = input_frames_dir / ("frame" + index_to_remove + ".png")
+        noised_image = noised_image_dir / ("frame" + index_to_remove + ".png")
+        upscaled_file_r = residual_upscaled_dir / ("output_" + get_lexicon_value(6, int(remove_before)) + ".png")
 
         # "mark" them-------
         remove = [prediction_data_file_r, residual_data_file_r, noised_image,

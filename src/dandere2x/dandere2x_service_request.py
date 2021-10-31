@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 from enum import Enum
+from pathlib import Path
 
 import yaml
 
@@ -76,13 +77,14 @@ class Dandere2xServiceRequest:
             upscale_engine:
         """
 
-        self.workspace: str = os.path.abspath(workspace)
+        self.workspace: Path = Path(workspace)
+        self.output_file: Path = Path(output_file)
+        self.input_file: Path = Path(input_file)
+
         self.scale_factor: int = scale_factor
         self.quality_minimum: int = quality_minimum
         self.denoise_level: int = denoise_level
         self.block_size: int = block_size
-        self.output_file: str = output_file
-        self.input_file: str = input_file
         self.output_options: dict = copy.deepcopy(output_options)
         self.name: str = name
         self.processing_type: ProcessingType = processing_type

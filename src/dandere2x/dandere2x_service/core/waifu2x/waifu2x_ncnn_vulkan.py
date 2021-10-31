@@ -19,6 +19,7 @@ Purpose:
 import copy
 import os
 import subprocess
+from pathlib import Path
 from threading import Thread
 
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
@@ -35,7 +36,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
     def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         # implementation specific
         self.active_waifu2x_subprocess = None
-        self.waifu2x_vulkan_path = load_executable_paths_yaml()['waifu2x_vulkan']
+        self.waifu2x_vulkan_path = Path(load_executable_paths_yaml()['waifu2x_vulkan'])
 
         assert get_operating_system() != "win32" or os.path.exists(self.waifu2x_vulkan_path), \
             "%s does not exist!" % self.waifu2x_vulkan_path
@@ -53,15 +54,15 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
     # override
     def repeated_call(self) -> None:
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "vulkan_upscale_frames.txt", "w")
+        console_output = open(self.context.console_output_dir / "vulkan_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
             if exec_command[x] == "[input_file]":
-                exec_command[x] = self.context.residual_images_dir
+                exec_command[x] = str(self.context.residual_images_dir.absolute())
 
             if exec_command[x] == "[output_file]":
-                exec_command[x] = self.context.residual_upscaled_dir
+                exec_command[x] = str(self.context.residual_upscaled_dir.absolute())
 
         console_output.write(str(exec_command))
         self.active_waifu2x_subprocess = subprocess.Popen(args=exec_command, shell=False,
@@ -70,9 +71,9 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
         self.active_waifu2x_subprocess.wait()
 
     # override
-    def upscale_file(self, input_image: str, output_image: str) -> None:
+    def upscale_file(self, input_image: Path, output_image: Path) -> None:
         exec_command = copy.copy(self.upscale_command)
-        console_output_path = self.context.console_output_dir + "vulkan_upscale_frames.txt"
+        console_output_path = self.context.console_output_dir / "vulkan_upscale_frames.txt"
 
         with open(console_output_path, "w") as console_output:
             """  
@@ -86,10 +87,10 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             # replace the exec command with the files we're concerned with
             for x in range(len(exec_command)):
                 if exec_command[x] == "[input_file]":
-                    exec_command[x] = input_image
+                    exec_command[x] = str(input_image.absolute())
 
                 if exec_command[x] == "[output_file]":
-                    exec_command[x] = output_image
+                    exec_command[x] = str(output_image.absolute())
 
             console_output.write(str(exec_command))
             self.active_waifu2x_subprocess = subprocess.Popen(exec_command,
@@ -110,7 +111,7 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
 
     # override
     def _construct_upscale_command(self) -> list:
-        waifu2x_vulkan_upscale_frame_command = [self.waifu2x_vulkan_path,
+        waifu2x_vulkan_upscale_frame_command = [str(self.waifu2x_vulkan_path.absolute()),
                                                 "-i", "[input_file]",
                                                 "-n", str(self.context.service_request.denoise_level),
                                                 "-s", str(self.context.service_request.scale_factor)]
@@ -146,8 +147,8 @@ class Waifu2xNCNNVulkan(AbstractUpscaler, Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.context.residual_upscaled_dir + file + ".png.png"
-            clean_name = self.context.residual_upscaled_dir + file + ".png"
+            dirty_name = self.context.residual_upscaled_dir / (file + ".png.png")
+            clean_name = self.context.residual_upscaled_dir / (file + ".png")
 
             wait_on_either_file(clean_name, dirty_name)
 

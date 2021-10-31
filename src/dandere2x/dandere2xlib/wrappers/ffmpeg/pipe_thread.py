@@ -1,6 +1,7 @@
 import subprocess
 import threading
 import time
+from pathlib import Path
 
 from colorlog import logging
 
@@ -15,14 +16,14 @@ class Pipe(threading.Thread):
     images to ffmpeg, thus removing the need for storing the processed images onto the disk.
     """
 
-    def __init__(self, output_no_sound: str, context: Dandere2xServiceContext, controller: Dandere2xController):
+    def __init__(self, output_no_sound: Path, context: Dandere2xServiceContext, controller: Dandere2xController):
         threading.Thread.__init__(self, name="Pipe Thread")
 
         # load context
         self.context = context
         self.controller = controller
-        self.output_no_sound = output_no_sound
-        self.log = logging.getLogger(name=self.context.service_request.input_file)
+        self.output_no_sound: Path = output_no_sound
+        self.log = logging.getLogger(name=self.context.service_request.input_file.name)
 
         # class specific
         self.ffmpeg_pipe_subprocess = None
@@ -104,7 +105,7 @@ class Pipe(threading.Thread):
         ffmpeg_pipe_command.append(output_no_sound)
 
         # Starting the Pipe Command
-        console_output = open(self.context.console_output_dir + "pipe_output.txt", "w")
+        console_output = open(self.context.console_output_dir / "pipe_output.txt", "w")
         console_output.write(str(ffmpeg_pipe_command))
 
         self.log.info("ffmpeg_pipe_command %s" % str(ffmpeg_pipe_command))

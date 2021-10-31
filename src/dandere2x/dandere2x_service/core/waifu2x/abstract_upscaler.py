@@ -21,6 +21,7 @@ import os
 import sys
 import time
 from abc import ABC, abstractmethod
+from pathlib import Path
 from threading import Thread
 
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
@@ -51,8 +52,8 @@ class AbstractUpscaler(Thread, ABC):
         """
         Verify the upscaler works by upscaling a very small frame, and throws a descriptive error if it doesn't.
         """
-        test_file = self.context.service_request.workspace + "test_frame.jpg"
-        test_file_upscaled = self.context.service_request.workspace + "test_frame_upscaled.jpg"
+        test_file = self.context.service_request.workspace / "test_frame.jpg"
+        test_file_upscaled = self.context.service_request.workspace / "test_frame_upscaled.jpg"
 
         test_frame = Frame()
         test_frame.create_new(2, 2)
@@ -123,7 +124,7 @@ class AbstractUpscaler(Thread, ABC):
         pass
 
     @abstractmethod
-    def upscale_file(self, input_image: str, output_image: str) -> None:
+    def upscale_file(self, input_image: Path, output_image: Path) -> None:
         """
         Upscale a single file using the implemented upscaling program.
         """
@@ -156,8 +157,8 @@ class RemoveUpscaledFiles(Thread):
 
         for x in range(len(self.list_of_names)):
             name = self.list_of_names[x]
-            residual_file = self.context.residual_images_dir + name
-            residual_upscaled_file = self.context.residual_upscaled_dir + name
+            residual_file = self.context.residual_images_dir / name
+            residual_upscaled_file = self.context.residual_upscaled_dir / name
 
             wait_on_file(residual_upscaled_file)
 

@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
@@ -24,20 +25,20 @@ class Dandere2xServiceContext:
         self.service_request = service_request
 
         # Directories and Paths
-        self.input_frames_dir = os.path.join(service_request.workspace, "inputs") + os.path.sep
-        self.noised_input_frames_dir = os.path.join(service_request.workspace, "noised_inputs") + os.path.sep
-        self.residual_images_dir = os.path.join(service_request.workspace, "residual_images") + os.path.sep
-        self.residual_upscaled_dir = os.path.join(service_request.workspace, "residual_upscaled") + os.path.sep
-        self.residual_data_dir = os.path.join(service_request.workspace, "residual_data") + os.path.sep
-        self.pframe_data_dir = os.path.join(service_request.workspace, "pframe_data") + os.path.sep
-        self.merged_dir = os.path.join(service_request.workspace, "merged") + os.path.sep
-        self.fade_data_dir = os.path.join(service_request.workspace, "fade_data") + os.path.sep
-        self.debug_dir = os.path.join(service_request.workspace, "debug") + os.path.sep
-        self.console_output_dir = os.path.join(service_request.workspace, "console_output") + os.path.sep
-        self.compressed_static_dir = os.path.join(service_request.workspace, "compressed_static") + os.path.sep
-        self.encoded_dir = os.path.join(service_request.workspace, "encoded") + os.path.sep
-        self.temp_image_folder = os.path.join(service_request.workspace, "temp_image_folder") + os.path.sep
-        self.log_dir = os.path.join(service_request.workspace, "log_dir") + os.path.sep
+        self.input_frames_dir: Path = service_request.workspace / "inputs"
+        self.noised_input_frames_dir: Path = service_request.workspace / "noised_inputs"
+        self.residual_images_dir: Path = service_request.workspace / "residual_images"
+        self.residual_upscaled_dir: Path = service_request.workspace / "residual_upscaled"
+        self.residual_data_dir: Path = service_request.workspace / "residual_data"
+        self.pframe_data_dir: Path = service_request.workspace / "pframe_data"
+        self.merged_dir: Path = service_request.workspace / "merged"
+        self.fade_data_dir: Path = service_request.workspace / "fade_data"
+        self.debug_dir = service_request.workspace / "debug"
+        self.console_output_dir: Path = service_request.workspace / "console_output"
+        self.compressed_static_dir: Path = service_request.workspace / "compressed_static"
+        self.encoded_dir: Path = service_request.workspace / "encoded"
+        self.temp_image_folder: Path = service_request.workspace / "temp_image_folder"
+        self.log_dir: Path = service_request.workspace / "log_dir"
 
         self.directories = {self.input_frames_dir,
                             self.noised_input_frames_dir,
@@ -63,7 +64,7 @@ class Dandere2xServiceContext:
 
         # todo static-ish settings < add to a yaml somewhere >
         self.bleed = self.service_request.output_options["dandere2x"]["bleed"]
-        self.temp_image = self.temp_image_folder + "tempimage.jpg"
+        self.temp_image = self.temp_image_folder / "tempimage.jpg"
         self.debug = False
         self.step_size = 4
         self.max_frames_ahead = 100
@@ -74,7 +75,7 @@ class Dandere2xServiceContext:
 
 
     def log_all_variables(self):
-        log = logging.getLogger(name=self.service_request.input_file)
+        log = logging.getLogger(name=self.service_request.input_file.name)
 
         log.info("Context Settings:")
         for item in self.__dict__:

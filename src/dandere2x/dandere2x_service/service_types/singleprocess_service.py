@@ -1,5 +1,6 @@
 import copy
 import os
+from pathlib import Path
 
 from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
@@ -24,9 +25,9 @@ class SingleProcessService(Dandere2xServiceInterface):
             "%s is not a video file!" % self._service_request.input_file
 
         self.child_request = copy.deepcopy(service_request)
-        self.child_request.input_file = os.path.join(service_request.workspace, "pre_processed.mkv")
-        self.child_request.output_file = os.path.join(service_request.workspace, "non_migrated.mkv")
-        self.child_request.workspace = os.path.join(service_request.workspace, "subworkspace")
+        self.child_request.input_file = service_request.workspace / "pre_processed.mkv"
+        self.child_request.output_file = service_request.workspace / "non_migrated.mkv"
+        self.child_request.workspace = service_request.workspace / "subworkspace"
         self.dandere2x_service = None
 
     def _pre_process(self):
@@ -66,7 +67,7 @@ class SingleProcessService(Dandere2xServiceInterface):
         """
         Finishes the video up by migrating the audio tracks from the child's output file with the original input file.
         """
-        ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
+        ffmpeg_path = Path(load_executable_paths_yaml()['ffmpeg'])
         migrate_tracks_contextless(ffmpeg_dir=ffmpeg_path, no_audio=self.child_request.output_file,
                                    file_dir=self._service_request.input_file,
                                    output_file=self._service_request.output_file,

@@ -12,6 +12,7 @@ import os
 import shutil
 import sys
 import time
+from pathlib import Path
 from sys import platform
 
 from pip._vendor.distlib.compat import raw_input
@@ -52,13 +53,13 @@ def force_delete_directory(directory):
             time.sleep(1)
 
 
-def get_list_from_file_and_wait(text_file: str):
+def get_list_from_file_and_wait(text_file: Path):
     logger = logging.getLogger(__name__)
     exists = exists = os.path.isfile(text_file)
     count = 0
     while not exists:
         if count / 500 == 0:
-            logger.debug(text_file + " does not exist, waiting")
+            logger.debug(str(text_file.absolute()) + " does not exist, waiting")
         exists = os.path.isfile(text_file)
         count += 1
         time.sleep(.01)
@@ -67,13 +68,13 @@ def get_list_from_file_and_wait(text_file: str):
     try:
         file = open(text_file, "r")
     except PermissionError:
-        logging.info("permission error on file" + text_file)
+        logging.info("permission error on file" + str(text_file.absolute()))
 
     while not file:
         try:
             file = open(text_file, "r")
         except PermissionError:
-            logging.info("permission error on file" + text_file)
+            logging.info("permission error on file" + str(text_file.absolute()))
 
     text_list = file.read().split('\n')
     file.close()
@@ -84,27 +85,27 @@ def get_list_from_file_and_wait(text_file: str):
     return text_list
 
 
-def wait_on_file(file_string: str):
+def wait_on_file(file_string: Path):
     logger = logging.getLogger(__name__)
     exists = os.path.isfile(file_string)
     count = 0
     while not exists:
         if count / 500 == 0:
-            logger.debug(file_string + " does not exist, waiting")
+            logger.debug(str(file_string.absolute()) + " does not exist, waiting")
         exists = os.path.isfile(file_string)
         count += 1
         time.sleep(.001)
 
 
 # for renaming function, break when either file exists
-def wait_on_either_file(file_1: str, file_2: str):
+def wait_on_either_file(file_1: Path, file_2: Path):
     logger = logging.getLogger(__name__)
     exists_1 = os.path.isfile(file_1)
     exists_2 = os.path.isfile(file_2)
     count = 0
     while not (exists_1 or exists_2):
         if count / 500 == 0:
-            logger.debug(file_1 + " does not exist, waiting")
+            logger.debug(str(file_1.absolute()) + " does not exist, waiting")
         exists_1 = os.path.isfile(file_1)
         exists_2 = os.path.isfile(file_2)
 
@@ -113,7 +114,7 @@ def wait_on_either_file(file_1: str, file_2: str):
 
 
 # many times a file may not exist yet, so just have this function wait if it does not.
-def file_exists(file_string: str):
+def file_exists(file_string: Path):
     return os.path.isfile(file_string)
 
 
@@ -136,7 +137,7 @@ def rename_file(file1, file2):
         os.rename(file1, file2)
 
 
-def rename_file_wait(file1, file2):
+def rename_file_wait(file1: Path, file2: Path):
     log = logging.getLogger()
     renamed = False
 

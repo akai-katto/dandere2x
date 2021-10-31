@@ -39,7 +39,7 @@ class Dandere2x(Thread):
             from dandere2x.dandere2x_service.service_types.folder_service import FolderService
             return FolderService
 
-        if request.input_file.endswith("gif"):
+        if request.input_file.name.endswith("gif"):
             from dandere2x.dandere2x_service.service_types.gif_service import GifService
             return GifService
 

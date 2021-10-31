@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import cv2
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait
@@ -12,9 +14,9 @@ class ProgressiveFramesExtractorCV2:
     """
 
     def __init__(self,
-                 input_video: str,
-                 extracted_frames_dir: str,
-                 compressed_frames_dir: str,
+                 input_video: Path,
+                 extracted_frames_dir: Path,
+                 compressed_frames_dir: Path,
                  compressed_quality: int):
 
         self.input_video = input_video
@@ -22,7 +24,7 @@ class ProgressiveFramesExtractorCV2:
         self.compressed_frames_dir = compressed_frames_dir
 
         self.compressed_quality = compressed_quality
-        self.cap = cv2.VideoCapture(self.input_video)
+        self.cap = cv2.VideoCapture(str(self.input_video))
 
         self.ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
 
@@ -54,10 +56,10 @@ class ProgressiveFramesExtractorCV2:
             success, image = self.cap.read()
 
         if success:
-            temp_image = self.extracted_frames_dir + "frame_temp_%s.png" % self.count
-            final_image = self.extracted_frames_dir + "frame%s.png" % self.count
+            temp_image = self.extracted_frames_dir / ("frame_temp_%s.png" % self.count)
+            final_image = self.extracted_frames_dir / ("frame%s.png" % self.count)
 
-            cv2.imwrite(temp_image, image)
+            cv2.imwrite(str(temp_image.absolute()), image)
 
             rename_file_wait(temp_image,
                              final_image)

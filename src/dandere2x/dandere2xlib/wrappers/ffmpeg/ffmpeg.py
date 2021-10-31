@@ -2,6 +2,7 @@ import logging
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution, get_operating_system
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section
@@ -219,9 +220,9 @@ def get_console_output(method_name: str, console_output_dir=None):
     return open(os.devnull, 'w')
 
 
-def apply_noise_to_image(ffmpeg_dir: str,
-                         input_image: str,
-                         output_file: str) -> None:
+def apply_noise_to_image(ffmpeg_dir: Path,
+                         input_image: Path,
+                         output_file: Path) -> None:
 
     concat_videos_command = [ffmpeg_dir,
                              "-i", input_image,
@@ -257,7 +258,7 @@ def concat_n_videos(ffmpeg_dir: str, temp_file_dir: str, console_output_dir: str
     subprocess.call(concat_videos_command, shell=False, stderr=console_output, stdout=console_output)
 
 
-def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, output_file: str,
+def migrate_tracks_contextless(ffmpeg_dir: Path, no_audio: Path, file_dir: Path, output_file: Path,
                                output_options: dict,
                                console_output_dir=None):
     """
@@ -272,9 +273,9 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
 
     log = logging.getLogger()
 
-    migrate_tracks_command = [ffmpeg_dir,
-                              "-i", no_audio,
-                              "-i", file_dir,
+    migrate_tracks_command = [str(ffmpeg_dir.absolute()),
+                              "-i", str(no_audio.absolute()),
+                              "-i", str(file_dir.absolute()),
                               "-map", "0:v?",
                               "-map", "1:a?",
                               "-map", "1:s?",
@@ -292,7 +293,7 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
 
     log.info("Migrating tracks %s " % convert(migrate_tracks_command))
 
-    console_output = get_console_output(__name__, console_output_dir)
+    console_output = get_console_output(__name__, str(console_output_dir.absolute()))
 
     log.info("Writing files to %s" % str(console_output_dir))
     log.info("Migrate Command: %s" % convert(migrate_tracks_command))

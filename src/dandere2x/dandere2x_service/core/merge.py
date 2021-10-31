@@ -44,6 +44,7 @@ from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead, Asy
 from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
 from dandere2x.dandere2x_service.core.residual_plugins.pframe import pframe_image
 
+
 class Merge(threading.Thread):
     """
     Description:
@@ -60,7 +61,7 @@ class Merge(threading.Thread):
         self.context = context
         self.controller = controller
         # load variables from context
-        self.log = logging.getLogger(name=context.service_request.input_file)
+        self.log = logging.getLogger(name=context.service_request.input_file.name)
 
         # setup the pipe for merging
         self.pipe = Pipe(self.context.service_request.output_file, context=context, controller=controller)
@@ -77,20 +78,19 @@ class Merge(threading.Thread):
 
         # Load the genesis image + the first upscaled image.
         frame_previous = Frame()
-        frame_previous.load_from_string_controller(
-            self.context.merged_dir + "merged_" + str(1) + ".png",
-            self.controller)
+        frame_previous.load_from_string_controller(self.context.merged_dir / ("merged_" + str(1) + ".png"),
+                                                   self.controller)
 
         # Load and pipe the 'first' image before we start the for loop procedure, since all the other images will
         # inductively build off this first frame.
         frame_previous = Frame()
         frame_previous.load_from_string_controller(
-            self.context.merged_dir + "merged_" + str(1) + ".png", self.controller)
+            self.context.merged_dir / ("merged_" + str(1) + ".png"), self.controller)
         self.pipe.save(frame_previous)
 
         current_upscaled_residuals = Frame()
         current_upscaled_residuals.load_from_string_controller(
-            self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, 1) + ".png",
+            self.context.residual_upscaled_dir / ("output_" + get_lexicon_value(6, 1) + ".png"),
             self.controller)
 
         last_frame = False
@@ -111,7 +111,7 @@ class Merge(threading.Thread):
                 it's well worth it. 
                 """
                 background_frame_load = AsyncFrameRead(
-                    self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
+                    self.context.residual_upscaled_dir / ("output_" + get_lexicon_value(6, x + 1) + ".png"),
                     self.controller)
                 background_frame_load.start()
 
@@ -122,10 +122,11 @@ class Merge(threading.Thread):
             # Load the needed vectors to create the merged image.
 
             prediction_data_list = get_list_from_file_and_wait(
-                self.context.pframe_data_dir + "pframe_" + str(x) + ".txt")
+                self.context.pframe_data_dir / ("pframe_" + str(x) + ".txt"))
             residual_data_list = get_list_from_file_and_wait(
-                self.context.residual_data_dir + "residual_" + str(x) + ".txt")
-            fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt")
+                self.context.residual_data_dir / ("residual_" + str(x) + ".txt"))
+
+            fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir / ("fade_" + str(x) + ".txt"))
 
             # Create the actual image itself.
             current_frame = self.make_merge_image(self.context, current_upscaled_residuals, frame_previous,
@@ -148,7 +149,7 @@ class Merge(threading.Thread):
             if not last_frame:
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
-                    wait_on_file(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
+                    wait_on_file(self.context.residual_upscaled_dir / ("output_" + get_lexicon_value(6, x + 1) + ".png"))
             """
             Now that we're all done with the current frame, the current `current_frame` is now the frame_previous
             (with respect to the next iteration). We could obviously manually load frame_previous = Frame(n-1) each

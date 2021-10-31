@@ -18,7 +18,7 @@ class Status(threading.Thread):
 
         self.con = context
         self.controller = controller
-        self.log = logging.getLogger(name=self.con.service_request.input_file)
+        self.log = logging.getLogger(name=self.con.service_request.input_file.name)
 
     def join(self, timeout=None):
         self.log.info("Join called.")

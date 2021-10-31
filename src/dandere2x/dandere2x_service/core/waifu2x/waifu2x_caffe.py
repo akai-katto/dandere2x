@@ -43,7 +43,7 @@ class Waifu2xCaffe(AbstractUpscaler, Thread):
     # override
     def repeated_call(self) -> None:
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "caffe_upscale_frames.txt", "w")
+        console_output = open(self.context.console_output_dir / "caffe_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
@@ -62,7 +62,7 @@ class Waifu2xCaffe(AbstractUpscaler, Thread):
     def upscale_file(self, input_image: str, output_image: str) -> None:
 
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "caffe_upscale_frames.txt", "w")
+        console_output = open(self.context.console_output_dir / "caffe_upscale_frames.txt", "w")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):

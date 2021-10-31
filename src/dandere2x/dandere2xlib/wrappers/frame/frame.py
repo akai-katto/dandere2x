@@ -4,6 +4,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass
+from pathlib import Path
 
 import imageio
 import numpy
@@ -106,14 +107,14 @@ class Frame:
         self.string_name = input_string
 
     from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
-    def load_from_string_controller(self, input_string, controller=Dandere2xController()):
+    def load_from_string_controller(self, input_string: Path, controller=Dandere2xController()):
 
         logger = logging.getLogger(__name__)
         exists = exists = os.path.isfile(input_string)
         count = 0
         while not exists:
             if count % 10000 == 0:
-                logger.debug(input_string + " dne")
+                logger.debug(str(input_string) + " dne")
             exists = os.path.isfile(input_string)
             count += 1
             time.sleep(.2)
@@ -130,7 +131,7 @@ class Frame:
             except SyntaxError:
                 logger.warning("Caught Syntax error - trying again")
 
-    def save_image(self, out_location):
+    def save_image(self, out_location: Path):
         """
         Save an image with specific instructions depending on it's extension type.
         """
@@ -138,15 +139,15 @@ class Frame:
 
         if 'jpg' in extension:
             jpegsave = self.get_pil_image()
-            jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=100)
-            wait_on_file(out_location + "temp" + extension)
-            rename_file(out_location + "temp" + extension, out_location)
+            jpegsave.save(out_location , format='JPEG', subsampling=0, quality=100)
+            wait_on_file(out_location )
+            rename_file(out_location, out_location)
 
         else:
             save_image = self.get_pil_image()
-            save_image.save(out_location + "temp" + extension, format='PNG')
-            wait_on_file(out_location + "temp" + extension)
-            rename_file(out_location + "temp" + extension, out_location)
+            save_image.save(out_location, format='PNG')
+            wait_on_file(out_location )
+            rename_file(out_location, out_location)
 
     def get_res(self):
         return (self.width, self.height)
@@ -154,7 +155,7 @@ class Frame:
     def get_pil_image(self):
         return Image.fromarray(self.frame.astype(np.uint8))
 
-    def save_image_temp(self, out_location, temp_location):
+    def save_image_temp(self, out_location: Path, temp_location: Path):
         """
         Save an image in the "temp_location" folder to prevent another program from accessing the file
         until it's done writing.
@@ -166,7 +167,7 @@ class Frame:
         wait_on_file(temp_location)
         rename_file(temp_location, out_location)
 
-    def save_image_quality(self, out_location, quality_per):
+    def save_image_quality(self, out_location: Path, quality_per):
         """
         Save an image with JPEG using the JPEG quality-compression ratio. 100 will be the best, while 0 will
         be the worst.
@@ -176,9 +177,9 @@ class Frame:
 
         if 'jpg' in extension:
             jpegsave = Image.fromarray(self.frame.astype(np.uint8))
-            jpegsave.save(out_location + "temp" + extension, format='JPEG', subsampling=0, quality=quality_per)
-            wait_on_file(out_location + "temp" + extension)
-            rename_file(out_location + "temp" + extension, out_location)
+            jpegsave.save(out_location / ("temp" + extension), format='JPEG', subsampling=0, quality=quality_per)
+            wait_on_file(out_location / ("temp" + extension))
+            rename_file(out_location / ("temp" + extension), out_location)
         else:
             # todo, fix this
             self.logger.error("Aka-katto has removed this customization you added - he's going to re-add it later.")
