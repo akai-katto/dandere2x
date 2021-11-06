@@ -54,7 +54,7 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
     # override
     def repeated_call(self) -> None:
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "waifu2x_converter_cpp_output.txt", "w")
+        console_output = open(self.context.console_output_dir / "waifu2x_converter_cpp_output.txt", "w")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
@@ -73,7 +73,7 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
     def upscale_file(self, input_image: str, output_image: str) -> None:
 
         exec_command = copy.copy(self.upscale_command)
-        console_output = open(self.context.console_output_dir + "waifu2x-converter-cpp-output.txt", "w")
+        console_output = open(self.context.console_output_dir / "waifu2x-converter-cpp-output.txt", "w")
 
         # replace the exec command with the files we're concerned with
         for x in range(len(exec_command)):
@@ -117,10 +117,10 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.context.residual_upscaled_dir + file + '_[NS-L' + str(
-                self.context.service_request.denoise_level) + '][x' + str(
-                self.context.service_request.scale_factor) + '.000000]' + ".png"
-            clean_name = self.context.residual_upscaled_dir + file + ".png"
+            dirty_name = self.context.residual_upscaled_dir / (file + '_[NS-L' + str(
+                self.context.service_request.denoise_level) + '][x' +
+                str(self.context.service_request.scale_factor) + '.000000]' + ".png")
+            clean_name = self.context.residual_upscaled_dir / (file + ".png")
 
             wait_on_either_file(clean_name, dirty_name)
 

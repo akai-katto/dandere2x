@@ -19,6 +19,7 @@ Purpose: Caffe implementation of abstract_upscaler
 import copy
 import os
 import subprocess
+from pathlib import Path
 from threading import Thread
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system
@@ -32,7 +33,7 @@ class Waifu2xCaffe(AbstractUpscaler, Thread):
     def __init__(self, context: Dandere2xServiceContext, controller: Dandere2xController):
         # implementation specific
         self.active_waifu2x_subprocess = None
-        self.waifu2x_caffe_path = load_executable_paths_yaml()['waifu2x_caffe']
+        self.waifu2x_caffe_path = Path(load_executable_paths_yaml()['waifu2x_caffe'])
 
         assert get_operating_system() != "win32" or os.path.exists(self.waifu2x_caffe_path), \
             "%s does not exist!" % self.waifu2x_caffe_path
@@ -59,7 +60,7 @@ class Waifu2xCaffe(AbstractUpscaler, Thread):
         self.active_waifu2x_subprocess.wait()
 
     # override
-    def upscale_file(self, input_image: str, output_image: str) -> None:
+    def upscale_file(self, input_image: Path, output_image: Path) -> None:
 
         exec_command = copy.copy(self.upscale_command)
         console_output = open(self.context.console_output_dir / "caffe_upscale_frames.txt", "w")
@@ -79,7 +80,7 @@ class Waifu2xCaffe(AbstractUpscaler, Thread):
 
     # override
     def _construct_upscale_command(self) -> list:
-        upscale_command = [self.waifu2x_caffe_path,
+        upscale_command = [str(self.waifu2x_caffe_path.absolute()),
                            "-i", "[input_file]",
                            "-n", str(self.context.service_request.denoise_level),
                            "-s", str(self.context.service_request.scale_factor)]

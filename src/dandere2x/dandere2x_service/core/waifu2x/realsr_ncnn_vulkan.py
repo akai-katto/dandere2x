@@ -116,7 +116,7 @@ class RealSRNCNNVulkan(AbstractUpscaler, Thread):
                                                 "-s", str(self.context.service_request.scale_factor)]
 
         waifu2x_vulkan_options = get_options_from_section(
-            self.context.service_request.output_options["waifu2x_ncnn_vulkan"]["output_options"])
+            self.context.service_request.output_options["realsr_ncnn_vulkan"]["output_options"])
 
         # add custom options to waifu2x_vulkan
         for element in waifu2x_vulkan_options:
