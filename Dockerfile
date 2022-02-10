@@ -18,6 +18,7 @@ RUN apt install -y --no-install-recommends ffmpeg nvidia-driver-440 python3.8 li
 
 # Needed Library for Building Dandere2x (this will be removed later)
 RUN apt-get install -y cmake
+RUN apt-get install -y curl
 RUN apt-get install -y git-core
 RUN apt-get install -y build-essential
 RUN apt-get install -y libgl1-mesa-glx
