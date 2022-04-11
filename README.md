@@ -90,6 +90,119 @@ Example:
 
 `./linux_setup.sh` will automatically create a config that uses the upscaler binaries that you have installed, including the ones from the AUR. As long as the binary is in PATH, the script will add it to the config. 
 
+## macOS
+
+1. Install Clang, OpenMP, and ffmpeg:
+
+    - Using [Homebrew](https://brew.sh/):  
+      ```sh
+      brew install llvm --with-clang
+      brew install cmake ffmpeg
+      rehash
+      ```
+
+    - Using [MacPorts](https://www.macports.org/):  
+      ```sh
+      sudo port install clang-14 libomp cmake ffmpeg
+      rehash
+      ```
+
+    **Note:** `rehash` is only required for `zsh`.
+
+1. Clone the source code:
+
+    ```
+    cd ~/Downloads
+    git clone https://github.com/akai-katto/dandere2x
+    cd dandere2x
+    ```
+
+1. Build the C++ part of the application:
+
+    ```sh
+    cd dandere2x_cpp
+    ```
+    
+    - Using Homebrew:  
+      ```sh
+      export CXX="$(brew list llvm | grep -Eo '\/.+\/bin\/clang\+\+$')"
+      export CC="$(brew list llvm | grep -Eo '\/.+\/bin\/clang$')"
+      ```
+
+    - Using MacPorts:  
+      ```sh
+      export CXX="$(sudo port contents clang-14 | grep -Eo '\/.+\/bin\/clang\+\+$')"
+      export CC="$(sudo port contents clang-14 | grep -Eo '\/.+\/bin\/clang$')"
+      ```
+
+    ```sh
+    cmake CMakeLists.txt
+    make
+    cd ..
+    ```
+
+    **Note:** The binary will segfault if executed without 7 or more arguments. The binary will work when called by the Python application, though.
+
+1. Create and activate a Python virtual environment:
+
+    ```sh
+    cd src
+    python -m venv .venv
+    source ./.venv/bin/activate
+    ```
+
+1. Install Python dependencies:
+
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+    **Note:** If this fails, try changing the `numpy` version in `requirements.txt` to `1.22.3` and running `pip install` again:  
+    ```txt
+    numpy==1.22.3
+    ```
+
+1. Download an upscaler (at least one is required):
+
+    - [waifu2x-ncnn-vulkan](https://github.com/nihui/waifu2x-ncnn-vulkan/releases)
+    - [realsr-ncnn-vulkan](https://github.com/nihui/realsr-ncnn-vulkan/releases)
+    - [waifu2x-converter-cpp](https://github.com/DeadSix27/waifu2x-converter-cpp/releases)
+    - [waifu2x-caffe-ubuntu](https://github.com/nagadomi/waifu2x-caffe-ubuntu)
+
+1. Allow dandere2x to find ffmpeg, ffprobe, and the upscaler(s):
+
+    - Add symlinks in `src/externals`:  
+      ```sh
+      cd externals
+      ln -s $(which ffmpeg)
+      ln -s $(which ffprobe)
+      ln -s ../../dandere2x_cpp/dandere2x_cpp
+      ln -s /Users/<username>/Downloads/waifu2x-ncnn-vulkan-20210521-macos/waifu2x-ncnn-vulkan
+      #...
+      cd ..
+      ```
+  
+    - **Or** add the correct paths to `src/config_files/executable_paths.yaml`:  
+      ```yaml
+      ffmpeg: "/usr/local/bin/ffmpeg"
+      waifu2x_vulkan: "/Users/<username>/Downloads/waifu2x-ncnn-vulkan-20210521-macos/waifu2x-ncnn-vulkan"
+      //...
+      ```
+
+1. Create `workspace` directory:
+
+    ```sh
+    mkdir workspace
+    ```
+
+1. Run the Python application:
+
+    ```sh
+    python3 main.py
+    ```
+
+    **Note:** After restarting your machine or opening a new terminal, you will need to run `source ./.venv/bin/activate` before starting the application.
+
 # Related Resources
 
 [Video2x](https://github.com/k4yt3x/video2x): A lossless video enlarger/video upscaler achieved with waifu2x.
