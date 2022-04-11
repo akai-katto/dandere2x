@@ -52,7 +52,7 @@ waifu2x_ncnn_vulkan:
     -g: null
     -load-proc-save_threads: null
     #    -m: models-upconv_7_anime_style_art_rgb
-    -tile-size: 200  # note: if you get black images try lowering this tile argument to some lower value.
+    -t: 200  # note: if you get black images try lowering this tile argument to some lower value.
     -verbose: null
 
 waifu2x_converter:
