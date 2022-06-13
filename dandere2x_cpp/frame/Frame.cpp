@@ -28,6 +28,7 @@ Purpose:
 #include <iostream>
 #include <cstdio>
 #include <random>
+#include <string.h>
 
 // local includes
 #include "../dandere2x_utilities.h"
@@ -64,18 +65,32 @@ Frame::Frame(const string &file_name) {
     stbi_image_free(stb_image);
 }
 
+// For writing to memory with stbi_write_to_func
+class Writer {
+public:
+    static unsigned char *byte_array;
+    static unsigned int offset;
+    // writes to a very stupid array
+    static void dummy_write(void *context, void *data, int len) {
+        memcpy(Writer::byte_array + offset, data, len);
+        Writer::offset += len;
+    }
+};
+unsigned char *Writer::byte_array = new unsigned char[500000000];
+unsigned int Writer::offset = 0;
+
 //----------------------------------------------------
 // Purpose: todo
 //----------------------------------------------------
-Frame::Frame(const string &file_name, const int compression, const string &workspace) {
+Frame::Frame(const string &file_name, const int compression) {
     int width, height, bpp;
     unsigned char *stb_image = stbi_load(file_name.c_str(), &width, &height, &bpp, 3);
 
-    string temp_name = workspace + dandere2x_utilities::separator() + "temp.jpg";
-    stbi_write_jpg(temp_name.c_str(), width, height, bpp, stb_image, compression);
+    stbi_write_jpg_to_func(Writer::dummy_write, 0, width, height, bpp, stb_image, compression);
     stbi_image_free(stb_image);
+    stb_image = stbi_load_from_memory( (unsigned  char *) Writer::byte_array, Writer::offset, &width, &height, &bpp, 3);
+    Writer::offset = 0;  // Reset Offset
 
-    stb_image = stbi_load(temp_name.c_str(), &width, &height, &bpp, 3);
     this->height = height;
     this->width = width;
     this->file_name = file_name;
@@ -90,7 +105,6 @@ Frame::Frame(const string &file_name, const int compression, const string &works
             this->image_colors[x][y] = this->construct_color(stb_image, x, y);
 
     stbi_image_free(stb_image);
-    std::remove(temp_name.c_str());
 }
 
 

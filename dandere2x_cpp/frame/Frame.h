@@ -70,7 +70,7 @@ public:
 
     explicit Frame(const string& file_name);
 
-    Frame(const string& file_name, const int compression, const string& workspace);
+    Frame(const string& file_name, const int compression);
 
     Frame(const Frame& other);
 
