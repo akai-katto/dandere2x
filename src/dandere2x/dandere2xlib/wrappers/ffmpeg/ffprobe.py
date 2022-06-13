@@ -182,3 +182,26 @@ def get_frame_count(ffprobe_dir, input_video):
     return_string = return_bytes.decode("utf-8")
 
     return return_string
+
+
+def is_variable_frame_rate(ffprobe_dir: str, input_video: str) -> bool:
+
+    execute = [ffprobe_dir,
+               '-v',
+               'quiet',
+               '-print_format',
+               'json',
+               '-show_streams',
+               input_video]
+
+    return_bytes = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
+    return_json = json.loads(return_bytes.decode("utf-8"))
+    codec_data = {}
+    for stream in return_json['streams']:
+        if stream['codec_type'] == 'video':
+            codec_data = stream
+
+    avg_frame_rate = codec_data['avg_frame_rate']
+    num, denom = avg_frame_rate.split("/")
+    return denom != "1"
+
