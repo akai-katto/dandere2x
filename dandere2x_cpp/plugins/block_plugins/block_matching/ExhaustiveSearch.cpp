@@ -38,17 +38,11 @@ std::vector<Block::Point> ExhaustiveSearch::createSearchVector(int centx, int ce
     std::vector<Block::Point> list = std::vector<Block::Point>();
 
     // We can optimize this a bit further by restricting the search domain to be within the grid.
-    // Might not be worth the added complexity.
-    for (int x = centx - max_box; x < centx + max_box; x++) {
-        for (int y = centy - max_box; y < centy + max_box; y++) {
-            if ((x >= 0 && x < width) && (y >= 0 && y < height)) {
-                Block::Point point{};
-                point.x = x;
-                point.y = y;
-                list.push_back(point);
-            }
-        }
-    }
+
+    Block::Point point{};
+    point.x = centx;
+    point.y = centy;
+    list.push_back(point);
 
     return list;
 }

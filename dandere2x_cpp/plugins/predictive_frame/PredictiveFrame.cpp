@@ -105,7 +105,7 @@ void PredictiveFrame::match_blocks() {
     int y = 0;
     int num_threads = 8;
 
-#pragma omp parallel for shared(current_frame, next_frame, next_frame_compressed, matched_blocks) private(x, y)
+//#pragma omp parallel for shared(current_frame, next_frame, next_frame_compressed, matched_blocks) private(x, y)
 
     for (x = 0; x < current_frame->get_width() / block_size; x++) {
         for (y = 0; y < current_frame->get_height() / block_size; y++) {
