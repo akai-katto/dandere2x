@@ -188,11 +188,17 @@ def divide_and_reencode_video(ffmpeg_path: str, ffprobe_path: str,
     ratio = math.ceil(seconds / divide)
     frame_rate = VideoSettings(ffprobe_dir=ffprobe_path, video_file=input_video).frame_rate
 
-    execute = [ffmpeg_path,
-               "-i", input_video,
-               "-f", "segment",
-               "-segment_time", str(ratio),
-               "-r", str(frame_rate)]
+    execute = [ffmpeg_path]
+
+    hw_accel = output_options["ffmpeg"]["pre_process_video"]["-hwaccel"]
+    if hw_accel is not None:
+        execute.append("-hwaccel")
+        execute.append(hw_accel)
+
+    execute.extend(["-i", input_video,
+                    "-f", "segment",
+                    "-segment_time", str(ratio),
+                    "-r", str(frame_rate)])
 
     options = get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],
                                        ffmpeg_command=True)
@@ -222,7 +228,6 @@ def get_console_output(method_name: str, console_output_dir=None):
 def apply_noise_to_image(ffmpeg_dir: str,
                          input_image: str,
                          output_file: str) -> None:
-
     concat_videos_command = [ffmpeg_dir,
                              "-i", input_image,
                              "-vf", "noise=c0s=8:c0f=u",
