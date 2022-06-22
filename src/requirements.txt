@@ -1,5 +1,5 @@
 opencv-contrib-python
-numpy==1.19.3
+numpy==1.22.0
 imageio==2.9.0
 Pillow
 PyQt5==5.15.2
