@@ -1,21 +1,23 @@
 import logging
 from fractions import Fraction
 
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import get_frame_count_ffmpeg
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate, \
     get_aspect_ratio, get_frame_count
 
 
 class VideoSettings:
 
-    def __init__(self, ffprobe_dir, video_file: str):
+    def __init__(self, ffprobe_dir, ffmpeg_dir, video_file: str):
         """
         A simple class to get the video settings needed for dandere2x using ffprobe.
         """
 
         log = logging.getLogger()
         self.ffprobe_dir = ffprobe_dir
+        self.ffmpeg_dir = ffmpeg_dir
         self.settings_json = get_video_info(self.ffprobe_dir, video_file)
-        self.frame_count = int(get_frame_count(self.ffprobe_dir, video_file))
+        self.frame_count = int(get_frame_count_ffmpeg(ffmpeg_dir=self.ffmpeg_dir, input_video=video_file))
 
         print("setting json %s" % self.settings_json)
         # todo: This entire class can be removed and simplified into the 'except' clause,

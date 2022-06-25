@@ -52,36 +52,3 @@ class Dandere2xServiceInterface(Thread, ABC):
     @abstractmethod
     def _on_completion(self):
         pass
-
-    @staticmethod
-    def _check_and_fix_resolution(input_file: str, block_size: int, output_options_original: dict) -> dict:
-        """
-        Returns a dictionary containing the output settings, taking into consideration if the video needs to be resized,
-        and if it does, changes the pipe_video commands to include dar.
-        """
-        from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-        from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import append_resize_filter_to_pre_process, \
-            append_dar_filter_to_pipe_process
-        from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
-        import copy
-
-        def valid_input_resolution(width: int, height: int, block_size: int):
-            return width % block_size == 0 and height % block_size == 0
-
-        new_output_options = copy.copy(output_options_original)
-
-        # get meta-data from the video to do pre-processing
-        ffprobe_path = load_executable_paths_yaml()['ffprobe']
-        video_settings = VideoSettings(ffprobe_path, input_file)
-        width, height = video_settings.width, video_settings.height
-
-        if not valid_input_resolution(width=width, height=height, block_size=block_size):
-            append_resize_filter_to_pre_process(output_options=new_output_options,
-                                                width=width,
-                                                height=height,
-                                                block_size=block_size)
-            append_dar_filter_to_pipe_process(output_options=new_output_options,
-                                              width=width,
-                                              height=height)
-
-        return new_output_options

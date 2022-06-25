@@ -1,16 +1,17 @@
 import logging
 import os
+import re
 import subprocess
 import sys
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution, get_operating_system
-from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section
+from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_seconds
-from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
 
 
 def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, input_file: str,
                     output_file: str, console_output=None) -> None:
+    from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
     """
     #todo
     """
@@ -19,7 +20,7 @@ def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, inp
         assert type(console_output) == str
 
     logger = logging.getLogger("root")
-    video_settings = VideoSettings(ffprobe_dir=ffprobe_dir, video_file=input_file)
+    video_settings = VideoSettings(ffmpeg_dir=ffmpeg_dir, ffprobe_dir=ffprobe_dir, video_file=input_file)
     frame_rate = video_settings.frame_rate
 
     extract_frames_command = [ffmpeg_dir]
@@ -113,6 +114,28 @@ def is_file_video(ffprobe_dir: str, input_video: str):
 
     return True
 
+def get_frame_count_ffmpeg(ffmpeg_dir: str, input_video: str):
+    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), "%s does not exist!" % ffmpeg_dir
+
+    execute = [
+        ffmpeg_dir,
+        "-vsync", str(1),
+        "-i", input_video,
+        "-c", "copy",
+        "-f", "null",
+        "-"
+    ]
+
+    process = subprocess.run(execute, capture_output=True)
+    stdout_as_str = process.stderr.decode("utf-8")
+
+    regex = re.compile("frame=.{0,3}[0-9]{1,10}")
+    matched_regex = regex.findall(stdout_as_str)
+    assert matched_regex
+
+    matched_regex = matched_regex[0]
+    frame_count = re.compile("\d{1,10}").findall(matched_regex)[0]
+    return int(frame_count)
 
 def append_resize_filter_to_pre_process(output_options: dict, width: int, height: int, block_size: int) -> None:
     """
@@ -162,6 +185,7 @@ def append_dar_filter_to_pipe_process(output_options: dict, width: int, height: 
 def divide_and_reencode_video(ffmpeg_path: str, ffprobe_path: str,
                               input_video: str, output_options: dict,
                               divide: int, output_dir: str):
+    from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
     """
     
     Attempts to divide a video into N different segments, using the ffmpeg segment_time argument. See the reading
@@ -303,3 +327,7 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
     log.info("Migrate Command: %s" % convert(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
     log.info("Finished migrating to file: %s" % output_file)
+
+if __name__ == "__main__":
+    test = get_frame_count_ffmpeg(ffmpeg_dir="ffmpeg",
+                                  input_video="C:\\Users\\tyler\\Documents\\GitHub\\dandere2x\\src\\workspace\\world_is_mine_cropped.mp4")
