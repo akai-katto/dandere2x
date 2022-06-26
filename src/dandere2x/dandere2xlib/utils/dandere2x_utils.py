@@ -13,6 +13,7 @@ import shutil
 import sys
 import time
 from sys import platform
+from typing import Tuple
 
 from pip._vendor.distlib.compat import raw_input
 from wget import bar_adaptive
@@ -203,7 +204,7 @@ def delete_directories(directories_list: list):
             print("Successfully deleted the directory %s " % subdirectory)
 
 
-def get_a_valid_input_resolution(width: int, height: int, block_size: int):
+def get_a_valid_input_resolution(width: int, height: int, block_size: int) -> Tuple[int, int]:
     width_up = width
     width_down = width
 

@@ -210,7 +210,7 @@ def divide_and_reencode_video(ffmpeg_path: str, ffprobe_path: str,
 
     seconds = int(get_seconds(ffprobe_dir=ffprobe_path, input_video=input_video))
     ratio = math.ceil(seconds / divide)
-    frame_rate = VideoSettings(ffprobe_dir=ffprobe_path, video_file=input_video).frame_rate
+    frame_rate = VideoSettings(ffprobe_dir=ffprobe_path, ffmpeg_dir=ffmpeg_path, video_file=input_video).frame_rate
 
     execute = [ffmpeg_path]
 
@@ -222,13 +222,13 @@ def divide_and_reencode_video(ffmpeg_path: str, ffprobe_path: str,
     execute.extend(["-i", input_video,
                     "-f", "segment",
                     "-segment_time", str(ratio),
-                    "-r", str(frame_rate)])
+                    "-c", "copy"])
 
-    options = get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],
-                                       ffmpeg_command=True)
-
-    for element in options:
-        execute.append(element)
+    # options = get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],
+    #                                    ffmpeg_command=True)
+    #
+    # for element in options:
+    #     execute.append(element)
 
     execute.append(os.path.join(output_dir, "split_video%d.mkv"))
 
