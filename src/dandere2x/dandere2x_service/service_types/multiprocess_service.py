@@ -29,19 +29,13 @@ class MultiProcessService(Dandere2xServiceInterface):
 
     def _pre_process(self):
 
-        # Resize the video and apply DAR if needed.
-        resized_output_options = Dandere2xServiceInterface._check_and_fix_resolution(
-            input_file=self._service_request.input_file,
-            block_size=self._service_request.block_size,
-            output_options_original=self._service_request.output_options)
-
         ffprobe_path = load_executable_paths_yaml()['ffprobe']
         ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
 
         # Attempt to split the video up into N=3 distinct parts.
         divide_and_reencode_video(ffmpeg_path=ffmpeg_path, ffprobe_path=ffprobe_path,
                                   input_video=self._service_request.input_file,
-                                  output_options=resized_output_options,
+                                  output_options=self._service_request.output_options,
                                   divide=3, output_dir=self._service_request.workspace)
 
         # Find all the split video files ffmpeg produced in the folder.
