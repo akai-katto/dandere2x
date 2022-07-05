@@ -36,6 +36,11 @@ Purpose: This class is to facilitate all the functions and uses dandere2x
 // internal includes
 #include <vector>
 #include <string>
+#include <iostream>
+#include <cstdio>
+#include <random>
+#include <string.h>
+
 
 // local includes
 #include "external_headers/stb_image.h"
@@ -70,13 +75,13 @@ public:
 
     explicit Frame(const string& file_name);
 
-    Frame(const string& file_name, const int compression);
+    explicit Frame(const string& file_name, const int compression);
 
-    Frame(const Frame& other);
+    explicit Frame(const Frame& other);
 
-    Frame(const int width, const int height, const int bpp);
+    explicit Frame(const int width, const int height, const int bpp);
 
-    Frame();
+    explicit Frame();
 
     void write(const string& output);
 
