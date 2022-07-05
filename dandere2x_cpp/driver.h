@@ -50,7 +50,7 @@ void driver_difference(const string &workspace,
         wait_for_file(frame_2_path);
 
         auto frame_2 = make_shared<Frame>(frame_2_path);
-        auto frame_2_compressed = make_shared<Frame>(frame_2_path, quality_setting, workspace);
+        auto frame_2_compressed = make_shared<Frame>(frame_2_path, quality_setting);
 
         FadeFrame fade = FadeFrame(evaluation_library, frame_1, frame_2, frame_2_compressed, block_size);
         fade.run();

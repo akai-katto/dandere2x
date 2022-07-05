@@ -35,6 +35,7 @@ Purpose:
 #include "Frame.h"
 #include "external_headers/stb_image.h"
 #include "external_headers/stb_image_write.h"
+using namespace std;
 
 //////////////////
 // Constructors //
@@ -78,6 +79,7 @@ public:
 };
 unsigned char *Writer::byte_array = new unsigned char[500000000];
 unsigned int Writer::offset = 0;
+
 
 //----------------------------------------------------
 // Purpose: todo
