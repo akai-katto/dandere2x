@@ -121,9 +121,8 @@ def _check_and_fix_resolution(input_file: str, block_size: int, output_options_o
     return new_output_options
 
 class VideoFrameExtractor:
-    FFMPEG_BINARY = "ffmpeg"
 
-    def __init__(self, input_video: Path, width: int, height: int, block_size: int, output_options_original: dict):
+    def __init__(self, ffmpeg_binary: Path,  input_video: Path, width: int, height: int, block_size: int, output_options_original: dict):
         self.__count: int = 0
         self._width, self._height = get_a_valid_input_resolution(width, height, block_size)
         self._dtype = np.uint8
@@ -131,7 +130,7 @@ class VideoFrameExtractor:
         self._output_options_original = output_options_original
 
         extraction_args = [
-            self.FFMPEG_BINARY, "-vsync", "1", "-loglevel", "panic",
+            str(ffmpeg_binary), "-vsync", "1", "-loglevel", "panic",
             "-i", str(input_video)
         ]
 
@@ -173,10 +172,4 @@ class VideoFrameExtractor:
 
 
 if __name__ == "__main__":
-
-    extractor = VideoFrameExtractor(Path("C:\\Users\\tyler\\Documents\\GitHub\\dandere2x\\src\\workspace\\yn_moving.mkv"), 1920, 1080)
-    image_array = []
-    for x in range(240):
-        some_frame = extractor.get_frame()
-        image_array.append(some_frame)
-        # some_frame.save(Path(f"/home/tyler/Downloads/end/extracted/output{x}.png"))
+    pass
