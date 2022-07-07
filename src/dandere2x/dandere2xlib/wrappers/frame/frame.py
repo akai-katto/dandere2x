@@ -128,7 +128,7 @@ class Frame:
             except ValueError:
                 logger.debug("Value Error - trying again")
             except SyntaxError:
-                logger.warning("Caught Syntax error - trying again")
+                logger.debug("Caught Syntax error - trying again")
 
     def save_image(self, out_location):
         """
