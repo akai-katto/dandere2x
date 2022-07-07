@@ -1,6 +1,5 @@
 import threading
 
-import cv2
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait, wait_on_file
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
