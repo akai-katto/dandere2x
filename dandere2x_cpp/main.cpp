@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     el::Loggers::reconfigureAllLoggers(c);
 
     // Parses the users inputs and starts the driver to preform Dandere2x Block Matching Calculations.
-    bool debug = true; //debug flag
+    bool debug = false; //debug flag
 
     string workspace = "C:\\Users\\windw0z\\Documents\\GitHub\\dandere2x\\src\\workspace\\gui\\subworkspace";
     string block_matching_arg = "exhaustive";
