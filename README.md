@@ -61,7 +61,7 @@ Assert that you have `nvidia-container-toolkit` installed on your respective mac
 
 ## The latest version can be found here
 
-https://github.com/akai-katto/dandere2x/releases/tag/3.3
+https://github.com/akai-katto/dandere2x/releases/
 
 ## Linux
 Dependencies:
@@ -69,13 +69,25 @@ Dependencies:
 * cmake
 * ffmpeg
 
+
+## MacOS
+Dependencies:
+
+You'll need brew: https://brew.sh/
+
+And after that, 
+
+* brew install python3
+* brew install cmake
+* brew install ffmpeg
+
 Check that you have these installed by running `which cmake`, `which ffmpeg` and `which python3`. Python 3 should be installed by default. You should get an output similar to `/usr/bin/ffmpeg`, else you will need to install these packages through your [package manager](https://wiki.archlinux.org/title/Pacman/Rosetta).
 
 ---
 Installation:
 1. Download the source by [cloning this repository](https://github.com/akai-katto/dandere2x/archive/refs/heads/master.zip) or by going into [releases](https://github.com/akai-katto/dandere2x/releases) and downloading the source from there. Extract the contents of the source file.
 2. Navigate to the `src` directory inside the root of Dandere2x.
-3. While in `src` on the root directory, run `./linux_setup.sh`. This will download the lastest linux binaries for waifu2x-ncnn-vulkan and realsr-ncnn-vulkan. If you want waifu2x-converter-cpp or waifu2x-caffe, you will have to compile them from source. 
+3. While in `src` on the root directory, run `./unix_setup.sh`. This will download the lastest linux binaries for waifu2x-ncnn-vulkan and realsr-ncnn-vulkan. If you want waifu2x-converter-cpp or waifu2x-caffe, you will have to compile them from source. 
 4. Setup a virtual environment with `python3 -m venv .venv`. To activate, run `source .venv/bin/activate`. `.venv` can be exchanged for any path that you prefer. *This step is not strictly necessary, but highly recommended.*
 5. Install the Python dependencies with `pip3 install --user -r requirements.txt`
 6. Run Dandere2x: `python3 main.py`. Running without any command-line arguments will attempt to start the GUI, if you want to see a complete list of options, use the `--help` argument.
