@@ -1,0 +1,3 @@
+requirements for unix
+
+- cmake

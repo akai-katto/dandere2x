@@ -43,7 +43,7 @@ cd externals
 echo "installing latest waifu2x-ncnn-vulkan"
 echo ""
 # download latest waifu2x-ncnn-vulkan and extract it to externals
-if OS = 'ubuntu'; then
+if [[ $OS == 'ubuntu' ]]; then
     curl -s https://api.github.com/repos/nihui/waifu2x-ncnn-vulkan/releases/latest | sed -n 's/.*"browser_download_url": "\(.*ubuntu\.zip\)".*/\1/p' | xargs -n1 curl -o waifu2x-ncnn-vulkan.zip -OL
 else
     curl -s https://api.github.com/repos/nihui/waifu2x-ncnn-vulkan/releases/latest | sed -n 's/.*"browser_download_url": "\(.*macos\.zip\)".*/\1/p' | xargs -n1 curl -o waifu2x-ncnn-vulkan.zip -OL
@@ -56,7 +56,7 @@ mv $(find . -name 'waifu2x*' -maxdepth 1) waifu2x-ncnn-vulkan
 # Waifu2x NCNN Vulkan 
 echo "installing latest realsr-ncnn-vulkan"
 echo ""
-if OS = 'ubuntu'; then 
+if [[ $OS == 'ubuntu' ]]; then
     curl -s https://api.github.com/repos/nihui/realsr-ncnn-vulkan/releases/latest | sed -n 's/.*"browser_download_url": "\(.*ubuntu\.zip\)".*/\1/p' | xargs -n1 curl -o realsr-ncnn-vulkan.zip -OL
 else
     curl -s https://api.github.com/repos/nihui/realsr-ncnn-vulkan/releases/latest | sed -n 's/.*"browser_download_url": "\(.*macos\.zip\)".*/\1/p' | xargs -n1 curl -o realsr-ncnn-vulkan.zip -OL
