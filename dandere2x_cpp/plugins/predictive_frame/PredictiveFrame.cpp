@@ -24,7 +24,6 @@ Purpose: todo
  
 ===================================================================== */
 
-#include <omp.h>
 #include <cmath>
 #include <fstream>
 #include "PredictiveFrame.h"

@@ -4,8 +4,8 @@ import sys
 
 
 import yaml
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog
 
 from pathlib import Path
 from dandere2x import Dandere2x
@@ -126,7 +126,7 @@ class AppWindow(QMainWindow):
         # allow user to upscale if two output_file are met
         if self.input_file != '' and self.output_file != '':
             self.ui.upscale_button.setEnabled(True)
-            self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+            self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11))
             self.ui.upscale_status_label.setText("Ready to upscale!")
 
     def refresh_output_file(self):
@@ -171,7 +171,7 @@ class AppWindow(QMainWindow):
 
     def press_upscale_button(self):
 
-        self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+        self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11))
         self.ui.upscale_status_label.setText("Upscaling in Progress")
         self.ui.upscale_status_label.setStyleSheet('color: #fad201')
 
@@ -214,7 +214,7 @@ class AppWindow(QMainWindow):
             self.thread.start()
         except:
             print("Oops!", sys.exc_info()[0], "occured.")
-            self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+            self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11))
             self.ui.upscale_status_label.setText("Upscale Failed. See log")
 
     def disable_buttons(self):
@@ -228,7 +228,7 @@ class AppWindow(QMainWindow):
         self.ui.select_video_button.setEnabled(True)
 
     def update(self):
-        self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+        self.ui.upscale_status_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11))
         self.ui.upscale_status_label.setText("Upscale Complete!")
         self.ui.upscale_status_label.setStyleSheet('color: #27FB35')
         self.thread.terminate()
@@ -303,7 +303,7 @@ class AppWindow(QMainWindow):
 
         # set the video label to the selected file name
         self.ui.video_label.setText(name)
-        self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11, QtGui.QFont.Bold))
+        self.ui.video_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 11))
 
         # parse inputs so we can access variables
         self.parse_gui_inputs()
@@ -342,7 +342,7 @@ class AppWindow(QMainWindow):
             start_val = 0
 
         self.ui.workspace_label.setText(".." + self.output_file[start_val:  len(self.output_file)])
-        self.ui.workspace_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 8, QtGui.QFont.Bold))
+        self.ui.workspace_label.setFont(QtGui.QFont("Yu Gothic UI Semibold", 8))
 
     def load_dir(self):
         self.ui.w = QWidget()
@@ -377,7 +377,7 @@ w = AppWindow()
 
 def gui_start():
     w.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":

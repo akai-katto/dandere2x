@@ -1,8 +1,7 @@
-opencv-contrib-python
-numpy==1.19.3
+numpy
 imageio==2.9.0
 Pillow
-PyQt5==5.15.2
+PyQt6
 dataclasses==0.6
 pyyaml==5.4
 psutil
