@@ -56,7 +56,11 @@ class Dandere2xServiceContext:
 
         ffprobe_path = load_executable_paths_yaml()['ffprobe']
         ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
-        video_settings = VideoSettings(ffprobe_dir=ffprobe_path, ffmpeg_dir=ffmpeg_path, video_file = self.service_request.input_file)
+        video_settings = VideoSettings(ffprobe_dir=ffprobe_path,
+                                       ffmpeg_dir=ffmpeg_path,
+                                       video_file = self.service_request.input_file,
+                                       frame_count_method="slow")
+
         self.video_settings = video_settings
         self.width, self.height = video_settings.width, video_settings.height
         self.frame_count = video_settings.frame_count
