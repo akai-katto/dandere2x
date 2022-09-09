@@ -114,28 +114,6 @@ def is_file_video(ffprobe_dir: str, input_video: str):
 
     return True
 
-def get_frame_count_ffmpeg(ffmpeg_dir: str, input_video: str):
-    assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), "%s does not exist!" % ffmpeg_dir
-
-    execute = [
-        ffmpeg_dir,
-        "-vsync", str(1),
-        "-i", input_video,
-        "-c", "copy",
-        "-f", "null",
-        "-"
-    ]
-
-    process = subprocess.run(execute, capture_output=True)
-    stdout_as_str = process.stderr.decode("utf-8")
-
-    regex = re.compile("frame=.{0,3}[0-9]{1,10}")
-    matched_regex = regex.findall(stdout_as_str)
-    assert matched_regex
-
-    matched_regex = matched_regex[0]
-    frame_count = re.compile("\d{1,10}").findall(matched_regex)[0]
-    return int(frame_count)
 
 def append_resize_filter_to_pre_process(output_options: dict, width: int, height: int, block_size: int) -> None:
     """
@@ -327,7 +305,3 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
     log.info("Migrate Command: %s" % convert(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
     log.info("Finished migrating to file: %s" % output_file)
-
-if __name__ == "__main__":
-    test = get_frame_count_ffmpeg(ffmpeg_dir="ffmpeg",
-                                  input_video="C:\\Users\\tyler\\Documents\\GitHub\\dandere2x\\src\\workspace\\world_is_mine_cropped.mp4")
