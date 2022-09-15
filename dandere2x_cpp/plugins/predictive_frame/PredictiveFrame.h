@@ -39,7 +39,7 @@ Purpose: Given two frames, try to find as many matching blocks between
 
 using namespace std;
 
-class PredictiveFrame : AbstractPlugin {
+class PredictiveFrame : public AbstractPlugin {
 public:
     PredictiveFrame(AbstractEvaluator *eval,
                     AbstractBlockMatch *block_matcher,
@@ -71,6 +71,8 @@ public:
     void debug_visual(const string &output_image);
 
     void debug_predictive(const string &output_image);
+
+    int missing_pixel_cost();
 
 protected:
 

@@ -242,5 +242,15 @@ vector<shared_ptr<Block>> PredictiveFrame::get_missing_blocks(const vector<vecto
     return returned_blocks;
 }
 
+int PredictiveFrame::missing_pixel_cost() {
+
+    int total_blocks = (this->next_frame->get_height() * this->next_frame->get_width()) /
+            ((this->block_size)  * (this->block_size));
+
+    int missing_blocks = total_blocks - this->matched_moving_blocks + this->matched_stationary_blocks;
+    int missing_pixels_to_be_upscaled = missing_blocks * ((this->block_size + this->bleed) * (this->block_size + this->bleed));
+    return missing_pixels_to_be_upscaled;
+}
+
 
 

@@ -96,6 +96,10 @@ public:
         std::rename((temp_file).c_str(), output.c_str());
     }
 
+    int get_block_size(){
+        return this->block_size;
+    }
+
 protected:
 
     // Every plugin *should* utilize some sort of parallel optimization, although it doesn't need t.
@@ -104,7 +108,6 @@ protected:
     shared_ptr<Frame> current_frame;
     shared_ptr<Frame> next_frame;
     shared_ptr<Frame> next_frame_compressed;
-
     int block_size;
 
 
