@@ -53,9 +53,9 @@ void driver_difference(const string &workspace,
         auto frame_2_compressed = make_shared<Frame>(frame_2_path, quality_setting);
 
         FadeFrame fade = FadeFrame(evaluation_library, frame_1, frame_2, frame_2_compressed, block_size);
-        fade.run();
+        //fade.run();
         fade.write(fade_file);
-        fade.update_frame(frame_2);
+        //fade.update_frame(frame_2);
 
         search_library->set_images(frame_1, frame_2);
         PredictiveFrameDynamicBlockSize test = PredictiveFrameDynamicBlockSize(evaluation_library, search_library,

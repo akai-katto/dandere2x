@@ -138,9 +138,9 @@ class Merge(threading.Thread):
 
             # Manually write the image if we're preserving frames (this is for enthusiasts / debugging).
 
-            # if True:
-            #     output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".png"
-            #     current_frame.save_image(output_file)
+            if True:
+                output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".png"
+                current_frame.save_image(output_file)
 
             #######################################
             # Assign variables for next iteration #
@@ -182,7 +182,7 @@ class Merge(threading.Thread):
         out_image.create_new(frame_previous.width, frame_previous.height)
 
         # If list_predictive is empty, then the residual frame is simply the newly produced image.
-        if not list_predictive:
+        if len(list_predictive) == 1:
             out_image.copy_image(frame_residual)
             return out_image
 

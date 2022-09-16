@@ -79,9 +79,7 @@ def get_list_from_file_and_wait(text_file: str):
     text_list = file.read().split('\n')
     file.close()
 
-    if len(text_list) == 1:
-        return []
-
+    del text_list[-1] # remove last line, as it's always newline character
     return text_list
 
 

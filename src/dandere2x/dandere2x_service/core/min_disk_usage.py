@@ -136,7 +136,7 @@ class MinDiskUsage(threading.Thread):
                   fade_data_file_r, input_image_r, upscaled_file_r]
 
         # remove
-        threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True, name="mindiskusage").start()
+        #threading.Thread(target=self.__delete_files_from_list, args=(remove,), daemon=True, name="mindiskusage").start()
 
     def __delete_files_from_list(self, files):
         """

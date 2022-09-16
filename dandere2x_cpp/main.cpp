@@ -55,7 +55,7 @@ void testing_files(){
 
 }
 int main(int argc, char **argv) {
-    testing_files();
+    //testing_files();
     // Easy Logging Setup
     // Sample output: 2021-05-08 18:51:54,662 INFO main.cpp : block_size: 20
     el::Configurations c;
@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
     // Parses the users inputs and starts the driver to preform Dandere2x Block Matching Calculations.
     bool debug = false; //debug flag
 
-    string workspace = "C:\\Users\\tylerpc\\Desktop\\3.6\\workspace\\gui\\subworkspace";
+    string workspace = "/Users/tyler/Documents/personal/dandere2x/src/workspace/gui/subworkspace";
     string block_matching_arg = "exhaustive";
     string evaluator_arg = "mse";
     int frame_count = 240;

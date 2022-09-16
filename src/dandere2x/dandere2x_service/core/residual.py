@@ -108,6 +108,7 @@ class Residual(threading.Thread):
             - frame(x)_residual
         """
         block_size = int(list_residual.pop(0))
+        block_size = int(list_predictive.pop(0))
 
         # Some conditions to check before making a residual image, in both cases, we don't need to do any actual
         # processing in the function call, if these conditions hold true.
