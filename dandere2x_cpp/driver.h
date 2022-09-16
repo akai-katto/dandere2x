@@ -55,17 +55,18 @@ void driver_difference(const string &workspace,
         FadeFrame fade = FadeFrame(evaluation_library, frame_1, frame_2, frame_2_compressed, block_size);
         fade.run();
         fade.write(fade_file);
-
-//        FadeFrame::write_empty_file(fade_file);
+        fade.update_frame(frame_2);
 
         search_library->set_images(frame_1, frame_2);
-        PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
-                                                  frame_1, frame_2, frame_2_compressed, block_size, bleed);
-        predict.run();
-        predict.write(p_data_file, residual_file);
+        PredictiveFrameDynamicBlockSize test = PredictiveFrameDynamicBlockSize(evaluation_library, search_library,
+                                                                               frame_1, frame_2, frame_2_compressed, 1);
+
+        shared_ptr<PredictiveFrame> best_prediction = test.best_predictive_frame();
+        best_prediction->write(p_data_file, residual_file);
+        best_prediction->update_frame(frame_2);
 
         if (debug_enabled()) {
-            predict.debug_predictive(debug_file);
+            best_prediction->debug_predictive(debug_file);
         }
 
         frame_1 = frame_2;

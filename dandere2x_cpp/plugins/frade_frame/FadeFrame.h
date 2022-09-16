@@ -32,7 +32,7 @@ public:
 
     void run() override;
 
-    void update_frame() override;
+    void update_frame(shared_ptr<Frame> final_frame) override;
 
     void write(const string &fade_file);
 

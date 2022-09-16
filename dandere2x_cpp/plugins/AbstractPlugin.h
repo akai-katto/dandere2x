@@ -58,7 +58,7 @@ public:
     virtual void run() = 0;
 
     // Every plugin needs to affect the frame somehow after it's done it's processing on it.
-    virtual void update_frame() = 0;
+    virtual void update_frame(shared_ptr<Frame> final_frame) = 0;
 
     // Writes blocks in a python / c++ safe manner (writes to a tempfile then renames to prevent python from
     // pre-maturely reading). Checks if the "sum" is less than zero for each block, which denotes
@@ -67,6 +67,7 @@ public:
 
         string temp_file = output + ".temp";
         std::ofstream out(temp_file);
+        out << block_size << endl;
 
         for (const vector<shared_ptr<Block>> &row: blocks) {
             for (const shared_ptr<Block> &block: row) {

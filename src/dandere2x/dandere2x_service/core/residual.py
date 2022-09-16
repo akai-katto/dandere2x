@@ -107,6 +107,7 @@ class Residual(threading.Thread):
         Output:
             - frame(x)_residual
         """
+        block_size = int(list_residual.pop(0))
 
         # Some conditions to check before making a residual image, in both cases, we don't need to do any actual
         # processing in the function call, if these conditions hold true.
@@ -130,7 +131,6 @@ class Residual(threading.Thread):
             return residual_image
 
         buffer = 5
-        block_size = context.service_request.block_size
         bleed = context.bleed
         """
         First make a 'bleeded' version of input_frame, as we need to create a buffer in the event the 'bleed'

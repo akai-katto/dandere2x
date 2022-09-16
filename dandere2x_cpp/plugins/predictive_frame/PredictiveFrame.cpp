@@ -111,8 +111,6 @@ void PredictiveFrame::match_blocks() {
             parallel_function_call(x * block_size, y * block_size);
         }
     }
-
-    update_frame();
 }
 
 
@@ -137,7 +135,6 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
     }
     else{
         write_positive_case(predictive_vectors_output, residual_vectors_output);
-        update_frame();
     }
 }
 
@@ -197,8 +194,8 @@ void PredictiveFrame::write_positive_case(const string &predictive_vectors_outpu
 //          In other words, the blocks found in next_frame that could be
 //          made with blocks from current_frame need to be updated.
 //-----------------------------------------------------------------------------
-void PredictiveFrame::update_frame() {
-    FrameUtilities::copy_frame_using_blocks(next_frame,
+void PredictiveFrame::update_frame(shared_ptr<Frame> final_frame) {
+    FrameUtilities::copy_frame_using_blocks(final_frame,
                                             current_frame,
                                             this->matched_blocks,
                                             this->block_size);
@@ -247,8 +244,9 @@ int PredictiveFrame::missing_pixel_cost() {
     int total_blocks = (this->next_frame->get_height() * this->next_frame->get_width()) /
             ((this->block_size)  * (this->block_size));
 
-    int missing_blocks = total_blocks - this->matched_moving_blocks + this->matched_stationary_blocks;
-    int missing_pixels_to_be_upscaled = missing_blocks * ((this->block_size + this->bleed) * (this->block_size + this->bleed));
+    int missing_blocks = total_blocks - this->matched_moving_blocks - this->matched_stationary_blocks;
+    int missing_pixels_to_be_upscaled = missing_blocks *
+            ((this->block_size + (this->bleed * 2)) * (this->block_size + (this->bleed * 2)));
     return missing_pixels_to_be_upscaled;
 }
 

@@ -41,5 +41,5 @@ void dandere2x_utilities::wait_for_file(const std::string &name) {
 }
 
 bool dandere2x_utilities::debug_enabled() {
-        return false;
+        return true;
 }
