@@ -13,7 +13,7 @@ import shutil
 import sys
 import time
 from sys import platform
-from typing import Tuple
+from typing import Tuple, List
 
 from pip._vendor.distlib.compat import raw_input
 from wget import bar_adaptive
@@ -79,7 +79,7 @@ def get_list_from_file_and_wait(text_file: str):
     text_list = file.read().split('\n')
     file.close()
 
-    del text_list[-1] # remove last line, as it's always newline character
+    del text_list[-1]  # remove last line, as it's always newline character
     return text_list
 
 
@@ -201,33 +201,6 @@ def delete_directories(directories_list: list):
         else:
             print("Successfully deleted the directory %s " % subdirectory)
 
-
-def get_a_valid_input_resolution(width: int, height: int, block_size: int) -> Tuple[int, int]:
-    width_up = width
-    width_down = width
-
-    height_up = height
-    height_down = height
-
-    while width_up % block_size != 0:
-        width_up = width_up + 1
-
-    while width_down % block_size != 0:
-        width_down = width_down - 1
-
-    while height_up % block_size != 0:
-        height_up = height_up + 1
-
-    while height_down % block_size != 0:
-        height_down = height_down - 1
-
-    smaller_width = width_up if abs(width_up - width) < abs(width_down - width) else width_down
-
-    smaller_height = height_up if abs(height_up - height) < abs(height_down - height) else height_down
-
-    return smaller_width, smaller_height
-
-
 # TODO bring this to ffprobe's modern settings
 # TODO Very outdated!
 def verify_user_settings(context):
@@ -281,3 +254,36 @@ def download_and_extract_externals(dandere2x_dir: str):
 
     print("finished downloading")
     os.remove(download_file)
+
+
+def get_compatible_resolution(target_resolution: Tuple[int, int], list_of_block_sizes=None):
+    if list_of_block_sizes is None:
+        list_of_block_sizes = [10, 20, 30, 40, 60]
+
+    width, height = target_resolution
+
+    adjustment_order = []
+
+    for x in range(100):
+        adjustment_order.append(x)
+        adjustment_order.append(-x)
+
+    count = 0
+
+    for x in adjustment_order:
+        for y in adjustment_order:
+
+            block_candidate = True
+            for block in list_of_block_sizes:
+                count += 1
+                if not ((width + x) % block == 0 and (height + y) % block == 0):
+                    block_candidate = False
+                    break
+            if block_candidate is True:
+                return width + x, height + y
+
+    raise Exception("Could not find valid resolution adjustment for block sizes")
+
+
+if __name__ == "__main__":
+    print(get_compatible_resolution((1929, 1087), [15, 20, 30]))

@@ -4,7 +4,8 @@ import re
 import subprocess
 import sys
 
-from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution, get_operating_system
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_operating_system, \
+    get_compatible_resolution
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section, load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_seconds
 
@@ -114,6 +115,7 @@ def is_file_video(ffprobe_dir: str, input_video: str):
 
     return True
 
+
 def get_frame_count_ffmpeg(ffmpeg_dir: str, input_video: str):
     assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), "%s does not exist!" % ffmpeg_dir
 
@@ -137,6 +139,7 @@ def get_frame_count_ffmpeg(ffmpeg_dir: str, input_video: str):
     frame_count = re.compile("\d{1,10}").findall(matched_regex)[0]
     return int(frame_count)
 
+
 def append_resize_filter_to_pre_process(output_options: dict, width: int, height: int, block_size: int) -> None:
     """
 
@@ -152,7 +155,7 @@ def append_resize_filter_to_pre_process(output_options: dict, width: int, height
     """
 
     log = logging.getLogger()
-    width, height = get_a_valid_input_resolution(width, height, block_size)
+    width, height = get_compatible_resolution((width, height))
 
     log.info("Dandere2x is resizing the video in order to make the resolution compatible with your settings... ")
     log.info("New width -> %s " % str(width))
@@ -327,6 +330,7 @@ def migrate_tracks_contextless(ffmpeg_dir: str, no_audio: str, file_dir: str, ou
     log.info("Migrate Command: %s" % convert(migrate_tracks_command))
     subprocess.call(migrate_tracks_command, shell=False, stderr=console_output, stdout=console_output)
     log.info("Finished migrating to file: %s" % output_file)
+
 
 if __name__ == "__main__":
     test = get_frame_count_ffmpeg(ffmpeg_dir="ffmpeg",

@@ -9,7 +9,7 @@ from pathlib import Path
 from numpy import shape
 from PIL import Image
 
-from dandere2x.dandere2xlib.utils.dandere2x_utils import get_a_valid_input_resolution
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_compatible_resolution
 from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section
 
 
@@ -124,7 +124,7 @@ class VideoFrameExtractor:
 
     def __init__(self, ffmpeg_binary: Path,  input_video: Path, width: int, height: int, block_size: int, output_options_original: dict):
         self.__count: int = 0
-        self._width, self._height = get_a_valid_input_resolution(width, height, block_size)
+        self._width, self._height = get_compatible_resolution((width, height))
         self._dtype = np.uint8
         self._block_size = block_size
         self._output_options_original = output_options_original
