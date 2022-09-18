@@ -36,6 +36,10 @@ public:
 
     void write(const string &fade_file);
 
+    int fade_block_count(){
+        return this->fade_blocks.size();
+    }
+
 private:
 
     // Struct for holding vectors

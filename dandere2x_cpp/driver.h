@@ -11,6 +11,7 @@ using namespace dandere2x_utilities;
 
 #include "plugins/predictive_frame/PredictiveFrame.h"
 #include "plugins/frade_frame/FadeFrame.h"
+#include "plugins/frade_frame/FadeFrameDynamicBlockSize.h"
 #include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
 #include "easyloggingpp/easylogging++.h"
 
@@ -51,13 +52,14 @@ void driver_difference(const string &workspace,
 
         auto frame_2 = make_shared<Frame>(frame_2_path);
         auto frame_2_compressed = make_shared<Frame>(frame_2_path, quality_setting);
-
-        FadeFrame fade = FadeFrame(evaluation_library, frame_1, frame_2, frame_2_compressed, block_size);
-        fade.run();
-        fade.write(fade_file);
-        fade.update_frame(frame_2);
-
         search_library->set_images(frame_1, frame_2);
+
+        FadeFrameDynamicBlockSize fade = FadeFrameDynamicBlockSize(evaluation_library, search_library, frame_1, frame_2, frame_2_compressed);
+
+        shared_ptr<FadeFrame> best_fade = fade.best_predictive_frame();
+        best_fade->write(fade_file);
+        best_fade->update_frame(frame_2);
+
         PredictiveFrameDynamicBlockSize test = PredictiveFrameDynamicBlockSize(evaluation_library, search_library,
                                                                                frame_1, frame_2, frame_2_compressed, 1);
 

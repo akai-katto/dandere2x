@@ -27,7 +27,7 @@ def fade_image(context, frame_base: Frame, list_correction: list):
 
     # load context
     scale_factor = int(context.service_request.scale_factor)
-    block_size = int(context.service_request.block_size)
+    block_size = int(list_correction.pop(0))
 
     fade_data_size = 3
 

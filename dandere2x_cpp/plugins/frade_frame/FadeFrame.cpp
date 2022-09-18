@@ -24,7 +24,7 @@ void FadeFrame::update_frame(shared_ptr<Frame> final_frame) {
 
 void FadeFrame::write(const string &fade_file) {
     std::ofstream out(fade_file + ".temp");
-
+    out << block_size << endl;
     for (auto &fade_block : fade_blocks) {
         out <<
             fade_block.x << "\n" <<

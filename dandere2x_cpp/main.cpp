@@ -13,7 +13,7 @@ using namespace std::chrono;
 #include "evaluator/SSIM_Function.h"
 #include "plugins/block_plugins/block_matching/ExhaustiveSearch.h"
 #include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
-#include "plugins/predictive_frame_dynamic_block_size/predictive_frame_dynamic_block_size.h"
+#include "plugins/predictive_frame/predictive_frame_dynamic_block_size.h"
 #include "driver.h"
 #include "easyloggingpp/easylogging++.h"
 
