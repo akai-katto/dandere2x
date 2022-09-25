@@ -11,7 +11,7 @@ dandere2x:
 
 dandere2x_cpp:
   block_matching_arg: "exhaustive"
-  evaluator_arg: "mse"
+  evaluator_arg: "ssim"
 
 ffmpeg:
   pre_process_video:

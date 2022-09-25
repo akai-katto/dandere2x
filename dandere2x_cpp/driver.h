@@ -31,6 +31,7 @@ void driver_difference(const string &workspace,
     string residual_data_prefix = workspace + separator() + "residual_data" + separator() + "residual_";
     string debug_frame_prefix = workspace + separator() + "debug" + separator() + "debug_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
+    string pframe_debug_prefix = "/Users/tyler/Documents/personal/dandere2x/src/workspace/gui/subworkspace/debug_predictive" + separator() + "prediction_";
 
     auto frame1_path = image_prefix + to_string(1) + ".png";
 
@@ -57,8 +58,9 @@ void driver_difference(const string &workspace,
         FadeFrameDynamicBlockSize fade = FadeFrameDynamicBlockSize(evaluation_library, search_library, frame_1, frame_2, frame_2_compressed);
 
         shared_ptr<FadeFrame> best_fade = fade.best_predictive_frame();
-        best_fade->write(fade_file);
-        best_fade->update_frame(frame_2);
+//        best_fade->write(fade_file);
+//        best_fade->update_frame(frame_1);
+        best_fade->write_empty_file(fade_file);
 
         PredictiveFrameDynamicBlockSize test = PredictiveFrameDynamicBlockSize(evaluation_library, search_library,
                                                                                frame_1, frame_2, frame_2_compressed, 1);
@@ -66,6 +68,7 @@ void driver_difference(const string &workspace,
         shared_ptr<PredictiveFrame> best_prediction = test.best_predictive_frame();
         best_prediction->write(p_data_file, residual_file);
         best_prediction->update_frame(frame_2);
+        best_prediction->debug_visual()
 
         if (debug_enabled()) {
             best_prediction->debug_predictive(debug_file);

@@ -25,7 +25,7 @@ def pframe_image(context: Dandere2xServiceContext,
     # load context
     scale_factor = int(context.service_request.scale_factor)
     block_size = int(list_predictive.pop(0))
-    list_residual.pop(0)
+    block_size = int(list_residual.pop(0))
     bleed = context.bleed
 
     for x in range(int(len(list_predictive) / 4)):
