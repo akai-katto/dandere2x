@@ -31,7 +31,7 @@ void driver_difference(const string &workspace,
     string residual_data_prefix = workspace + separator() + "residual_data" + separator() + "residual_";
     string debug_frame_prefix = workspace + separator() + "debug" + separator() + "debug_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
-    string pframe_debug_prefix = "/Users/tyler/Documents/personal/dandere2x/src/workspace/gui/subworkspace/debug_predictive" + separator() + "prediction_";
+    string pframe_debug_prefix =  workspace + separator() + "pframe_debug_data" + separator() + "debug_";
 
     auto frame1_path = image_prefix + to_string(1) + ".png";
 
@@ -68,7 +68,7 @@ void driver_difference(const string &workspace,
         shared_ptr<PredictiveFrame> best_prediction = test.best_predictive_frame();
         best_prediction->write(p_data_file, residual_file);
         best_prediction->update_frame(frame_2);
-        best_prediction->debug_visual()
+        best_prediction->debug_visual(pframe_debug_prefix + to_string(x) + ".png");
 
         if (debug_enabled()) {
             best_prediction->debug_predictive(debug_file);

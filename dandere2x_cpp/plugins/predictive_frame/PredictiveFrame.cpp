@@ -203,12 +203,14 @@ void PredictiveFrame::update_frame(shared_ptr<Frame> final_frame) {
 
 
 void PredictiveFrame::debug_visual(const string &output_image) {
-//    Frame debug_frame = Frame(current_frame->get_width(), current_frame->get_height(), this->current_frame->get_bpp());
-//    FrameUtilities::copy_frame_using_blocks(debug_frame,
-//                                            current_frame,
-//                                            this->matched_blocks,
-//                                            this->block_size);
-//    debug_frame.write(output_image);
+    shared_ptr<Frame> debug_frame = make_shared<Frame>(current_frame->get_width(), current_frame->get_height(), this->current_frame->get_bpp());
+    FrameUtilities::copy_frame_using_blocks(debug_frame,
+                                            current_frame,
+                                            this->matched_blocks,
+                                            this->block_size);
+    cout << "Debug visual" << endl;
+    cout << output_image << endl;
+    debug_frame->write(output_image);
 }
 
 void PredictiveFrame::debug_predictive(const string &output_image) {

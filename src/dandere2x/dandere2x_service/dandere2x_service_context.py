@@ -67,7 +67,7 @@ class Dandere2xServiceContext:
         self.temp_image = self.temp_image_folder + "tempimage.jpg"
         self.debug = False
         self.step_size = 4
-        self.max_frames_ahead = 100
+        self.max_frames_ahead = 15
 
         # Dandere2xCPP
         self.dandere2x_cpp_block_matching_arg = self.service_request.output_options["dandere2x_cpp"]["block_matching_arg"]
