@@ -12,13 +12,12 @@ void FadeFrame::run() {
             parallel_function_call(x * block_size, y * block_size);
         }
     }
-    update_frame();
 }
 
-void FadeFrame::update_frame() {
+void FadeFrame::update_frame(shared_ptr<Frame> update_frame) {
 
     for (auto fb : this->fade_blocks) {
-        FadeFrame::add_scalar_to_image(current_frame, fb.x, fb.y, fb.scalar, block_size);
+        FadeFrame::add_scalar_to_image(update_frame, fb.x, fb.y, fb.scalar, block_size);
     }
 
 }

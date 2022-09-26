@@ -64,7 +64,7 @@ public:
 
     void run() override;
 
-    void update_frame() override;
+    void update_frame(shared_ptr<Frame> update_frame) override;
 
     void write(const string &predictive_vectors_output, const string &residual_vectors_output);
 

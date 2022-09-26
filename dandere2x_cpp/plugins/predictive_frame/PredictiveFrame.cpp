@@ -111,8 +111,6 @@ void PredictiveFrame::match_blocks() {
             parallel_function_call(x * block_size, y * block_size);
         }
     }
-
-    update_frame();
 }
 
 
@@ -137,7 +135,6 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
     }
     else{
         write_positive_case(predictive_vectors_output, residual_vectors_output);
-        update_frame();
     }
 }
 
@@ -197,8 +194,8 @@ void PredictiveFrame::write_positive_case(const string &predictive_vectors_outpu
 //          In other words, the blocks found in next_frame that could be
 //          made with blocks from current_frame need to be updated.
 //-----------------------------------------------------------------------------
-void PredictiveFrame::update_frame() {
-    FrameUtilities::copy_frame_using_blocks(next_frame,
+void PredictiveFrame::update_frame(shared_ptr<Frame> update_frame) {
+    FrameUtilities::copy_frame_using_blocks(update_frame,
                                             current_frame,
                                             this->matched_blocks,
                                             this->block_size);
