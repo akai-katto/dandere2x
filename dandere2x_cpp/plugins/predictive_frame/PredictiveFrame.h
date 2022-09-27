@@ -43,9 +43,9 @@ class PredictiveFrame : AbstractPlugin {
 public:
     PredictiveFrame(AbstractEvaluator *eval,
                     AbstractBlockMatch *block_matcher,
-                    shared_ptr<Frame> current_frame,
-                    shared_ptr<Frame> next_frame,
-                    shared_ptr<Frame> next_frame_compressed,
+                    shared_ptr<const Frame> current_frame,
+                    shared_ptr<const Frame> next_frame,
+                    shared_ptr<const Frame> next_frame_compressed,
                     const int block_size,
                     const int bleed) : AbstractPlugin(current_frame,
                                                       next_frame,
@@ -64,7 +64,7 @@ public:
 
     void run() override;
 
-    void update_frame() override;
+    void update_frame(shared_ptr<Frame> updated_frame) override;
 
     void write(const string &predictive_vectors_output, const string &residual_vectors_output);
 

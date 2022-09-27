@@ -42,9 +42,9 @@ public:
 
     // Note that "current_frame" is not const, and can be updated in the "update_frame" function, once the plugin
     // "updates" it.
-    AbstractPlugin(shared_ptr<Frame> current_frame,
-                   shared_ptr<Frame> next_frame,
-                   shared_ptr<Frame> next_frame_compressed,
+    AbstractPlugin(shared_ptr<const Frame> current_frame,
+                   shared_ptr<const Frame> next_frame,
+                   shared_ptr<const Frame> next_frame_compressed,
                    const int block_size) {
 
         this->current_frame = current_frame;
@@ -58,7 +58,7 @@ public:
     virtual void run() = 0;
 
     // Every plugin needs to affect the frame somehow after it's done it's processing on it.
-    virtual void update_frame() = 0;
+    virtual void update_frame(shared_ptr<Frame> updated_frame) = 0;
 
     // Writes blocks in a python / c++ safe manner (writes to a tempfile then renames to prevent python from
     // pre-maturely reading). Checks if the "sum" is less than zero for each block, which denotes
@@ -101,9 +101,9 @@ protected:
     // Every plugin *should* utilize some sort of parallel optimization, although it doesn't need t.
     virtual void parallel_function_call(int x, int y) = 0;
 
-    shared_ptr<Frame> current_frame;
-    shared_ptr<Frame> next_frame;
-    shared_ptr<Frame> next_frame_compressed;
+    shared_ptr<const Frame> current_frame;
+    shared_ptr<const Frame> next_frame;
+    shared_ptr<const Frame> next_frame_compressed;
 
     int block_size;
 

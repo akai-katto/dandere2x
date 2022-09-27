@@ -11,7 +11,7 @@ class FrameUtilities{
 public:
 
     static void copy_frame_using_blocks(shared_ptr<Frame> final_frame,
-                                        shared_ptr<Frame> base_image,
+                                        shared_ptr<const Frame> base_image,
                                         const vector<vector<shared_ptr<Block>>>& matched_blocks,
                                         const int block_size){
         for (const vector<shared_ptr<Block>>& row: matched_blocks){

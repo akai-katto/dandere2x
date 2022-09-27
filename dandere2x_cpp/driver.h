@@ -55,6 +55,7 @@ void driver_difference(const string &workspace,
         FadeFrame fade = FadeFrame(evaluation_library, frame_1, frame_2, frame_2_compressed, block_size);
         fade.run();
         fade.write(fade_file);
+        fade.update_frame(frame_1);
 
 //        FadeFrame::write_empty_file(fade_file);
 
@@ -63,6 +64,7 @@ void driver_difference(const string &workspace,
                                                   frame_1, frame_2, frame_2_compressed, block_size, bleed);
         predict.run();
         predict.write(p_data_file, residual_file);
+        predict.update_frame(frame_2);
 
         if (debug_enabled()) {
             predict.debug_predictive(debug_file);

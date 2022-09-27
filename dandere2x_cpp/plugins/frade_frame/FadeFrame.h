@@ -19,20 +19,20 @@ using namespace std;
 class FadeFrame : public AbstractPlugin {
 public:
     FadeFrame(AbstractEvaluator *eval,
-              shared_ptr<Frame> current_frame,
-              shared_ptr<Frame> next_frame,
-              shared_ptr<Frame> next_frame_compressed,
+              shared_ptr<const Frame> current_frame,
+              shared_ptr<const Frame> next_frame,
+              shared_ptr<const Frame> next_frame_compressed,
               const int block_size) : AbstractPlugin(current_frame,
                                                      next_frame,
                                                      next_frame_compressed,
                                                      block_size) {
-        current_frame_copy = shared_ptr<Frame>(current_frame);
+        current_frame_copy = make_shared<Frame>(*current_frame);
         this->eval = eval;
     }
 
     void run() override;
 
-    void update_frame() override;
+    void update_frame(shared_ptr<Frame> updated_frame) override;
 
     void write(const string &fade_file);
 
