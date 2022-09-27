@@ -38,6 +38,7 @@ class Dandere2xServiceContext:
         self.encoded_dir = os.path.join(service_request.workspace, "encoded") + os.path.sep
         self.temp_image_folder = os.path.join(service_request.workspace, "temp_image_folder") + os.path.sep
         self.log_dir = os.path.join(service_request.workspace, "log_dir") + os.path.sep
+        self.block_size_dir = os.path.join(service_request.workspace, "block_size_dir") + os.path.sep
 
         self.directories = {self.input_frames_dir,
                             self.noised_input_frames_dir,
@@ -52,7 +53,8 @@ class Dandere2xServiceContext:
                             self.fade_data_dir,
                             self.encoded_dir,
                             self.temp_image_folder,
-                            self.log_dir}
+                            self.log_dir,
+                            self.block_size_dir}
 
         ffprobe_path = load_executable_paths_yaml()['ffprobe']
         ffmpeg_path = load_executable_paths_yaml()['ffmpeg']

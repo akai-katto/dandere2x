@@ -8,7 +8,7 @@ from dandere2x.dandere2xlib.wrappers.frame.frame import Frame, DisplacementVecto
 
 def pframe_image(context: Dandere2xServiceContext,
                  frame_next: Frame, frame_previous: Frame, frame_residual: Frame,
-                 list_residual: list, list_predictive: list):
+                 list_residual: list, list_predictive: list, block_size: int):
     """
     Create a new image using residuals and predictive vectors.
     Roughly, we can describe this method as
@@ -24,7 +24,6 @@ def pframe_image(context: Dandere2xServiceContext,
 
     # load context
     scale_factor = int(context.service_request.scale_factor)
-    block_size = context.service_request.block_size
     bleed = context.bleed
 
     for x in range(int(len(list_predictive) / 4)):

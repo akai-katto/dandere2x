@@ -30,6 +30,7 @@ void driver_difference(const string &workspace,
     string residual_data_prefix = workspace + separator() + "residual_data" + separator() + "residual_";
     string debug_frame_prefix = workspace + separator() + "debug" + separator() + "debug_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
+    string block_size_prefix = workspace + separator() + "block_size_prefix" + separator() + "blocksize_";
 
     auto frame1_path = image_prefix + to_string(1) + ".png";
 
@@ -65,6 +66,10 @@ void driver_difference(const string &workspace,
         predict.run();
         predict.write(p_data_file, residual_file);
         predict.update_frame(frame_2);
+
+        std::ofstream out(block_size_prefix + to_string(x) + ".txt");
+        out << block_size;
+        out.close();
 
         if (debug_enabled()) {
             predict.debug_predictive(debug_file);

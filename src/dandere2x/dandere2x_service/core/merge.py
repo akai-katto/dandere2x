@@ -127,9 +127,11 @@ class Merge(threading.Thread):
                 self.context.residual_data_dir + "residual_" + str(x) + ".txt")
             fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt")
 
+            block_size = int(get_list_from_file_and_wait(self.context.block_size_dir + "block_size_" + str(x) + ".txt")[0])
+
             # Create the actual image itself.
             current_frame = self.make_merge_image(self.context, current_upscaled_residuals, frame_previous,
-                                                  prediction_data_list, residual_data_list, fade_data_list)
+                                                  prediction_data_list, residual_data_list, fade_data_list, block_size)
             ###############
             # Saving Area #
             ###############
@@ -162,7 +164,7 @@ class Merge(threading.Thread):
 
     @staticmethod
     def make_merge_image(context: Dandere2xServiceContext, frame_residual: Frame, frame_previous: Frame,
-                         list_predictive: list, list_residual: list, list_fade: list):
+                         list_predictive: list, list_residual: list, list_fade: list, block_size: int):
         """
         This section can best be explained through pictures. A visual way of expressing what 'merging'
         is doing is this section in the wiki.
@@ -198,7 +200,8 @@ class Merge(threading.Thread):
         ###################
 
         # Note: Run the residual_plugins in the SAME order it was ran in dandere2x_cpp. If not, it won't work correctly.
-        out_image = fade_image(context, out_image, list_fade)
-        out_image = pframe_image(context, out_image, frame_previous, frame_residual, list_residual, list_predictive)
+        out_image = fade_image(context, out_image, list_fade, block_size)
+        out_image = pframe_image(context, out_image, frame_previous, frame_residual, list_residual, list_predictive,
+                                 block_size)
 
         return out_image

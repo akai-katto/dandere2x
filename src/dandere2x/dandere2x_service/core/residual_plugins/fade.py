@@ -11,7 +11,7 @@ class FadeData:
     scalar: int
 
 
-def fade_image(context, frame_base: Frame, list_correction: list):
+def fade_image(context, frame_base: Frame, list_correction: list, block_size: int):
     """
     Apply a flat scalar to the respective blocks in the image. See "fade.cpp" in dandere2x_cpp for more in depth
     documentation. Roughly
@@ -27,7 +27,6 @@ def fade_image(context, frame_base: Frame, list_correction: list):
 
     # load context
     scale_factor = int(context.service_request.scale_factor)
-    block_size = int(context.service_request.block_size)
 
     fade_data_size = 3
 
