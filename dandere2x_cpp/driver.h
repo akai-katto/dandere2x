@@ -13,10 +13,11 @@ using namespace dandere2x_utilities;
 #include "plugins/frade_frame/FadeFrame.h"
 #include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
 #include "easyloggingpp/easylogging++.h"
+#include "plugins/predictive_frame/predictive_frame_dynamic_block_size.h"
 
 void driver_difference(const string &workspace,
                        const int frame_count,
-                       const int block_size,
+                       int block_size,
                        const int quality_setting,
                        const int bleed,
                        AbstractBlockMatch *search_library,
@@ -30,9 +31,10 @@ void driver_difference(const string &workspace,
     string residual_data_prefix = workspace + separator() + "residual_data" + separator() + "residual_";
     string debug_frame_prefix = workspace + separator() + "debug" + separator() + "debug_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
-    string block_size_prefix = workspace + separator() + "block_size_prefix" + separator() + "blocksize_";
+    string block_size_prefix = workspace + separator() + "block_size_dir" + separator() + "block_size_";
 
     auto frame1_path = image_prefix + to_string(1) + ".png";
+    block_size = 60;
 
     wait_for_file(frame1_path);
     auto frame_1 = make_shared<Frame>(frame1_path);
@@ -61,18 +63,25 @@ void driver_difference(const string &workspace,
 //        FadeFrame::write_empty_file(fade_file);
 
         search_library->set_images(frame_1, frame_2);
-        PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
-                                                  frame_1, frame_2, frame_2_compressed, block_size, bleed);
-        predict.run();
-        predict.write(p_data_file, residual_file);
-        predict.update_frame(frame_2);
+//        PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
+//                                                  frame_1, frame_2, frame_2_compressed, block_size, bleed);
+//        predict.run();
+//        predict.write(p_data_file, residual_file);
+//        predict.update_frame(frame_2);
+
+        PredictiveFrameDynamicBlockSize test = PredictiveFrameDynamicBlockSize(evaluation_library, search_library,
+                                                                               frame_1, frame_2, frame_2_compressed, 1);
+
+        shared_ptr<PredictiveFrame> best_prediction = test.best_predictive_frame();
+        best_prediction->update_frame(frame_2);
+        best_prediction->write(p_data_file, residual_file);
 
         std::ofstream out(block_size_prefix + to_string(x) + ".txt");
-        out << block_size;
+        out << best_prediction->get_block_size() << endl;
         out.close();
 
         if (debug_enabled()) {
-            predict.debug_predictive(debug_file);
+            best_prediction->debug_predictive(debug_file);
         }
 
         frame_1 = frame_2;

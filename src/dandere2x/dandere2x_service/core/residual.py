@@ -56,13 +56,14 @@ class Residual(threading.Thread):
             residual_data = get_list_from_file_and_wait(self.con.residual_data_dir + "residual_" + str(x) + ".txt")
 
             prediction_data = get_list_from_file_and_wait(self.con.pframe_data_dir + "pframe_" + str(x) + ".txt")
+            block_size = int(get_list_from_file_and_wait(self.con.block_size_dir + "block_size_" + str(x) + ".txt")[0])
 
             # Create the output files..
             debug_output_file = self.con.debug_dir + "debug" + str(x + 1) + ".png"
             output_file = self.con.residual_images_dir + "output_" + get_lexicon_value(6, x) + ".png"
 
             # Save to a temp folder so waifu2x-vulkan doesn't try reading it, then move it
-            out_image = self.make_residual_image(self.con, f1, residual_data, prediction_data)
+            out_image = self.make_residual_image(self.con, f1, residual_data, prediction_data, block_size)
 
             if out_image.get_res() == (1, 1):
                 """
@@ -93,7 +94,7 @@ class Residual(threading.Thread):
 
     @staticmethod
     def make_residual_image(context: Dandere2xServiceContext, raw_frame: Frame, list_residual: list,
-                            list_predictive: list):
+                            list_predictive: list, block_size: int):
         """
         This section can best be explained through pictures. A visual way of expressing what 'make_residual_image'
         is doing is this section in the wiki.
@@ -130,7 +131,6 @@ class Residual(threading.Thread):
             return residual_image
 
         buffer = 5
-        block_size = context.service_request.block_size
         bleed = context.bleed
         """
         First make a 'bleeded' version of input_frame, as we need to create a buffer in the event the 'bleed'
