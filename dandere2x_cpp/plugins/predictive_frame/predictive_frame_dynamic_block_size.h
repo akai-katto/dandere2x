@@ -6,12 +6,15 @@
 #define DANDERE2X_CPP_PREDICTIVE_FRAME_DYNAMIC_BLOCK_SIZE_H
 
 
+#include <utility>
+
 #include "../AbstractPlugin.h"
 #include "../../evaluator/AbstractEvaluator.h"
 #include "../block_plugins/block_matching/AbstractBlockMatch.h"
 #include "PredictiveFrame.h"
 #include "../../easyloggingpp/easylogging++.h"
 
+using namespace std;
 class PredictiveFrameDynamicBlockSize {
 public:
     PredictiveFrameDynamicBlockSize(AbstractEvaluator *eval,
@@ -22,23 +25,19 @@ public:
                                     const int bleed) {
         this->eval = eval;
         this->block_matcher = block_matcher;
-        this->current_frame = current_frame;
-        this->next_frame = next_frame;
-        this->next_frame_compressed = next_frame_compressed;
+        this->current_frame = move(current_frame);
+        this->next_frame = move(next_frame);
+        this->next_frame_compressed = move(next_frame_compressed);
         this->bleed = bleed;
     }
 
     shared_ptr<PredictiveFrame> best_predictive_frame() {
 
-        static int total_computations = 6;
-        shared_ptr<PredictiveFrame> predictiveFrames[6] = {make_shared<PredictiveFrame>(this->eval,
+        static int total_computations = 3;
+        shared_ptr<PredictiveFrame> predictiveFrames[3] = {make_shared<PredictiveFrame>(this->eval,
                                                                                         this->block_matcher, this->current_frame,
                                                                                         this->next_frame, this->next_frame_compressed,
                                                                                         10, this->bleed),
-                                                           make_shared<PredictiveFrame>(this->eval,
-                                                                                        this->block_matcher, this->current_frame,
-                                                                                        this->next_frame, this->next_frame_compressed,
-                                                                                        20, this->bleed),
                                                            make_shared<PredictiveFrame>(this->eval,
                                                                                         this->block_matcher, this->current_frame,
                                                                                         this->next_frame, this->next_frame_compressed,
@@ -46,15 +45,8 @@ public:
                                                            make_shared<PredictiveFrame>(this->eval,
                                                                                         this->block_matcher, this->current_frame,
                                                                                         this->next_frame, this->next_frame_compressed,
-                                                                                        40, this->bleed),
-                                                           make_shared<PredictiveFrame>(this->eval,
-                                                                                        this->block_matcher, this->current_frame,
-                                                                                        this->next_frame, this->next_frame_compressed,
-                                                                                        50, this->bleed),
-                                                           make_shared<PredictiveFrame>(this->eval,
-                                                                                        this->block_matcher, this->current_frame,
-                                                                                        this->next_frame, this->next_frame_compressed,
-                                                                                        60, this->bleed)};
+                                                                                        60, this->bleed)
+                                                                                        };
 
         int lowest_index = 0;
         unsigned int lowest_index_value = 999999999;
