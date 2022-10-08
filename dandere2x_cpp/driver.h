@@ -71,17 +71,17 @@ void driver_difference(const string &workspace,
 
         PredictiveFrameDynamicBlockSize test = PredictiveFrameDynamicBlockSize(evaluation_library, search_library,
                                                                                frame_1, frame_2, frame_2_compressed, 1);
-
-        PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
-                                                  frame_1, frame_2, frame_2_compressed,
-                                                  test.best_predictive_frame()->get_block_size(), bleed);
-        predict.run();
-        predict.write(p_data_file, residual_file);
-        predict.update_frame(frame_2);
+        shared_ptr<PredictiveFrame> predict = test.best_predictive_frame();
+//        PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
+//                                                  frame_1, frame_2, frame_2_compressed,
+//                                                  test.best_predictive_frame()->get_block_size(), bleed);
+//        predict->run();
+        predict->write(p_data_file, residual_file);
+        predict->update_frame(frame_2);
 
 
         std::ofstream out(block_size_prefix + to_string(x) + ".txt");
-        out << predict.get_block_size() << endl;
+        out << predict->get_block_size() << endl;
         out.close();
 
         if (debug_enabled()) {
