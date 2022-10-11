@@ -13,8 +13,11 @@
 #include "../block_plugins/block_matching/AbstractBlockMatch.h"
 #include "PredictiveFrame.h"
 #include "../../easyloggingpp/easylogging++.h"
+#include <thread>
+#include <future>
 
 using namespace std;
+
 class PredictiveFrameDynamicBlockSize {
 public:
     PredictiveFrameDynamicBlockSize(AbstractEvaluator *eval,
@@ -31,34 +34,52 @@ public:
         this->bleed = bleed;
     }
 
+    static void pframe_thread(AbstractEvaluator *eval,
+                              AbstractBlockMatch *block_matcher,
+                              const shared_ptr<const Frame> &current_frame,
+                              const shared_ptr<const Frame> &next_frame,
+                              const shared_ptr<const Frame> &next_frame_compressed,
+                              const int block_size,
+                              const int bleed,
+                              std::promise<shared_ptr<PredictiveFrame>> *promObj) {
+        shared_ptr<PredictiveFrame> predictiveFrame = make_shared<PredictiveFrame>(eval, block_matcher, current_frame,
+                                                                                   next_frame, next_frame_compressed,
+                                                                                   block_size, bleed);
+        predictiveFrame->run();
+        promObj->set_value(predictiveFrame);
+    }
+
+
     shared_ptr<PredictiveFrame> best_predictive_frame() {
 
         static int total_computations = 3;
-        shared_ptr<PredictiveFrame> predictiveFrames[3] = {make_shared<PredictiveFrame>(this->eval,
-                                                                                        this->block_matcher, this->current_frame,
-                                                                                        this->next_frame, this->next_frame_compressed,
-                                                                                        10, this->bleed),
-                                                           make_shared<PredictiveFrame>(this->eval,
-                                                                                        this->block_matcher, this->current_frame,
-                                                                                        this->next_frame, this->next_frame_compressed,
-                                                                                        30, this->bleed),
-                                                           make_shared<PredictiveFrame>(this->eval,
-                                                                                        this->block_matcher, this->current_frame,
-                                                                                        this->next_frame, this->next_frame_compressed,
-                                                                                        60, this->bleed)
-                                                                                        };
+        int block_sizes[] = {10, 30, 60};
+        promise<shared_ptr<PredictiveFrame>> promises[] = {promise<shared_ptr<PredictiveFrame>>(),
+                                                           promise<shared_ptr<PredictiveFrame>>(),
+                                                           promise<shared_ptr<PredictiveFrame>>()};
+        for (int i = 0; i < total_computations; i++) {
+            thread th(pframe_thread, this->eval,
+                      this->block_matcher,
+                      this->current_frame,
+                      this->next_frame,
+                      this->next_frame_compressed,
+                      block_sizes[i], this->bleed, &promises[i]);
+        }
+
+
 
         int lowest_index = 0;
         unsigned int lowest_index_value = 999999999;
         this->block_matcher->set_images(this->current_frame, this->next_frame);
 
-        for (int i = 0; i < total_computations; i++){
-            predictiveFrames[i]->run();
-            LOG(INFO) << "blocksize: " << predictiveFrames[i]->get_block_size() << " " <<  predictiveFrames[i]->missing_pixel_cost() << endl;
+        for (int i = 0; i < total_computations; i++) {
+            shared_ptr<PredictiveFrame> predictiveFrameFuture = promises[i].get_future().get();
+            LOG(INFO) << "blocksize: " << predictiveFrameFuture->get_block_size() << " "
+                      << predictiveFrameFuture->missing_pixel_cost() << endl;
 
-            if (predictiveFrames[i]->missing_pixel_cost() < lowest_index_value){
+            if (predictiveFrameFuture->missing_pixel_cost() < lowest_index_value) {
                 lowest_index = i;
-                lowest_index_value = predictiveFrames[i]->missing_pixel_cost();
+                lowest_index_value = predictiveFrameFuture->missing_pixel_cost();
             }
         }
 

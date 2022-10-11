@@ -41,7 +41,7 @@ AbstractEvaluator *get_evaluator(const string &evaluator_arg) {
 INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char **argv) {
-
+    cout << "hi" << endl;
     // Easy Logging Setup
     // Sample output: 2021-05-08 18:51:54,662 INFO main.cpp : block_size: 20
     el::Configurations c;
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     el::Loggers::reconfigureAllLoggers(c);
 
     // Parses the users inputs and starts the driver to preform Dandere2x Block Matching Calculations.
-    bool debug = false; //debug flag
+    bool debug = true; //debug flag
 
     string workspace = "C:\\Users\\windw0z\\Documents\\GitHub\\dandere2x\\src\\workspace\\gui\\subworkspace";
     string block_matching_arg = "exhaustive";
