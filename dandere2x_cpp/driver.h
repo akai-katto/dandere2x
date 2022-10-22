@@ -62,7 +62,7 @@ void driver_difference(const string &workspace,
 
 //        FadeFrame::write_empty_file(fade_file);
 
-        search_library->set_images(frame_1,           frame_2);
+        search_library->set_images(frame_1,frame_2);
 
         PredictiveFrameDynamicBlockSize test = PredictiveFrameDynamicBlockSize(evaluation_library, search_library,
                                                                                frame_1, frame_2, frame_2_compressed, 1);

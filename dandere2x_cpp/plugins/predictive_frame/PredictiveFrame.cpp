@@ -83,7 +83,6 @@ void PredictiveFrame::parallel_function_call(int x, int y) {
 void PredictiveFrame::run() {
 
     double psnr = eval->psnr_two_frames(*current_frame, *next_frame);
-
     // Don't conduct block matches if the PSNR is terribly low.
     if (psnr < 10) {
         std::cout << "PSNR " << psnr << std::endl;

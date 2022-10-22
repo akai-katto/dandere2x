@@ -35,6 +35,7 @@ Purpose:
 #include "Frame.h"
 #include "external_headers/stb_image.h"
 #include "external_headers/stb_image_write.h"
+
 using namespace std;
 
 //////////////////
@@ -71,12 +72,14 @@ class Writer {
 public:
     static unsigned char *byte_array;
     static unsigned int offset;
+
     // writes to a very stupid array
     static void dummy_write(void *context, void *data, int len) {
         memcpy(Writer::byte_array + offset, data, len);
         Writer::offset += len;
     }
 };
+
 unsigned char *Writer::byte_array = new unsigned char[500000000];
 unsigned int Writer::offset = 0;
 
@@ -90,7 +93,7 @@ Frame::Frame(const string &file_name, const int compression) {
 
     stbi_write_jpg_to_func(Writer::dummy_write, 0, width, height, bpp, stb_image, compression);
     stbi_image_free(stb_image);
-    stb_image = stbi_load_from_memory( (unsigned  char *) Writer::byte_array, Writer::offset, &width, &height, &bpp, 3);
+    stb_image = stbi_load_from_memory((unsigned char *) Writer::byte_array, Writer::offset, &width, &height, &bpp, 3);
     Writer::offset = 0;  // Reset Offset
 
     this->height = height;
@@ -124,10 +127,11 @@ Frame::Frame(const Frame &other) {
     this->image_colors.resize(other.get_width(), std::vector<Frame::Color>(other.get_height()));
 
     // Fill our wrapper's image with stbi image information
-    for (int x = 0; x < width; x++)
-        for (int y = 0; y < height; y++)
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
             this->image_colors[x][y] = other.get_color(x, y);
-
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -180,7 +184,7 @@ void Frame::apply_noise(const int range) {
             edited_color.r = max(0, min(255, edited_color.r + noise));
             edited_color.g = max(0, min(255, edited_color.g + noise));
             edited_color.b = max(0, min(255, edited_color.b + noise));
-            set_color(i,j, edited_color);
+            set_color(i, j, edited_color);
         }
     }
 
@@ -228,7 +232,7 @@ void Frame::sanity_check(const string &caller, const int x, const int y) const {
 // Purpose: Determine whether a block is within bounds of an image or not.
 //-----------------------------------------------------------------------------
 bool Frame::block_out_of_bounds(const int x, const int y, const int block_size) const {
-    return is_out_of_bounds(x + block_size, y + block_size );
+    return is_out_of_bounds(x + block_size, y + block_size);
 }
 
 //-----------------------------------------------------------------------------
@@ -236,7 +240,7 @@ bool Frame::block_out_of_bounds(const int x, const int y, const int block_size) 
 //          or not. To be called by any bounds checker in Frame.
 //-----------------------------------------------------------------------------
 bool Frame::is_out_of_bounds(const int x, const int y) const {
-    return x > width || y > height  || x < 0 || y < 0;
+    return x > width || y > height || x < 0 || y < 0;
 }
 
 
@@ -278,7 +282,7 @@ int Frame::bound_integer(int min, int max, int val) {
     return val;
 }
 
-Frame::Color Frame::bound_color(int r, int g, int b){
+Frame::Color Frame::bound_color(int r, int g, int b) {
     Color returned_color{};
     auto char_max = 255;
 

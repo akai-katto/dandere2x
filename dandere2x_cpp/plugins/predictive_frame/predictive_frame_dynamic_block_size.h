@@ -41,7 +41,7 @@ public:
                               const shared_ptr<const Frame> &next_frame_compressed,
                               const int block_size,
                               const int bleed,
-                              std::promise<shared_ptr<PredictiveFrame>> *promObj) {
+                              promise<shared_ptr<PredictiveFrame>> *promObj) {
         shared_ptr<PredictiveFrame> predictiveFrame = make_shared<PredictiveFrame>(eval, block_matcher, current_frame,
                                                                                    next_frame, next_frame_compressed,
                                                                                    block_size, bleed);
@@ -52,21 +52,63 @@ public:
 
     shared_ptr<PredictiveFrame> best_predictive_frame() {
 
-        static int total_computations = 3;
-        int block_sizes[] = {10, 30, 60};
+        static int total_computations = 6;
+        int block_sizes[] = {15, 20, 30,40, 50, 60};
         promise<shared_ptr<PredictiveFrame>> promises[] = {promise<shared_ptr<PredictiveFrame>>(),
                                                            promise<shared_ptr<PredictiveFrame>>(),
+                                                           promise<shared_ptr<PredictiveFrame>>(),
+                                                           promise<shared_ptr<PredictiveFrame>>(),
+                                                           promise<shared_ptr<PredictiveFrame>>(),
                                                            promise<shared_ptr<PredictiveFrame>>()};
+
+        thread threads[] = {thread(pframe_thread, this->eval,
+                                   this->block_matcher,
+                                   this->current_frame,
+                                   this->next_frame,
+                                   this->next_frame_compressed,
+                                   block_sizes[0], this->bleed, &promises[0]),
+                            thread(pframe_thread, this->eval,
+                                   this->block_matcher,
+                                   this->current_frame,
+                                   this->next_frame,
+                                   this->next_frame_compressed,
+                                   block_sizes[1], this->bleed, &promises[1]),
+
+                            thread(pframe_thread, this->eval,
+                                   this->block_matcher,
+                                   this->current_frame,
+                                   this->next_frame,
+                                   this->next_frame_compressed,
+                                   block_sizes[2], this->bleed, &promises[2]),
+                            thread(pframe_thread, this->eval,
+                                   this->block_matcher,
+                                   this->current_frame,
+                                   this->next_frame,
+                                   this->next_frame_compressed,
+                                   block_sizes[3], this->bleed, &promises[3]),
+                            thread(pframe_thread, this->eval,
+                                   this->block_matcher,
+                                   this->current_frame,
+                                   this->next_frame,
+                                   this->next_frame_compressed,
+                                   block_sizes[4], this->bleed, &promises[4]),
+                            thread(pframe_thread, this->eval,
+                                   this->block_matcher,
+                                   this->current_frame,
+                                   this->next_frame,
+                                   this->next_frame_compressed,
+                                   block_sizes[5], this->bleed, &promises[5])};
+
         for (int i = 0; i < total_computations; i++) {
-            thread th(pframe_thread, this->eval,
-                      this->block_matcher,
-                      this->current_frame,
-                      this->next_frame,
-                      this->next_frame_compressed,
-                      block_sizes[i], this->bleed, &promises[i]);
+            threads[i].join();
         }
 
-
+        shared_ptr<PredictiveFrame> predictive_frames[] = {shared_ptr<PredictiveFrame>(),
+                                                           shared_ptr<PredictiveFrame>(),
+                                                           shared_ptr<PredictiveFrame>(),
+                                                           shared_ptr<PredictiveFrame>(),
+                                                           shared_ptr<PredictiveFrame>(),
+                                                           shared_ptr<PredictiveFrame>()};
 
         int lowest_index = 0;
         unsigned int lowest_index_value = 999999999;
@@ -74,6 +116,7 @@ public:
 
         for (int i = 0; i < total_computations; i++) {
             shared_ptr<PredictiveFrame> predictiveFrameFuture = promises[i].get_future().get();
+            predictive_frames[i] = predictiveFrameFuture;
             LOG(INFO) << "blocksize: " << predictiveFrameFuture->get_block_size() << " "
                       << predictiveFrameFuture->missing_pixel_cost() << endl;
 
@@ -85,7 +128,7 @@ public:
 
         LOG(INFO) << "lowest index is " << lowest_index << " with a value of " << lowest_index_value << endl;
 
-        return predictiveFrames[lowest_index];
+        return predictive_frames[lowest_index];
     }
 
 
