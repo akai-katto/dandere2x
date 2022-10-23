@@ -8,7 +8,7 @@ realsr_ncnn_vulkan:
 
 dandere2x:
   bleed: 1
-  max_frames_ahead = 500
+  max_frames_ahead: 500
 
 dandere2x_cpp:
   block_matching_arg: "exhaustive"
