@@ -261,7 +261,7 @@ Frame::Color Frame::construct_color(const unsigned char *stb_image, const int x,
 //          placing the colors found in the array's pixels back into a char array. This is used when
 //          saving the file using stb_image_write.
 //--------------------------------------------------------------------------------------------------------
-void Frame::deconstruct_color(unsigned char *stb_image, const int x, const int y) {
+const void Frame::deconstruct_color(unsigned char *stb_image, const int x, const int y) const {
     Color pixel = this->get_color(x, y);
 
     stb_image[x * 3 + 3 * y * width + 0] = pixel.r;
@@ -286,6 +286,29 @@ Frame::Color Frame::bound_color(int r, int g, int b){
     returned_color.g = (char) bound_integer(0, char_max, g);
     returned_color.b = (char) bound_integer(0, char_max, b);
     return returned_color;
+}
+
+Frame::Frame(const Frame &other, int buffer) {
+
+    this->file_name = "buffered image";
+    this->height = other.get_height() + buffer * 2;
+    this->width = other.get_width() + buffer * 2;
+    this->bpp = other.get_bpp();
+
+    // Begin the process of putting the stb image into our wrapper.
+    this->image_colors.resize(this->width, std::vector<Frame::Color>(this->height));
+
+    Frame::Color black;
+    black.r = 0;
+    black.g = 0;
+    black.b = 0;
+
+
+    for(int x = 0; x < other.get_width(); x++){
+        for (int y = 0; y < other.get_height(); y++){
+            this->set_color(x + buffer, y + buffer, other.get_color(x, y));
+        }
+    }
 }
 
 

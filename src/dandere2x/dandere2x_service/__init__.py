@@ -104,7 +104,7 @@ class Dandere2xServiceThread(threading.Thread):
         self.min_disk_demon.start()
         self.dandere2x_cpp_thread.start()
         self.merge_thread.start()
-        self.residual_thread.start()
+        #self.residual_thread.start()
         self.waifu2x.start()
         self.status_thread.start()
 
@@ -115,7 +115,7 @@ class Dandere2xServiceThread(threading.Thread):
         self.min_disk_demon.join()
         self.dandere2x_cpp_thread.join()
         self.merge_thread.join()
-        self.residual_thread.join()
+        #self.residual_thread.join()
         self.waifu2x.join()
         self.status_thread.join()
 

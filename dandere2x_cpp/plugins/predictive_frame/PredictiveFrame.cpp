@@ -26,6 +26,7 @@ Purpose: todo
 
 #include <cmath>
 #include <fstream>
+#include <thread>
 #include "PredictiveFrame.h"
 #include "../../easyloggingpp/easylogging++.h"
 #include "../../frame/Frame_Utilities.h"
@@ -119,7 +120,10 @@ void PredictiveFrame::match_blocks() {
 //-----------------------------------------------------------------------------
 // Purpose: Writes the residuals (i.e the blocks that did not get matched )
 //-----------------------------------------------------------------------------
-void PredictiveFrame::write(const string &predictive_vectors_output, const string &residual_vectors_output) {
+void PredictiveFrame::write(const string &predictive_vectors_output,
+                            const string &residual_vectors_output,
+                            const string &residual_frame) {
+
     int max_blocks_possible = (current_frame->get_height() * this->current_frame->get_width()) / (block_size * block_size);
     int total_found_blocks = (matched_stationary_blocks + matched_moving_blocks);
     int missing_blocks = max_blocks_possible - total_found_blocks;
@@ -134,14 +138,18 @@ void PredictiveFrame::write(const string &predictive_vectors_output, const strin
         LOG(INFO) << "Too many missing blocks - conducting redraw" << std::endl;
         this->write_blocks(predictive_vectors_output, {});
         this->write_blocks(residual_vectors_output, {});
+
+        next_frame->write(residual_frame);
     }
     else{
-        write_positive_case(predictive_vectors_output, residual_vectors_output);
+        write_positive_case(predictive_vectors_output, residual_vectors_output, residual_frame);
         update_frame();
     }
 }
 
-void PredictiveFrame::write_positive_case(const string &predictive_vectors_output, const string &residual_vectors_output) {
+void PredictiveFrame::write_positive_case(const string &predictive_vectors_output,
+                                          const string &residual_vectors_output,
+                                          const string &residual_frame) {
     // I apologize to myself / any maintainer that this is in a big function, but couldn't find a way to make this
     // split up into a few smaller bits and pieces.
 
@@ -164,6 +172,8 @@ void PredictiveFrame::write_positive_case(const string &predictive_vectors_outpu
     int missing_blocks_length = missing_blocks.size();
     int dimension = sqrt(missing_blocks_length) + 1; // The dimension of the output image
 
+
+    int buffer = 5;
     // Start cycling through each missing block, giving it an (x,y) coordinate in the new smaller output image.
     for (int x = 0; x < dimension; x++) {
         for (int y = 0; y < dimension; y++) {
@@ -175,8 +185,8 @@ void PredictiveFrame::write_positive_case(const string &predictive_vectors_outpu
 
             // Create the displacement matching the two images via vectors.
             shared_ptr<Block> current = missing_blocks[0];
-            vector_displacements.push_back(make_shared<Block>(current->x_start , current->y_start,
-                                                              x, y, 0));
+            vector_displacements.push_back(make_shared<Block>(x * (block_size+bleed * 2), y * (block_size+bleed * 2),
+                                                              current->x_start - bleed + buffer, current->y_start - bleed + buffer, 0));
             missing_blocks.erase(missing_blocks.begin(), missing_blocks.begin() + 1);
         }
     }
@@ -188,8 +198,41 @@ void PredictiveFrame::write_positive_case(const string &predictive_vectors_outpu
      * text files).
      */
     this->write_blocks(predictive_vectors_output, matched_blocks);
-    vector<vector<shared_ptr<Block>>> argument_vector = {vector_displacements};
-    this->write_blocks(residual_vectors_output, argument_vector); // why is this not writing anything out?
+
+    //int(sqrt(vector_displacements.size() + 1)) * (block_size + bleed * 2)
+    shared_ptr<Frame> next_frame_bleeded = make_shared<Frame>(*next_frame, buffer);
+    shared_ptr<Frame> output_frame = make_shared<Frame>((int(sqrt(vector_displacements.size())) + 1) * (block_size + bleed * 2), (int(sqrt(vector_displacements.size())) + 1) * (block_size + bleed * 2), this->current_frame->get_bpp());
+    FrameUtilities::copy_frame_using_blocks(output_frame, next_frame_bleeded, {vector_displacements}, (block_size+ (bleed * 2)));
+    //output_frame->write(residual_frame);
+    thread(Frame::write_detatched, residual_frame, output_frame).detach();
+
+    // new code
+    vector<shared_ptr<Block>> missing_blocks2 = PredictiveFrame::get_missing_blocks(this->matched_blocks);
+    vector<shared_ptr<Block>> vector_displacements2;
+
+    int missing_blocks_length2 = missing_blocks.size();
+    int dimension2 = sqrt(missing_blocks_length) + 1; // The dimension of the output image
+
+    // Start cycling through each missing block, giving it an (x,y) coordinate in the new smaller output image.
+    for (int x = 0; x < dimension2; x++) {
+        for (int y = 0; y < dimension2; y++) {
+
+            // Break if we pre-maturely finished.
+            if (missing_blocks2.empty()) {
+                break;
+            }
+
+            // Create the displacement matching the two images via vectors.
+            shared_ptr<Block> current = missing_blocks2[0];
+            vector_displacements2.push_back(make_shared<Block>(current->x_start , current->y_start,
+                                                              x, y, 0));
+            missing_blocks2.erase(missing_blocks2.begin(), missing_blocks2.begin() + 1);
+        }
+    }
+    this->write_blocks(residual_vectors_output, {vector_displacements2}); // why is this not writing anything out?
+
+
+
 }
 
 //-----------------------------------------------------------------------------

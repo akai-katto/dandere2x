@@ -14,6 +14,15 @@ using namespace dandere2x_utilities;
 #include "plugins/block_plugins/block_matching/AbstractBlockMatch.h"
 #include "easyloggingpp/easylogging++.h"
 
+std::string pad_left(std::string const& str, size_t s)
+{
+    if ( str.size() < s )
+        return std::string(s-str.size(), '0') + str;
+    else
+        return str;
+}
+
+
 void driver_difference(const string &workspace,
                        const int frame_count,
                        const int block_size,
@@ -28,6 +37,7 @@ void driver_difference(const string &workspace,
     // Output files
     string p_data_prefix = workspace + separator() + "pframe_data" + separator() + "pframe_";
     string residual_data_prefix = workspace + separator() + "residual_data" + separator() + "residual_";
+    string residual_frames_prefix = workspace + separator() + "residual_images" + separator() + "output_";
     string debug_frame_prefix = workspace + separator() + "debug" + separator() + "debug_";
     string fade_prefix = workspace + separator() + "fade_data" + separator() + "fade_";
 
@@ -41,7 +51,8 @@ void driver_difference(const string &workspace,
 
         // File Declarations
         string p_data_file = p_data_prefix + to_string(x) + ".txt";
-        string residual_file = residual_data_prefix + to_string(x) + ".txt";
+        string residual_data = residual_data_prefix + to_string(x) + ".txt";
+        string residual_file = residual_frames_prefix + pad_left(to_string(x), 6) + ".png";
         string fade_file = fade_prefix + to_string(x) + ".txt";
         string debug_file = debug_frame_prefix + to_string(x) + ".png";
 
@@ -62,7 +73,7 @@ void driver_difference(const string &workspace,
         PredictiveFrame predict = PredictiveFrame(evaluation_library, search_library,
                                                   frame_1, frame_2, frame_2_compressed, block_size, bleed);
         predict.run();
-        predict.write(p_data_file, residual_file);
+        predict.write(p_data_file, residual_data, residual_file);
 
         if (debug_enabled()) {
             predict.debug_predictive(debug_file);

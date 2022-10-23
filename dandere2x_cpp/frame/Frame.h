@@ -40,10 +40,13 @@ Purpose: This class is to facilitate all the functions and uses dandere2x
 #include <cstdio>
 #include <random>
 #include <string.h>
+#include <thread>
+#include <memory>
 
 
 // local includes
 #include "external_headers/stb_image.h"
+#include "external_headers/stb_image_write.h"
 
 
 using namespace std;
@@ -71,6 +74,20 @@ public:
         return returned_color;
     }
 
+    static void write_detatched(const string& filename, shared_ptr<Frame> other){
+        unsigned char *stb_image;
+        stb_image = new unsigned char[other->get_height() * other->get_width() * 3];
+
+        for (int x = 0; x < other->width; x++) {
+            for (int y = 0; y < other->height; y++) {
+                other->deconstruct_color(stb_image, x, y);
+            }
+        }
+
+        stbi_write_png(filename.c_str(), other->width, other->height, other->bpp, stb_image, other->width * other->bpp);
+        stbi_image_free(stb_image);
+    }
+
     // Constructors //
 
     explicit Frame(const string& file_name);
@@ -78,6 +95,8 @@ public:
     explicit Frame(const string& file_name, const int compression);
 
     explicit Frame(const Frame& other);
+
+    explicit Frame(const Frame& other, int buffer);
 
     explicit Frame(const int width, const int height, const int bpp);
 
@@ -115,7 +134,7 @@ public:
     }
 
     void set_color(const int x, const int y, const Frame::Color &color) {
-        // sanity_check("void Frame::set_color", x, y);
+        sanity_check("void Frame::set_color", x, y);
         image_colors[x][y] = color;
     }
 
@@ -139,7 +158,7 @@ private:
     // utility functions to assist with stb_image //
     Frame::Color construct_color(const unsigned char *stb_image, const int x, const int y) const;
 
-    void deconstruct_color(unsigned char *stb_image, const int x, const int y);
+    const void deconstruct_color(unsigned char *stb_image, const int x, const int y) const;
 
 
 };

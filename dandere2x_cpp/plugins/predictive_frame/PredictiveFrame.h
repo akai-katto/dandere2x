@@ -66,7 +66,9 @@ public:
 
     void update_frame() override;
 
-    void write(const string &predictive_vectors_output, const string &residual_vectors_output);
+    void write(const string &predictive_vectors_output,
+               const string &residual_vectors_output,
+               const string &residual_frame);
 
     void debug_visual(const string &output_image);
 
@@ -74,7 +76,9 @@ public:
 
 protected:
 
-    void write_positive_case(const string &predictive_vectors_output, const string &residual_vectors_output);
+    void write_positive_case(const string &predictive_vectors_output,
+                             const string &residual_vectors_output,
+                             const string &residual_frame);
 
 private:
 
