@@ -1,9 +1,12 @@
+import threading
+import time
+import uuid
 from pathlib import Path
 
 from dandere2x.dandere2xlib.utils.dandere2x_utils import rename_file_wait
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
 from dandere2x.dandere2xlib.wrappers.ffmpeg.progressive_frame_extractor._ffmpeg_video_frame_extractor import \
-    FFMpegVideoFrameExtractor
+    FFMpegVideoFrameExtractor, D2xFrame
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_width_height
 
 
@@ -48,11 +51,14 @@ class ProgressiveFrameExtractor:
         success = False
         image = self.cap.get_frame()
 
-        temp_image = self.extracted_frames_dir + "frame_temp_%s.png" % self.count
+        temp_image = self.extracted_frames_dir + str(uuid.uuid4()) + "frame_temp_%s.png" % self.count
         final_image = self.extracted_frames_dir + "frame%s.png" % self.count
 
-        image.save(Path(temp_image))
-
-        rename_file_wait(temp_image, final_image)
+        threading.Thread(target=self.save_asyncable, args=(image, temp_image, final_image,)).start()
 
         self.count += 1
+
+    @staticmethod
+    def save_asyncable(image: D2xFrame, temp_image:str,  final_image: str):
+        image.save(Path(temp_image))
+        rename_file_wait(temp_image, final_image)
