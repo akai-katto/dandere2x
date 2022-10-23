@@ -120,9 +120,11 @@ def _check_and_fix_resolution(input_file: str, block_size: int, output_options_o
 
     return new_output_options
 
-class VideoFrameExtractor:
 
-    def __init__(self, ffmpeg_binary: Path,  input_video: Path, width: int, height: int, block_size: int, output_options_original: dict):
+class FFMpegVideoFrameExtractor:
+
+    def __init__(self, ffmpeg_binary: Path, input_video: Path, width: int, height: int, block_size: int,
+                 output_options_original: dict):
         self.__count: int = 0
         self._width, self._height = get_a_valid_input_resolution(width, height, block_size)
         self._dtype = np.uint8
@@ -140,12 +142,12 @@ class VideoFrameExtractor:
 
         print("pre output options")
         options = get_options_from_section(fixed_resolution["ffmpeg"]["pre_process_video"]['output_options'],
-            ffmpeg_command=True)
+                                           ffmpeg_command=True)
         for item in options:
             extraction_args.append(item)
 
         extraction_args.extend(["-c:v", "rawvideo", "-f", "rawvideo",
-            "-pix_fmt", "rgb24", "-an", "-"])
+                                "-pix_fmt", "rgb24", "-an", "-"])
 
         pprint(extraction_args)
         self.ffmpeg = subprocess.Popen(extraction_args, stdout=subprocess.PIPE)

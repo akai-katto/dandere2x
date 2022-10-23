@@ -98,15 +98,17 @@ class Dandere2xServiceThread(threading.Thread):
 
         self.progressive_noise_adder.start()
 
-        self.min_disk_demon.extract_initial_frames()
+        extract_initial_frames = threading.Thread(target=self.min_disk_demon.extract_initial_frames)
+        extract_initial_frames.start()
         self.__upscale_first_frame()
+        extract_initial_frames.join()
 
-        self.min_disk_demon.start()
         self.dandere2x_cpp_thread.start()
         self.merge_thread.start()
         self.residual_thread.start()
         self.waifu2x.start()
         self.status_thread.start()
+        self.min_disk_demon.start()
 
         while self.controller.get_current_frame() < self.context.frame_count - 1:
             time.sleep(1)

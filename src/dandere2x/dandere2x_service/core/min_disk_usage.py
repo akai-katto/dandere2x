@@ -30,8 +30,7 @@ from colorlog import logging
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
 from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value
-from dandere2x.dandere2xlib.wrappers.ffmpeg.progressive_frame_extractor_ffmpeg_rework import \
-    ProgressiveFramesExtractorFFMPEG
+from dandere2x.dandere2xlib.wrappers.ffmpeg.progressive_frame_extractor import ProgressiveFrameExtractor
 
 
 class MinDiskUsage(threading.Thread):
@@ -53,12 +52,12 @@ class MinDiskUsage(threading.Thread):
         self.controller = controller
         self.max_frames_ahead = self.context.max_frames_ahead
         self.frame_count = context.frame_count
-        self.progressive_frame_extractor = ProgressiveFramesExtractorFFMPEG(input_video=self.context.service_request.input_file,
-                                                                            extracted_frames_dir=self.context.input_frames_dir,
-                                                                            compressed_frames_dir=self.context.compressed_static_dir,
-                                                                            compressed_quality=self.context.service_request.quality_minimum,
-                                                                            block_size=self.context.service_request.block_size,
-                                                                            output_options_original=self.context.service_request.output_options)
+        self.progressive_frame_extractor = ProgressiveFrameExtractor(input_video=self.context.service_request.input_file,
+                                                                     extracted_frames_dir=self.context.input_frames_dir,
+                                                                     compressed_frames_dir=self.context.compressed_static_dir,
+                                                                     compressed_quality=self.context.service_request.quality_minimum,
+                                                                     block_size=self.context.service_request.block_size,
+                                                                     output_options_original=self.context.service_request.output_options)
         self.start_frame = 1
 
     def join(self, timeout=None):
@@ -84,14 +83,12 @@ class MinDiskUsage(threading.Thread):
                 time.sleep(.00001)
 
             if not self.is_alive():
-                self.progressive_frame_extractor.release_capture()
                 return
 
             # when it does get ahead, extract the next frame
             self.progressive_frame_extractor.next_frame()
             self.__delete_used_files(x)
 
-        self.progressive_frame_extractor.release_capture()
 
     def extract_initial_frames(self):
         """
