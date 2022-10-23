@@ -89,7 +89,6 @@ class MinDiskUsage(threading.Thread):
             self.progressive_frame_extractor.next_frame()
             self.__delete_used_files(x)
 
-        self.progressive_frame_extractor.release_capture()
 
     def extract_initial_frames(self):
         """
