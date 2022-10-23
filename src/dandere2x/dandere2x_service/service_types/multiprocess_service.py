@@ -39,7 +39,7 @@ class MultiProcessService(Dandere2xServiceInterface):
                                   divide=3, output_dir=self._service_request.workspace)
 
         # Find all the split video files ffmpeg produced in the folder.
-        divided_re_encoded_videos = glob.glob(os.path.join(self._service_request.workspace, "*.mkv"))
+        divided_re_encoded_videos = sorted(glob.glob(os.path.join(self._service_request.workspace, "*.mkv")))
 
         # Create unique child_requests for each unique video, with the video being the input.
         for x in range(0, len(divided_re_encoded_videos)):
