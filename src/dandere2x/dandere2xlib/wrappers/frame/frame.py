@@ -80,7 +80,7 @@ class Frame:
     """
 
     def __init__(self):
-        self.frame = ''
+        self.frame: np.array = ''
         self.width = ''
         self.height = ''
         self.string_name = ''
@@ -88,13 +88,13 @@ class Frame:
 
     def create_new(self, width, height):
 
-        self.frame = np.zeros([height, width, 3], dtype=np.uint8)
+        self.frame: np.array = np.zeros([height, width, 3], dtype=np.uint8)
         self.width = width
         self.height = height
         self.string_name = ''
 
     def load_from_string(self, input_string):
-        self.frame = imageio.imread(input_string).astype(np.uint8)
+        self.frame: np.array = imageio.imread(input_string).astype(np.uint8)
 
         if self.frame.shape[0] == 3:
             # Google collab for some reason, for some images, has the arrays swapped for how the PIL
