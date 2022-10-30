@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import subprocess
@@ -35,18 +36,20 @@ def get_frame_count_slow(ffmpeg_dir: str, input_video: str):
     Gets the total number of frames by exporting each frame as a 1x1 image, and we collect the buffer sum.
     """
     assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), "%s does not exist!" % ffmpeg_dir
-
+    log = logging.getLogger()
     extraction_args = [
         str(ffmpeg_dir), "-vsync", "1", "-loglevel", "panic",
         "-i", str(input_video), "-vf", "scale=1:1",  "-f", "rawvideo"
     ]
     extraction_args.extend(["-an", "-"])
 
-    pprint(extraction_args)
+    logging.getLogger()
+    log.info("collecting frame count... this can take some time")
+    log.debug(extraction_args)
     ffmpeg = subprocess.Popen(extraction_args, stdout=subprocess.PIPE)
 
     max_x_value = 0
-    for x in range(1000000):
+    for x in range(100000000):
         max_x_value = x
         raw = ffmpeg.stdout.read(3)
         if not raw:
