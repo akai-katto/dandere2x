@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+import tempfile
 import time
 from dataclasses import dataclass
 
@@ -203,6 +204,16 @@ class Frame:
 
         copy_from(frame_other.frame, self.frame, (0, 0), (0, 0),
                   (frame_other.frame.shape[0], frame_other.frame.shape[1]))
+
+    def compress_frame_for_computations(self, compression: int):
+        pil_image = self.get_pil_image()
+
+        with tempfile.SpooledTemporaryFile(suffix=".jpg") as tf:
+            pil_image.save(tf, quality=compression, format="JPEG")
+            tf.seek(0)
+            self.frame: np.array = imageio.imread(tf).astype(np.uint8)
+
+
 
     def copy_block(self, frame_other, block_size, other_x, other_y, this_x, this_y):
         """
