@@ -48,7 +48,7 @@ else
 fi
 unzip waifu2x-ncnn-vulkan.zip
 rm waifu2x-ncnn-vulkan.zip
-find . -maxdepth 1 -name "waifu2x*" -maxdepth 1 -exec mv {} waifu2x-ncnn-vulkan \;
+find . -maxdepth 1 -name "waifu2x*" -exec mv {} waifu2x-ncnn-vulkan \;
 
 
 # Waifu2x NCNN Vulkan
