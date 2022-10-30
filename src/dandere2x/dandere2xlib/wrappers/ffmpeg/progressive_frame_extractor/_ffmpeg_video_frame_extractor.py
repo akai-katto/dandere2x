@@ -105,7 +105,7 @@ def _check_and_fix_resolution(input_file: str, block_size: int, output_options_o
     # get meta-data from the video to do pre-processing
     ffprobe_path = load_executable_paths_yaml()['ffprobe']
     ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
-    video_settings = VideoSettings(ffprobe_path, ffmpeg_path, input_file)
+    video_settings = VideoSettings(ffprobe_path, ffmpeg_path, input_file, "fast")
     width, height = video_settings.width, video_settings.height
 
     if not valid_input_resolution(width=width, height=height, block_size=block_size):

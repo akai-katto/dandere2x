@@ -5,7 +5,7 @@ from dandere2x.dandere2x_service import Dandere2xServiceThread
 from dandere2x.dandere2x_service.service_types.dandere2x_service_interface import Dandere2xServiceInterface
 from dandere2x.dandere2x_service_request import Dandere2xServiceRequest
 from dandere2x.dandere2xlib.utils.yaml_utils import load_executable_paths_yaml
-from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import re_encode_video, migrate_tracks_contextless, is_file_video
+from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import migrate_tracks_contextless, is_file_video
 
 
 class SingleProcessService(Dandere2xServiceInterface):
@@ -34,26 +34,6 @@ class SingleProcessService(Dandere2xServiceInterface):
         Creates self.child_request.input_file file by re-encoding self._service_request.input_file. Without this
         re-encode, dandere2x isn't guaranteed to function correctly.
         """
-
-        # Checks to see the video needs to be resized in order to conform to the block size. Applies the "DAR"
-        # ffmpeg filter to 'pipe_video' in 'output_options.yaml' if the video was resized.
-        # resized_output_options = Dandere2xServiceInterface._check_and_fix_resolution(
-        #     input_file=self._service_request.input_file,
-        #     block_size=self._service_request.block_size,
-        #     output_options_original=self._service_request.output_options)
-        #
-        # ffprobe_path = load_executable_paths_yaml()['ffprobe']
-        # ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
-        #
-        # # Re-encode the sent service_request into the child's input file, so that the child_request will operate on
-        # # "pre_processed.mkv", rather than self._service_request.input_file, which may not be a valid video file to
-        # # operate on.
-        # re_encode_video(ffmpeg_dir=ffmpeg_path,
-        #                 ffprobe_dir=ffprobe_path,
-        #                 output_options=resized_output_options,
-        #                 input_file=self._service_request.input_file,
-        #                 output_file=self.child_request.input_file)
-
         self.dandere2x_service = Dandere2xServiceThread(service_request=self.child_request)
 
     def run(self):
