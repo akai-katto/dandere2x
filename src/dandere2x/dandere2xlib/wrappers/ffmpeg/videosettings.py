@@ -21,7 +21,7 @@ class VideoSettings:
         if frame_count_method == "fast":
             self.frame_count = int(get_frame_count_fast(ffmpeg_dir=self.ffmpeg_dir, input_video=video_file))
         if frame_count_method == "slow":
-            self.frame_count = int(get_frame_count_fast(ffmpeg_dir=self.ffmpeg_dir, input_video=video_file))
+            self.frame_count = int(get_frame_count_slow(ffmpeg_dir=self.ffmpeg_dir, input_video=video_file))
 
         print("setting json %s" % self.settings_json)
         # todo: This entire class can be removed and simplified into the 'except' clause,
