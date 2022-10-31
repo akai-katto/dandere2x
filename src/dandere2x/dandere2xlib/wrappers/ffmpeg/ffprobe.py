@@ -158,32 +158,6 @@ def get_frame_rate(ffprobe_dir, input_video):
 
     return return_string
 
-
-def get_frame_count(ffprobe_dir, input_video):
-    assert get_operating_system() != "win32" or os.path.exists(ffprobe_dir), "%s does not exist!" % ffprobe_dir
-
-    # this execution command needs to be hard-coded
-    # since video2x only strictly recignizes this one format
-    execute = [
-        ffprobe_dir,
-        '-v',
-        'panic',
-        '-count_frames',
-        '-select_streams',
-        'v:0',
-        '-show_entries',
-        'stream=nb_read_frames ',
-        '-of',
-        'csv=p=0',
-        input_video
-    ]
-
-    return_bytes = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
-    return_string = return_bytes.decode("utf-8")
-
-    return return_string
-
-
 def is_variable_frame_rate(ffprobe_dir: str, input_video: str) -> bool:
 
     execute = [ffprobe_dir,

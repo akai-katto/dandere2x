@@ -3,7 +3,7 @@ from fractions import Fraction
 
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import get_frame_count_ffmpeg
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate, \
-    get_aspect_ratio, get_frame_count
+    get_aspect_ratio
 
 
 class VideoSettings:
