@@ -133,7 +133,7 @@ def get_frame_count_ffmpeg(ffmpeg_dir: str, input_video: str):
     matched_regex = regex.findall(stdout_as_str)
     assert matched_regex
 
-    matched_regex = matched_regex[0]
+    matched_regex = matched_regex[-1]
     frame_count = re.compile("\d{1,10}").findall(matched_regex)[0]
     return int(frame_count)
 
