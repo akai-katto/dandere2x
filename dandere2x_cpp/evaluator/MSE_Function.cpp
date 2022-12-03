@@ -98,11 +98,12 @@ double MSE_FUNCTIONS::compute_mse(const Frame &image_a, const Frame &image_b,
 
     // Compute the mse
     double sum = 0;
-    for (int x = 0; x < block_size; x++)
+    for (int x = 0; x < block_size; x++){
         for (int y = 0; y < block_size; y++) {
             sum += square(image_a.get_color(image_a_x_start + x, image_a_y_start + y),
                           image_b.get_color(image_b_x_start + x, image_b_y_start + y));
         }
+    }
     sum /= block_size * block_size;
 
     return sum;
