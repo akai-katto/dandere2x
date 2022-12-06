@@ -169,7 +169,7 @@ def get_pixfmt(ffprobe_dir: str, input_video) -> str:
                '-of', 'csv=p=0', input_video]
 
     return_bytes = subprocess.run(execute, check=True, stdout=subprocess.PIPE).stdout
-    return return_bytes.decode("utf-8")
+    return return_bytes.decode("utf-8").strip()
 
 def is_variable_frame_rate(ffprobe_dir: str, input_video: str) -> bool:
 
