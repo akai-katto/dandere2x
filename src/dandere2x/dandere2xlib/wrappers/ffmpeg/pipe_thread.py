@@ -91,6 +91,7 @@ class Pipe(threading.Thread):
             ffmpeg_pipe_command.append(hw_accel)
 
         ffmpeg_pipe_command.extend(["-r", frame_rate])
+        ffmpeg_pipe_command.extend(['-pix_fmt', self.context.video_settings.pix_fmt])
 
         options = get_options_from_section(
             self.context.service_request.output_options["ffmpeg"]["pipe_video"]['output_options'],

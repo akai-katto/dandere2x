@@ -3,7 +3,7 @@ from fractions import Fraction
 
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffmpeg import get_frame_count_ffmpeg
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_video_info, get_width_height, get_frame_rate, \
-    get_aspect_ratio
+    get_aspect_ratio, get_pixfmt
 
 
 class VideoSettings:
@@ -18,7 +18,7 @@ class VideoSettings:
         self.ffmpeg_dir = ffmpeg_dir
         self.settings_json = get_video_info(self.ffprobe_dir, video_file)
         self.frame_count = int(get_frame_count_ffmpeg(ffmpeg_dir=self.ffmpeg_dir, input_video=video_file))
-
+        self.pix_fmt = get_pixfmt(ffprobe_dir=ffprobe_dir, input_video=video_file)
         print("setting json %s" % self.settings_json)
         # todo: This entire class can be removed and simplified into the 'except' clause,
         # but having this try / except provides me a sense of security. Some file containers
