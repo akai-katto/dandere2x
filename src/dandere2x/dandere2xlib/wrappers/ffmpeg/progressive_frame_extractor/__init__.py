@@ -33,8 +33,7 @@ class ProgressiveFrameExtractor:
         self.compressed_quality = compressed_quality
 
         width, height = get_width_height(ffprobe_dir=ffprobe_path, input_video=input_video)
-        self.cap = FFMpegVideoFrameExtractor(Path(ffmpeg_path), Path(input_video), width, height, block_size,
-                                             output_options_original)
+        self.cap = FFMpegVideoFrameExtractor(Path(ffmpeg_path), Path(input_video), width, height, block_size, output_options_original)
 
         self.ffmpeg_path = load_executable_paths_yaml()['ffmpeg']
 

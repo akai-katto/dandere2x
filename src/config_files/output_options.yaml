@@ -15,11 +15,10 @@ dandere2x_cpp:
   evaluator_arg: "mse"
 
 ffmpeg:
-  pre_process_video:
-    -hwaccel: auto
+  convert_video_to_frames:
     output_options:
       -vf:
-        - " null"
+        - 'null'
 
   convert_video_to_gif:
     output_options:

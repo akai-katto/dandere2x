@@ -52,6 +52,7 @@ def resource_path():
     else:
         return Path(os.path.dirname(os.path.abspath(sys.executable)))
 
+
 def load_executable_paths_yaml() -> dict:
     """
     Load the dandere2x_directories yaml file, but replace all the relative path definitions with absolute

@@ -140,8 +140,7 @@ class FFMpegVideoFrameExtractor:
                                                      block_size=block_size,
                                                      output_options_original=output_options_original)
 
-        print("pre output options")
-        options = get_options_from_section(fixed_resolution["ffmpeg"]["pre_process_video"]['output_options'],
+        options = get_options_from_section(fixed_resolution["ffmpeg"]["convert_video_to_frames"]['output_options'],
                                            ffmpeg_command=True)
         for item in options:
             extraction_args.append(item)
@@ -149,7 +148,6 @@ class FFMpegVideoFrameExtractor:
         extraction_args.extend(["-c:v", "rawvideo", "-f", "rawvideo",
                                 "-pix_fmt", "rgb24", "-an", "-"])
 
-        pprint(extraction_args)
         self.ffmpeg = subprocess.Popen(extraction_args, stdout=subprocess.PIPE)
 
     @property
