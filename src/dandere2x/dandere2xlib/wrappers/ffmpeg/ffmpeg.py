@@ -9,47 +9,6 @@ from dandere2x.dandere2xlib.utils.yaml_utils import get_options_from_section, lo
 from dandere2x.dandere2xlib.wrappers.ffmpeg.ffprobe import get_seconds
 
 
-def re_encode_video(ffmpeg_dir: str, ffprobe_dir: str, output_options: dict, input_file: str,
-                    output_file: str, console_output=None) -> None:
-    from dandere2x.dandere2xlib.wrappers.ffmpeg.videosettings import VideoSettings
-    """
-    #todo
-    """
-
-    if console_output:
-        assert type(console_output) == str
-
-    logger = logging.getLogger("root")
-    video_settings = VideoSettings(ffmpeg_dir=ffmpeg_dir, ffprobe_dir=ffprobe_dir, video_file=input_file)
-    frame_rate = video_settings.frame_rate
-
-    extract_frames_command = [ffmpeg_dir]
-
-    hw_accel = output_options["ffmpeg"]["pre_process_video"]["-hwaccel"]
-    if hw_accel is not None:
-        extract_frames_command.append("-hwaccel")
-        extract_frames_command.append(hw_accel)
-
-    extract_frames_command.extend(["-i", input_file])
-
-    extract_frames_options = \
-        get_options_from_section(output_options["ffmpeg"]['pre_process_video']['output_options'],
-                                 ffmpeg_command=True)
-
-    for element in extract_frames_options:
-        extract_frames_command.append(element)
-
-    extract_frames_command.append("-r")
-    extract_frames_command.append(str(frame_rate))
-    extract_frames_command.extend([output_file])
-
-    logger.warning("Re-encoding your video, this may take some time.")
-    process = subprocess.Popen(extract_frames_command, stdout=sys.stdout, stderr=sys.stdout,
-                               stdin=subprocess.PIPE, shell=False)
-
-    stdout, stderr = process.communicate()
-
-
 def convert_video_to_gif(ffmpeg_dir: str, input_path: str, output_path: str, output_options=None) -> None:
     assert get_operating_system() != "win32" or os.path.exists(ffmpeg_dir), \
         "%s does not exist" % ffmpeg_dir
@@ -158,7 +117,7 @@ def append_resize_filter_to_pre_process(output_options: dict, width: int, height
     log.info("New width -> %s " % str(width))
     log.info("New height -> %s " % str(height))
 
-    output_options['ffmpeg']['pre_process_video']['output_options']['-vf'] \
+    output_options['ffmpeg']['convert_video_to_frames']['output_options']['-vf'] \
         .append("scale=" + str(width) + ":" + str(height))
 
 
