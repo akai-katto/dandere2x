@@ -19,7 +19,7 @@ from dandere2x.dandere2x_service.core.waifu2x.waifu2x_ncnn_vulkan import Waifu2x
 from dandere2x.dandere2x_service.core.waifu2x.realsr_ncnn_vulkan import RealSRNCNNVulkan
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
-from dandere2x.dandere2xlib.utils.dandere2x_utils import file_exists
+from dandere2x.dandere2xlib.utils.dandere2x_utils import file_exists, wait_on_file
 from dandere2x.dandere2xlib.wrappers.ffmpeg.progressive_noise_adder import ProgressiveNoiseAdder
 
 
@@ -131,6 +131,7 @@ class Dandere2xServiceThread(threading.Thread):
 
         # measure the time to upscale a single frame for printing purposes
         one_frame_time = time.time()
+        wait_on_file(self.context.input_frames_dir + "frame" + str(1) + ".png")
         self.waifu2x.upscale_file(
             input_image=self.context.input_frames_dir + "frame" + str(1) + ".png",
             output_image=self.context.merged_dir + "merged_" + str(1) + ".png")
