@@ -34,14 +34,6 @@ RUN make -j4
 
 
 
-
-
-
-
-
-
-
-
 FROM ubuntu:19.10
 
 # Since ubuntu 19.10 isn't LTS, use LTS sources for the packages we need.
@@ -89,6 +81,7 @@ RUN wget 'https://bootstrap.pypa.io/get-pip.py' && python3.8 get-pip.py
 RUN pip3.8 install -U pip
 RUN pip3.8 install -r /dandere2x/dandere2x/src/requirements.txt
 
+RUN apt -y install libopencv-dev libopencv-imgcodecs-dev libopencv-imgproc-dev libopencv-core-dev
 COPY --from=BASEWAIFUX2CPP /dandere2x/waifu2x-converter-cpp/out /dandere2x/dandere2x/src/externals
 
 WORKDIR /dandere2x/dandere2x/src/
