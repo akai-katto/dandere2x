@@ -94,7 +94,6 @@ class Merge(threading.Thread):
             self.controller)
         
         logger = logging.getLogger(__name__)
-        logger.info("COOLLOG: Start runner")
 
         last_frame = False
         for x in range(1, self.context.frame_count):
@@ -122,16 +121,13 @@ class Merge(threading.Thread):
             # Core Logic of Loop #
             ######################
 
-            # Load the needed vectors to create the merged image.
-            logger.info("COOLLOG: Blah1")
-            
+            # Load the needed vectors to create the merged image.            
             prediction_data_list = get_list_from_file_and_wait(
                 self.context.pframe_data_dir + "pframe_" + str(x) + ".txt")
             residual_data_list = get_list_from_file_and_wait(
                 self.context.residual_data_dir + "residual_" + str(x) + ".txt")
             fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt")
 
-            logger.info("COOLLOG: Blah2")
             # Create the actual image itself.
             current_frame = self.make_merge_image(self.context, current_upscaled_residuals, frame_previous,
                                                   prediction_data_list, residual_data_list, fade_data_list)
@@ -146,7 +142,7 @@ class Merge(threading.Thread):
             # if True:
             #     output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".png"
             #     current_frame.save_image(output_file)
-            logger.info("COOLLOG: Blah3")
+
             #######################################
             # Assign variables for next iteration #
             #######################################
@@ -162,7 +158,7 @@ class Merge(threading.Thread):
             frame_previous = current_frame
             current_upscaled_residuals = background_frame_load.loaded_image
             self.controller.update_frame_count(x)
-            logger.info("COOLLOG: Blah4: " + str(x))
+            logger.info("Completed frame: " + str(x))
 
         self.pipe.kill()
 

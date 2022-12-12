@@ -52,7 +52,6 @@ RUN apt-get install -y libgl1-mesa-glx
 RUN apt-get install -y ffmpeg
 RUN apt-get install -y wget
 RUN apt-get install -y zip
-RUN apt-get install -y curl
 
 # Move Dandere2x's files to /dandere2x/
 RUN mkdir /dandere2x/
