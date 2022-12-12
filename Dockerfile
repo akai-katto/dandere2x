@@ -47,6 +47,9 @@ RUN apt-get install -y keyboard-configuration
 # Needed Libraries for Dandere2x
 RUN apt install -y --no-install-recommends ffmpeg nvidia-driver-440 python3.8 libvulkan1 libgtk2.0-dev pkg-config
 
+# Dependencies for waifu2x-converter-cpp
+RUN apt -y install libopencv-dev libopencv-imgcodecs-dev libopencv-imgproc-dev libopencv-core-dev
+
 # Needed Library for Building Dandere2x (this will be removed later)
 RUN apt-get install -y cmake
 RUN apt-get install -y git-core
@@ -75,7 +78,6 @@ RUN wget 'https://bootstrap.pypa.io/get-pip.py' && python3.8 get-pip.py
 RUN pip3.8 install -U pip
 RUN pip3.8 install -r /dandere2x/dandere2x/src/requirements.txt
 
-RUN apt -y install libopencv-dev libopencv-imgcodecs-dev libopencv-imgproc-dev libopencv-core-dev
 COPY --from=BASEWAIFUX2CPP /dandere2x/waifu2x-converter-cpp/out /dandere2x/dandere2x/src/externals/waifu2x-converter-cpp
 COPY --from=BASEWAIFUX2CPP /dandere2x/waifu2x-converter-cpp/models_rgb /usr/local/share/waifu2x-converter-cpp/
 

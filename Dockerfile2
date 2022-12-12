@@ -44,6 +44,9 @@ RUN apt-get install python3.8 -y
 
 RUN apt install -y --no-install-recommends ffmpeg nvidia-driver-440 libvulkan1 libgtk2.0-dev pkg-config
 
+# Dependencies for waifu2x-converter-cpp
+RUN apt -y install libopencv-dev libopencv-imgcodecs-dev libopencv-imgproc-dev libopencv-core-dev
+
 # Needed Library for Building Dandere2x (this will be removed later)
 RUN apt-get install -y cmake
 RUN apt-get install -y git-core
@@ -53,7 +56,6 @@ RUN apt-get install -y ffmpeg
 RUN apt-get install -y wget
 RUN apt-get install -y zip
 
-RUN apt -y install libopencv-dev libopencv-imgcodecs-dev libopencv-imgproc-dev libopencv-core-dev
 
 # Move Dandere2x's files to /dandere2x/
 RUN mkdir /dandere2x/
