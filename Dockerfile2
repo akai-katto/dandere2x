@@ -70,7 +70,7 @@ RUN apt-get install python3-distutils python3-apt python3-pip -y
 RUN pip3 install -r /dandere2x/dandere2x/src/requirements.txt
 
 RUN apt -y install libopencv-dev libopencv-imgcodecs-dev libopencv-imgproc-dev libopencv-core-dev
-COPY --from=BASEWAIFUX2CPP /dandere2x/waifu2x-converter-cpp/out /dandere2x/dandere2x/src/externals
+COPY --from=BASEWAIFUX2CPP /dandere2x/waifu2x-converter-cpp/out /dandere2x/dandere2x/src/externals/waifu2x-converter-cpp
 
 WORKDIR /dandere2x/dandere2x/src/
 ENTRYPOINT ["python3", "/dandere2x/dandere2x/src/main.py"]
