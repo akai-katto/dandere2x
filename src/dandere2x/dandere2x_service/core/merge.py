@@ -158,7 +158,7 @@ class Merge(threading.Thread):
             frame_previous = current_frame
             current_upscaled_residuals = background_frame_load.loaded_image
             self.controller.update_frame_count(x)
-            logger.info("Completed frame: " + str(x) + "/" + self.context.frame_count)
+            logger.info("Completed frame: " + str(x) + "/" + str(self.context.frame_count))
 
         self.pipe.kill()
 
