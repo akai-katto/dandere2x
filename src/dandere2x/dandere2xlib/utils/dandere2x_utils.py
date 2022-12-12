@@ -12,6 +12,7 @@ import os
 import shutil
 import sys
 import time
+from glob import glob
 from sys import platform
 from typing import Tuple
 
@@ -93,6 +94,20 @@ def wait_on_file(file_string: str):
         if count / 500 == 0:
             logger.debug(file_string + " does not exist, waiting")
         exists = os.path.isfile(file_string)
+        count += 1
+        time.sleep(.001)
+
+def wait_on_file_withglob(file_string: str):
+    logger = logging.getLogger(__name__)
+    count = 0
+    while True:
+        if count / 500 == 0:
+            logger.debug(file_string + " does not exist, waiting")
+          
+        potential_files = glob(file_string)
+        if len(potential_files) > 0:
+            actual_file_name = potential_files[0]
+            break
         count += 1
         time.sleep(.001)
 

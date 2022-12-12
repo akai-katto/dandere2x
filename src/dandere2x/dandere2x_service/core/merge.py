@@ -38,7 +38,7 @@ import threading
 from dandere2x.dandere2x_service.core.residual_plugins.fade import fade_image
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
-from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file_withglob
 from dandere2x.dandere2xlib.wrappers.ffmpeg.pipe_thread import Pipe
 from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead, AsyncFrameWrite
 from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
@@ -90,8 +90,11 @@ class Merge(threading.Thread):
 
         current_upscaled_residuals = Frame()
         current_upscaled_residuals.load_from_string_controller(
-            self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, 1) + ".png",
+            self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, 1) + "*.png",
             self.controller)
+        
+        logger = logging.getLogger(__name__)
+        logger.info("COOLLOG: Start runner")
 
         last_frame = False
         for x in range(1, self.context.frame_count):
@@ -111,7 +114,7 @@ class Merge(threading.Thread):
                 it's well worth it. 
                 """
                 background_frame_load = AsyncFrameRead(
-                    self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
+                    self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + "*.png",
                     self.controller)
                 background_frame_load.start()
 
@@ -120,13 +123,15 @@ class Merge(threading.Thread):
             ######################
 
             # Load the needed vectors to create the merged image.
-
+            logger.info("COOLLOG: Blah1")
+            
             prediction_data_list = get_list_from_file_and_wait(
                 self.context.pframe_data_dir + "pframe_" + str(x) + ".txt")
             residual_data_list = get_list_from_file_and_wait(
                 self.context.residual_data_dir + "residual_" + str(x) + ".txt")
             fade_data_list = get_list_from_file_and_wait(self.context.fade_data_dir + "fade_" + str(x) + ".txt")
 
+            logger.info("COOLLOG: Blah2")
             # Create the actual image itself.
             current_frame = self.make_merge_image(self.context, current_upscaled_residuals, frame_previous,
                                                   prediction_data_list, residual_data_list, fade_data_list)
@@ -141,14 +146,14 @@ class Merge(threading.Thread):
             # if True:
             #     output_file = self.context.merged_dir + "merged_" + str(x + 1) + ".png"
             #     current_frame.save_image(output_file)
-
+            logger.info("COOLLOG: Blah3")
             #######################################
             # Assign variables for next iteration #
             #######################################
             if not last_frame:
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
-                    wait_on_file(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + "*.png") # Added * here because waifu2x_converter_cpp outputs filenames as: output_000008_[L3][x2.00].png
+                    wait_on_file_withglob(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + "*.png") # Added * here because waifu2x_converter_cpp outputs filenames as: output_000008_[L3][x2.00].png
             """
             Now that we're all done with the current frame, the current `current_frame` is now the frame_previous
             (with respect to the next iteration). We could obviously manually load frame_previous = Frame(n-1) each
@@ -157,6 +162,7 @@ class Merge(threading.Thread):
             frame_previous = current_frame
             current_upscaled_residuals = background_frame_load.loaded_image
             self.controller.update_frame_count(x)
+            logger.info("COOLLOG: Blah4: " + str(x))
 
         self.pipe.kill()
 
