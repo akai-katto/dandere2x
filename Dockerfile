@@ -77,6 +77,7 @@ RUN pip3.8 install -r /dandere2x/dandere2x/src/requirements.txt
 
 RUN apt -y install libopencv-dev libopencv-imgcodecs-dev libopencv-imgproc-dev libopencv-core-dev
 COPY --from=BASEWAIFUX2CPP /dandere2x/waifu2x-converter-cpp/out /dandere2x/dandere2x/src/externals/waifu2x-converter-cpp
+COPY --from=BASEWAIFUX2CPP /dandere2x/waifu2x-converter-cpp/models_rgb /usr/local/share/waifu2x-converter-cpp/
 
 WORKDIR /dandere2x/dandere2x/src/
 ENTRYPOINT ["python3.8", "/dandere2x/dandere2x/src/main.py"]
