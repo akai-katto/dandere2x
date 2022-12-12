@@ -1,26 +1,20 @@
 FROM ubuntu:19.10 as BASEWAIFUX2CPP
 
-# Since ubuntu 19.10 isn't LTS, use LTS sources for the packages we need.
-RUN sed -i "s/archive/old-releases/" /etc/apt/sources.list \
-    && sed -i "/security/d" /etc/apt/sources.list \
-    && apt-get update
+ENV DEBIAN_FRONTEND noninteractive
 
 # We need Nvidia Drivers
-RUN apt install -y --no-install-recommends apt-utils software-properties-common
-RUN add-apt-repository -y ppa:graphics-drivers/ppa
 RUN apt-get -y update
-
-# Set nvidia-driver installation to not ask for keyboard configeration
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get install -y keyboard-configuration
-
-
 RUN apt -y install ocl-icd-opencl-dev
 RUN apt -y install libopencv-dev libopencv-imgcodecs-dev libopencv-imgproc-dev libopencv-core-dev
 RUN apt -y install nvidia-cuda-toolkit
+RUN apt install -y --no-install-recommends apt-utils software-properties-common gpg-agent
+RUN add-apt-repository universe
+RUN apt-get -y update
 
-RUN apt-get install -y git-core
+# Needed Library for Building Dandere2x (this will be removed later)
 RUN apt-get install -y cmake
+RUN apt-get install -y git-core
+RUN apt-get install -y build-essential
 
 WORKDIR /dandere2x
 RUN git clone "https://github.com/DeadSix27/waifu2x-converter-cpp"
