@@ -46,5 +46,6 @@ def main():
 
     print("Total runtime duration:", time.time() - start)
 
+    sys.exit()
 
 main()
