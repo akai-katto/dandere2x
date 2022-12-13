@@ -38,7 +38,8 @@ ffmpeg:
       -crf: 15
       -vf:
         - ' deband=range=8:blur=false, pp7=qp=2:mode=medium'
-
+  divide_video:
+    -hwaccel: auto
   migrate_audio:
     output_options:
       -c: copy
