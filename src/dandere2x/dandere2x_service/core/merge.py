@@ -38,7 +38,7 @@ import threading
 from dandere2x.dandere2x_service.core.residual_plugins.fade import fade_image
 from dandere2x.dandere2x_service.dandere2x_service_context import Dandere2xServiceContext
 from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
-from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file_withglob
+from dandere2x.dandere2xlib.utils.dandere2x_utils import get_lexicon_value, get_list_from_file_and_wait, wait_on_file
 from dandere2x.dandere2xlib.wrappers.ffmpeg.pipe_thread import Pipe
 from dandere2x.dandere2xlib.wrappers.frame.asyncframe import AsyncFrameRead, AsyncFrameWrite
 from dandere2x.dandere2xlib.wrappers.frame.frame import Frame
@@ -90,9 +90,9 @@ class Merge(threading.Thread):
 
         current_upscaled_residuals = Frame()
         current_upscaled_residuals.load_from_string_controller(
-            self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, 1) + "*.png",
+            self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, 1) + ".png",
             self.controller)
-        
+
         logger = logging.getLogger(__name__)
 
         last_frame = False
@@ -113,7 +113,7 @@ class Merge(threading.Thread):
                 it's well worth it. 
                 """
                 background_frame_load = AsyncFrameRead(
-                    self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + "*.png",
+                    self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png",
                     self.controller)
                 background_frame_load.start()
 
@@ -121,7 +121,8 @@ class Merge(threading.Thread):
             # Core Logic of Loop #
             ######################
 
-            # Load the needed vectors to create the merged image.            
+            # Load the needed vectors to create the merged image.
+
             prediction_data_list = get_list_from_file_and_wait(
                 self.context.pframe_data_dir + "pframe_" + str(x) + ".txt")
             residual_data_list = get_list_from_file_and_wait(
@@ -149,7 +150,7 @@ class Merge(threading.Thread):
             if not last_frame:
                 # We need to wait until the next upscaled image exists before we move on.
                 while not background_frame_load.load_complete:
-                    wait_on_file_withglob(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + "*.png") # Added * here because waifu2x_converter_cpp outputs filenames as: output_000008_[L3][x2.00].png
+                    wait_on_file(self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, x + 1) + ".png")
             """
             Now that we're all done with the current frame, the current `current_frame` is now the frame_previous
             (with respect to the next iteration). We could obviously manually load frame_previous = Frame(n-1) each

@@ -46,4 +46,5 @@ def main():
 
     print("Total runtime duration:", time.time() - start)
 
+
 main()

@@ -3,7 +3,6 @@
 import logging
 import os
 import time
-from glob import glob
 from dataclasses import dataclass
 
 import imageio
@@ -108,27 +107,21 @@ class Frame:
 
     from dandere2x.dandere2x_service.dandere2x_service_controller import Dandere2xController
     def load_from_string_controller(self, input_string, controller=Dandere2xController()):
-        
-        actual_file_name = ''
 
         logger = logging.getLogger(__name__)
+        exists = exists = os.path.isfile(input_string)
         count = 0
-        while True:
+        while not exists:
             if count % 10000 == 0:
                 logger.debug(input_string + " dne")
-            
-            potential_files = glob(input_string)
-            if len(potential_files) > 0:
-                actual_file_name = potential_files[0]
-                break
-
+            exists = os.path.isfile(input_string)
             count += 1
             time.sleep(.2)
 
         loaded = False
         while not loaded:
             try:
-                self.load_from_string(actual_file_name)
+                self.load_from_string(input_string)
                 loaded = True
             except PermissionError:
                 logger.debug("Permission Error - trying again ")
