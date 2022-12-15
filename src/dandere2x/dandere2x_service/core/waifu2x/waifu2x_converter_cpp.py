@@ -117,9 +117,9 @@ class Waifu2xConverterCpp(AbstractUpscaler, Thread):
             file_names.append("output_" + get_lexicon_value(6, x))
 
         for file in file_names:
-            dirty_name = self.context.residual_upscaled_dir + file + '_[NS-L' + str(
+            dirty_name = self.context.residual_upscaled_dir + file + '_[L' + str(
                 self.context.service_request.denoise_level) + '][x' + str(
-                self.context.service_request.scale_factor) + '.000000]' + ".png"
+                self.context.service_request.scale_factor) + '.00]' + ".png"
             clean_name = self.context.residual_upscaled_dir + file + ".png"
 
             wait_on_either_file(clean_name, dirty_name)
