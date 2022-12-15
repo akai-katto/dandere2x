@@ -57,8 +57,8 @@ jobs:
       run: |
         cd src
         pyinstaller --onefile main.py
-    - name: find
-      run: find    
+    - name: ls
+      run: ls -R
     - uses: actions/upload-artifact@v3
       with:
         name: dandere2x_windows
