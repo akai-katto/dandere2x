@@ -56,6 +56,8 @@ jobs:
         python-version: '3.8'
     - name: Install PyInstaller
       run: pip install pyinstaller
+    - name: Pip install requirements
+      run: pip3 install -r src/requirements.txt
     - name: Build to single exe
       run: |
         cd src
