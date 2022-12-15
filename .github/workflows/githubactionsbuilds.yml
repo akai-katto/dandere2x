@@ -62,7 +62,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: dandere2x_windows
-        path: src/main.exe
+        path: src/dist/main.exe
 
   release_github:
     needs: [
