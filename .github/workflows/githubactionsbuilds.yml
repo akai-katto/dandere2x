@@ -71,7 +71,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: dandere2x_windows
-        path: src/dist/main.exe
+        path: src/main.exe
 
   build_linux:
     needs: generate_version_number
@@ -98,7 +98,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: dandere2x_linux
-        path: src/dist/main.bin
+        path: src/main.bin
 
   release_github:
     needs: [
