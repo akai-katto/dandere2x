@@ -173,7 +173,7 @@ def divide_and_reencode_video(ffmpeg_path: str, ffprobe_path: str,
 
     execute = [ffmpeg_path]
 
-    hw_accel = output_options["ffmpeg"]["pre_process_video"]["-hwaccel"]
+    hw_accel = output_options["ffmpeg"]["divide_video"]["-hwaccel"]
     if hw_accel is not None:
         execute.append("-hwaccel")
         execute.append(hw_accel)
