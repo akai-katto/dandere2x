@@ -56,11 +56,11 @@ jobs:
         python-version: '3.8'
     # - name: Install PyInstaller
     #   run: pip install pyinstaller
-    - name: In
-      run: python -m pip install nuitka
+    - name: pip install nuitka
+      run: pip install nuitka
     - name: Pip install requirements
       run: pip3 install -r src/requirements.txt
-    - name: Build to single exe
+    - name: Build to single executable
       run: |
         cd src
         #pyinstaller --onefile main.py
@@ -72,10 +72,37 @@ jobs:
         name: dandere2x_windows
         path: src/dist/main.exe
 
+  build_linux:
+    needs: generate_version_number
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    # - name: Install PyInstaller
+    #   run: pip install pyinstaller
+    - name: pip install nuitka
+      run: pip install nuitka
+    - name: Pip install requirements
+      run: pip3 install -r src/requirements.txt
+    - name: Build to single executable
+      run: |
+        cd src
+        #pyinstaller --onefile main.py
+        python -m nuitka --follow-imports --onefile main.py
+    - name: ls
+      run: ls -R
+    - uses: actions/upload-artifact@v3
+      with:
+        name: dandere2x_linux
+        path: src/dist/main.bin
+
   release_github:
     needs: [
       generate_version_number,
-      build_windows]
+      build_windows,
+      build_linux]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
@@ -106,5 +133,6 @@ jobs:
         tag_name: 1.0.${{needs.generate_version_number.outputs.build_number}}
         files: |
           ./artifacts/dandere2x_windows/main.exe
+          ./artifacts/dandere2x_linux/main.bin
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
