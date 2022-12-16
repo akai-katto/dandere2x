@@ -64,6 +64,7 @@ jobs:
       run: |
         cd src
         #pyinstaller --onefile main.py
+        pip install orderedset
         python -m nuitka --onefile --enable-plugin=numpy --assume-yes-for-downloads main.py
     - name: ls
       run: ls -R
