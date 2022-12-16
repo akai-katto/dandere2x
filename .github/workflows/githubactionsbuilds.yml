@@ -54,14 +54,17 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: '3.8'
-    - name: Install PyInstaller
-      run: pip install pyinstaller
+    # - name: Install PyInstaller
+    #   run: pip install pyinstaller
+    - name: In
+      run: python -m pip install nuitka
     - name: Pip install requirements
       run: pip3 install -r src/requirements.txt
     - name: Build to single exe
       run: |
         cd src
-        pyinstaller --onefile main.py
+        #pyinstaller --onefile main.py
+        python -m nuitka --follow-imports --onefile main.py
     - name: ls
       run: ls -R
     - uses: actions/upload-artifact@v3
