@@ -96,7 +96,6 @@ def wait_on_file(file_string: str):
         count += 1
         time.sleep(.001)
 
-
 # for renaming function, break when either file exists
 def wait_on_either_file(file_1: str, file_2: str):
     logger = logging.getLogger(__name__)

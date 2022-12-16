@@ -93,6 +93,8 @@ class Merge(threading.Thread):
             self.context.residual_upscaled_dir + "output_" + get_lexicon_value(6, 1) + ".png",
             self.controller)
 
+        logger = logging.getLogger(__name__)
+
         last_frame = False
         for x in range(1, self.context.frame_count):
             ########################################
@@ -157,6 +159,7 @@ class Merge(threading.Thread):
             frame_previous = current_frame
             current_upscaled_residuals = background_frame_load.loaded_image
             self.controller.update_frame_count(x)
+            logger.info("Completed frame: " + str(x) + "/" + str(self.context.frame_count))
 
         self.pipe.kill()
 
