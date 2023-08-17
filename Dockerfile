@@ -55,8 +55,8 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,graphics,utility
 COPY src/config_files/nvidia_icd.x86_64.json /etc/vulkan/icd.d/
 COPY src/config_files/10_nvidia.json /usr/share/glvnd/egl_vendor.d/
 # Move Dandere2x's files to /dandere2x/
-RUN mkdir -p /dandere2x/dandere2x
-COPY dandere2x/ /dandere2x/dandere2x/
+RUN mkdir /dandere2x/
+RUN git clone --recurse-submodules --progress https://github.com/aka-katto/dandere2x.git /dandere2x/dandere2x
 
 # Begin the building process
 RUN cd /dandere2x/dandere2x/src/ && bash /dandere2x/dandere2x/src/unix_setup.sh
